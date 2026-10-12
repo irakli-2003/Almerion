@@ -246,11 +246,12 @@ The counts are the same as a half caster's slots, but each level is a type of ch
   table. For example, one coal (4) makes two Steam-pressure charges or one Thermal charge.
 - **A long rest refuels automatically** if the artificer carries a furnace and fuel. Missing
   charges are refilled from the lowest level up to the furnace tier. The weakest fuel burns
-  first, and fuel is only burned when it can finish a charge.
+  first, and fuel is only burned when it can finish a charge. A **short rest** refuels too, but
+  only up to half of the missing charges (rounded up), weakest first.
 - **Mechanical devices** take a charge of their level or any stronger one. Each level above
   the spell's level adds one damage die. **Tuned devices** run only on their own capsule type.
   For example, the Thermal Smoke Grenade works only with a Thermal charge.
-- **Crafting** still lets a stronger charge stand in for a weaker one.
+- **Crafting** counts as a mechanical action, so any charge of the required level or stronger works.
 - **Blueprints are an item type.** A blueprint lists:
   - its product;
   - its materials, which are used up;

@@ -161,6 +161,16 @@ public final class Progression {
         return log;
     }
 
+    /** {@link #shortRest} plus a partial refuel of an energy caster's charges (half the missing ones). */
+    public static List<String> shortRest(PlayerCharacter pc, CharacterClass cls, int hitPointsRecovered,
+                                         java.util.function.Function<String, com.dnd.model.item.Item> items) {
+        List<String> log = shortRest(pc, cls, hitPointsRecovered);
+        if (pc.getCastingResource() == CastingResource.ENERGY_CHARGES) {
+            log.addAll(com.dnd.model.crafting.Workshop.shortRestRefill(pc, pc.getSpellSlots(), items));
+        }
+        return log;
+    }
+
     /** Long rest: everything back to full and every effect and cooldown cleared. */
     public static List<String> longRest(PlayerCharacter pc) {
         List<String> log = new ArrayList<>();

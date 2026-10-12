@@ -76,12 +76,13 @@ final class ProgressionPanel {
                 } catch (NumberFormatException ex) {
                     hp = 0;
                 }
-                Progression.shortRest(pc, cls, hp);
+                Progression.shortRest(pc, cls, hp, repos.items()::getById);
                 repos.players().save(pc);
                 onChanged.run();
             });
         });
-        shortRest.setTooltip(new Tooltip("HP from hit dice, pact slots back, half the missing mana, timed effects end"));
+        shortRest.setTooltip(new Tooltip("HP from hit dice, pact slots back, half the missing mana, timed effects end."
+            + " The workshop furnace refills up to half of the missing energy charges from the fuel in the pack."));
 
         Button longRest = owner.btn("Long Rest", () -> {
             Progression.longRest(pc, repos.items()::getById);

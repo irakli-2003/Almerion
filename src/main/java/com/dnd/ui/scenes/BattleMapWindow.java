@@ -2255,16 +2255,18 @@ public class BattleMapWindow {
             Integer hp = askNumber("Short rest", TokenSupport.nameOf(token) + " - HP recovered from hit dice rolled:", 0);
             if (hp == null) return;
             com.dnd.model.character.Progression.shortRest(state, isPactCaster(token), hp, TokenSupport.levelOf(token));
+            List<String> furnace = refuelOnRest(token, state, false);
             afterVitalsChange(token);
             showDetail(token);
-            status(TokenSupport.nameOf(token) + " takes a short rest.");
+            status(TokenSupport.nameOf(token) + " takes a short rest."
+                + (furnace.isEmpty() ? "" : " Workshop furnace: " + String.join(", ", furnace) + "."));
         });
         Button longRest = new Button("Long Rest");
         longRest.getStyleClass().add("dnd-button");
         longRest.setTooltip(new Tooltip("Full HP, mana, spell slots and feature uses; every effect and cooldown cleared"));
         longRest.setOnAction(e -> {
             com.dnd.model.character.Progression.longRest(state);
-            List<String> furnace = refuelOnRest(token, state);
+            List<String> furnace = refuelOnRest(token, state, true);
             afterVitalsChange(token);
             showDetail(token);
             status(TokenSupport.nameOf(token) + " takes a long rest."
@@ -2273,13 +2275,18 @@ public class BattleMapWindow {
         return new FlowPane(6, 6, shortRest, longRest);
     }
 
-    /** An energy caster's furnace burns the pack's fuel during a long rest and refills the charges. */
-    private List<String> refuelOnRest(MapObject token, CombatState state) {
+    /**
+     * An energy caster's furnace burns the pack's fuel during a rest: a long rest refills every
+     * charge it can, a short rest up to half of the missing ones.
+     */
+    private List<String> refuelOnRest(MapObject token, CombatState state, boolean longRest) {
         if (!(token instanceof PlayerToken pt) || pt.getCharacter() == null
             || state.effectiveCastingResource() != com.dnd.model.magic.CastingResource.ENERGY_CHARGES) {
             return List.of();
         }
-        return com.dnd.model.crafting.Workshop.restRefill(pt.getCharacter(), state.getSpellSlots(), repos.items()::getById);
+        return longRest
+            ? com.dnd.model.crafting.Workshop.restRefill(pt.getCharacter(), state.getSpellSlots(), repos.items()::getById)
+            : com.dnd.model.crafting.Workshop.shortRestRefill(pt.getCharacter(), state.getSpellSlots(), repos.items()::getById);
     }
 
     private boolean isPactCaster(MapObject token) {
@@ -2346,9 +2353,12 @@ public class BattleMapWindow {
             CombatState state = TokenSupport.combatOf(pt);
             if (chosen == longType) {
                 com.dnd.model.character.Progression.longRest(state);
-                refuelOnRest(pt, state);
-            } else com.dnd.model.character.Progression.shortRest(state, isPactCaster(pt), rolls.get(pt).getValue(),
-                TokenSupport.levelOf(pt));
+                refuelOnRest(pt, state, true);
+            } else {
+                com.dnd.model.character.Progression.shortRest(state, isPactCaster(pt), rolls.get(pt).getValue(),
+                    TokenSupport.levelOf(pt));
+                refuelOnRest(pt, state, false);
+            }
         }
         dirty = true;
         pushAllToSheets();

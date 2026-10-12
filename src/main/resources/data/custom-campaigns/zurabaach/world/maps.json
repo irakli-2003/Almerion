@@ -1711,7 +1711,8 @@
     } ] ],
     "layers" : [ ],
     "drawings" : [ ],
-    "groups" : [ ]
+    "groups" : [ ],
+    "musicPlaylistId" : null
   }, {
     "id" : "gilded-stag-upper",
     "name" : "The Gilded Stag - Guest Rooms",
@@ -3151,7 +3152,8 @@
     } ] ],
     "layers" : [ ],
     "drawings" : [ ],
-    "groups" : [ ]
+    "groups" : [ ],
+    "musicPlaylistId" : null
   }, {
     "id" : "greenhollow-square",
     "name" : "Greenhollow - Village Square",
@@ -3474,6 +3476,10 @@
           },
           "traits" : [ "practical", "grumbling", "kind" ],
           "languages" : [ "common" ],
+          "maxHitPoints" : 0,
+          "armorClass" : 0,
+          "maxMana" : 0,
+          "spellSlots" : [ ],
           "imagePath" : null
         },
         "position" : {
@@ -3501,6 +3507,12 @@
           "movementUsed" : 0,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : true
         },
         "symbol" : "N"
@@ -3582,6 +3594,10 @@
           },
           "traits" : [ "kind", "shrewd", "protective" ],
           "languages" : [ "common", "halfling-tongue", "thieves-cant" ],
+          "maxHitPoints" : 0,
+          "armorClass" : 0,
+          "maxMana" : 0,
+          "spellSlots" : [ ],
           "imagePath" : null
         },
         "position" : {
@@ -3609,6 +3625,12 @@
           "movementUsed" : 0,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : true
         },
         "symbol" : "N"
@@ -4219,37 +4241,43 @@
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "kaavor-whip",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "hide-armor",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "rations",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           }, {
             "itemId" : "waterskin",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           }, {
             "itemId" : "potion-of-greater-healing",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           } ],
           "spells" : [ ],
           "passwordHash" : null,
@@ -4262,7 +4290,13 @@
           "currentHitPoints" : 20,
           "maxMana" : 0,
           "currentMana" : 0,
-          "activeEffects" : [ ]
+          "activeEffects" : [ ],
+          "subclass" : null,
+          "backstory" : null,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { }
         },
         "position" : {
           "x" : 6,
@@ -4289,6 +4323,12 @@
           "movementUsed" : 0,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : true
         },
         "symbol" : "P"
@@ -4444,49 +4484,57 @@
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "shortbow",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "studded-leather",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "elven-cloak",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "leaf-pendant",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "rope-hempen",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           }, {
             "itemId" : "rations",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           }, {
             "itemId" : "bedroll",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           } ],
           "spells" : [ {
             "spellId" : "hunters-mark",
@@ -4528,7 +4576,13 @@
             "healingPerRound" : 0,
             "source" : "DM",
             "expired" : false
-          } ]
+          } ],
+          "subclass" : null,
+          "backstory" : null,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { }
         },
         "position" : {
           "x" : 6,
@@ -4555,6 +4609,12 @@
           "movementUsed" : 0,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : true
         },
         "symbol" : "P"
@@ -4586,6 +4646,10 @@
           },
           "traits" : [ "random", "does not have a personality", "uses happy face and sad face for expressing emotions" ],
           "languages" : [ ],
+          "maxHitPoints" : 0,
+          "armorClass" : 0,
+          "maxMana" : 0,
+          "spellSlots" : [ ],
           "imagePath" : "images/npcs/new_1788421566015.jpg"
         },
         "position" : {
@@ -4613,6 +4677,12 @@
           "movementUsed" : 0,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : true
         },
         "symbol" : "N"
@@ -4658,43 +4728,50 @@
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "light-crossbow",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "shield",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "leather-armor",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "holy-symbol",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "healers-kit",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           }, {
             "itemId" : "holy-water",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           } ],
           "spells" : [ {
             "spellId" : "sacred-flame",
@@ -4768,7 +4845,13 @@
             "healingPerRound" : 0,
             "source" : "DM",
             "expired" : false
-          } ]
+          } ],
+          "subclass" : null,
+          "backstory" : null,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { }
         },
         "position" : {
           "x" : 12,
@@ -4795,6 +4878,12 @@
           "movementUsed" : 0,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : true
         },
         "symbol" : "P"
@@ -4951,6 +5040,10 @@
           },
           "abilities" : [ ],
           "languages" : [ ],
+          "maxHitPoints" : 0,
+          "armorClass" : 0,
+          "maxMana" : 0,
+          "spellSlots" : [ ],
           "imagePath" : "images/monsters/corpse dolly.jpg"
         },
         "position" : {
@@ -4978,6 +5071,12 @@
           "movementUsed" : 0,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : false
         },
         "symbol" : "M"
@@ -5124,6 +5223,10 @@
           },
           "abilities" : [ ],
           "languages" : [ ],
+          "maxHitPoints" : 0,
+          "armorClass" : 0,
+          "maxMana" : 0,
+          "spellSlots" : [ ],
           "imagePath" : "images/monsters/corpse dolly.jpg"
         },
         "position" : {
@@ -5151,6 +5254,12 @@
           "movementUsed" : 0,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : false
         },
         "symbol" : "M"
@@ -5282,6 +5391,10 @@
           },
           "abilities" : [ ],
           "languages" : [ ],
+          "maxHitPoints" : 0,
+          "armorClass" : 0,
+          "maxMana" : 0,
+          "spellSlots" : [ ],
           "imagePath" : "images/monsters/corpse dolly.jpg"
         },
         "position" : {
@@ -5309,6 +5422,12 @@
           "movementUsed" : 0,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : false
         },
         "symbol" : "M"
@@ -5450,6 +5569,10 @@
           },
           "abilities" : [ ],
           "languages" : [ ],
+          "maxHitPoints" : 0,
+          "armorClass" : 0,
+          "maxMana" : 0,
+          "spellSlots" : [ ],
           "imagePath" : "images/monsters/corpse dolly.jpg"
         },
         "position" : {
@@ -5477,6 +5600,12 @@
           "movementUsed" : 0,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : false
         },
         "symbol" : "M"
@@ -5517,43 +5646,50 @@
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "shield",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "breastplate",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "dagger",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           }, {
             "itemId" : "word-lavenos",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           }, {
             "itemId" : "rations",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           }, {
             "itemId" : "potion-of-healing",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           } ],
           "spells" : [ ],
           "passwordHash" : null,
@@ -5575,7 +5711,13 @@
             "healingPerRound" : 0,
             "source" : "DM",
             "expired" : false
-          } ]
+          } ],
+          "subclass" : null,
+          "backstory" : null,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { }
         },
         "position" : {
           "x" : 9,
@@ -5602,6 +5744,12 @@
           "movementUsed" : 2,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : true
         },
         "symbol" : "P"
@@ -5648,6 +5796,10 @@
           },
           "abilities" : [ ],
           "languages" : [ ],
+          "maxHitPoints" : 0,
+          "armorClass" : 0,
+          "maxMana" : 0,
+          "spellSlots" : [ ],
           "imagePath" : "images/monsters/corpse dolly.jpg"
         },
         "position" : {
@@ -5675,6 +5827,12 @@
           "movementUsed" : 6,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : false
         },
         "symbol" : "M"
@@ -5705,43 +5863,50 @@
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "monokatana",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "studded-leather",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "gravitic-anchor-node",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "thieves-tools",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           }, {
             "itemId" : "manacles",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           }, {
             "itemId" : "potion-of-healing",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           } ],
           "spells" : [ ],
           "passwordHash" : null,
@@ -5763,7 +5928,13 @@
             "healingPerRound" : 0,
             "source" : "DM",
             "expired" : false
-          } ]
+          } ],
+          "subclass" : null,
+          "backstory" : null,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { }
         },
         "position" : {
           "x" : 15,
@@ -5790,6 +5961,12 @@
           "movementUsed" : 2,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : true
         },
         "symbol" : "P"
@@ -5849,7 +6026,13 @@
             "healingPerRound" : 0,
             "source" : "DM",
             "expired" : false
-          } ]
+          } ],
+          "subclass" : null,
+          "backstory" : null,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { }
         },
         "position" : {
           "x" : 16,
@@ -5876,6 +6059,12 @@
           "movementUsed" : 4,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : true
         },
         "symbol" : "P"
@@ -5907,6 +6096,10 @@
           },
           "abilities" : [ ],
           "languages" : [ ],
+          "maxHitPoints" : 0,
+          "armorClass" : 0,
+          "maxMana" : 0,
+          "spellSlots" : [ ],
           "imagePath" : "images/monsters/corpse dolly.jpg"
         },
         "position" : {
@@ -5934,6 +6127,12 @@
           "movementUsed" : 0,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : false
         },
         "symbol" : "M"
@@ -6135,6 +6334,10 @@
           },
           "traits" : [ "reclusive", "wise", "blunt" ],
           "languages" : [ "common", "orcish", "druidic" ],
+          "maxHitPoints" : 0,
+          "armorClass" : 0,
+          "maxMana" : 0,
+          "spellSlots" : [ ],
           "imagePath" : null
         },
         "position" : {
@@ -6162,6 +6365,12 @@
           "movementUsed" : 0,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : true
         },
         "symbol" : "N"
@@ -6283,6 +6492,10 @@
           },
           "traits" : [ "compassionate", "stubborn", "devout" ],
           "languages" : [ "common", "celestial" ],
+          "maxHitPoints" : 0,
+          "armorClass" : 0,
+          "maxMana" : 0,
+          "spellSlots" : [ ],
           "imagePath" : null
         },
         "position" : {
@@ -6310,6 +6523,12 @@
           "movementUsed" : 0,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : true
         },
         "symbol" : "N"
@@ -6993,7 +7212,8 @@
       "zorder" : 0
     } ],
     "drawings" : [ ],
-    "groups" : [ ]
+    "groups" : [ ],
+    "musicPlaylistId" : null
   }, {
     "id" : "ironhand-smithy-map",
     "name" : "Ironhand Smithy",
@@ -7265,43 +7485,50 @@
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "light-crossbow",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "shield",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "leather-armor",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "holy-symbol",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "healers-kit",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           }, {
             "itemId" : "holy-water",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           } ],
           "spells" : [ {
             "spellId" : "sacred-flame",
@@ -7375,7 +7602,13 @@
             "healingPerRound" : 0,
             "source" : "DM",
             "expired" : false
-          } ]
+          } ],
+          "subclass" : null,
+          "backstory" : null,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { }
         },
         "position" : {
           "x" : 6,
@@ -7402,6 +7635,12 @@
           "movementUsed" : 0,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : true
         },
         "symbol" : "P"
@@ -7497,37 +7736,43 @@
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "kaavor-whip",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "hide-armor",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "rations",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           }, {
             "itemId" : "waterskin",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           }, {
             "itemId" : "potion-of-greater-healing",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           } ],
           "spells" : [ ],
           "passwordHash" : null,
@@ -7540,7 +7785,13 @@
           "currentHitPoints" : 27,
           "maxMana" : 0,
           "currentMana" : 0,
-          "activeEffects" : [ ]
+          "activeEffects" : [ ],
+          "subclass" : null,
+          "backstory" : null,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { }
         },
         "position" : {
           "x" : 6,
@@ -7567,6 +7818,12 @@
           "movementUsed" : 0,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : true
         },
         "symbol" : "P"
@@ -7673,6 +7930,10 @@
           },
           "traits" : [ "random", "does not have a personality", "uses happy face and sad face for expressing emotions" ],
           "languages" : [ ],
+          "maxHitPoints" : 0,
+          "armorClass" : 0,
+          "maxMana" : 0,
+          "spellSlots" : [ ],
           "imagePath" : "images/npcs/new_1788421566015.jpg"
         },
         "position" : {
@@ -7700,6 +7961,12 @@
           "movementUsed" : 0,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : true
         },
         "symbol" : "N"
@@ -7910,43 +8177,50 @@
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "monokatana",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "studded-leather",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "gravitic-anchor-node",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "thieves-tools",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           }, {
             "itemId" : "manacles",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           }, {
             "itemId" : "potion-of-healing",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           } ],
           "spells" : [ ],
           "passwordHash" : null,
@@ -7968,7 +8242,13 @@
             "healingPerRound" : 0,
             "source" : "DM",
             "expired" : false
-          } ]
+          } ],
+          "subclass" : null,
+          "backstory" : null,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { }
         },
         "position" : {
           "x" : 4,
@@ -7995,6 +8275,12 @@
           "movementUsed" : 0,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : true
         },
         "symbol" : "P"
@@ -8031,7 +8317,10 @@
             "effects" : [ "advantage_on_attack" ],
             "range" : 5.0,
             "recharge" : 0,
-            "radius" : 0.0
+            "radius" : 0.0,
+            "hpCost" : 0,
+            "manaCost" : 0,
+            "damage" : null
           }, {
             "id" : "keen_smell",
             "name" : "Keen Smell",
@@ -8039,7 +8328,10 @@
             "effects" : [ ],
             "range" : 0.0,
             "recharge" : 0,
-            "radius" : 0.0
+            "radius" : 0.0,
+            "hpCost" : 0,
+            "manaCost" : 0,
+            "damage" : null
           }, {
             "id" : "bite",
             "name" : "Bite",
@@ -8047,8 +8339,15 @@
             "effects" : [ "prone" ],
             "range" : 5.0,
             "recharge" : 0,
-            "radius" : 0.0
+            "radius" : 0.0,
+            "hpCost" : 0,
+            "manaCost" : 0,
+            "damage" : null
           } ],
+          "maxHitPoints" : 0,
+          "armorClass" : 0,
+          "maxMana" : 0,
+          "spellSlots" : [ ],
           "imagePath" : "images/beasts/dire-wolf.jpg"
         },
         "position" : {
@@ -8076,6 +8375,12 @@
           "movementUsed" : 0,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : false
         },
         "symbol" : "B"
@@ -8107,7 +8412,10 @@
             "effects" : [ "advantage_on_attack" ],
             "range" : 5.0,
             "recharge" : 0,
-            "radius" : 0.0
+            "radius" : 0.0,
+            "hpCost" : 0,
+            "manaCost" : 0,
+            "damage" : null
           }, {
             "id" : "keen_smell",
             "name" : "Keen Smell",
@@ -8115,8 +8423,15 @@
             "effects" : [ ],
             "range" : 0.0,
             "recharge" : 0,
-            "radius" : 0.0
+            "radius" : 0.0,
+            "hpCost" : 0,
+            "manaCost" : 0,
+            "damage" : null
           } ],
+          "maxHitPoints" : 0,
+          "armorClass" : 0,
+          "maxMana" : 0,
+          "spellSlots" : [ ],
           "imagePath" : "images/beasts/wolf.jpg"
         },
         "position" : {
@@ -8144,6 +8459,12 @@
           "movementUsed" : 0,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : false
         },
         "symbol" : "B"
@@ -8230,7 +8551,10 @@
             "effects" : [ "advantage_on_attack" ],
             "range" : 5.0,
             "recharge" : 0,
-            "radius" : 0.0
+            "radius" : 0.0,
+            "hpCost" : 0,
+            "manaCost" : 0,
+            "damage" : null
           }, {
             "id" : "keen_smell",
             "name" : "Keen Smell",
@@ -8238,8 +8562,15 @@
             "effects" : [ ],
             "range" : 0.0,
             "recharge" : 0,
-            "radius" : 0.0
+            "radius" : 0.0,
+            "hpCost" : 0,
+            "manaCost" : 0,
+            "damage" : null
           } ],
+          "maxHitPoints" : 0,
+          "armorClass" : 0,
+          "maxMana" : 0,
+          "spellSlots" : [ ],
           "imagePath" : "images/beasts/wolf.jpg"
         },
         "position" : {
@@ -8267,6 +8598,12 @@
           "movementUsed" : 3,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : false
         },
         "symbol" : "B"
@@ -8363,7 +8700,10 @@
             "effects" : [ "advantage_on_attack" ],
             "range" : 5.0,
             "recharge" : 0,
-            "radius" : 0.0
+            "radius" : 0.0,
+            "hpCost" : 0,
+            "manaCost" : 0,
+            "damage" : null
           }, {
             "id" : "keen_smell",
             "name" : "Keen Smell",
@@ -8371,8 +8711,15 @@
             "effects" : [ ],
             "range" : 0.0,
             "recharge" : 0,
-            "radius" : 0.0
+            "radius" : 0.0,
+            "hpCost" : 0,
+            "manaCost" : 0,
+            "damage" : null
           } ],
+          "maxHitPoints" : 0,
+          "armorClass" : 0,
+          "maxMana" : 0,
+          "spellSlots" : [ ],
           "imagePath" : "images/beasts/wolf.jpg"
         },
         "position" : {
@@ -8400,6 +8747,12 @@
           "movementUsed" : 2,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : false
         },
         "symbol" : "B"
@@ -8446,7 +8799,10 @@
             "effects" : [ "advantage_on_attack" ],
             "range" : 5.0,
             "recharge" : 0,
-            "radius" : 0.0
+            "radius" : 0.0,
+            "hpCost" : 0,
+            "manaCost" : 0,
+            "damage" : null
           }, {
             "id" : "keen_smell",
             "name" : "Keen Smell",
@@ -8454,8 +8810,15 @@
             "effects" : [ ],
             "range" : 0.0,
             "recharge" : 0,
-            "radius" : 0.0
+            "radius" : 0.0,
+            "hpCost" : 0,
+            "manaCost" : 0,
+            "damage" : null
           } ],
+          "maxHitPoints" : 0,
+          "armorClass" : 0,
+          "maxMana" : 0,
+          "spellSlots" : [ ],
           "imagePath" : "images/beasts/wolf.jpg"
         },
         "position" : {
@@ -8483,6 +8846,12 @@
           "movementUsed" : 2,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : false
         },
         "symbol" : "B"
@@ -8591,7 +8960,8 @@
       "zorder" : 0
     } ],
     "drawings" : [ ],
-    "groups" : [ ]
+    "groups" : [ ],
+    "musicPlaylistId" : null
   }, {
     "id" : "temple-dawnfather-map",
     "name" : "Temple of the Dawnfather",
@@ -11903,7 +12273,8 @@
     } ] ],
     "layers" : [ ],
     "drawings" : [ ],
-    "groups" : [ ]
+    "groups" : [ ],
+    "musicPlaylistId" : null
   }, {
     "id" : "stonekeep-ground-floor",
     "name" : "Stonekeep - Ground Floor",
@@ -12298,7 +12669,34 @@
           "y" : 2
         },
         "inventory" : [ ],
-        "combat" : null,
+        "combat" : {
+          "maxHitPoints" : 22,
+          "currentHitPoints" : 22,
+          "maxMana" : 0,
+          "currentMana" : 0,
+          "gold" : 0,
+          "initiative" : 0,
+          "deathSaveFailures" : 0,
+          "downed" : false,
+          "dead" : false,
+          "conditions" : [ ],
+          "notes" : null,
+          "inInitiative" : true,
+          "walkSpeed" : 30,
+          "climbSpeed" : 0,
+          "swimSpeed" : 0,
+          "speedSeeded" : true,
+          "movementUsed" : 0,
+          "activeEffects" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "actingThisRound" : true
+        },
         "symbol" : "M"
       } ]
     }, {
@@ -12430,7 +12828,34 @@
           "y" : 3
         },
         "inventory" : [ ],
-        "combat" : null,
+        "combat" : {
+          "maxHitPoints" : 22,
+          "currentHitPoints" : 22,
+          "maxMana" : 0,
+          "currentMana" : 0,
+          "gold" : 0,
+          "initiative" : 0,
+          "deathSaveFailures" : 0,
+          "downed" : false,
+          "dead" : false,
+          "conditions" : [ ],
+          "notes" : null,
+          "inInitiative" : true,
+          "walkSpeed" : 30,
+          "climbSpeed" : 0,
+          "swimSpeed" : 0,
+          "speedSeeded" : true,
+          "movementUsed" : 0,
+          "activeEffects" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "actingThisRound" : true
+        },
         "symbol" : "M"
       } ]
     }, {
@@ -12559,7 +12984,34 @@
           "y" : 3
         },
         "inventory" : [ ],
-        "combat" : null,
+        "combat" : {
+          "maxHitPoints" : 45,
+          "currentHitPoints" : 45,
+          "maxMana" : 0,
+          "currentMana" : 0,
+          "gold" : 0,
+          "initiative" : 0,
+          "deathSaveFailures" : 0,
+          "downed" : false,
+          "dead" : false,
+          "conditions" : [ ],
+          "notes" : null,
+          "inInitiative" : true,
+          "walkSpeed" : 30,
+          "climbSpeed" : 0,
+          "swimSpeed" : 0,
+          "speedSeeded" : true,
+          "movementUsed" : 0,
+          "activeEffects" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "actingThisRound" : true
+        },
         "symbol" : "B"
       } ]
     }, {
@@ -12661,7 +13113,34 @@
           "y" : 3
         },
         "inventory" : [ ],
-        "combat" : null,
+        "combat" : {
+          "maxHitPoints" : 22,
+          "currentHitPoints" : 22,
+          "maxMana" : 0,
+          "currentMana" : 0,
+          "gold" : 0,
+          "initiative" : 0,
+          "deathSaveFailures" : 0,
+          "downed" : false,
+          "dead" : false,
+          "conditions" : [ ],
+          "notes" : null,
+          "inInitiative" : true,
+          "walkSpeed" : 30,
+          "climbSpeed" : 0,
+          "swimSpeed" : 0,
+          "speedSeeded" : true,
+          "movementUsed" : 0,
+          "activeEffects" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "actingThisRound" : true
+        },
         "symbol" : "M"
       } ]
     }, {
@@ -12778,7 +13257,34 @@
           "y" : 3
         },
         "inventory" : [ ],
-        "combat" : null,
+        "combat" : {
+          "maxHitPoints" : 22,
+          "currentHitPoints" : 22,
+          "maxMana" : 0,
+          "currentMana" : 0,
+          "gold" : 0,
+          "initiative" : 0,
+          "deathSaveFailures" : 0,
+          "downed" : false,
+          "dead" : false,
+          "conditions" : [ ],
+          "notes" : null,
+          "inInitiative" : true,
+          "walkSpeed" : 30,
+          "climbSpeed" : 0,
+          "swimSpeed" : 0,
+          "speedSeeded" : true,
+          "movementUsed" : 0,
+          "activeEffects" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "actingThisRound" : true
+        },
         "symbol" : "M"
       } ]
     }, {
@@ -12885,7 +13391,34 @@
           "y" : 4
         },
         "inventory" : [ ],
-        "combat" : null,
+        "combat" : {
+          "maxHitPoints" : 22,
+          "currentHitPoints" : 22,
+          "maxMana" : 0,
+          "currentMana" : 0,
+          "gold" : 0,
+          "initiative" : 0,
+          "deathSaveFailures" : 0,
+          "downed" : false,
+          "dead" : false,
+          "conditions" : [ ],
+          "notes" : null,
+          "inInitiative" : true,
+          "walkSpeed" : 30,
+          "climbSpeed" : 0,
+          "swimSpeed" : 0,
+          "speedSeeded" : true,
+          "movementUsed" : 0,
+          "activeEffects" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "actingThisRound" : true
+        },
         "symbol" : "M"
       } ]
     }, {
@@ -13072,7 +13605,34 @@
           "y" : 4
         },
         "inventory" : [ ],
-        "combat" : null,
+        "combat" : {
+          "maxHitPoints" : 22,
+          "currentHitPoints" : 22,
+          "maxMana" : 0,
+          "currentMana" : 0,
+          "gold" : 0,
+          "initiative" : 0,
+          "deathSaveFailures" : 0,
+          "downed" : false,
+          "dead" : false,
+          "conditions" : [ ],
+          "notes" : null,
+          "inInitiative" : true,
+          "walkSpeed" : 30,
+          "climbSpeed" : 0,
+          "swimSpeed" : 0,
+          "speedSeeded" : true,
+          "movementUsed" : 0,
+          "activeEffects" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "actingThisRound" : true
+        },
         "symbol" : "M"
       } ]
     }, {
@@ -13179,7 +13739,34 @@
           "y" : 5
         },
         "inventory" : [ ],
-        "combat" : null,
+        "combat" : {
+          "maxHitPoints" : 22,
+          "currentHitPoints" : 22,
+          "maxMana" : 0,
+          "currentMana" : 0,
+          "gold" : 0,
+          "initiative" : 0,
+          "deathSaveFailures" : 0,
+          "downed" : false,
+          "dead" : false,
+          "conditions" : [ ],
+          "notes" : null,
+          "inInitiative" : true,
+          "walkSpeed" : 30,
+          "climbSpeed" : 0,
+          "swimSpeed" : 0,
+          "speedSeeded" : true,
+          "movementUsed" : 0,
+          "activeEffects" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "actingThisRound" : true
+        },
         "symbol" : "M"
       } ]
     }, {
@@ -13366,7 +13953,34 @@
           "y" : 5
         },
         "inventory" : [ ],
-        "combat" : null,
+        "combat" : {
+          "maxHitPoints" : 22,
+          "currentHitPoints" : 22,
+          "maxMana" : 0,
+          "currentMana" : 0,
+          "gold" : 0,
+          "initiative" : 0,
+          "deathSaveFailures" : 0,
+          "downed" : false,
+          "dead" : false,
+          "conditions" : [ ],
+          "notes" : null,
+          "inInitiative" : true,
+          "walkSpeed" : 30,
+          "climbSpeed" : 0,
+          "swimSpeed" : 0,
+          "speedSeeded" : true,
+          "movementUsed" : 0,
+          "activeEffects" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "actingThisRound" : true
+        },
         "symbol" : "M"
       } ]
     }, {
@@ -13473,7 +14087,34 @@
           "y" : 6
         },
         "inventory" : [ ],
-        "combat" : null,
+        "combat" : {
+          "maxHitPoints" : 22,
+          "currentHitPoints" : 22,
+          "maxMana" : 0,
+          "currentMana" : 0,
+          "gold" : 0,
+          "initiative" : 0,
+          "deathSaveFailures" : 0,
+          "downed" : false,
+          "dead" : false,
+          "conditions" : [ ],
+          "notes" : null,
+          "inInitiative" : true,
+          "walkSpeed" : 30,
+          "climbSpeed" : 0,
+          "swimSpeed" : 0,
+          "speedSeeded" : true,
+          "movementUsed" : 0,
+          "activeEffects" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "actingThisRound" : true
+        },
         "symbol" : "M"
       } ]
     }, {
@@ -13602,7 +14243,34 @@
           "y" : 6
         },
         "inventory" : [ ],
-        "combat" : null,
+        "combat" : {
+          "maxHitPoints" : 45,
+          "currentHitPoints" : 45,
+          "maxMana" : 0,
+          "currentMana" : 0,
+          "gold" : 0,
+          "initiative" : 0,
+          "deathSaveFailures" : 0,
+          "downed" : false,
+          "dead" : false,
+          "conditions" : [ ],
+          "notes" : null,
+          "inInitiative" : true,
+          "walkSpeed" : 30,
+          "climbSpeed" : 0,
+          "swimSpeed" : 0,
+          "speedSeeded" : true,
+          "movementUsed" : 0,
+          "activeEffects" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "actingThisRound" : true
+        },
         "symbol" : "B"
       } ]
     }, {
@@ -13729,7 +14397,34 @@
           "y" : 6
         },
         "inventory" : [ ],
-        "combat" : null,
+        "combat" : {
+          "maxHitPoints" : 22,
+          "currentHitPoints" : 22,
+          "maxMana" : 0,
+          "currentMana" : 0,
+          "gold" : 0,
+          "initiative" : 0,
+          "deathSaveFailures" : 0,
+          "downed" : false,
+          "dead" : false,
+          "conditions" : [ ],
+          "notes" : null,
+          "inInitiative" : true,
+          "walkSpeed" : 30,
+          "climbSpeed" : 0,
+          "swimSpeed" : 0,
+          "speedSeeded" : true,
+          "movementUsed" : 0,
+          "activeEffects" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "actingThisRound" : true
+        },
         "symbol" : "M"
       } ]
     }, {
@@ -13836,7 +14531,34 @@
           "y" : 7
         },
         "inventory" : [ ],
-        "combat" : null,
+        "combat" : {
+          "maxHitPoints" : 22,
+          "currentHitPoints" : 22,
+          "maxMana" : 0,
+          "currentMana" : 0,
+          "gold" : 0,
+          "initiative" : 0,
+          "deathSaveFailures" : 0,
+          "downed" : false,
+          "dead" : false,
+          "conditions" : [ ],
+          "notes" : null,
+          "inInitiative" : true,
+          "walkSpeed" : 30,
+          "climbSpeed" : 0,
+          "swimSpeed" : 0,
+          "speedSeeded" : true,
+          "movementUsed" : 0,
+          "activeEffects" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "actingThisRound" : true
+        },
         "symbol" : "M"
       } ]
     }, {
@@ -14023,7 +14745,34 @@
           "y" : 7
         },
         "inventory" : [ ],
-        "combat" : null,
+        "combat" : {
+          "maxHitPoints" : 22,
+          "currentHitPoints" : 22,
+          "maxMana" : 0,
+          "currentMana" : 0,
+          "gold" : 0,
+          "initiative" : 0,
+          "deathSaveFailures" : 0,
+          "downed" : false,
+          "dead" : false,
+          "conditions" : [ ],
+          "notes" : null,
+          "inInitiative" : true,
+          "walkSpeed" : 30,
+          "climbSpeed" : 0,
+          "swimSpeed" : 0,
+          "speedSeeded" : true,
+          "movementUsed" : 0,
+          "activeEffects" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "actingThisRound" : true
+        },
         "symbol" : "M"
       } ]
     }, {
@@ -14130,7 +14879,34 @@
           "y" : 8
         },
         "inventory" : [ ],
-        "combat" : null,
+        "combat" : {
+          "maxHitPoints" : 22,
+          "currentHitPoints" : 22,
+          "maxMana" : 0,
+          "currentMana" : 0,
+          "gold" : 0,
+          "initiative" : 0,
+          "deathSaveFailures" : 0,
+          "downed" : false,
+          "dead" : false,
+          "conditions" : [ ],
+          "notes" : null,
+          "inInitiative" : true,
+          "walkSpeed" : 30,
+          "climbSpeed" : 0,
+          "swimSpeed" : 0,
+          "speedSeeded" : true,
+          "movementUsed" : 0,
+          "activeEffects" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "actingThisRound" : true
+        },
         "symbol" : "M"
       } ]
     }, {
@@ -14317,7 +15093,34 @@
           "y" : 8
         },
         "inventory" : [ ],
-        "combat" : null,
+        "combat" : {
+          "maxHitPoints" : 22,
+          "currentHitPoints" : 22,
+          "maxMana" : 0,
+          "currentMana" : 0,
+          "gold" : 0,
+          "initiative" : 0,
+          "deathSaveFailures" : 0,
+          "downed" : false,
+          "dead" : false,
+          "conditions" : [ ],
+          "notes" : null,
+          "inInitiative" : true,
+          "walkSpeed" : 30,
+          "climbSpeed" : 0,
+          "swimSpeed" : 0,
+          "speedSeeded" : true,
+          "movementUsed" : 0,
+          "activeEffects" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "actingThisRound" : true
+        },
         "symbol" : "M"
       } ]
     }, {
@@ -14424,7 +15227,34 @@
           "y" : 9
         },
         "inventory" : [ ],
-        "combat" : null,
+        "combat" : {
+          "maxHitPoints" : 22,
+          "currentHitPoints" : 22,
+          "maxMana" : 0,
+          "currentMana" : 0,
+          "gold" : 0,
+          "initiative" : 0,
+          "deathSaveFailures" : 0,
+          "downed" : false,
+          "dead" : false,
+          "conditions" : [ ],
+          "notes" : null,
+          "inInitiative" : true,
+          "walkSpeed" : 30,
+          "climbSpeed" : 0,
+          "swimSpeed" : 0,
+          "speedSeeded" : true,
+          "movementUsed" : 0,
+          "activeEffects" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "actingThisRound" : true
+        },
         "symbol" : "M"
       } ]
     }, {
@@ -14611,7 +15441,34 @@
           "y" : 9
         },
         "inventory" : [ ],
-        "combat" : null,
+        "combat" : {
+          "maxHitPoints" : 22,
+          "currentHitPoints" : 22,
+          "maxMana" : 0,
+          "currentMana" : 0,
+          "gold" : 0,
+          "initiative" : 0,
+          "deathSaveFailures" : 0,
+          "downed" : false,
+          "dead" : false,
+          "conditions" : [ ],
+          "notes" : null,
+          "inInitiative" : true,
+          "walkSpeed" : 30,
+          "climbSpeed" : 0,
+          "swimSpeed" : 0,
+          "speedSeeded" : true,
+          "movementUsed" : 0,
+          "activeEffects" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "actingThisRound" : true
+        },
         "symbol" : "M"
       } ]
     }, {
@@ -14718,7 +15575,34 @@
           "y" : 10
         },
         "inventory" : [ ],
-        "combat" : null,
+        "combat" : {
+          "maxHitPoints" : 22,
+          "currentHitPoints" : 22,
+          "maxMana" : 0,
+          "currentMana" : 0,
+          "gold" : 0,
+          "initiative" : 0,
+          "deathSaveFailures" : 0,
+          "downed" : false,
+          "dead" : false,
+          "conditions" : [ ],
+          "notes" : null,
+          "inInitiative" : true,
+          "walkSpeed" : 30,
+          "climbSpeed" : 0,
+          "swimSpeed" : 0,
+          "speedSeeded" : true,
+          "movementUsed" : 0,
+          "activeEffects" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "actingThisRound" : true
+        },
         "symbol" : "M"
       } ]
     }, {
@@ -14905,7 +15789,34 @@
           "y" : 10
         },
         "inventory" : [ ],
-        "combat" : null,
+        "combat" : {
+          "maxHitPoints" : 22,
+          "currentHitPoints" : 22,
+          "maxMana" : 0,
+          "currentMana" : 0,
+          "gold" : 0,
+          "initiative" : 0,
+          "deathSaveFailures" : 0,
+          "downed" : false,
+          "dead" : false,
+          "conditions" : [ ],
+          "notes" : null,
+          "inInitiative" : true,
+          "walkSpeed" : 30,
+          "climbSpeed" : 0,
+          "swimSpeed" : 0,
+          "speedSeeded" : true,
+          "movementUsed" : 0,
+          "activeEffects" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "actingThisRound" : true
+        },
         "symbol" : "M"
       } ]
     }, {
@@ -15012,7 +15923,34 @@
           "y" : 11
         },
         "inventory" : [ ],
-        "combat" : null,
+        "combat" : {
+          "maxHitPoints" : 22,
+          "currentHitPoints" : 22,
+          "maxMana" : 0,
+          "currentMana" : 0,
+          "gold" : 0,
+          "initiative" : 0,
+          "deathSaveFailures" : 0,
+          "downed" : false,
+          "dead" : false,
+          "conditions" : [ ],
+          "notes" : null,
+          "inInitiative" : true,
+          "walkSpeed" : 30,
+          "climbSpeed" : 0,
+          "swimSpeed" : 0,
+          "speedSeeded" : true,
+          "movementUsed" : 0,
+          "activeEffects" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "actingThisRound" : true
+        },
         "symbol" : "M"
       } ]
     }, {
@@ -15199,7 +16137,34 @@
           "y" : 11
         },
         "inventory" : [ ],
-        "combat" : null,
+        "combat" : {
+          "maxHitPoints" : 22,
+          "currentHitPoints" : 22,
+          "maxMana" : 0,
+          "currentMana" : 0,
+          "gold" : 0,
+          "initiative" : 0,
+          "deathSaveFailures" : 0,
+          "downed" : false,
+          "dead" : false,
+          "conditions" : [ ],
+          "notes" : null,
+          "inInitiative" : true,
+          "walkSpeed" : 30,
+          "climbSpeed" : 0,
+          "swimSpeed" : 0,
+          "speedSeeded" : true,
+          "movementUsed" : 0,
+          "activeEffects" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "actingThisRound" : true
+        },
         "symbol" : "M"
       } ]
     }, {
@@ -15306,7 +16271,34 @@
           "y" : 12
         },
         "inventory" : [ ],
-        "combat" : null,
+        "combat" : {
+          "maxHitPoints" : 22,
+          "currentHitPoints" : 22,
+          "maxMana" : 0,
+          "currentMana" : 0,
+          "gold" : 0,
+          "initiative" : 0,
+          "deathSaveFailures" : 0,
+          "downed" : false,
+          "dead" : false,
+          "conditions" : [ ],
+          "notes" : null,
+          "inInitiative" : true,
+          "walkSpeed" : 30,
+          "climbSpeed" : 0,
+          "swimSpeed" : 0,
+          "speedSeeded" : true,
+          "movementUsed" : 0,
+          "activeEffects" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "actingThisRound" : true
+        },
         "symbol" : "M"
       } ]
     }, {
@@ -15493,7 +16485,34 @@
           "y" : 12
         },
         "inventory" : [ ],
-        "combat" : null,
+        "combat" : {
+          "maxHitPoints" : 22,
+          "currentHitPoints" : 22,
+          "maxMana" : 0,
+          "currentMana" : 0,
+          "gold" : 0,
+          "initiative" : 0,
+          "deathSaveFailures" : 0,
+          "downed" : false,
+          "dead" : false,
+          "conditions" : [ ],
+          "notes" : null,
+          "inInitiative" : true,
+          "walkSpeed" : 30,
+          "climbSpeed" : 0,
+          "swimSpeed" : 0,
+          "speedSeeded" : true,
+          "movementUsed" : 0,
+          "activeEffects" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "actingThisRound" : true
+        },
         "symbol" : "M"
       } ]
     }, {
@@ -15670,7 +16689,34 @@
           "y" : 13
         },
         "inventory" : [ ],
-        "combat" : null,
+        "combat" : {
+          "maxHitPoints" : 22,
+          "currentHitPoints" : 22,
+          "maxMana" : 0,
+          "currentMana" : 0,
+          "gold" : 0,
+          "initiative" : 0,
+          "deathSaveFailures" : 0,
+          "downed" : false,
+          "dead" : false,
+          "conditions" : [ ],
+          "notes" : null,
+          "inInitiative" : true,
+          "walkSpeed" : 30,
+          "climbSpeed" : 0,
+          "swimSpeed" : 0,
+          "speedSeeded" : true,
+          "movementUsed" : 0,
+          "activeEffects" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "actingThisRound" : true
+        },
         "symbol" : "M"
       } ]
     }, {
@@ -15872,7 +16918,34 @@
           "y" : 14
         },
         "inventory" : [ ],
-        "combat" : null,
+        "combat" : {
+          "maxHitPoints" : 22,
+          "currentHitPoints" : 22,
+          "maxMana" : 0,
+          "currentMana" : 0,
+          "gold" : 0,
+          "initiative" : 0,
+          "deathSaveFailures" : 0,
+          "downed" : false,
+          "dead" : false,
+          "conditions" : [ ],
+          "notes" : null,
+          "inInitiative" : true,
+          "walkSpeed" : 30,
+          "climbSpeed" : 0,
+          "swimSpeed" : 0,
+          "speedSeeded" : true,
+          "movementUsed" : 0,
+          "activeEffects" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "actingThisRound" : true
+        },
         "symbol" : "M"
       } ]
     }, {
@@ -16031,7 +17104,34 @@
           "y" : 15
         },
         "inventory" : [ ],
-        "combat" : null,
+        "combat" : {
+          "maxHitPoints" : 22,
+          "currentHitPoints" : 22,
+          "maxMana" : 0,
+          "currentMana" : 0,
+          "gold" : 0,
+          "initiative" : 0,
+          "deathSaveFailures" : 0,
+          "downed" : false,
+          "dead" : false,
+          "conditions" : [ ],
+          "notes" : null,
+          "inInitiative" : true,
+          "walkSpeed" : 30,
+          "climbSpeed" : 0,
+          "swimSpeed" : 0,
+          "speedSeeded" : true,
+          "movementUsed" : 0,
+          "activeEffects" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "actingThisRound" : true
+        },
         "symbol" : "M"
       } ]
     }, {
@@ -16105,7 +17205,34 @@
           "y" : 15
         },
         "inventory" : [ ],
-        "combat" : null,
+        "combat" : {
+          "maxHitPoints" : 22,
+          "currentHitPoints" : 22,
+          "maxMana" : 0,
+          "currentMana" : 0,
+          "gold" : 0,
+          "initiative" : 0,
+          "deathSaveFailures" : 0,
+          "downed" : false,
+          "dead" : false,
+          "conditions" : [ ],
+          "notes" : null,
+          "inInitiative" : true,
+          "walkSpeed" : 30,
+          "climbSpeed" : 0,
+          "swimSpeed" : 0,
+          "speedSeeded" : true,
+          "movementUsed" : 0,
+          "activeEffects" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "actingThisRound" : true
+        },
         "symbol" : "M"
       } ]
     }, {
@@ -16359,7 +17486,34 @@
           "y" : 16
         },
         "inventory" : [ ],
-        "combat" : null,
+        "combat" : {
+          "maxHitPoints" : 120,
+          "currentHitPoints" : 120,
+          "maxMana" : 0,
+          "currentMana" : 0,
+          "gold" : 0,
+          "initiative" : 0,
+          "deathSaveFailures" : 0,
+          "downed" : false,
+          "dead" : false,
+          "conditions" : [ ],
+          "notes" : null,
+          "inInitiative" : true,
+          "walkSpeed" : 30,
+          "climbSpeed" : 0,
+          "swimSpeed" : 0,
+          "speedSeeded" : true,
+          "movementUsed" : 0,
+          "activeEffects" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "actingThisRound" : true
+        },
         "symbol" : "M"
       } ]
     }, {
@@ -16516,7 +17670,8 @@
       "zorder" : 0
     } ],
     "drawings" : [ ],
-    "groups" : [ ]
+    "groups" : [ ],
+    "musicPlaylistId" : null
   }, {
     "id" : "forest-clearing-map",
     "name" : "The Old Forest - Standing Stones",
@@ -17559,6 +18714,10 @@
           },
           "traits" : [ "random", "does not have a personality", "uses happy face and sad face for expressing emotions" ],
           "languages" : [ ],
+          "maxHitPoints" : 0,
+          "armorClass" : 0,
+          "maxMana" : 0,
+          "spellSlots" : [ ],
           "imagePath" : "images/npcs/new_1788421566015.jpg"
         },
         "position" : {
@@ -17586,6 +18745,12 @@
           "movementUsed" : 0,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : true
         },
         "symbol" : "N"
@@ -18984,7 +20149,8 @@
       "zorder" : 0
     } ],
     "drawings" : [ ],
-    "groups" : [ ]
+    "groups" : [ ],
+    "musicPlaylistId" : null
   }, {
     "id" : "barrow-crypt-map",
     "name" : "The Barrow Crypt",
@@ -22773,7 +23939,8 @@
     } ] ],
     "layers" : [ ],
     "drawings" : [ ],
-    "groups" : [ ]
+    "groups" : [ ],
+    "musicPlaylistId" : null
   }, {
     "id" : "blackfen-cave-map",
     "name" : "Blackfen Cave",
@@ -24596,9 +25763,16 @@
             "effects" : [ ],
             "range" : 4.0,
             "recharge" : 1,
-            "radius" : 0.0
+            "radius" : 0.0,
+            "hpCost" : 0,
+            "manaCost" : 0,
+            "damage" : null
           } ],
           "languages" : [ ],
+          "maxHitPoints" : 0,
+          "armorClass" : 0,
+          "maxMana" : 0,
+          "spellSlots" : [ ],
           "imagePath" : null
         },
         "position" : {
@@ -24761,9 +25935,16 @@
             "effects" : [ ],
             "range" : 4.0,
             "recharge" : 1,
-            "radius" : 0.0
+            "radius" : 0.0,
+            "hpCost" : 0,
+            "manaCost" : 0,
+            "damage" : null
           } ],
           "languages" : [ ],
+          "maxHitPoints" : 0,
+          "armorClass" : 0,
+          "maxMana" : 0,
+          "spellSlots" : [ ],
           "imagePath" : null
         },
         "position" : {
@@ -25151,7 +26332,10 @@
             "effects" : [ "grappled", "restrained" ],
             "range" : 5.0,
             "recharge" : 0,
-            "radius" : 0.0
+            "radius" : 0.0,
+            "hpCost" : 0,
+            "manaCost" : 0,
+            "damage" : null
           }, {
             "id" : "false_appearance",
             "name" : "False Appearance",
@@ -25159,9 +26343,16 @@
             "effects" : [ ],
             "range" : 0.0,
             "recharge" : 0,
-            "radius" : 0.0
+            "radius" : 0.0,
+            "hpCost" : 0,
+            "manaCost" : 0,
+            "damage" : null
           } ],
           "languages" : [ ],
+          "maxHitPoints" : 0,
+          "armorClass" : 0,
+          "maxMana" : 0,
+          "spellSlots" : [ ],
           "imagePath" : null
         },
         "position" : {
@@ -25318,7 +26509,8 @@
       "opacity" : 1.0,
       "zorder" : 8
     } ],
-    "groups" : [ ]
+    "groups" : [ ],
+    "musicPlaylistId" : null
   }, {
     "id" : "bandit-camp-map",
     "name" : "The Roadside Camp",
@@ -27487,7 +28679,8 @@
     } ] ],
     "layers" : [ ],
     "drawings" : [ ],
-    "groups" : [ ]
+    "groups" : [ ],
+    "musicPlaylistId" : null
   }, {
     "id" : "orins-tower-map",
     "name" : "Magister Orin's Tower",
@@ -28579,7 +29772,8 @@
     } ] ],
     "layers" : [ ],
     "drawings" : [ ],
-    "groups" : [ ]
+    "groups" : [ ],
+    "musicPlaylistId" : null
   }, {
     "id" : "open-field-map",
     "name" : "Open Ground (blank encounter map)",
@@ -28875,7 +30069,13 @@
             "healingPerRound" : 0,
             "source" : "DM",
             "expired" : false
-          } ]
+          } ],
+          "subclass" : null,
+          "backstory" : null,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { }
         },
         "position" : {
           "x" : 7,
@@ -28902,6 +30102,12 @@
           "movementUsed" : 0,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : true
         },
         "symbol" : "P"
@@ -29203,6 +30409,10 @@
           },
           "traits" : [ "random", "does not have a personality", "uses happy face and sad face for expressing emotions" ],
           "languages" : [ ],
+          "maxHitPoints" : 0,
+          "armorClass" : 0,
+          "maxMana" : 0,
+          "spellSlots" : [ ],
           "imagePath" : "images/npcs/new_1788421566015.jpg"
         },
         "position" : {
@@ -29230,6 +30440,12 @@
           "movementUsed" : 0,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : true
         },
         "symbol" : "N"
@@ -29285,43 +30501,50 @@
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "light-crossbow",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "shield",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "leather-armor",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "holy-symbol",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "healers-kit",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           }, {
             "itemId" : "holy-water",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           } ],
           "spells" : [ {
             "spellId" : "sacred-flame",
@@ -29395,7 +30618,13 @@
             "healingPerRound" : 0,
             "source" : "DM",
             "expired" : false
-          } ]
+          } ],
+          "subclass" : null,
+          "backstory" : null,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { }
         },
         "position" : {
           "x" : 9,
@@ -29422,6 +30651,12 @@
           "movementUsed" : 3,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : true
         },
         "symbol" : "P"
@@ -29452,37 +30687,43 @@
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "kaavor-whip",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "hide-armor",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "rations",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           }, {
             "itemId" : "waterskin",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           }, {
             "itemId" : "potion-of-greater-healing",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           } ],
           "spells" : [ ],
           "passwordHash" : null,
@@ -29495,7 +30736,13 @@
           "currentHitPoints" : 27,
           "maxMana" : 0,
           "currentMana" : 0,
-          "activeEffects" : [ ]
+          "activeEffects" : [ ],
+          "subclass" : null,
+          "backstory" : null,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { }
         },
         "position" : {
           "x" : 10,
@@ -29522,6 +30769,12 @@
           "movementUsed" : 0,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : true
         },
         "symbol" : "P"
@@ -29612,49 +30865,57 @@
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "shortbow",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "studded-leather",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "elven-cloak",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "leaf-pendant",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "rope-hempen",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           }, {
             "itemId" : "rations",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           }, {
             "itemId" : "bedroll",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           } ],
           "spells" : [ {
             "spellId" : "hunters-mark",
@@ -29696,7 +30957,13 @@
             "healingPerRound" : 0,
             "source" : "DM",
             "expired" : false
-          } ]
+          } ],
+          "subclass" : null,
+          "backstory" : null,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { }
         },
         "position" : {
           "x" : 3,
@@ -29723,6 +30990,12 @@
           "movementUsed" : 0,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : true
         },
         "symbol" : "P"
@@ -29778,43 +31051,50 @@
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "monokatana",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "studded-leather",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "gravitic-anchor-node",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "thieves-tools",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           }, {
             "itemId" : "manacles",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           }, {
             "itemId" : "potion-of-healing",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           } ],
           "spells" : [ ],
           "passwordHash" : null,
@@ -29836,7 +31116,13 @@
             "healingPerRound" : 0,
             "source" : "DM",
             "expired" : false
-          } ]
+          } ],
+          "subclass" : null,
+          "backstory" : null,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { }
         },
         "position" : {
           "x" : 9,
@@ -29863,6 +31149,12 @@
           "movementUsed" : 5,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : true
         },
         "symbol" : "P"
@@ -29988,43 +31280,50 @@
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "shield",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "breastplate",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : true
+            "equipped" : true,
+            "quantity" : 1
           }, {
             "itemId" : "dagger",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           }, {
             "itemId" : "word-lavenos",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           }, {
             "itemId" : "rations",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           }, {
             "itemId" : "potion-of-healing",
             "condition" : {
               "durability" : 100
             },
-            "equipped" : false
+            "equipped" : false,
+            "quantity" : 1
           } ],
           "spells" : [ ],
           "passwordHash" : null,
@@ -30046,7 +31345,13 @@
             "healingPerRound" : 0,
             "source" : "DM",
             "expired" : false
-          } ]
+          } ],
+          "subclass" : null,
+          "backstory" : null,
+          "castingResource" : null,
+          "spellSlots" : [ ],
+          "cooldowns" : { },
+          "featureUses" : { }
         },
         "position" : {
           "x" : 9,
@@ -30073,6 +31378,12 @@
           "movementUsed" : 5,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : true
         },
         "symbol" : "P"
@@ -30109,7 +31420,10 @@
             "effects" : [ "regeneration" ],
             "range" : 0.0,
             "recharge" : 0,
-            "radius" : 0.0
+            "radius" : 0.0,
+            "hpCost" : 0,
+            "manaCost" : 0,
+            "damage" : null
           }, {
             "id" : "berserk",
             "name" : "Berserk",
@@ -30117,9 +31431,16 @@
             "effects" : [ ],
             "range" : 5.0,
             "recharge" : 0,
-            "radius" : 0.0
+            "radius" : 0.0,
+            "hpCost" : 0,
+            "manaCost" : 0,
+            "damage" : null
           } ],
           "languages" : [ ],
+          "maxHitPoints" : 0,
+          "armorClass" : 0,
+          "maxMana" : 0,
+          "spellSlots" : [ ],
           "imagePath" : null
         },
         "position" : {
@@ -30147,6 +31468,12 @@
           "movementUsed" : 0,
           "activeEffects" : [ ],
           "cooldowns" : { },
+          "featureUses" : { },
+          "resistances" : [ ],
+          "enduranceFeature" : null,
+          "featureSpeedBonus" : 0,
+          "castingResource" : null,
+          "spellSlots" : [ ],
           "actingThisRound" : false
         },
         "symbol" : "M"
@@ -31541,6 +32868,7 @@
       "label" : "სკამი",
       "memberKeys" : [ "drawing:drawing_1788422858379_13", "drawing:drawing_1788422856019_12", "drawing:drawing_1788422854922_11", "drawing:drawing_1788422852783_10", "drawing:drawing_1788422849570_9", "drawing:drawing_1788422843918_8", "drawing:drawing_1788422842771_7", "drawing:drawing_1788422841460_6", "drawing:drawing_1788422838222_5", "drawing:drawing_1788422835981_4" ],
       "zorder" : 14
-    } ]
+    } ],
+    "musicPlaylistId" : null
   } ]
 }

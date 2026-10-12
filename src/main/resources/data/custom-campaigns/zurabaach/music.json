@@ -1,0 +1,489 @@
+{
+  "playlists" : [ {
+    "id" : "tavern",
+    "name" : "Tavern",
+    "tracks" : [ {
+      "title" : "Medieval Fantasy Tavern - music & ambience",
+      "url" : "https://www.youtube.com/watch?v=vyg5jJrZ42s"
+    }, {
+      "title" : "Taverns - Music & Ambience (Witcher 3)",
+      "url" : "https://www.youtube.com/watch?v=4r_5A6K7gu0"
+    }, {
+      "title" : "Fantasy Bard / Tavern Music Compilation",
+      "url" : "https://www.youtube.com/watch?v=M0pOMVCUY50"
+    }, {
+      "title" : "Medieval Tavern - Inn Ambience, fireplace",
+      "url" : "https://www.youtube.com/watch?v=rv3Nl-Od9YU"
+    } ]
+  }, {
+    "id" : "city-market",
+    "name" : "City market",
+    "tracks" : [ {
+      "title" : "Medieval Fantasy Music - Medieval Market",
+      "url" : "https://www.youtube.com/watch?v=bF-ayUbGtu4"
+    }, {
+      "title" : "Medieval City - Realistic Ambience",
+      "url" : "https://www.youtube.com/watch?v=_52K0E_gNY0"
+    }, {
+      "title" : "Fantasy Medieval Town Ambience",
+      "url" : "https://www.youtube.com/watch?v=ugLwYV1GSvo"
+    }, {
+      "title" : "D&D Ambience - Small Marketplace",
+      "url" : "https://www.youtube.com/watch?v=x2UulCWGess"
+    } ]
+  }, {
+    "id" : "harbor",
+    "name" : "Harbor & port",
+    "tracks" : [ {
+      "title" : "Harbor Sounds - Seaside Market Ambience",
+      "url" : "https://www.youtube.com/watch?v=frEJTGfLOhM"
+    }, {
+      "title" : "Relaxing Medieval Music: Fantasy Harbor",
+      "url" : "https://www.youtube.com/watch?v=OxMQjlBq6zQ"
+    } ]
+  }, {
+    "id" : "bazaar",
+    "name" : "Desert bazaar",
+    "tracks" : [ {
+      "title" : "Bazaar - Oriental Market Ambience",
+      "url" : "https://www.youtube.com/watch?v=8uRtW8lBe0I"
+    } ]
+  }, {
+    "id" : "castle",
+    "name" : "Castle & royal court",
+    "tracks" : [ {
+      "title" : "Palace Corridors - Castle Ambience",
+      "url" : "https://www.youtube.com/watch?v=BwV1azM1Ifw"
+    }, {
+      "title" : "Medieval Castle Music - King Arthur's Court",
+      "url" : "https://www.youtube.com/watch?v=UON27Kydqsw"
+    }, {
+      "title" : "Medieval Music - Royal Castle",
+      "url" : "https://www.youtube.com/watch?v=z2V4Rn8mHIE"
+    }, {
+      "title" : "Dark Royalty Core Classical Music",
+      "url" : "https://www.youtube.com/watch?v=Ty81ibUn75E"
+    } ]
+  }, {
+    "id" : "village",
+    "name" : "Peaceful village",
+    "tracks" : [ {
+      "title" : "Fantasy Medieval Music - The Dwarf's Long Mountain Journey",
+      "url" : "https://www.youtube.com/watch?v=4WIMyqBG9gs"
+    }, {
+      "title" : "The Quiet Night Medieval Village",
+      "url" : "https://www.youtube.com/watch?v=dJ5VtIE3kwU"
+    }, {
+      "title" : "The Knight Quiet Forest",
+      "url" : "https://www.youtube.com/watch?v=xxYJONmXE8w"
+    } ]
+  }, {
+    "id" : "travel",
+    "name" : "Travel & exploration",
+    "tracks" : [ {
+      "title" : "DnD Calm Fantasy Music for Adventure and Exploration",
+      "url" : "https://www.youtube.com/watch?v=sHA_4wfQhE8"
+    }, {
+      "title" : "Fantasy Medieval Music - Song of the North",
+      "url" : "https://www.youtube.com/watch?v=gRuggMzH3Gw"
+    }, {
+      "title" : "3 Hours of Fantasy Music",
+      "url" : "https://www.youtube.com/watch?v=GkSHE6wOzX0"
+    } ]
+  }, {
+    "id" : "forest",
+    "name" : "Forest",
+    "tracks" : [ {
+      "title" : "Enchanted Forest - Music & Ambience",
+      "url" : "https://www.youtube.com/watch?v=XxEhuSJF780"
+    }, {
+      "title" : "Fairy Lands - Fantasy Music in a Magical Forest",
+      "url" : "https://www.youtube.com/watch?v=syp6Lsd8HOo"
+    }, {
+      "title" : "Forest Sounds - Woodland Ambience, Bird Song",
+      "url" : "https://www.youtube.com/watch?v=xNN7iTA57jM"
+    } ]
+  }, {
+    "id" : "dungeon",
+    "name" : "Dungeon & caves",
+    "tracks" : [ {
+      "title" : "Skyrim - Music & Ambience - Dungeons",
+      "url" : "https://www.youtube.com/watch?v=K1JvqHnSHfc"
+    }, {
+      "title" : "D&D Ambience - Generic Dungeon",
+      "url" : "https://www.youtube.com/watch?v=wScEFaoqwPM"
+    }, {
+      "title" : "D&D Ambience - Catacombs",
+      "url" : "https://www.youtube.com/watch?v=WPpVMmTt74Q"
+    }, {
+      "title" : "Dark Tomb - Cave Sounds",
+      "url" : "https://www.youtube.com/watch?v=kxqJuc1HHbg"
+    } ]
+  }, {
+    "id" : "mystery",
+    "name" : "Mystery & suspense",
+    "tracks" : [ {
+      "title" : "Suspense - D&D/TTRPG Music",
+      "url" : "https://www.youtube.com/watch?v=EApZmmYg_oQ"
+    }, {
+      "title" : "Dark and Mysterious Ambient Music",
+      "url" : "https://www.youtube.com/watch?v=CDWtH8eHeEU"
+    }, {
+      "title" : "3 Hours of Dark Fantasy Music - The Dark Trilogy",
+      "url" : "https://www.youtube.com/watch?v=WUhMLw6vq8g"
+    } ]
+  }, {
+    "id" : "horror",
+    "name" : "Horror",
+    "tracks" : [ {
+      "title" : "Hallucinations - Lovecraftian Dark Ambient",
+      "url" : "https://www.youtube.com/watch?v=Jg_QwWE_5cY"
+    }, {
+      "title" : "Nightmares from the Mist - Dark Ambient",
+      "url" : "https://www.youtube.com/watch?v=tvTsUs0n9zw"
+    }, {
+      "title" : "Dark Witch of the Woods - Ambience and Music",
+      "url" : "https://www.youtube.com/watch?v=7tURXEUhwhg"
+    } ]
+  }, {
+    "id" : "combat",
+    "name" : "Combat",
+    "tracks" : [ {
+      "title" : "D&D/RPG Combat Music Mix",
+      "url" : "https://www.youtube.com/watch?v=t3B802PIuB0"
+    }, {
+      "title" : "Epic Fight - D&D Battle Music",
+      "url" : "https://www.youtube.com/watch?v=BWoGeXrNs_g"
+    }, {
+      "title" : "Surprise! - D&D Battle Music",
+      "url" : "https://www.youtube.com/watch?v=sd1Otp7s1Fk"
+    }, {
+      "title" : "Combat Music Megamix - The Witcher",
+      "url" : "https://www.youtube.com/watch?v=UDUuD4IiEyk"
+    } ]
+  }, {
+    "id" : "boss",
+    "name" : "Boss fight",
+    "tracks" : [ {
+      "title" : "Boss Fight Music - D&D/TTRPG",
+      "url" : "https://www.youtube.com/watch?v=m15ZYxlOdmk"
+    }, {
+      "title" : "End This - Epic Boss Fight Music",
+      "url" : "https://www.youtube.com/watch?v=L9dhkINF5Vk"
+    }, {
+      "title" : "Escape from Darkness - Dark Battle Orchestral",
+      "url" : "https://www.youtube.com/watch?v=dh0Yqin18mM"
+    } ]
+  }, {
+    "id" : "sad",
+    "name" : "Sad & emotional",
+    "tracks" : [ {
+      "title" : "Forgotten Gods - Emotional Ethereal Fantasy Music",
+      "url" : "https://www.youtube.com/watch?v=aoJ-NYeuxGk"
+    }, {
+      "title" : "Fantasy World - Beautiful Sad Piano",
+      "url" : "https://www.youtube.com/watch?v=NdgLj3-tEgM"
+    }, {
+      "title" : "One Life - Emotional Orchestral",
+      "url" : "https://www.youtube.com/watch?v=v47KZwY5Ih0"
+    } ]
+  }, {
+    "id" : "camp",
+    "name" : "Camp at night",
+    "tracks" : [ {
+      "title" : "Campfire Ambience with Night Animals",
+      "url" : "https://www.youtube.com/watch?v=E77jmtut1Zc"
+    }, {
+      "title" : "Fantasy Medieval Winter Night Ambience",
+      "url" : "https://www.youtube.com/watch?v=81iRGxYAmMk"
+    } ]
+  }, {
+    "id" : "sea",
+    "name" : "At sea",
+    "tracks" : [ {
+      "title" : "Pirate Ship Ambience - Captain's Cabin",
+      "url" : "https://www.youtube.com/watch?v=Ft-lJyu_nuY"
+    }, {
+      "title" : "Sailing Ship - High Seas Ambience",
+      "url" : "https://www.youtube.com/watch?v=beOw8MEojQ4"
+    }, {
+      "title" : "Pirate Folk Music of the Lost Seas",
+      "url" : "https://www.youtube.com/watch?v=bRzEFm00-Zo"
+    }, {
+      "title" : "Sirens song",
+      "url" : "https://youtu.be/dtPDLZyRL3o?si=j0fR_4cM-kUSJUEk"
+    } ]
+  } ],
+  "sounds" : [ {
+    "id" : "amb-river",
+    "name" : "River",
+    "url" : "https://www.youtube.com/watch?v=IvjMgVS6kng",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : true
+  }, {
+    "id" : "amb-waterfall",
+    "name" : "Waterfall",
+    "url" : "https://www.youtube.com/watch?v=VXPXkAhB6ek",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : true
+  }, {
+    "id" : "amb-wind-howling",
+    "name" : "Wind (howling)",
+    "url" : "https://www.youtube.com/watch?v=sT5f1jBJHng",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : true
+  }, {
+    "id" : "amb-winter-storm",
+    "name" : "Winter storm",
+    "url" : "https://www.youtube.com/watch?v=sGkh1W5cbH4",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : true
+  }, {
+    "id" : "amb-blizzard",
+    "name" : "Blizzard",
+    "url" : "https://www.youtube.com/watch?v=7BrIJrjxVxA",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : true
+  }, {
+    "id" : "amb-rain",
+    "name" : "Rain",
+    "url" : "https://www.youtube.com/watch?v=q76bMs-NwRk",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : true
+  }, {
+    "id" : "amb-thunderstorm",
+    "name" : "Thunderstorm",
+    "url" : "https://www.youtube.com/watch?v=gVKEM4K8J8A",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : true
+  }, {
+    "id" : "amb-ocean-waves",
+    "name" : "Ocean waves",
+    "url" : "https://www.youtube.com/watch?v=vPhg6sc1Mk4",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : true
+  }, {
+    "id" : "amb-fireplace",
+    "name" : "Fireplace",
+    "url" : "https://www.youtube.com/watch?v=L_LUpnjgPso",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : true
+  }, {
+    "id" : "amb-cave-dripping",
+    "name" : "Cave (dripping)",
+    "url" : "https://www.youtube.com/watch?v=3Hwr_BaekgM",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : true
+  }, {
+    "id" : "amb-swamp-at-night",
+    "name" : "Swamp at night",
+    "url" : "https://www.youtube.com/watch?v=ih4_1FyVjaY",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : true
+  }, {
+    "id" : "amb-night-crickets",
+    "name" : "Night crickets",
+    "url" : "https://www.youtube.com/watch?v=g1w3IT5WnYw",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : true
+  }, {
+    "id" : "amb-forest-birds",
+    "name" : "Forest birds",
+    "url" : "https://www.youtube.com/watch?v=xNN7iTA57jM",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : true
+  }, {
+    "id" : "amb-wolves-in-the-night",
+    "name" : "Wolves in the night",
+    "url" : "https://www.youtube.com/watch?v=MJmW4gsvaVE",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : true
+  }, {
+    "id" : "amb-angry-crowd",
+    "name" : "Angry crowd",
+    "url" : "https://www.youtube.com/watch?v=UNibrdgIVSw",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : true
+  }, {
+    "id" : "sfx-thunder-clap",
+    "name" : "Thunder clap",
+    "url" : "https://www.youtube.com/watch?v=T-BOPr7NXME",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : false
+  }, {
+    "id" : "sfx-door-creak",
+    "name" : "Door creak",
+    "url" : "https://www.youtube.com/watch?v=W2jJpBouh9U",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : false
+  }, {
+    "id" : "sfx-sword-clash",
+    "name" : "Sword clash",
+    "url" : "https://www.youtube.com/watch?v=SwD4SDnL1xE",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : false
+  }, {
+    "id" : "sfx-sword-slash",
+    "name" : "Sword slash",
+    "url" : "https://www.youtube.com/watch?v=E8Ced6hW45k",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : false
+  }, {
+    "id" : "sfx-dragon-roar",
+    "name" : "Dragon roar",
+    "url" : "https://www.youtube.com/watch?v=79NxCXrO1nU",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : false
+  }, {
+    "id" : "sfx-wolf-howl",
+    "name" : "Wolf howl",
+    "url" : "https://www.youtube.com/watch?v=8_8Pk7pwNUI",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : false
+  }, {
+    "id" : "sfx-explosion",
+    "name" : "Explosion",
+    "url" : "https://www.youtube.com/watch?v=dz6Lp_PyX_Q",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : false
+  }, {
+    "id" : "sfx-evil-laugh",
+    "name" : "Evil laugh",
+    "url" : "https://www.youtube.com/watch?v=f3BPx2lt6E0",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : false
+  }, {
+    "id" : "sfx-ghost-laugh",
+    "name" : "Ghost laugh",
+    "url" : "https://www.youtube.com/watch?v=ujSx5LyEYBU",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : false
+  }, {
+    "id" : "sfx-coin-purse",
+    "name" : "Coin purse",
+    "url" : "https://www.youtube.com/watch?v=DdVuCBdEGro",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : false
+  }, {
+    "id" : "sfx-magic-spell",
+    "name" : "Magic spell",
+    "url" : "https://www.youtube.com/watch?v=RZtMFFudEw8",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : false
+  }, {
+    "id" : "sfx-fairy-magic",
+    "name" : "Fairy magic",
+    "url" : "https://www.youtube.com/watch?v=_nX273mOpkE",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : false
+  }, {
+    "id" : "sfx-fireball",
+    "name" : "Fireball",
+    "url" : "https://www.youtube.com/watch?v=AHRf27GPhQc",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : false
+  }, {
+    "id" : "sfx-church-bell",
+    "name" : "Church bell",
+    "url" : "https://www.youtube.com/watch?v=F0avwfiK0f8",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : false
+  }, {
+    "id" : "sfx-bells-of-doom",
+    "name" : "Bells of doom",
+    "url" : "https://www.youtube.com/watch?v=9HZxWNoyTJY",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : false
+  }, {
+    "id" : "sfx-monster-growl",
+    "name" : "Monster growl",
+    "url" : "https://www.youtube.com/watch?v=I6KMAxpqUw8",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : false
+  }, {
+    "id" : "sfx-horse-gallop",
+    "name" : "Horse gallop",
+    "url" : "https://www.youtube.com/watch?v=CqFOZhbvRV4",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : false
+  }, {
+    "id" : "sfx-arrow",
+    "name" : "Arrow",
+    "url" : "https://www.youtube.com/watch?v=fWGdG_NL0cU",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : false
+  }, {
+    "id" : "sfx-crow",
+    "name" : "Crow",
+    "url" : "https://www.youtube.com/watch?v=kA8mEHxkUsw",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : false
+  }, {
+    "id" : "sfx-scream",
+    "name" : "Scream",
+    "url" : "https://www.youtube.com/watch?v=DM1Ylv7-DA8",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : false
+  }, {
+    "id" : "sfx-glass-shatter",
+    "name" : "Glass shatter",
+    "url" : "https://www.youtube.com/watch?v=TcnufvBffcY",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : false
+  }, {
+    "id" : "sfx-war-horn",
+    "name" : "War horn",
+    "url" : "https://www.youtube.com/watch?v=uHHMV8hukBI",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : false
+  }, {
+    "id" : "sfx-heartbeat",
+    "name" : "Heartbeat",
+    "url" : "https://www.youtube.com/watch?v=TgZjYIPPe50",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : false
+  } ],
+  "combatPlaylistId" : null,
+  "volume" : 56,
+  "effectsVolume" : 80,
+  "shuffle" : false,
+  "loop" : true
+}

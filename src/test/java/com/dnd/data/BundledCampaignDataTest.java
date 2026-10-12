@@ -68,7 +68,7 @@ public class BundledCampaignDataTest {
             List<com.dnd.model.item.crafting.Blueprint> blueprints = repos.items().list().stream()
                 .filter(i -> i instanceof com.dnd.model.item.crafting.Blueprint)
                 .map(i -> (com.dnd.model.item.crafting.Blueprint) i).toList();
-            assertEquals(12, blueprints.size());
+            assertEquals(13, blueprints.size());
             for (var bp : blueprints) {
                 assertNotNull(bp.getId(), repos.items().getById(bp.getProductId()));
                 bp.getMaterials().forEach(m -> assertNotNull(bp.getId() + " " + m.getItemId(), repos.items().getById(m.getItemId())));
@@ -88,7 +88,7 @@ public class BundledCampaignDataTest {
         var toren = zurabaach.players().getById("player-toren");
         assertNotNull(toren);
         assertEquals(com.dnd.model.magic.CastingResource.ENERGY_CHARGES, toren.getCastingResource());
-        assertEquals(12, toren.getKnownBlueprints().size());
+        assertEquals(13, toren.getKnownBlueprints().size());
         assertTrue(com.dnd.model.crafting.Workshop.furnaceTier(toren, zurabaach.items()::getById) >= 2);
     }
 }

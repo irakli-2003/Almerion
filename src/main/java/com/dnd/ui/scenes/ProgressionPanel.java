@@ -84,11 +84,12 @@ final class ProgressionPanel {
         shortRest.setTooltip(new Tooltip("HP from hit dice, pact slots back, half the missing mana, timed effects end"));
 
         Button longRest = owner.btn("Long Rest", () -> {
-            Progression.longRest(pc);
+            Progression.longRest(pc, repos.items()::getById);
             repos.players().save(pc);
             onChanged.run();
         });
-        longRest.setTooltip(new Tooltip("Full HP, mana and spell slots; every effect and cooldown cleared"));
+        longRest.setTooltip(new Tooltip("Full HP, mana and spell slots; every effect and cooldown cleared."
+            + " Energy charges are refilled by the workshop furnace from the fuel in the pack."));
 
         box.getChildren().add(new FlowPane(8, 8, levelUp, shortRest, longRest));
         return box;

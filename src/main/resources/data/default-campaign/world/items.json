@@ -2302,6 +2302,7 @@
       },
       "spellId": "bolt-repeater-shot",
       "chargeLevel": 0,
+      "mechanical": true,
       "effects": [
         "knockback"
       ]
@@ -2320,6 +2321,7 @@
       },
       "spellId": "smoke-canister-burst",
       "chargeLevel": 0,
+      "mechanical": true,
       "effects": [
         "blinded"
       ]
@@ -2338,6 +2340,7 @@
       },
       "spellId": null,
       "chargeLevel": 0,
+      "mechanical": true,
       "effects": []
     },
     {
@@ -2354,6 +2357,7 @@
       },
       "spellId": "grapnel-shot",
       "chargeLevel": 1,
+      "mechanical": true,
       "effects": []
     },
     {
@@ -2370,6 +2374,7 @@
       },
       "spellId": "sticky-foam",
       "chargeLevel": 0,
+      "mechanical": true,
       "effects": [
         "restrained"
       ]
@@ -2388,6 +2393,7 @@
       },
       "spellId": "messenger-beetle",
       "chargeLevel": 1,
+      "mechanical": true,
       "effects": []
     },
     {
@@ -2404,6 +2410,7 @@
       },
       "spellId": "scalding-bolt-shot",
       "chargeLevel": 0,
+      "mechanical": true,
       "effects": [
         "burn"
       ]
@@ -2422,6 +2429,7 @@
       },
       "spellId": "flash-bomb-throw",
       "chargeLevel": 0,
+      "mechanical": true,
       "effects": [
         "blinded"
       ]
@@ -2440,6 +2448,7 @@
       },
       "spellId": "shock-dart-throw",
       "chargeLevel": 0,
+      "mechanical": true,
       "effects": [
         "shock"
       ]
@@ -2458,6 +2467,7 @@
       },
       "spellId": "steam-jet-blast",
       "chargeLevel": 1,
+      "mechanical": true,
       "effects": [
         "knockback"
       ]
@@ -2476,6 +2486,7 @@
       },
       "spellId": "thermal-grenade-throw",
       "chargeLevel": 0,
+      "mechanical": true,
       "effects": [
         "burn",
         "area_damage"
@@ -2495,6 +2506,7 @@
       },
       "spellId": "pressure-ram-strike",
       "chargeLevel": 2,
+      "mechanical": true,
       "effects": [
         "knockback",
         "prone"
@@ -2514,6 +2526,7 @@
       },
       "spellId": "concussion-bolt-shot",
       "chargeLevel": 0,
+      "mechanical": true,
       "effects": [
         "concussed",
         "area_damage"
@@ -3002,6 +3015,63 @@
       },
       "material": "STEEL",
       "armorClassBonus": 2
+    },
+    {
+      "id": "thermal-smoke-grenade",
+      "name": "Thermal Smoke Grenade",
+      "type": "device",
+      "description": "A reusable brass canister with a heating coil and a cartridge of smoke salts. Slot in a Thermal capsule and throw: the coil flash-boils the salts into a 20 ft cloud that heavily obscures the area for 1 minute; then pick it up and reload it. Tuned to Thermal capsules ONLY - steam pressure cannot heat the coil and an Electric capsule would burn it out.",
+      "valueGold": 45,
+      "weight": 1.0,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "spellId": "thermal-smoke-burst",
+      "chargeLevel": 2,
+      "mechanical": false,
+      "effects": [
+        "blinded"
+      ]
+    },
+    {
+      "id": "bp-thermal-smoke-grenade",
+      "name": "Blueprint: Thermal Smoke Grenade",
+      "type": "blueprint",
+      "description": "Reusable smoke grenade. Building it needs no charge, but every throw needs exactly one Thermal capsule.",
+      "valueGold": 45,
+      "weight": 0.1,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "productId": "thermal-smoke-grenade",
+      "productQuantity": 1,
+      "category": "Utility / control",
+      "minLevel": 3,
+      "craftMinutes": 60,
+      "materials": [
+        {
+          "itemId": "brass-scrap",
+          "quantity": 2
+        },
+        {
+          "itemId": "copper-wire",
+          "quantity": 1
+        },
+        {
+          "itemId": "alchemical-salts",
+          "quantity": 2
+        }
+      ],
+      "toolIds": [
+        "tinkers-tools",
+        "smiths-tools"
+      ],
+      "charges": [],
+      "effects": []
     }
   ]
 }

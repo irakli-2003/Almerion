@@ -1923,6 +1923,7 @@
           },
           "spellId": "smoke-canister-burst",
           "chargeLevel": 0,
+          "mechanical": true,
           "effects": [
             "blinded"
           ]
@@ -1988,6 +1989,7 @@
           },
           "spellId": "sticky-foam",
           "chargeLevel": 0,
+          "mechanical": true,
           "effects": [
             "restrained"
           ]
@@ -2053,6 +2055,7 @@
           },
           "spellId": "scalding-bolt-shot",
           "chargeLevel": 0,
+          "mechanical": true,
           "effects": [
             "burn"
           ]
@@ -2108,6 +2111,7 @@
           },
           "spellId": "flash-bomb-throw",
           "chargeLevel": 0,
+          "mechanical": true,
           "effects": [
             "blinded"
           ]
@@ -2163,6 +2167,7 @@
           },
           "spellId": "shock-dart-throw",
           "chargeLevel": 0,
+          "mechanical": true,
           "effects": [
             "shock"
           ]
@@ -2254,6 +2259,7 @@
           },
           "spellId": "thermal-grenade-throw",
           "chargeLevel": 0,
+          "mechanical": true,
           "effects": [
             "burn",
             "area_damage"
@@ -2355,6 +2361,7 @@
           },
           "spellId": "concussion-bolt-shot",
           "chargeLevel": 0,
+          "mechanical": true,
           "effects": [
             "concussed",
             "area_damage"
@@ -2394,6 +2401,34 @@
         ],
         "typeId": "thunder"
       },
+      "cooldownRounds": 0,
+      "areaSpell": true
+    },
+    {
+      "id": "thermal-smoke-burst",
+      "name": "Thermal Smoke Grenade",
+      "description": "Throw 12 m: a 20 ft cloud heavily obscures the area for 1 minute. Needs exactly one Thermal capsule (no other type works).",
+      "level": 2,
+      "school": "conjuration",
+      "manaCost": 6,
+      "range": 40,
+      "radius": 20,
+      "castingMethod": "hand-movement",
+      "requiredConsumables": [],
+      "requiredTools": [],
+      "concentration": null,
+      "effects": [
+        {
+          "id": "blinded",
+          "name": "Blinded",
+          "description": "Cannot see; automatically fails sight-based checks and attacks at disadvantage.",
+          "damaging": false,
+          "healing": false,
+          "damageAmount": 0,
+          "healingAmount": 0
+        }
+      ],
+      "damage": null,
       "cooldownRounds": 0,
       "areaSpell": true
     }

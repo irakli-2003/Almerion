@@ -201,6 +201,58 @@ public final class Workshop {
         return null;
     }
 
+    /**
+     * What a rest does for an energy caster: the furnace runs on the fuel in the pack and
+     * refills {@code slots} (the sheet's own, or a battle token's copy), weakest charges first.
+     * Fuel is only burned when it can finish a charge; the least efficient fuel goes in first.
+     *
+     * @return what happened, e.g. "burns 2x Coal Lump", "+3 Steam-pressure charges"; empty if nothing
+     */
+    public static List<String> restRefill(PlayerCharacter pc, List<SpellSlot> slots, Function<String, Item> items) {
+        List<String> log = new ArrayList<>();
+        int tier = furnaceTier(pc, items);
+        if (pc == null || slots == null || tier <= 0) return log;
+        java.util.Map<String, Integer> burned = new java.util.LinkedHashMap<>();
+        for (SpellSlot slot : slots.stream().sorted(java.util.Comparator.comparingInt(SpellSlot::getLevel)).toList()) {
+            if (slot == null || slot.getLevel() > tier) continue;
+            int cost = EnergyCharges.fuelCost(slot.getLevel());
+            int made = 0;
+            while (slot.getCurrent() < slot.getMax()) {
+                if (pc.getFurnaceFuel() + carriedFuelUnits(pc, items) < cost) break;
+                while (pc.getFurnaceFuel() < cost) {
+                    Fuel fuel = weakestFuel(pc, items);
+                    burn(pc, fuel.getId(), 1, items);
+                    burned.merge(fuel.getName() == null ? fuel.getId() : fuel.getName(), 1, Integer::sum);
+                }
+                pc.setFurnaceFuel(pc.getFurnaceFuel() - cost);
+                slot.setCurrent(slot.getCurrent() + 1);
+                made++;
+            }
+            if (made > 0) log.add("+" + made + " " + EnergyCharges.name(slot.getLevel()) + " charge" + (made == 1 ? "" : "s"));
+        }
+        burned.forEach((name, n) -> log.add(0, "burns " + n + "\u00d7 " + name));
+        return log;
+    }
+
+    private static int carriedFuelUnits(PlayerCharacter pc, Function<String, Item> items) {
+        int units = 0;
+        if (pc.getItems() == null) return 0;
+        for (PlayerCharacter.PlayerItem carried : pc.getItems()) {
+            Item item = carried == null || carried.getItemId() == null ? null : items.apply(carried.getItemId());
+            if (item instanceof Fuel f && f.getFuelValue() > 0) units += f.getFuelValue() * Math.max(1, carried.getQuantity());
+        }
+        return units;
+    }
+
+    private static Fuel weakestFuel(PlayerCharacter pc, Function<String, Item> items) {
+        Fuel best = null;
+        for (PlayerCharacter.PlayerItem carried : pc.getItems()) {
+            Item item = carried == null || carried.getItemId() == null ? null : items.apply(carried.getItemId());
+            if (item instanceof Fuel f && f.getFuelValue() > 0 && (best == null || f.getFuelValue() < best.getFuelValue())) best = f;
+        }
+        return best;
+    }
+
     /** Makes one charge of {@code level}; returns null on success or the reason it failed. */
     public static String makeCharge(PlayerCharacter pc, int level, Function<String, Item> items) {
         String problem = chargeProblem(pc, level, items);

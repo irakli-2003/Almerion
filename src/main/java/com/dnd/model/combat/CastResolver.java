@@ -52,6 +52,8 @@ public final class CastResolver {
         private final List<Item> consumables;
         private final int spellLevel;
         private final int hpCost;
+        /** Exact charge/slot level to spend; 0 = the lowest available at or above the spell level. */
+        private int chargeLevel;
 
         private Castable(String id, String name, String description, boolean spell, int manaCost,
                          double rangeFeet, double radiusFeet, int cooldownRounds,
@@ -75,6 +77,37 @@ public final class CastResolver {
         /** 0 for cantrips and abilities; otherwise the minimum spell slot level it needs. */
         public int getSpellLevel() {
             return spellLevel;
+        }
+
+        /** The exact charge level this cast spends, or 0 when any charge at or above the spell level will do. */
+        public int getChargeLevel() {
+            return chargeLevel;
+        }
+
+        /** Extra damage dice from running a mechanical device on a stronger charge than it needs. */
+        public int getBoost() {
+            return chargeLevel > spellLevel && spellLevel > 0 ? chargeLevel - spellLevel : 0;
+        }
+
+        /**
+         * The same action locked to one charge level. Above the spell's own level it is boosted:
+         * the first damage die is rolled once more per level of difference.
+         */
+        public Castable onCharge(int level) {
+            int boost = level > spellLevel && spellLevel > 0 ? level - spellLevel : 0;
+            Damage boosted = damage;
+            if (boost > 0 && damage != null && damage.hasDice()) {
+                List<DiceRoll> dice = new ArrayList<>();
+                for (DiceRoll roll : damage.getDice()) {
+                    dice.add(new DiceRoll(roll.getDiceId(), roll.getCount()));
+                }
+                dice.get(0).setCount(dice.get(0).getCount() + boost);
+                boosted = new Damage(dice, damage.getTypeId());
+            }
+            Castable c = new Castable(id, name, description, spell, manaCost, rangeFeet, radiusFeet, cooldownRounds,
+                effects, boosted, consumables, spellLevel, hpCost);
+            c.chargeLevel = Math.max(0, level);
+            return c;
         }
 
         /** Hit points always paid by the caster, whatever their casting resource. */
@@ -272,7 +305,16 @@ public final class CastResolver {
             return action.getName() + " costs " + hpNeeded + " HP but only "
                 + state.getCurrentHitPoints() + " HP remain.";
         }
-        if (resource.usesSlots() && levelled) {
+        if (resource.usesSlots() && levelled && action.getChargeLevel() > 0) {
+            com.dnd.model.magic.SpellSlot slot = SpellSlots.find(state.getSpellSlots(), action.getChargeLevel());
+            if (slot == null || slot.getCurrent() <= 0) {
+                return resource == CastingResource.ENERGY_CHARGES
+                    ? "No " + com.dnd.model.magic.EnergyCharges.name(action.getChargeLevel()) + " charge left"
+                        + (action.getChargeLevel() == action.getSpellLevel() ? " - " + action.getName()
+                            + " only runs on that type." : ".")
+                    : "No spell slot of level " + action.getChargeLevel() + " left.";
+            }
+        } else if (resource.usesSlots() && levelled) {
             if (SpellSlots.lowestAvailable(state.getSpellSlots(), action.getSpellLevel()) < 0) {
                 return resource == CastingResource.ENERGY_CHARGES
                     ? "No " + com.dnd.model.magic.EnergyCharges.name(action.getSpellLevel())
@@ -293,9 +335,11 @@ public final class CastResolver {
         int hp = action.getHpCost();
         if (resource == CastingResource.HIT_POINTS) hp += action.getManaCost();
         if (resource.usesSlots() && action.isSpell() && action.getSpellLevel() > 0) {
-            int slot = SpellSlots.lowestAvailable(state.getSpellSlots(), action.getSpellLevel());
+            int slot = action.getChargeLevel() > 0 ? action.getChargeLevel()
+                : SpellSlots.lowestAvailable(state.getSpellSlots(), action.getSpellLevel());
             if (slot > 0 && SpellSlots.spend(state.getSpellSlots(), slot)) {
-                parts.add("spends " + SpellSlots.slotName(slot, resource));
+                parts.add("spends " + SpellSlots.slotName(slot, resource)
+                    + (action.getBoost() > 0 ? " (boosted: +" + action.getBoost() + " damage die)" : ""));
             }
         } else if (resource == CastingResource.MANA && action.getManaCost() > 0) {
             state.setCurrentMana(state.getCurrentMana() - action.getManaCost());

@@ -238,12 +238,19 @@ The counts are the same as a half caster's slots, but each level is a type of ch
 | 4 | Magnetic | 10 |
 | 5 | Resonance | 14 |
 
-- **Rests don't refill charges.** You make them at a **workshop furnace**, which is a *Tool*
+- **Charges are made at a workshop furnace**, which is a *Tool*
   item with a furnace tier. The tier is the highest charge level it can make. The Tinkerer's
   Portable Forge is tier 1 and the Valebrick Portable Field Workshop is tier 2.
 - **The furnace burns fuel.** Each *Fuel* item has a value: firewood 2, charcoal 3, coal 4,
-  lamp oil 5.
-- **Stronger charges can stand in for weaker ones**, both when casting and when crafting.
+  lamp oil 5. That many units go into the furnace per piece; a charge costs the units in the
+  table. For example, one coal (4) makes two Steam-pressure charges or one Thermal charge.
+- **A long rest refuels automatically** if the artificer carries a furnace and fuel. Missing
+  charges are refilled from the lowest level up to the furnace tier. The weakest fuel burns
+  first, and fuel is only burned when it can finish a charge.
+- **Mechanical devices** take a charge of their level or any stronger one. Each level above
+  the spell's level adds one damage die. **Tuned devices** run only on their own capsule type.
+  For example, the Thermal Smoke Grenade works only with a Thermal charge.
+- **Crafting** still lets a stronger charge stand in for a weaker one.
 - **Blueprints are an item type.** A blueprint lists:
   - its product;
   - its materials, which are used up;
@@ -256,9 +263,9 @@ The counts are the same as a half caster's slots, but each level is a type of ch
 - **Devices are an item type.** A device can link a spell. Carrying it adds the spell to the
   token, and the spell's level decides which charge it uses (level 0 needs no charge).
   Ammunition and grenades are devices whose spell uses up one of them.
-- **There are 12 bundled blueprints:**
+- **There are 13 bundled blueprints:**
   - Utility and control: Smoke Canister, Tripwire Alarm, Steam Grapnel Launcher, Sticky Foam,
-    Messenger Beetle.
+    Messenger Beetle, Thermal Smoke Grenade (Thermal only).
   - Light combat: Scalding Bolts, Flash Bomb, Shock Darts, Steam-Jet Gauntlet.
   - Medium combat: Thermal Grenade, Pressure Ram, Concussion Bolts.
 - **The Workshop section in Manage Players** shows charges and furnace fuel, and has buttons to:

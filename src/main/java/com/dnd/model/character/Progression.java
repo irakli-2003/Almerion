@@ -177,6 +177,19 @@ public final class Progression {
         return log;
     }
 
+    /**
+     * Long rest that also lets an energy caster's workshop furnace burn the fuel in the pack
+     * and refill the charges (rests alone never do).
+     */
+    public static List<String> longRest(PlayerCharacter pc,
+                                        java.util.function.Function<String, com.dnd.model.item.Item> items) {
+        List<String> log = longRest(pc);
+        if (pc.getCastingResource() == CastingResource.ENERGY_CHARGES) {
+            log.addAll(com.dnd.model.crafting.Workshop.restRefill(pc, pc.getSpellSlots(), items));
+        }
+        return log;
+    }
+
     /** Battle-map counterpart of {@link #shortRest} for a token's combat state. */
     public static void shortRest(CombatState state, boolean pactCaster, int hitPointsRecovered) {
         shortRest(state, pactCaster, hitPointsRecovered, 1);

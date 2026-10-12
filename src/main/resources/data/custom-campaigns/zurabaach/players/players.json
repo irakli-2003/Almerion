@@ -916,259 +916,221 @@
     "spellSlots" : [ ],
     "cooldowns" : { }
   }, {
-    "id": "player-toren",
-    "name": "Toren Valebrick",
-    "classId": "artificer",
-    "raceId": "human",
-    "level": 5,
-    "xp": 0,
-    "stats": {
-      "strength": 8,
-      "dexterity": 15,
-      "constitution": 15,
-      "intelligence": 15,
-      "wisdom": 8,
-      "charisma": 8
+    "id" : "player-toren",
+    "name" : "Toren Valebrick",
+    "classId" : "artificer",
+    "raceId" : "human",
+    "level" : 5,
+    "xp" : 0,
+    "stats" : {
+      "strength" : 8,
+      "dexterity" : 15,
+      "constitution" : 15,
+      "intelligence" : 15,
+      "wisdom" : 8,
+      "charisma" : 8
     },
-    "items": [
-      {
-        "itemId": "valebrick-field-workshop",
-        "condition": {
-          "durability": 100
-        },
-        "equipped": true,
-        "quantity": 1
+    "items" : [ {
+      "itemId" : "valebrick-field-workshop",
+      "condition" : {
+        "durability" : 100
       },
-      {
-        "itemId": "valebrick-bolt-repeater",
-        "condition": {
-          "durability": 100
-        },
-        "equipped": true,
-        "quantity": 1
+      "equipped" : true,
+      "quantity" : 1
+    }, {
+      "itemId" : "valebrick-bolt-repeater",
+      "condition" : {
+        "durability" : 100
       },
-      {
-        "itemId": "tinkers-tools",
-        "condition": {
-          "durability": 100
-        },
-        "equipped": false,
-        "quantity": 1
+      "equipped" : true,
+      "quantity" : 1
+    }, {
+      "itemId" : "tinkers-tools",
+      "condition" : {
+        "durability" : 100
       },
-      {
-        "itemId": "smiths-tools",
-        "condition": {
-          "durability": 100
-        },
-        "equipped": false,
-        "quantity": 1
+      "equipped" : false,
+      "quantity" : 1
+    }, {
+      "itemId" : "smiths-tools",
+      "condition" : {
+        "durability" : 100
       },
-      {
-        "itemId": "thieves-tools",
-        "condition": {
-          "durability": 100
-        },
-        "equipped": false,
-        "quantity": 1
+      "equipped" : false,
+      "quantity" : 1
+    }, {
+      "itemId" : "thieves-tools",
+      "condition" : {
+        "durability" : 100
       },
-      {
-        "itemId": "woodcarvers-tools",
-        "condition": {
-          "durability": 100
-        },
-        "equipped": false,
-        "quantity": 1
+      "equipped" : false,
+      "quantity" : 1
+    }, {
+      "itemId" : "woodcarvers-tools",
+      "condition" : {
+        "durability" : 100
       },
-      {
-        "itemId": "coal",
-        "condition": {
-          "durability": 100
-        },
-        "equipped": false,
-        "quantity": 3
+      "equipped" : false,
+      "quantity" : 1
+    }, {
+      "itemId" : "coal",
+      "condition" : {
+        "durability" : 100
       },
-      {
-        "itemId": "firewood",
-        "condition": {
-          "durability": 100
-        },
-        "equipped": false,
-        "quantity": 2
+      "equipped" : false,
+      "quantity" : 3
+    }, {
+      "itemId" : "firewood",
+      "condition" : {
+        "durability" : 100
       },
-      {
-        "itemId": "lamp-oil",
-        "condition": {
-          "durability": 100
-        },
-        "equipped": false,
-        "quantity": 1
+      "equipped" : false,
+      "quantity" : 2
+    }, {
+      "itemId" : "lamp-oil",
+      "condition" : {
+        "durability" : 100
       },
-      {
-        "itemId": "brass-scrap",
-        "condition": {
-          "durability": 100
-        },
-        "equipped": false,
-        "quantity": 4
+      "equipped" : false,
+      "quantity" : 1
+    }, {
+      "itemId" : "brass-scrap",
+      "condition" : {
+        "durability" : 100
       },
-      {
-        "itemId": "steel-stock",
-        "condition": {
-          "durability": 100
-        },
-        "equipped": false,
-        "quantity": 3
+      "equipped" : false,
+      "quantity" : 4
+    }, {
+      "itemId" : "steel-stock",
+      "condition" : {
+        "durability" : 100
       },
-      {
-        "itemId": "copper-wire",
-        "condition": {
-          "durability": 100
-        },
-        "equipped": false,
-        "quantity": 2
+      "equipped" : false,
+      "quantity" : 3
+    }, {
+      "itemId" : "copper-wire",
+      "condition" : {
+        "durability" : 100
       },
-      {
-        "itemId": "clockwork-springs",
-        "condition": {
-          "durability": 100
-        },
-        "equipped": false,
-        "quantity": 2
+      "equipped" : false,
+      "quantity" : 2
+    }, {
+      "itemId" : "clockwork-springs",
+      "condition" : {
+        "durability" : 100
       },
-      {
-        "itemId": "alchemical-salts",
-        "condition": {
-          "durability": 100
-        },
-        "equipped": false,
-        "quantity": 2
+      "equipped" : false,
+      "quantity" : 2
+    }, {
+      "itemId" : "alchemical-salts",
+      "condition" : {
+        "durability" : 100
       },
-      {
-        "itemId": "glass-lens",
-        "condition": {
-          "durability": 100
-        },
-        "equipped": false,
-        "quantity": 1
+      "equipped" : false,
+      "quantity" : 2
+    }, {
+      "itemId" : "glass-lens",
+      "condition" : {
+        "durability" : 100
       },
-      {
-        "itemId": "leather-strap",
-        "condition": {
-          "durability": 100
-        },
-        "equipped": false,
-        "quantity": 1
+      "equipped" : false,
+      "quantity" : 1
+    }, {
+      "itemId" : "leather-strap",
+      "condition" : {
+        "durability" : 100
       },
-      {
-        "itemId": "black-powder",
-        "condition": {
-          "durability": 100
-        },
-        "equipped": false,
-        "quantity": 1
+      "equipped" : false,
+      "quantity" : 1
+    }, {
+      "itemId" : "black-powder",
+      "condition" : {
+        "durability" : 100
       },
-      {
-        "itemId": "scalding-bolt",
-        "condition": {
-          "durability": 100
-        },
-        "equipped": false,
-        "quantity": 4
+      "equipped" : false,
+      "quantity" : 1
+    }, {
+      "itemId" : "scalding-bolt",
+      "condition" : {
+        "durability" : 100
       },
-      {
-        "itemId": "smoke-canister",
-        "condition": {
-          "durability": 100
-        },
-        "equipped": false,
-        "quantity": 1
+      "equipped" : false,
+      "quantity" : 4
+    }, {
+      "itemId" : "smoke-canister",
+      "condition" : {
+        "durability" : 100
       },
-      {
-        "itemId": "simple-clothes",
-        "condition": {
-          "durability": 100
-        },
-        "equipped": false,
-        "quantity": 1
-      }
-    ],
-    "spells": [
-      {
-        "spellId": "mending",
-        "rank": 0,
-        "active": true
+      "equipped" : false,
+      "quantity" : 1
+    }, {
+      "itemId" : "simple-clothes",
+      "condition" : {
+        "durability" : 100
       },
-      {
-        "spellId": "guidance",
-        "rank": 0,
-        "active": true
+      "equipped" : false,
+      "quantity" : 1
+    }, {
+      "itemId" : "thermal-smoke-grenade",
+      "condition" : {
+        "durability" : 100
       },
-      {
-        "spellId": "cure-wounds",
-        "rank": 1,
-        "active": true
-      },
-      {
-        "spellId": "faerie-fire",
-        "rank": 1,
-        "active": true
-      },
-      {
-        "spellId": "shield-spell",
-        "rank": 1,
-        "active": true
-      },
-      {
-        "spellId": "scorching-ray",
-        "rank": 2,
-        "active": true
-      },
-      {
-        "spellId": "web",
-        "rank": 2,
-        "active": true
-      }
-    ],
-    "passwordHash": null,
-    "passwordSalt": null,
-    "imagePath": null,
-    "playerName": "Unassigned",
-    "ownerUsername": null,
-    "description": "22 years, 185 cm. Young human noble engineer of House Valebrick - curious, suspicious, heavily sarcastic, composed and educated. Carries a 32-36 kg portable field workshop on his back with a Resonance Core and a removable stationary Bolt Repeater. \"Don't ask what humans were given. Ask what we built.\"",
-    "maxHitPoints": 28,
-    "currentHitPoints": 28,
-    "maxMana": 0,
-    "currentMana": 0,
-    "activeEffects": [],
-    "subclass": "Artillerist",
-    "backstory": "Lore\nToren was born into House Valebrick, a wealthy human noble family whose influence came from engineering, foundries, workshops, bridges and machines rather than ancient magical blood. As a child he dismantled clocks, locks and mechanisms because he needed to know why they worked. His grandfather Aldren taught him one principle: \"Open it. Understand it.\"\n\nDuring the Ash Border War, Marianne Bell - the girl Toren loved - was killed in magical warfare in an industrial district. She was not the target. Since then Toren is cold toward magical power and wary of anyone who treats inherited supernatural gifts as proof of superiority. He is fiercely proud of humanity precisely because humans were not the most gifted: they built their advantages. \"Others inherited their advantages. We built ours.\"\n\nGrand Theory of Replication\nToren rejects the word \"magic\". He calls it Arcane Resonance - a natural field that can be measured, stored, transferred and stabilised. Every repeatable magical phenomenon can eventually be reproduced technologically. His key word is \"yet\". Failure response: \"Again.\"\n\nFamily\nEvelyne Valebrick (28), his elegant and politically skilled older sister. Toren understands machines; Evelyne understands people. They exchange notes through Argus, a mechanical messenger owl.\n\nSkills & tools\nSaves CON +6, INT +7. Investigation +5 (machines, traps, mechanisms only), History +3, Insight +1. Tools: Tinker's, Smith's, Thieves' (\"precision access instruments\"), Woodcarver's.\n\nEnergy charges\nInstead of spell slots Toren spends energy capsules: Steam-pressure (L1) and Thermal (L2) for now, Electric and beyond after upgrades. He refills them at the workshop's Resonance Core furnace, which burns any fuel - some more efficiently than others. Rests do not refill them.\n\nValebrick Portable Field Workshop\n~80 x 45 x 30 cm, 32-36 kg, reinforced harness. Drivers, hammers, files, calipers, clamps, resonance testers, wire, plates, ammunition parts, sealed blueprint tubes, a compact hardened-steel anvil and a small forge chamber. Full deployment into a workbench takes 30-60 seconds outside combat. Heavy and awkward in tight spaces or water.\n\nValebrick Resonance Core\nA refined arcane-reactive crystal in a brass stabilisation cage with rotating rings, conductors and regulators. Failure signs: vibration, unstable tone, heat, misaligned rings, blue arcing. A cracked or overcharged core can discharge violently.\n\nBolt Repeater\nStationary single-barrel turret (Eldritch Cannon - Force Ballista). Deploy: action. Fire: bonus action, d20 + ammunition bonus, 30 m, 2d6 force, push 5 ft. AC 8, HP 12, Mending restores 1d6. Takes different ammunition types.\n\nCombat Fabrication (DM-approved homebrew)\n3 per long rest from prepared parts: Emergency Patch, Quick Cover, Special Charge. No permanent weapons, armor or major machines during combat.\n\nDM additions\nIn the storage world he finds a metal bracer covering his left forearm that unfolds into a 25 cm-radius light round shield: it stops projectiles and light weapons but, being so light, does not absorb blunt attacks (Valebrick Folding Bracer).",
-    "castingResource": "ENERGY_CHARGES",
-    "spellSlots": [
-      {
-        "level": 1,
-        "max": 4,
-        "current": 4
-      },
-      {
-        "level": 2,
-        "max": 2,
-        "current": 2
-      }
-    ],
-    "knownBlueprints": [
-      "bp-smoke-canister",
-      "bp-tripwire-alarm",
-      "bp-grapnel-launcher",
-      "bp-sticky-foam",
-      "bp-messenger-beetle",
-      "bp-scalding-bolts",
-      "bp-flash-bomb",
-      "bp-shock-darts",
-      "bp-steam-jet-gauntlet",
-      "bp-thermal-grenade",
-      "bp-pressure-ram",
-      "bp-concussion-bolts"
-    ],
-    "furnaceFuel": 0
+      "equipped" : false,
+      "quantity" : 1
+    } ],
+    "spells" : [ {
+      "spellId" : "mending",
+      "rank" : 0,
+      "active" : true
+    }, {
+      "spellId" : "guidance",
+      "rank" : 0,
+      "active" : true
+    }, {
+      "spellId" : "cure-wounds",
+      "rank" : 1,
+      "active" : true
+    }, {
+      "spellId" : "faerie-fire",
+      "rank" : 1,
+      "active" : true
+    }, {
+      "spellId" : "shield-spell",
+      "rank" : 1,
+      "active" : true
+    }, {
+      "spellId" : "scorching-ray",
+      "rank" : 2,
+      "active" : true
+    }, {
+      "spellId" : "web",
+      "rank" : 2,
+      "active" : true
+    } ],
+    "passwordHash" : null,
+    "passwordSalt" : null,
+    "imagePath" : null,
+    "playerName" : "Unassigned",
+    "ownerUsername" : null,
+    "description" : "22 years, 185 cm. Young human noble engineer of House Valebrick - curious, suspicious, heavily sarcastic, composed and educated. Carries a 32-36 kg portable field workshop on his back with a Resonance Core and a removable stationary Bolt Repeater. \"Don't ask what humans were given. Ask what we built.\"",
+    "maxHitPoints" : 28,
+    "currentHitPoints" : 28,
+    "maxMana" : 0,
+    "currentMana" : 0,
+    "activeEffects" : [ ],
+    "subclass" : "Artillerist",
+    "backstory" : "Lore\nToren was born into House Valebrick, a wealthy human noble family whose influence came from engineering, foundries, workshops, bridges and machines rather than ancient magical blood. As a child he dismantled clocks, locks and mechanisms because he needed to know why they worked. His grandfather Aldren taught him one principle: \"Open it. Understand it.\"\n\nDuring the Ash Border War, Marianne Bell - the girl Toren loved - was killed in magical warfare in an industrial district. She was not the target. Since then Toren is cold toward magical power and wary of anyone who treats inherited supernatural gifts as proof of superiority. He is fiercely proud of humanity precisely because humans were not the most gifted: they built their advantages. \"Others inherited their advantages. We built ours.\"\n\nGrand Theory of Replication\nToren rejects the word \"magic\". He calls it Arcane Resonance - a natural field that can be measured, stored, transferred and stabilised. Every repeatable magical phenomenon can eventually be reproduced technologically. His key word is \"yet\". Failure response: \"Again.\"\n\nFamily\nEvelyne Valebrick (28), his elegant and politically skilled older sister. Toren understands machines; Evelyne understands people. They exchange notes through Argus, a mechanical messenger owl.\n\nSkills & tools\nSaves CON +6, INT +7. Investigation +5 (machines, traps, mechanisms only), History +3, Insight +1. Tools: Tinker's, Smith's, Thieves' (\"precision access instruments\"), Woodcarver's.\n\nEnergy charges\nInstead of spell slots Toren spends energy capsules: Steam-pressure (L1) and Thermal (L2) for now, Electric and beyond after upgrades. He refills them at the workshop's Resonance Core furnace, which burns any fuel - some more efficiently than others. Rests do not refill them.\n\nValebrick Portable Field Workshop\n~80 x 45 x 30 cm, 32-36 kg, reinforced harness. Drivers, hammers, files, calipers, clamps, resonance testers, wire, plates, ammunition parts, sealed blueprint tubes, a compact hardened-steel anvil and a small forge chamber. Full deployment into a workbench takes 30-60 seconds outside combat. Heavy and awkward in tight spaces or water.\n\nValebrick Resonance Core\nA refined arcane-reactive crystal in a brass stabilisation cage with rotating rings, conductors and regulators. Failure signs: vibration, unstable tone, heat, misaligned rings, blue arcing. A cracked or overcharged core can discharge violently.\n\nBolt Repeater\nStationary single-barrel turret (Eldritch Cannon - Force Ballista). Deploy: action. Fire: bonus action, d20 + ammunition bonus, 30 m, 2d6 force, push 5 ft. AC 8, HP 12, Mending restores 1d6. Takes different ammunition types.\n\nCombat Fabrication (DM-approved homebrew)\n3 per long rest from prepared parts: Emergency Patch, Quick Cover, Special Charge. No permanent weapons, armor or major machines during combat.\n\nDM additions\nIn the storage world he finds a metal bracer covering his left forearm that unfolds into a 25 cm-radius light round shield: it stops projectiles and light weapons but, being so light, does not absorb blunt attacks (Valebrick Folding Bracer).",
+    "castingResource" : "ENERGY_CHARGES",
+    "spellSlots" : [ {
+      "level" : 1,
+      "max" : 4,
+      "current" : 4
+    }, {
+      "level" : 2,
+      "max" : 2,
+      "current" : 2
+    } ],
+    "knownBlueprints" : [ "bp-smoke-canister", "bp-tripwire-alarm", "bp-grapnel-launcher", "bp-sticky-foam", "bp-messenger-beetle", "bp-thermal-smoke-grenade", "bp-scalding-bolts", "bp-flash-bomb", "bp-shock-darts", "bp-steam-jet-gauntlet", "bp-thermal-grenade", "bp-pressure-ram", "bp-concussion-bolts" ],
+    "furnaceFuel" : 0
   } ]
 }

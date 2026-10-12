@@ -85,6 +85,7 @@ public final class FieldHelp {
         f("Fuel.fuelValue", "Furnace units per piece. A steam-pressure charge costs 2 units, thermal 4, electric 7, magnetic 10, resonance 14.");
         f("Tool.furnaceTier", "0 = ordinary tool. Above 0 = a workshop furnace that can make energy charges up to this level. Raise it to 'upgrade' the workshop.");
         f("Device.spellId", "The action this gadget performs on the battle map. Whoever carries it gets the action.");
+        f("Device.mechanical", "Ticked: a mechanical gadget that runs on this charge or any stronger one - a stronger charge adds a damage die per level. Unticked: tuned to exactly this charge type and nothing else.");
         f("Device.chargeLevel", "Energy charge level used per activation; 0 = runs on clockwork and costs nothing.");
 
         o(SpellcastingType.NONE, "No spells. The class fights with weapons and its own features (barbarian, fighter, rogue, monk).");

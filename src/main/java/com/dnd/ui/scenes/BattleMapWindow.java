@@ -1337,12 +1337,33 @@ public class BattleMapWindow {
     private Node buildSpellList(MapObject token, List<Spell> spells) {
         VBox box = new VBox(2);
         CombatState state = TokenSupport.combatOf(token);
+        boolean energy = state.effectiveCastingResource() == com.dnd.model.magic.CastingResource.ENERGY_CHARGES;
+        java.util.Map<String, com.dnd.model.item.crafting.Device> devices = carriedDevices(token);
         for (Spell spell : spells) {
             String label = spell.getName() + "  ·  lvl " + spell.getLevel()
                 + (spell.getManaCost() > 0 ? "  ·  " + spell.getManaCost() + " mana" : "")
                 + (spell.getRange() > 0 ? "  ·  " + spell.getRange() + " ft" : "")
                 + (spell.getRadius() > 0 ? "  ·  " + spell.getRadius() + " ft blast" : "");
-            box.getChildren().add(castRow(token, state, CastResolver.of(spell), label, spell.getDescription()));
+            com.dnd.model.item.crafting.Device device = devices.get(spell.getId());
+            if (!energy || device == null || spell.getLevel() <= 0) {
+                box.getChildren().add(castRow(token, state, CastResolver.of(spell), label, spell.getDescription()));
+                continue;
+            }
+            String level1 = com.dnd.model.magic.EnergyCharges.name(spell.getLevel());
+            if (!device.isMechanical()) {
+                // Tuned devices run on exactly one charge type.
+                box.getChildren().add(castRow(token, state, CastResolver.of(spell).onCharge(spell.getLevel()),
+                    spell.getName() + "  ·  " + level1 + " charge only", spell.getDescription()));
+                continue;
+            }
+            // Mechanical devices take any charge of their level or stronger; stronger hits harder.
+            for (com.dnd.model.magic.SpellSlot slot : state.getSpellSlots()) {
+                if (slot == null || slot.getMax() <= 0 || slot.getLevel() < spell.getLevel()) continue;
+                int boost = slot.getLevel() - spell.getLevel();
+                box.getChildren().add(castRow(token, state, CastResolver.of(spell).onCharge(slot.getLevel()),
+                    spell.getName() + "  ·  " + com.dnd.model.magic.EnergyCharges.name(slot.getLevel())
+                        + (boost > 0 ? " (+" + boost + " die)" : ""), spell.getDescription()));
+            }
         }
         return box;
     }
@@ -1374,7 +1395,8 @@ public class BattleMapWindow {
         if (action == null) return row;
 
         boolean armed = armedCast != null && armedCaster == token
-            && action.getId() != null && action.getId().equals(armedCast.getId());
+            && action.getId() != null && action.getId().equals(armedCast.getId())
+            && action.getChargeLevel() == armedCast.getChargeLevel();
         if (armed) row.getStyleClass().add("selected-row");
 
         String blocked = CastResolver.blockedReason(token, action);
@@ -1981,6 +2003,17 @@ public class BattleMapWindow {
         render();
     }
 
+    /** Linked spell id -> the carried device that grants it. */
+    private java.util.Map<String, com.dnd.model.item.crafting.Device> carriedDevices(MapObject token) {
+        java.util.Map<String, com.dnd.model.item.crafting.Device> out = new java.util.HashMap<>();
+        for (String id : TokenSupport.itemIdsOf(token)) {
+            if (repos.items().getById(id) instanceof com.dnd.model.item.crafting.Device d && d.getSpellId() != null) {
+                out.putIfAbsent(d.getSpellId(), d);
+            }
+        }
+        return out;
+    }
+
     private List<Spell> resolveSpells(MapObject token) {
         List<Spell> spells = new ArrayList<>();
         for (String id : TokenSupport.spellIdsOf(token)) {
@@ -2231,11 +2264,22 @@ public class BattleMapWindow {
         longRest.setTooltip(new Tooltip("Full HP, mana, spell slots and feature uses; every effect and cooldown cleared"));
         longRest.setOnAction(e -> {
             com.dnd.model.character.Progression.longRest(state);
+            List<String> furnace = refuelOnRest(token, state);
             afterVitalsChange(token);
             showDetail(token);
-            status(TokenSupport.nameOf(token) + " takes a long rest.");
+            status(TokenSupport.nameOf(token) + " takes a long rest."
+                + (furnace.isEmpty() ? "" : " Workshop furnace: " + String.join(", ", furnace) + "."));
         });
         return new FlowPane(6, 6, shortRest, longRest);
+    }
+
+    /** An energy caster's furnace burns the pack's fuel during a long rest and refills the charges. */
+    private List<String> refuelOnRest(MapObject token, CombatState state) {
+        if (!(token instanceof PlayerToken pt) || pt.getCharacter() == null
+            || state.effectiveCastingResource() != com.dnd.model.magic.CastingResource.ENERGY_CHARGES) {
+            return List.of();
+        }
+        return com.dnd.model.crafting.Workshop.restRefill(pt.getCharacter(), state.getSpellSlots(), repos.items()::getById);
     }
 
     private boolean isPactCaster(MapObject token) {
@@ -2300,8 +2344,10 @@ public class BattleMapWindow {
         if (chosen == ButtonType.CANCEL) return;
         for (PlayerToken pt : players) {
             CombatState state = TokenSupport.combatOf(pt);
-            if (chosen == longType) com.dnd.model.character.Progression.longRest(state);
-            else com.dnd.model.character.Progression.shortRest(state, isPactCaster(pt), rolls.get(pt).getValue(),
+            if (chosen == longType) {
+                com.dnd.model.character.Progression.longRest(state);
+                refuelOnRest(pt, state);
+            } else com.dnd.model.character.Progression.shortRest(state, isPactCaster(pt), rolls.get(pt).getValue(),
                 TokenSupport.levelOf(pt));
         }
         dirty = true;

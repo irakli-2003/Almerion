@@ -459,20 +459,30 @@ public class CharacterCreationWizard extends BaseScene {
         }
         if (state.subclass != null) features.setText(describeSubclass(state.cls, state.subclass));
         page.getChildren().addAll(guide("A subclass is a specialisation inside your class (a barbarian's path, "
-            + "a wizard's school...). It adds its own features as you level up - listed below once you pick one."),
-            options, sectionLabel("Subclass features"), features);
+            + "a wizard's school...). It shapes how your character plays and adds its own features as you level up. "
+            + "Pick one to read what it is about and exactly what each feature does."),
+            options, sectionLabel("About this subclass"), features);
     }
 
-    private static String describeSubclass(CharacterClass cls, String sub) {
-        List<String> lines = new ArrayList<>();
+    /** Overview of {@code sub} followed by each of its features, level by level, with what it does. */
+    static String describeSubclass(CharacterClass cls, String sub) {
+        StringBuilder sb = new StringBuilder();
+        String overview = cls.subclassDescription(sub);
+        if (!isBlank(overview)) sb.append(overview).append("\n\n");
+        List<ClassFeature> own = new ArrayList<>();
         if (cls.getFeatures() != null) {
             for (ClassFeature f : cls.getFeatures()) {
-                if (f != null && f.getSubclass() != null && f.getSubclass().equalsIgnoreCase(sub)) {
-                    lines.add("Lvl " + f.getLevel() + " – " + f.getName());
-                }
+                if (f != null && f.getSubclass() != null && f.getSubclass().equalsIgnoreCase(sub)) own.add(f);
             }
         }
-        return lines.isEmpty() ? "(no subclass-specific features listed)" : String.join("\n", lines);
+        own.sort(java.util.Comparator.comparingInt(ClassFeature::getLevel));
+        if (own.isEmpty()) return sb.append("(no subclass-specific features listed)").toString();
+        sb.append("What you get, level by level:");
+        for (ClassFeature f : own) {
+            sb.append("\n\n\u2022 Level ").append(f.getLevel()).append(" \u2013 ").append(nz(f.getName()));
+            if (!isBlank(f.getDescription())) sb.append("\n   ").append(f.getDescription());
+        }
+        return sb.toString();
     }
 
     private void buildAbilitiesPage() {

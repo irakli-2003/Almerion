@@ -27,6 +27,11 @@
         "Path of the Totem Warrior",
         "Path of the Zealot"
       ],
+      "subclassDescriptions": {
+        "Path of the Berserker": "Pure, reckless fury. While raging you can enter a frenzy and make an extra weapon attack every turn, at the cost of exhaustion afterwards. Later you can't be charmed or frightened while raging and you can terrify enemies with a look. Best for players who want to hit as hard and as often as possible.",
+        "Path of the Totem Warrior": "A spiritual barbarian bonded to an animal spirit. You choose a totem (bear, eagle, wolf...) at several levels: Bear makes you resist almost all damage while raging, Eagle makes you fast and mobile, Wolf helps allies hit the enemies next to you. Flexible and very tough; great if you want to protect the party.",
+        "Path of the Zealot": "A warrior blessed (or cursed) by a god of battle. Your rage adds extra radiant or necrotic damage, you can be raised from the dead for free, and at high level you simply refuse to die while raging. Ideal for a fearless front-liner who wants to stay in the fight no matter what."
+      },
       "features": [
         {
           "level": 1,
@@ -249,6 +254,11 @@
         "College of Lore",
         "College of Valor"
       ],
+      "subclassDescriptions": {
+        "College of Glamour": "Bards touched by the Feywild who enchant crowds. Your performances give allies temporary hit points and free movement, and you can charm or frighten groups and wrap yourself in an awe-inspiring aura. Good for a charismatic support who controls the battlefield and social scenes.",
+        "College of Lore": "Collectors of knowledge and secrets. You gain extra skill proficiencies, can use Bardic Inspiration to make enemies miss or fail checks (Cutting Words), and learn spells from other classes' lists early. The most flexible bard: a skill expert and the best spell 'thief' in the game.",
+        "College of Valor": "Battle-skalds who sing in the front line. You gain medium armour, shields and martial weapons, your inspiration can boost an ally's damage or armour class, and later you attack twice and can cast a spell and swing in the same turn. Choose this if you want a bard who fights."
+      },
       "features": [
         {
           "level": 1,
@@ -486,6 +496,12 @@
         "Tempest Domain",
         "War Domain"
       ],
+      "subclassDescriptions": {
+        "Life Domain": "The classic healer. Every healing spell you cast heals extra hit points, you can heal several allies at once with Channel Divinity, and you wear heavy armour. Later your healing also heals you. Best for players who want to keep the party alive.",
+        "Light Domain": "Priests of the sun and fire. You get blasting spells like Burning Hands and Fireball, can flash light to make an attacker miss, and Channel Divinity floods the area with radiant light that burns enemies. A damage-focused cleric that still heals.",
+        "Tempest Domain": "Servants of storm gods. You wear heavy armour, punish attackers with lightning, and can make your thunder and lightning spells deal maximum damage. Thunderwave and Call Lightning are your signature spells. Great for a tough, explosive front-line caster.",
+        "War Domain": "Clerics of war gods who fight in heavy armour with martial weapons. You can make extra attacks as a bonus action, add a big bonus to a single attack roll, and later resist weapon damage. Pick this for a holy warrior who prays and punches."
+      },
       "features": [
         {
           "level": 1,
@@ -764,6 +780,11 @@
         "Circle of the Land",
         "Circle of the Moon"
       ],
+      "subclassDescriptions": {
+        "Circle of Spores": "Druids of decay and the cycle of rot. You wrap yourself in a halo of spores that damages nearby enemies, can animate fallen creatures as zombies, and gain a symbiotic form with extra hit points and poison damage on hits. A close-range, grim druid.",
+        "Circle of the Land": "Druids tied to one kind of land (forest, mountain, swamp...). Once a day you recover some spell slots on a short rest and get extra spells from your chosen land, always prepared. Later nature can't harm or slow you. The best pure spellcaster druid.",
+        "Circle of the Moon": "Shapeshifters. You Wild Shape as a bonus action into much stronger beasts (bears, later elementals) and can heal in beast form by spending spell slots. Pick this if you want to fight as an animal in melee."
+      },
       "features": [
         {
           "level": 1,
@@ -978,6 +999,11 @@
         "Champion",
         "Eldritch Knight"
       ],
+      "subclassDescriptions": {
+        "Battle Master": "A tactician. You learn manoeuvres powered by superiority dice: trip enemies, disarm them, push them back, command allies to attack, or riposte. Every hit can be a tactical choice. Best for players who like options and control in combat.",
+        "Champion": "Simple and deadly. Your critical hits happen on a 19 or 20 (later 18-20), you become more athletic, gain a second fighting style and regenerate hit points when badly hurt. Very easy to play: you just hit hard and crit often.",
+        "Eldritch Knight": "A fighter who learns wizard spells (mostly abjuration and evocation, like Shield and Magic Missile). You can bond to your weapon so it can't be taken from you, and later attack and cast in the same turn. Great for a sturdy warrior with a bit of magic."
+      },
       "features": [
         {
           "level": 1,
@@ -1207,6 +1233,11 @@
         "Way of the Four Elements",
         "Way of the Open Hand"
       ],
+      "subclassDescriptions": {
+        "Way of Shadow": "Ninja-like monks. You spend ki to cast Darkness, Silence and similar spells, teleport from shadow to shadow, and later become invisible in dim light. A stealthy infiltrator and assassin.",
+        "Way of the Four Elements": "Monks who bend the elements. You spend ki to throw fire, water, earth and air effects (fire blasts, gusts, walls of water), effectively a monk that casts spells. Flashy but ki-hungry.",
+        "Way of the Open Hand": "Masters of unarmed combat. Your Flurry of Blows can knock enemies prone, push them away or stop their reactions; you can heal yourself and later kill with a single touch. The classic, most reliable monk."
+      },
       "features": [
         {
           "level": 1,
@@ -1434,6 +1465,11 @@
         "Oath of Vengeance",
         "Oath of the Ancients"
       ],
+      "subclassDescriptions": {
+        "Oath of Devotion": "The knight in shining armour, sworn to honesty and justice. You can make your weapon holy (add Charisma to attack rolls), turn fiends and undead, and later you and nearby allies can't be charmed. A loyal protector.",
+        "Oath of Vengeance": "Avenger sworn to punish great evil. You can mark one enemy and gain advantage against it (Vow of Enmity), move after anyone who attacks you, and later fly and strike back. The most aggressive single-target paladin.",
+        "Oath of the Ancients": "Green knights who defend life, joy and nature. You can entangle enemies in vines, and your aura makes allies resist damage from spells. Later you can return from near death. A protector against magic."
+      },
       "features": [
         {
           "level": 1,
@@ -1654,6 +1690,11 @@
         "Gloom Stalker",
         "Hunter"
       ],
+      "subclassDescriptions": {
+        "Beast Master": "A ranger with a loyal animal companion (wolf, panther, hawk...) that fights beside you on your command. The companion grows stronger as you level. Choose this if you want a pet that matters in combat.",
+        "Gloom Stalker": "Hunters of the dark places. You act first in combat with an extra attack on the first turn, are invisible to creatures relying on darkvision, and resist fear. Excellent ambusher and scout.",
+        "Hunter": "Specialist slayer. At several levels you choose a technique: extra damage to wounded foes, hitting several enemies at once, defending against packs or giant monsters. A simple, strong damage ranger."
+      },
       "features": [
         {
           "level": 1,
@@ -1882,6 +1923,11 @@
         "Assassin",
         "Thief"
       ],
+      "subclassDescriptions": {
+        "Arcane Trickster": "A rogue who learns illusion and enchantment spells, with an invisible Mage Hand that can steal and pick locks from a distance. Later you can confuse enemies with your magic. Great for a clever, magical thief.",
+        "Assassin": "Masters of the first strike. You have advantage against creatures that haven't acted yet, and any hit on a surprised creature is a critical. You can also build perfect false identities. The best ambusher.",
+        "Thief": "The burglar. You use objects, pick locks and steal as a bonus action, climb faster and jump further, and at high level you take two turns in the first round. Ideal for heists and using magic items."
+      },
       "features": [
         {
           "level": 1,
@@ -2104,6 +2150,11 @@
         "Shadow Magic",
         "Wild Magic"
       ],
+      "subclassDescriptions": {
+        "Draconic Bloodline": "Your magic comes from a dragon ancestor. You gain extra hit points, natural armour, bonus damage with one element, and later dragon wings and a frightening presence. A tougher sorcerer and great elemental blaster.",
+        "Shadow Magic": "Your power comes from the Shadowfell. You see in magical darkness, can summon a shadow hound to hunt a target, teleport between shadows and refuse to die once per rest. A dark, mysterious caster.",
+        "Wild Magic": "Your magic is chaotic. Casting spells can trigger random surges (fireballs, turning blue, teleporting...), and you can control luck with Tides of Chaos. Fun and unpredictable; best for players who enjoy surprises."
+      },
       "features": [
         {
           "level": 1,
@@ -2296,6 +2347,11 @@
         "The Fiend",
         "The Great Old One"
       ],
+      "subclassDescriptions": {
+        "The Archfey": "Your patron is a fey lord or lady. You can charm or frighten creatures around you, vanish when hurt, and later trap enemies in illusions. Great for a tricky, enchanting warlock.",
+        "The Fiend": "Your patron is a devil or demon. You gain temporary hit points whenever you kill an enemy, add fire spells like Fireball to your list, and later hurl foes through the lower planes. The sturdiest damage-dealing warlock.",
+        "The Great Old One": "Your patron is an alien, unknowable entity. You speak telepathically to any creature, can turn an enemy's attack against itself, and later charm minds with a touch. Ideal for a creepy psychic character."
+      },
       "features": [
         {
           "level": 1,
@@ -2479,6 +2535,11 @@
         "School of Divination",
         "School of Evocation"
       ],
+      "subclassDescriptions": {
+        "School of Abjuration": "Protective magic. When you cast abjuration spells (Shield, Counterspell, Dispel Magic...) you build a magical ward that absorbs damage, and later you can shield allies and resist spells. The toughest, most defensive wizard.",
+        "School of Divination": "Seers of the future. Twice per long rest you roll two d20s and can later replace any roll you see (yours, an ally's or an enemy's) with one of them (Portent). Divination spells refund themselves. Excellent for controlling luck and gathering information.",
+        "School of Evocation": "Battle mages who throw fire, lightning and force. You can shape your area spells so allies are untouched (Sculpt Spells), cantrips still hurt on a save, and you add Intelligence to spell damage. The best wizard for raw damage."
+      },
       "features": [
         {
           "level": 1,
@@ -2664,6 +2725,11 @@
         "Alchemist",
         "Armorer"
       ],
+      "subclassDescriptions": {
+        "Artillerist": "Explosives and magical cannons. You deploy a turret (the Bolt Repeater, an Eldritch Cannon) that fires force bolts as a bonus action, patch allies or throw up cover with Combat Fabrication, and later add damage to your spells through an arcane firearm. A ranged damage dealer and battlefield gunner.",
+        "Alchemist": "Potions and elixirs. After each rest you brew experimental elixirs (healing, flight, resilience...), add Intelligence to healing and acid/fire/poison spells, and later restore conditions. A supportive healer-inventor.",
+        "Armorer": "You turn your armour into a power suit. Choose Guardian (thunder gauntlets that pull enemies' attention) or Infiltrator (lightning launcher, stealth and speed). You count as having heavy armour without Strength penalties. A front-line tank or striker."
+      },
       "features": [
         {
           "level": 1,

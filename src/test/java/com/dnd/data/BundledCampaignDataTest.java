@@ -29,6 +29,24 @@ public class BundledCampaignDataTest {
     }
 
     @Test
+    public void everyBundledSubclassHasAnOverview() throws IOException {
+        List<Path> campaigns;
+        try (Stream<Path> dirs = Files.list(CAMPAIGNS)) {
+            campaigns = new java.util.ArrayList<>(dirs.filter(Files::isDirectory).toList());
+        }
+        campaigns.add(Paths.get("src", "main", "resources", "data", "default-campaign"));
+        for (Path campaign : campaigns) {
+            for (var cls : new CampaignRepositories(campaign).classes().list()) {
+                for (String sub : cls.getSubclasses()) {
+                    String text = cls.subclassDescription(sub);
+                    assertNotNull(campaign.getFileName() + ": " + sub, text);
+                    assertTrue(sub, text.length() > 80);
+                }
+            }
+        }
+    }
+
+    @Test
     public void everyRepositoryLoads() throws IOException {
         List<Path> campaigns;
         try (Stream<Path> dirs = Files.list(CAMPAIGNS)) {

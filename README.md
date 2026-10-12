@@ -284,7 +284,12 @@ The counts are the same as a half caster's slots, but each level is a type of ch
 
 Every option in the character wizard and the DM creation forms (class, race, character, spell,
 item) has a short note explaining what it does. Choices from a list show a live explanation
-of the selected value.
+of the selected value. On the wizard's Subclass step, each subclass has an overview of its theme,
+play style and who it suits. Below that is every subclass feature by level, with what it does.
+The DM can edit these overviews in the class form (*Subclass Descriptions*).
+
+New player characters are created only through the **Create Character** wizard. The DM menu's
+Players section and the *New* button in the player list both open it.
 
 Each class has default spells and items. When you pick a class in the wizard, its defaults are
 pre-selected, and you can still change them.

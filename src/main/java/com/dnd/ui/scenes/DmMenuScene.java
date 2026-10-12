@@ -152,19 +152,13 @@ public class DmMenuScene extends BaseScene {
         scrollRow.setAlignment(Pos.CENTER_LEFT);
         HBox.setHgrow(scroll, Priority.ALWAYS);
 
-        Button newPlayerBtn = btn("+ New Player", () -> {
-            uiSession.setActiveEntityCategory(EntityCategory.PLAYER);
-            uiSession.setActiveEntityId(null);
-            uiSession.getRouter().goTo(SceneType.ENTITY_DETAIL);
-        });
-
         Button createCharacterBtn = btn("Create Character", () -> {
             if (uiSession.campaignRoot() != null) {
                 new CharacterCreationWizard(uiSession, new CampaignRepositories(uiSession.campaignRoot())).show();
             }
         });
 
-        HBox playerButtons = new HBox(10, createCharacterBtn, newPlayerBtn);
+        HBox playerButtons = new HBox(10, createCharacterBtn);
         section.getChildren().addAll(scrollRow, playerButtons);
         return card("☻ Players", section);
     }

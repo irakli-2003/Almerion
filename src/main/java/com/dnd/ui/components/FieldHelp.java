@@ -36,6 +36,8 @@ public final class FieldHelp {
         f("CharacterClass.savingThrowBonuses", "Saving throws (resisting danger) the class is trained in, with their bonus.");
         f("CharacterClass.spellcasting", "How the class gets magic. Pick an option to read what it means.");
         f("CharacterClass.subclasses", "Specialisations chosen at character creation, e.g. Path of the Berserker.");
+        f("CharacterClass.subclassDescriptions", "One overview per subclass (key = subclass name): its theme, how it plays "
+            + "and who it suits. Shown in the character creation wizard above the subclass's features.");
         f("CharacterClass.features", "Abilities unlocked level by level. Leave 'subclass' blank for features every member gets.");
         f("CharacterClass.defaultSpells", "Spells pre-ticked when a new character picks this class. Players can still change them.");
         f("CharacterClass.defaultItems", "Starting equipment pre-ticked when a new character picks this class. Still changeable.");

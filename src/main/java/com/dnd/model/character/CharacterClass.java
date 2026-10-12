@@ -77,6 +77,8 @@ public class CharacterClass implements Printable {
     private com.dnd.model.magic.SpellcastingType spellcasting = com.dnd.model.magic.SpellcastingType.NONE;
     /** Subclass names offered at character creation (e.g. Path of the Berserker). */
     private List<String> subclasses = new java.util.ArrayList<>();
+    /** Plain-language overview of each subclass (theme, play style, who it suits), keyed by subclass name. */
+    private Map<String, String> subclassDescriptions = new java.util.LinkedHashMap<>();
     /** Spells pre-ticked for this class in the character creation wizard (still changeable). */
     private List<String> defaultSpells = new java.util.ArrayList<>();
     /** Starting equipment pre-ticked in the character creation wizard (still changeable). */
@@ -115,6 +117,23 @@ public class CharacterClass implements Printable {
 
     public void setSubclasses(List<String> subclasses) {
         this.subclasses = subclasses == null ? new java.util.ArrayList<>() : subclasses;
+    }
+
+    public Map<String, String> getSubclassDescriptions() {
+        return subclassDescriptions;
+    }
+
+    public void setSubclassDescriptions(Map<String, String> subclassDescriptions) {
+        this.subclassDescriptions = subclassDescriptions == null ? new java.util.LinkedHashMap<>() : subclassDescriptions;
+    }
+
+    /** The overview written for {@code subclass} (name matched ignoring case), or null. */
+    public String subclassDescription(String subclass) {
+        if (subclass == null || subclassDescriptions == null) return null;
+        for (Map.Entry<String, String> e : subclassDescriptions.entrySet()) {
+            if (subclass.equalsIgnoreCase(e.getKey())) return e.getValue();
+        }
+        return null;
     }
 
     public List<ClassFeature> getFeatures() {

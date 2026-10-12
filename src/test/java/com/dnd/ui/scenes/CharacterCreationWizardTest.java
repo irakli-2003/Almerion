@@ -45,6 +45,24 @@ public class CharacterCreationWizardTest {
     }
 
     @Test
+    public void subclassDescriptionExplainsTheSubclassAndEachFeature() {
+        CharacterClass wizard = new CharacterClass();
+        wizard.setSubclasses(new java.util.ArrayList<>(List.of("School of Evocation")));
+        wizard.setSubclassDescriptions(new java.util.LinkedHashMap<>(Map.of("School of Evocation", "Battle mages.")));
+        wizard.setFeatures(new java.util.ArrayList<>(List.of(
+            new com.dnd.model.character.ClassFeature(6, "Potent Cantrip", "Cantrips still hurt on a save.", "School of Evocation"),
+            new com.dnd.model.character.ClassFeature(2, "Sculpt Spells", "Allies are spared.", "School of Evocation"),
+            new com.dnd.model.character.ClassFeature(2, "Portent", "Roll two d20s.", "School of Divination"))));
+
+        String text = CharacterCreationWizard.describeSubclass(wizard, "school of evocation");
+
+        assertTrue(text, text.startsWith("Battle mages."));
+        assertTrue(text, text.contains("Sculpt Spells") && text.contains("Allies are spared."));
+        assertTrue(text, text.indexOf("Sculpt Spells") < text.indexOf("Potent Cantrip"));
+        assertFalse(text, text.contains("Portent"));
+    }
+
+    @Test
     public void cannotAdvanceWithoutRaceClassOrName() {
         State s = new State();
         assertFalse(CharacterCreationWizard.canAdvance(Step.RACE, s));

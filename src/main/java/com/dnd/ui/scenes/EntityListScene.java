@@ -86,6 +86,10 @@ public class EntityListScene extends BaseScene {
 
         if (uiSession.isDm()) {
             Button newBtn = btn("New", () -> {
+                if (cat == EntityCategory.PLAYER) {
+                    new CharacterCreationWizard(uiSession, repos).show(() -> uiSession.getRouter().goTo(SceneType.ENTITY_LIST));
+                    return;
+                }
                 uiSession.setActiveEntityId(null);
                 uiSession.getRouter().goTo(SceneType.ENTITY_DETAIL);
             });

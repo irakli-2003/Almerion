@@ -43,8 +43,11 @@ public final class EntityInfoFormatter {
         if (slots instanceof List<?> list && !list.isEmpty()) {
             @SuppressWarnings("unchecked")
             List<com.dnd.model.magic.SpellSlot> typed = (List<com.dnd.model.magic.SpellSlot>) list;
-            String described = com.dnd.model.magic.SpellSlots.describe(typed);
-            if (!described.isBlank()) parts.add("Spell slots " + described);
+            Object res = readProperty(entity, "getCastingResource");
+            boolean energy = res == com.dnd.model.magic.CastingResource.ENERGY_CHARGES;
+            String described = energy ? com.dnd.model.magic.EnergyCharges.describe(typed)
+                : com.dnd.model.magic.SpellSlots.describe(typed);
+            if (!described.isBlank()) parts.add((energy ? "Energy charges " : "Spell slots ") + described);
         }
         return String.join(" · ", parts);
     }

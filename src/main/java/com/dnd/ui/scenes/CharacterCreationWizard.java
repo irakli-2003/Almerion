@@ -96,6 +96,34 @@ public class CharacterCreationWizard extends BaseScene {
         return cls != null && cls.getSubclasses() != null && !cls.getSubclasses().isEmpty();
     }
 
+    /** What each ability score is for, in plain words (same order as {@link #ABILITY_NAMES}). */
+    public static final String[] ABILITY_NOTES = {
+        "Strength - lifting, pushing, melee hits with heavy weapons, carrying capacity.",
+        "Dexterity - agility and aim: ranged and finesse attacks, dodging (armor class), stealth.",
+        "Constitution - toughness: extra hit points every level, resisting poison and exhaustion.",
+        "Intelligence - learning and reasoning: wizards' and artificers' magic, investigation, lore.",
+        "Wisdom - perception and willpower: clerics', druids' and rangers' magic, spotting danger.",
+        "Charisma - force of personality: persuasion, deception, bards', sorcerers' and warlocks' magic."
+    };
+
+    /**
+     * Picks a class. Switching to a different class resets the subclass, replaces the spell
+     * choices with the new class's default spells and swaps the old class's default items for
+     * the new one's (items the player picked by hand stay). Everything remains editable.
+     */
+    public static void chooseClass(State s, CharacterClass cls) {
+        if (cls == null) return;
+        boolean changed = s.cls == null || !cls.getId().equals(s.cls.getId());
+        if (changed) {
+            if (s.cls != null) s.itemIds.removeAll(s.cls.getDefaultItems());
+            s.subclass = null;
+            s.spellIds.clear();
+            if (isCaster(cls)) s.spellIds.addAll(cls.getDefaultSpells());
+            s.itemIds.addAll(cls.getDefaultItems());
+        }
+        s.cls = cls;
+    }
+
     public static boolean isCaster(CharacterClass cls) {
         return cls != null && cls.getSpellcasting() != null && cls.getSpellcasting() != SpellcastingType.NONE;
     }
@@ -347,7 +375,9 @@ public class CharacterCreationWizard extends BaseScene {
         }
         if (races.isEmpty()) options.getChildren().add(body("No races defined in this campaign."));
         if (state.race != null) details.setText(describeRace(state.race));
-        page.getChildren().addAll(options, sectionLabel("Details"), details);
+        page.getChildren().addAll(guide("Your race is the people you were born into. It adds bonuses to some "
+            + "ability scores and sets how fast you move. Click a race to read about it."),
+            options, sectionLabel("Details"), details);
     }
 
     private static String describeRace(CharacterRace race) {
@@ -374,11 +404,7 @@ public class CharacterCreationWizard extends BaseScene {
             rb.setToggleGroup(group);
             rb.setSelected(state.cls != null && cls.getId() != null && cls.getId().equals(state.cls.getId()));
             rb.setOnAction(e -> {
-                if (state.cls == null || !cls.getId().equals(state.cls.getId())) {
-                    state.subclass = null;
-                    state.spellIds.clear();
-                }
-                state.cls = cls;
+                chooseClass(state, cls);
                 details.setText(describeClass(cls));
                 refreshNav();
             });
@@ -386,14 +412,28 @@ public class CharacterCreationWizard extends BaseScene {
         }
         if (classes.isEmpty()) options.getChildren().add(body("No classes defined in this campaign."));
         if (state.cls != null) details.setText(describeClass(state.cls));
-        page.getChildren().addAll(options, sectionLabel("Details"), details);
+        page.getChildren().addAll(guide("Your class is your training and role in the party: who fights in front, "
+            + "who heals, who casts. It decides your hit points, your features and whether you use magic. "
+            + "Picking one also pre-selects its usual spells and starting gear - you can change those later."),
+            options, sectionLabel("Details"), details);
     }
 
     private static String describeClass(CharacterClass cls) {
         StringBuilder sb = new StringBuilder();
         if (cls.getDescription() != null) sb.append(cls.getDescription()).append("\n");
-        sb.append("Hit die: d").append(hitDieSides(cls));
+        sb.append("Hit die: d").append(hitDieSides(cls))
+            .append("  (rolled for hit points each level - bigger means tougher)");
         sb.append("\nSpellcasting: ").append(cls.getSpellcasting());
+        String casting = com.dnd.ui.components.FieldHelp.option(cls.getSpellcasting());
+        if (casting != null) sb.append("\n   ").append(casting);
+        if (cls.getPrimaryAbilities() != null && !cls.getPrimaryAbilities().isEmpty()) {
+            sb.append("\nMain abilities: ").append(String.join(", ", cls.getPrimaryAbilities()))
+                .append("  (put your best scores here)");
+        }
+        if (!cls.getDefaultSpells().isEmpty() || !cls.getDefaultItems().isEmpty()) {
+            sb.append("\nStarts with ").append(cls.getDefaultSpells().size()).append(" default spell(s) and ")
+                .append(cls.getDefaultItems().size()).append(" item(s), pre-ticked on the next pages.");
+        }
         return sb.toString();
     }
 
@@ -418,7 +458,9 @@ public class CharacterCreationWizard extends BaseScene {
             options.getChildren().add(rb);
         }
         if (state.subclass != null) features.setText(describeSubclass(state.cls, state.subclass));
-        page.getChildren().addAll(options, sectionLabel("Subclass features"), features);
+        page.getChildren().addAll(guide("A subclass is a specialisation inside your class (a barbarian's path, "
+            + "a wizard's school...). It adds its own features as you level up - listed below once you pick one."),
+            options, sectionLabel("Subclass features"), features);
     }
 
     private static String describeSubclass(CharacterClass cls, String sub) {
@@ -460,12 +502,38 @@ public class CharacterCreationWizard extends BaseScene {
                 }
             });
             spinners.add(sp);
-            grid.addRow(i, body(ABILITY_NAMES[i]), sp, mod);
+            grid.addRow(i, body(ABILITY_NAMES[i]), sp, mod, hint(ABILITY_NOTES[i]));
         }
         Button standard = btn("Standard array", () -> {
             for (int i = 0; i < 6; i++) spinners.get(i).getValueFactory().setValue(STANDARD_ARRAY[i]);
         });
-        page.getChildren().addAll(levelRow, sectionLabel("Ability scores"), grid, standard);
+        page.getChildren().addAll(levelRow,
+            hint("Level 1 is a fresh adventurer; higher levels start with more hit points, features and spells."),
+            sectionLabel("Ability scores"),
+            guide("Six numbers describe what the character is good at. 10 is average, 15 is excellent, 8 is weak. "
+                + "The number in brackets is the modifier added to dice rolls: every 2 points above 10 is +1. "
+                + "Race bonuses are added on top at the end."),
+            grid, standard,
+            hint("Standard array fills in 15, 14, 13, 12, 10, 8 - a balanced set. Rearrange them to suit the class."));
+    }
+
+    /** A short explanatory paragraph at the top of a page. */
+    private Label guide(String text) {
+        Label label = new Label(text);
+        label.setWrapText(true);
+        label.setMaxWidth(640);
+        label.setStyle("-fx-text-fill: #b8a070; -fx-font-size: 12px; -fx-font-style: italic;"
+            + " -fx-padding: 6 10; -fx-background-color: #ffffff0a; -fx-border-color: #c9a84c44;");
+        return label;
+    }
+
+    /** A small grey note next to or under a control. */
+    private Label hint(String text) {
+        Label label = new Label(text);
+        label.setWrapText(true);
+        label.setMaxWidth(460);
+        label.setStyle(com.dnd.ui.components.EntityForm.HINT_STYLE.replace("#6a5a3a", "#8a7a5a"));
+        return label;
     }
 
     private static String modText(int score) {
@@ -478,7 +546,16 @@ public class CharacterCreationWizard extends BaseScene {
             page.getChildren().add(body("This class doesn't cast spells."));
             return;
         }
-        page.getChildren().add(body("Optional: pick the spells this character knows."));
+        boolean energy = state.cls.getSpellcasting() == SpellcastingType.ENERGY;
+        String slots = energy
+            ? com.dnd.model.magic.EnergyCharges.describe(SpellSlots.fresh(SpellSlots.maxSlots(state.cls.getSpellcasting(), state.level)))
+            : SpellSlots.describe(SpellSlots.fresh(SpellSlots.maxSlots(state.cls.getSpellcasting(), state.level)));
+        page.getChildren().add(guide("Cantrips are free and can be used every turn. Levelled spells cost "
+            + (energy ? "an energy charge" : "a spell slot") + " of their level or higher each cast. "
+            + "The class's usual spells are already ticked; tick or untick freely."
+            + (slots.isBlank() ? "\nAt level " + state.level + " this class has no "
+                + (energy ? "charges" : "slots") + " yet - only cantrips are usable."
+                : "\nAt level " + state.level + ": " + slots + ".")));
         List<String[]> entries = new ArrayList<>();
         for (Spell sp : spellList) {
             String label = (sp.getName() != null ? sp.getName() : sp.getId())
@@ -489,7 +566,8 @@ public class CharacterCreationWizard extends BaseScene {
     }
 
     private void buildItemsPage() {
-        page.getChildren().add(body("Optional: pick the character's starting items."));
+        page.getChildren().add(guide("Starting equipment. The class's usual kit is already ticked - add or remove "
+            + "anything. Blueprints ticked here are also copied into an artificer's blueprint book."));
         List<String[]> entries = new ArrayList<>();
         for (Item it : itemList) entries.add(new String[]{it.getId(), it.getName() != null ? it.getName() : it.getId()});
         page.getChildren().add(multiSelect(entries, state.itemIds));
@@ -564,7 +642,9 @@ public class CharacterCreationWizard extends BaseScene {
         HBox portraitRow = new HBox(10, preview, choose, portraitName);
         portraitRow.setAlignment(Pos.CENTER_LEFT);
 
-        page.getChildren().addAll(body("Name"), name, body("Player name"), player, body("Owner username"), owner,
+        page.getChildren().addAll(guide("Who the character is. Only the name is required. The owner username "
+            + "links the character to a player's login so they can see their own sheet."),
+            body("Name"), name, body("Player name"), player, body("Owner username"), owner,
             body("Backstory"), backstory, body("Description"), description, body("Portrait"), portraitRow);
     }
 
@@ -581,8 +661,13 @@ public class CharacterCreationWizard extends BaseScene {
         sb.append("Abilities (race bonuses included): ").append(String.join("  ", stats)).append("\n");
         sb.append("Max HP: ").append(maxHitPoints(hitDieSides(state.cls), finalScores[2], state.level)).append("\n");
         if (isCaster(state.cls)) {
-            sb.append("Spell slots: ").append(SpellSlots.describe(SpellSlots.fresh(
-                SpellSlots.maxSlots(state.cls.getSpellcasting(), state.level)))).append("\n");
+            List<com.dnd.model.magic.SpellSlot> fresh = SpellSlots.fresh(
+                SpellSlots.maxSlots(state.cls.getSpellcasting(), state.level));
+            if (state.cls.getSpellcasting() == SpellcastingType.ENERGY) {
+                sb.append("Energy charges: ").append(com.dnd.model.magic.EnergyCharges.describe(fresh)).append("\n");
+            } else {
+                sb.append("Spell slots: ").append(SpellSlots.describe(fresh)).append("\n");
+            }
             sb.append("Spells: ").append(names(state.spellIds, spellList, Spell::getId, Spell::getName)).append("\n");
         }
         sb.append("Items: ").append(names(state.itemIds, itemList, Item::getId, Item::getName)).append("\n");
@@ -610,6 +695,11 @@ public class CharacterCreationWizard extends BaseScene {
     private void create() {
         try {
             PlayerCharacter pc = buildCharacter(state, repos.players().list());
+            for (Item it : itemList) {
+                if (it instanceof com.dnd.model.item.crafting.Blueprint && state.itemIds.contains(it.getId())) {
+                    com.dnd.model.crafting.Workshop.learn(pc, it.getId());
+                }
+            }
             if (portraitFile != null && uiSession.campaignRoot() != null) {
                 pc.setImagePath(ImageStore.copyImage(uiSession.campaignRoot(), "players", pc.getId(), portraitFile));
             }

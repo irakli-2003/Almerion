@@ -1843,6 +1843,594 @@
       "concentration": null,
       "effects": [],
       "damage": null
+    },
+    {
+      "id": "mending",
+      "name": "Mending",
+      "description": "Repairs a single break or tear in an object (a broken chain link, a torn cloak, a cracked housing). Restores 1d6 HP to a Bolt Repeater or construct you touch.",
+      "level": 0,
+      "school": "transmutation",
+      "manaCost": 0,
+      "range": 5,
+      "radius": 0,
+      "castingMethod": "hand-movement",
+      "requiredConsumables": [],
+      "requiredTools": [],
+      "concentration": null,
+      "effects": [],
+      "damage": null,
+      "cooldownRounds": 0,
+      "areaSpell": false
+    },
+    {
+      "id": "bolt-repeater-shot",
+      "name": "Bolt Repeater: Rivet Shot",
+      "description": "Bonus action: the deployed Bolt Repeater fires a heavy rivet. Ranged attack with INT, 30 m (100 ft): 2d6 force and the target is pushed 5 ft.",
+      "level": 0,
+      "school": "evocation",
+      "manaCost": 0,
+      "range": 100,
+      "radius": 0,
+      "castingMethod": "hand-movement",
+      "requiredConsumables": [],
+      "requiredTools": [],
+      "concentration": null,
+      "effects": [
+        {
+          "id": "knockback",
+          "name": "Knockback",
+          "description": "Force enough to hurl the target away from its attacker.",
+          "damaging": false,
+          "healing": false,
+          "damageAmount": 0,
+          "healingAmount": 0
+        }
+      ],
+      "damage": {
+        "dice": [
+          {
+            "diceId": "d6",
+            "count": 2
+          }
+        ],
+        "typeId": "force"
+      },
+      "cooldownRounds": 0,
+      "areaSpell": false
+    },
+    {
+      "id": "smoke-canister-burst",
+      "name": "Smoke Canister",
+      "description": "Throw 9 m: 15 ft cloud that heavily obscures the area. Uses one Smoke Canister.",
+      "level": 0,
+      "school": "conjuration",
+      "manaCost": 0,
+      "range": 30,
+      "radius": 15,
+      "castingMethod": "hand-movement",
+      "requiredConsumables": [
+        {
+          "id": "smoke-canister",
+          "name": "Smoke Canister",
+          "type": "device",
+          "description": "Pull the pin and throw: a 15 ft cloud of thick grey smoke heavily obscures the area for 1 minute. Consumed on use.",
+          "valueGold": 5,
+          "weight": 0.5,
+          "damage": null,
+          "durability": {
+            "max": 1,
+            "current": 1
+          },
+          "spellId": "smoke-canister-burst",
+          "chargeLevel": 0,
+          "mechanical": true,
+          "effects": [
+            "blinded"
+          ]
+        }
+      ],
+      "requiredTools": [],
+      "concentration": null,
+      "effects": [
+        {
+          "id": "blinded",
+          "name": "Blinded",
+          "description": "Cannot see; automatically fails sight-based checks and attacks at disadvantage.",
+          "damaging": false,
+          "healing": false,
+          "damageAmount": 0,
+          "healingAmount": 0
+        }
+      ],
+      "damage": null,
+      "cooldownRounds": 0,
+      "areaSpell": true
+    },
+    {
+      "id": "grapnel-shot",
+      "name": "Grapnel Shot",
+      "description": "Steam Grapnel Launcher: fire the hook up to 18 m and reel yourself to it, or pull a light object to you. Costs a Steam-pressure charge.",
+      "level": 1,
+      "school": "transmutation",
+      "manaCost": 3,
+      "range": 60,
+      "radius": 0,
+      "castingMethod": "hand-movement",
+      "requiredConsumables": [],
+      "requiredTools": [],
+      "concentration": null,
+      "effects": [],
+      "damage": null,
+      "cooldownRounds": 0,
+      "areaSpell": false
+    },
+    {
+      "id": "sticky-foam",
+      "name": "Sticky Foam",
+      "description": "Throw 6 m: the target is restrained (STR save DC 13 to break free). Uses one Sticky Foam Flask.",
+      "level": 0,
+      "school": "conjuration",
+      "manaCost": 0,
+      "range": 20,
+      "radius": 0,
+      "castingMethod": "hand-movement",
+      "requiredConsumables": [
+        {
+          "id": "sticky-foam-flask",
+          "name": "Sticky Foam Flask",
+          "type": "device",
+          "description": "A pressurised flask of expanding foam. Thrown 6 m, it glues a creature's feet in place (restrained, STR save DC 13 ends it). Consumed on use.",
+          "valueGold": 10,
+          "weight": 0.5,
+          "damage": null,
+          "durability": {
+            "max": 1,
+            "current": 1
+          },
+          "spellId": "sticky-foam",
+          "chargeLevel": 0,
+          "mechanical": true,
+          "effects": [
+            "restrained"
+          ]
+        }
+      ],
+      "requiredTools": [],
+      "concentration": null,
+      "effects": [
+        {
+          "id": "restrained",
+          "name": "Restrained",
+          "description": "Speed is zero, attacks are made at disadvantage, and dexterity saves suffer.",
+          "damaging": false,
+          "healing": false,
+          "damageAmount": 0,
+          "healingAmount": 0
+        }
+      ],
+      "damage": null,
+      "cooldownRounds": 0,
+      "areaSpell": false
+    },
+    {
+      "id": "messenger-beetle",
+      "name": "Messenger Beetle",
+      "description": "Wind the beetle: it carries a 25-word message to a place you know within 1 mile. Costs a Steam-pressure charge.",
+      "level": 1,
+      "school": "divination",
+      "manaCost": 3,
+      "range": 5,
+      "radius": 0,
+      "castingMethod": "hand-movement",
+      "requiredConsumables": [],
+      "requiredTools": [],
+      "concentration": null,
+      "effects": [],
+      "damage": null,
+      "cooldownRounds": 0,
+      "areaSpell": false
+    },
+    {
+      "id": "scalding-bolt-shot",
+      "name": "Bolt Repeater: Scalding Bolt",
+      "description": "Bonus action: the Bolt Repeater fires a Scalding Bolt. Ranged attack with INT, 30 m: 2d6 fire and burning. Uses one Scalding Bolt.",
+      "level": 0,
+      "school": "evocation",
+      "manaCost": 0,
+      "range": 100,
+      "radius": 0,
+      "castingMethod": "hand-movement",
+      "requiredConsumables": [
+        {
+          "id": "scalding-bolt",
+          "name": "Scalding Bolt",
+          "type": "device",
+          "description": "Bolt Repeater ammunition with a boiling-water core. Fires as a Bolt Repeater shot: 2d6 fire and the target is scalded (burn). One bolt per shot.",
+          "valueGold": 3,
+          "weight": 0.1,
+          "damage": null,
+          "durability": {
+            "max": 1,
+            "current": 1
+          },
+          "spellId": "scalding-bolt-shot",
+          "chargeLevel": 0,
+          "mechanical": true,
+          "effects": [
+            "burn"
+          ]
+        }
+      ],
+      "requiredTools": [],
+      "concentration": null,
+      "effects": [
+        {
+          "id": "burn",
+          "name": "Burning",
+          "description": "Flames cling to the target and keep searing it each round.",
+          "damaging": true,
+          "healing": false,
+          "damageAmount": 3,
+          "healingAmount": 0
+        }
+      ],
+      "damage": {
+        "dice": [
+          {
+            "diceId": "d6",
+            "count": 2
+          }
+        ],
+        "typeId": "fire"
+      },
+      "cooldownRounds": 0,
+      "areaSpell": false
+    },
+    {
+      "id": "flash-bomb-throw",
+      "name": "Flash Bomb",
+      "description": "Throw 9 m: 10 ft burst, 1d4 radiant and blinded (CON save). Uses one Flash Bomb.",
+      "level": 0,
+      "school": "evocation",
+      "manaCost": 0,
+      "range": 30,
+      "radius": 10,
+      "castingMethod": "hand-movement",
+      "requiredConsumables": [
+        {
+          "id": "flash-bomb",
+          "name": "Flash Bomb",
+          "type": "device",
+          "description": "A glass ball of magnesium salts. Thrown 9 m, it bursts in a 10 ft blinding flash (1d4 radiant, CON save or blinded until the end of its next turn). Consumed on use.",
+          "valueGold": 8,
+          "weight": 0.3,
+          "damage": null,
+          "durability": {
+            "max": 1,
+            "current": 1
+          },
+          "spellId": "flash-bomb-throw",
+          "chargeLevel": 0,
+          "mechanical": true,
+          "effects": [
+            "blinded"
+          ]
+        }
+      ],
+      "requiredTools": [],
+      "concentration": null,
+      "effects": [
+        {
+          "id": "blinded",
+          "name": "Blinded",
+          "description": "Cannot see; automatically fails sight-based checks and attacks at disadvantage.",
+          "damaging": false,
+          "healing": false,
+          "damageAmount": 0,
+          "healingAmount": 0
+        }
+      ],
+      "damage": {
+        "dice": [
+          {
+            "diceId": "d4",
+            "count": 1
+          }
+        ],
+        "typeId": "radiant"
+      },
+      "cooldownRounds": 0,
+      "areaSpell": true
+    },
+    {
+      "id": "shock-dart-throw",
+      "name": "Shock Dart",
+      "description": "Throw 9 m (attack with DEX): 1d8 lightning and shocked. Uses one Shock Dart.",
+      "level": 0,
+      "school": "evocation",
+      "manaCost": 0,
+      "range": 30,
+      "radius": 0,
+      "castingMethod": "hand-movement",
+      "requiredConsumables": [
+        {
+          "id": "shock-dart",
+          "name": "Shock Dart",
+          "type": "device",
+          "description": "A finned dart with a charged copper coil. Thrown 9 m: 1d8 lightning and the target is shocked. Consumed on use.",
+          "valueGold": 4,
+          "weight": 0.1,
+          "damage": null,
+          "durability": {
+            "max": 1,
+            "current": 1
+          },
+          "spellId": "shock-dart-throw",
+          "chargeLevel": 0,
+          "mechanical": true,
+          "effects": [
+            "shock"
+          ]
+        }
+      ],
+      "requiredTools": [],
+      "concentration": null,
+      "effects": [
+        {
+          "id": "shock",
+          "name": "Shock",
+          "description": "Muscles lock under a surge of electricity, costing the victim its reaction.",
+          "damaging": false,
+          "healing": false,
+          "damageAmount": 0,
+          "healingAmount": 0
+        }
+      ],
+      "damage": {
+        "dice": [
+          {
+            "diceId": "d8",
+            "count": 1
+          }
+        ],
+        "typeId": "lightning"
+      },
+      "cooldownRounds": 0,
+      "areaSpell": false
+    },
+    {
+      "id": "steam-jet-blast",
+      "name": "Steam-Jet Blast",
+      "description": "Steam-Jet Gauntlet: 15 ft cone of scalding steam, 2d6 fire and pushed back (DEX save for half). Costs a Steam-pressure charge.",
+      "level": 1,
+      "school": "evocation",
+      "manaCost": 3,
+      "range": 15,
+      "radius": 15,
+      "castingMethod": "hand-movement",
+      "requiredConsumables": [],
+      "requiredTools": [],
+      "concentration": null,
+      "effects": [
+        {
+          "id": "knockback",
+          "name": "Knockback",
+          "description": "Force enough to hurl the target away from its attacker.",
+          "damaging": false,
+          "healing": false,
+          "damageAmount": 0,
+          "healingAmount": 0
+        }
+      ],
+      "damage": {
+        "dice": [
+          {
+            "diceId": "d6",
+            "count": 2
+          }
+        ],
+        "typeId": "fire"
+      },
+      "cooldownRounds": 0,
+      "areaSpell": true
+    },
+    {
+      "id": "thermal-grenade-throw",
+      "name": "Thermal Grenade",
+      "description": "Throw 12 m: 10 ft radius, 3d6 fire and burning (DEX save for half). Uses one Thermal Grenade.",
+      "level": 0,
+      "school": "evocation",
+      "manaCost": 0,
+      "range": 40,
+      "radius": 10,
+      "castingMethod": "hand-movement",
+      "requiredConsumables": [
+        {
+          "id": "thermal-grenade",
+          "name": "Thermal Grenade",
+          "type": "device",
+          "description": "A thick brass shell holding a Thermal charge that is released all at once. Thrown 12 m: 10 ft radius, 3d6 fire and burning. Consumed on use.",
+          "valueGold": 20,
+          "weight": 0.8,
+          "damage": null,
+          "durability": {
+            "max": 1,
+            "current": 1
+          },
+          "spellId": "thermal-grenade-throw",
+          "chargeLevel": 0,
+          "mechanical": true,
+          "effects": [
+            "burn",
+            "area_damage"
+          ]
+        }
+      ],
+      "requiredTools": [],
+      "concentration": null,
+      "effects": [
+        {
+          "id": "burn",
+          "name": "Burning",
+          "description": "Flames cling to the target and keep searing it each round.",
+          "damaging": true,
+          "healing": false,
+          "damageAmount": 3,
+          "healingAmount": 0
+        }
+      ],
+      "damage": {
+        "dice": [
+          {
+            "diceId": "d6",
+            "count": 3
+          }
+        ],
+        "typeId": "fire"
+      },
+      "cooldownRounds": 0,
+      "areaSpell": true
+    },
+    {
+      "id": "pressure-ram-strike",
+      "name": "Pressure Ram",
+      "description": "Melee strike with the forearm piston: 3d8 bludgeoning, the target is knocked back and prone. Costs a Thermal charge.",
+      "level": 2,
+      "school": "evocation",
+      "manaCost": 6,
+      "range": 5,
+      "radius": 0,
+      "castingMethod": "hand-movement",
+      "requiredConsumables": [],
+      "requiredTools": [],
+      "concentration": null,
+      "effects": [
+        {
+          "id": "knockback",
+          "name": "Knockback",
+          "description": "Force enough to hurl the target away from its attacker.",
+          "damaging": false,
+          "healing": false,
+          "damageAmount": 0,
+          "healingAmount": 0
+        },
+        {
+          "id": "prone",
+          "name": "Prone",
+          "description": "Knocked flat; movement costs double and melee attackers gain advantage.",
+          "damaging": false,
+          "healing": false,
+          "damageAmount": 0,
+          "healingAmount": 0
+        }
+      ],
+      "damage": {
+        "dice": [
+          {
+            "diceId": "d8",
+            "count": 3
+          }
+        ],
+        "typeId": "bludgeoning"
+      },
+      "cooldownRounds": 0,
+      "areaSpell": false
+    },
+    {
+      "id": "concussion-bolt-shot",
+      "name": "Bolt Repeater: Concussion Bolt",
+      "description": "Bonus action: the Bolt Repeater fires a Concussion Bolt. Ranged attack with INT, 30 m: bursts in 5 ft, 3d6 thunder and concussed. Uses one Concussion Bolt.",
+      "level": 0,
+      "school": "evocation",
+      "manaCost": 0,
+      "range": 100,
+      "radius": 5,
+      "castingMethod": "hand-movement",
+      "requiredConsumables": [
+        {
+          "id": "concussion-bolt",
+          "name": "Concussion Bolt",
+          "type": "device",
+          "description": "Bolt Repeater ammunition packed with powder. On impact it bursts in a 5 ft radius: 3d6 thunder and the target is concussed. One bolt per shot.",
+          "valueGold": 10,
+          "weight": 0.2,
+          "damage": null,
+          "durability": {
+            "max": 1,
+            "current": 1
+          },
+          "spellId": "concussion-bolt-shot",
+          "chargeLevel": 0,
+          "mechanical": true,
+          "effects": [
+            "concussed",
+            "area_damage"
+          ]
+        }
+      ],
+      "requiredTools": [],
+      "concentration": null,
+      "effects": [
+        {
+          "id": "concussed",
+          "name": "Concussed",
+          "description": "Head ringing: disadvantage on attacks and ability checks until the end of its next turn.",
+          "damaging": false,
+          "healing": false,
+          "damageAmount": 0,
+          "healingAmount": 0,
+          "durationRounds": 1,
+          "lasting": true
+        },
+        {
+          "id": "stunned",
+          "name": "Stunned",
+          "description": "Incapacitated, unable to move, and barely able to speak.",
+          "damaging": false,
+          "healing": false,
+          "damageAmount": 0,
+          "healingAmount": 0
+        }
+      ],
+      "damage": {
+        "dice": [
+          {
+            "diceId": "d6",
+            "count": 3
+          }
+        ],
+        "typeId": "thunder"
+      },
+      "cooldownRounds": 0,
+      "areaSpell": true
+    },
+    {
+      "id": "thermal-smoke-burst",
+      "name": "Thermal Smoke Grenade",
+      "description": "Throw 12 m: a 20 ft cloud heavily obscures the area for 1 minute. Needs exactly one Thermal capsule (no other type works).",
+      "level": 2,
+      "school": "conjuration",
+      "manaCost": 6,
+      "range": 40,
+      "radius": 20,
+      "castingMethod": "hand-movement",
+      "requiredConsumables": [],
+      "requiredTools": [],
+      "concentration": null,
+      "effects": [
+        {
+          "id": "blinded",
+          "name": "Blinded",
+          "description": "Cannot see; automatically fails sight-based checks and attacks at disadvantage.",
+          "damaging": false,
+          "healing": false,
+          "damageAmount": 0,
+          "healingAmount": 0
+        }
+      ],
+      "damage": null,
+      "cooldownRounds": 0,
+      "areaSpell": true
     }
   ]
 }

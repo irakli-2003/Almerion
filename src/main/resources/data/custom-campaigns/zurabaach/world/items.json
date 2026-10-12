@@ -2488,6 +2488,1021 @@
         "current": 1
       },
       "overview": "Ammunition for Sixfold Judgment. Found or crafted only."
+    },
+    {
+      "id": "tinkers-tools",
+      "name": "Tinker's Tools",
+      "type": "tool",
+      "description": "Drivers, tweezers, tiny files and spare screws for clockwork and small mechanisms.",
+      "valueGold": 50,
+      "weight": 5.0,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "furnaceTier": 0
+    },
+    {
+      "id": "smiths-tools",
+      "name": "Smith's Tools",
+      "type": "tool",
+      "description": "Hammers, tongs and punches for metal fittings, rivets and ammunition casings.",
+      "valueGold": 20,
+      "weight": 8.0,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "furnaceTier": 0
+    },
+    {
+      "id": "woodcarvers-tools",
+      "name": "Woodcarver's Tools",
+      "type": "tool",
+      "description": "Knives, gouges and a small saw for stocks, housings and frames.",
+      "valueGold": 1,
+      "weight": 5.0,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "furnaceTier": 0
+    },
+    {
+      "id": "portable-forge",
+      "name": "Tinkerer's Portable Forge",
+      "type": "tool",
+      "description": "A suitcase forge with a pressure boiler. Burns fuel to fill Steam-pressure charges (level 1).",
+      "valueGold": 75,
+      "weight": 12.0,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "furnaceTier": 1
+    },
+    {
+      "id": "valebrick-field-workshop",
+      "name": "Valebrick Portable Field Workshop",
+      "type": "tool",
+      "description": "Toren's 32-36 kg backpack workshop: tool panels, a compact hardened-steel anvil, a small forge chamber, sealed blueprint tubes and the Valebrick Resonance Core - a refined crystal in a brass stabilisation cage. Deploys into a workbench in 30-60 seconds. Its furnace burns any fuel to fill Steam-pressure (L1) and Thermal (L2) charges; upgrades will unlock Electric charges and beyond.",
+      "valueGold": 500,
+      "weight": 34.0,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "furnaceTier": 2
+    },
+    {
+      "id": "firewood",
+      "name": "Firewood Bundle",
+      "type": "fuel",
+      "description": "Dry split logs. Cheap and everywhere, but burns fast: 2 furnace units.",
+      "valueGold": 0.1,
+      "weight": 5.0,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "fuelValue": 2
+    },
+    {
+      "id": "charcoal",
+      "name": "Charcoal Sack",
+      "type": "fuel",
+      "description": "Clean, hot-burning charcoal: 3 furnace units.",
+      "valueGold": 0.5,
+      "weight": 3.0,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "fuelValue": 3
+    },
+    {
+      "id": "coal",
+      "name": "Coal Lump",
+      "type": "fuel",
+      "description": "Dense black coal from the mines: 4 furnace units.",
+      "valueGold": 1,
+      "weight": 2.0,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "fuelValue": 4
+    },
+    {
+      "id": "lamp-oil",
+      "name": "Flask of Lamp Oil",
+      "type": "fuel",
+      "description": "Refined oil; the most efficient common fuel: 5 furnace units.",
+      "valueGold": 1,
+      "weight": 1.0,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "fuelValue": 5
+    },
+    {
+      "id": "brass-scrap",
+      "name": "Brass Scrap",
+      "type": "material",
+      "description": "Offcuts, old fittings and casings - the basis of most housings.",
+      "valueGold": 1,
+      "weight": 0.5,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "steel-stock",
+      "name": "Steel Bar Stock",
+      "type": "material",
+      "description": "Short bars of good steel for bolts, rams and frames.",
+      "valueGold": 2,
+      "weight": 1.0,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "copper-wire",
+      "name": "Copper Wire Coil",
+      "type": "material",
+      "description": "Conductive wire for triggers, coils and shock circuits.",
+      "valueGold": 2,
+      "weight": 0.3,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "clockwork-springs",
+      "name": "Clockwork Springs",
+      "type": "material",
+      "description": "A tin of springs, cogs and escapements.",
+      "valueGold": 3,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "glass-lens",
+      "name": "Glass Lens",
+      "type": "material",
+      "description": "A ground lens or vial - focuses light or holds a reagent.",
+      "valueGold": 3,
+      "weight": 0.1,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "leather-strap",
+      "name": "Leather Straps",
+      "type": "material",
+      "description": "Buckles and straps to mount a device on a body or a pack.",
+      "valueGold": 1,
+      "weight": 0.3,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "alchemical-salts",
+      "name": "Alchemical Salts",
+      "type": "material",
+      "description": "Reactive salts: smoke, foam and flash compounds.",
+      "valueGold": 4,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "black-powder",
+      "name": "Black Powder",
+      "type": "material",
+      "description": "A small horn of powder. Keep it away from the furnace.",
+      "valueGold": 5,
+      "weight": 0.5,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "valebrick-bolt-repeater",
+      "name": "Valebrick Bolt Repeater",
+      "type": "device",
+      "description": "Single-barrel stationary turret carried in Toren's workshop pack (Artillerist Eldritch Cannon - Force Ballista). Deploy with an action on a small tripod within 5 ft; fire it with a bonus action: ranged attack, 30 m, 2d6 force and the target is pushed 5 ft. AC 8, HP 12; Mending restores 1d6. Basic rivet shots are free; special ammunition (Scalding or Concussion bolts) adds its own shot.",
+      "valueGold": 0,
+      "weight": 9.0,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "spellId": "bolt-repeater-shot",
+      "chargeLevel": 0,
+      "mechanical": true,
+      "effects": [
+        "knockback"
+      ]
+    },
+    {
+      "id": "smoke-canister",
+      "name": "Smoke Canister",
+      "type": "device",
+      "description": "Pull the pin and throw: a 15 ft cloud of thick grey smoke heavily obscures the area for 1 minute. Consumed on use.",
+      "valueGold": 5,
+      "weight": 0.5,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "spellId": "smoke-canister-burst",
+      "chargeLevel": 0,
+      "mechanical": true,
+      "effects": [
+        "blinded"
+      ]
+    },
+    {
+      "id": "tripwire-alarm",
+      "name": "Tripwire Alarm",
+      "type": "device",
+      "description": "A spring-loaded bell with 15 m of copper tripwire. Anything crossing the wire rings it loudly; set up in 1 minute around a camp or doorway. Needs no charge.",
+      "valueGold": 5,
+      "weight": 1.0,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "spellId": null,
+      "chargeLevel": 0,
+      "mechanical": true,
+      "effects": []
+    },
+    {
+      "id": "grapnel-launcher",
+      "name": "Steam Grapnel Launcher",
+      "type": "device",
+      "description": "Wrist-mounted grapnel with 18 m of line. Each shot vents one Steam-pressure charge and can pull you up to the hook or yank a light object to you.",
+      "valueGold": 30,
+      "weight": 3.0,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "spellId": "grapnel-shot",
+      "chargeLevel": 1,
+      "mechanical": true,
+      "effects": []
+    },
+    {
+      "id": "sticky-foam-flask",
+      "name": "Sticky Foam Flask",
+      "type": "device",
+      "description": "A pressurised flask of expanding foam. Thrown 6 m, it glues a creature's feet in place (restrained, STR save DC 13 ends it). Consumed on use.",
+      "valueGold": 10,
+      "weight": 0.5,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "spellId": "sticky-foam",
+      "chargeLevel": 0,
+      "mechanical": true,
+      "effects": [
+        "restrained"
+      ]
+    },
+    {
+      "id": "messenger-beetle",
+      "name": "Clockwork Messenger Beetle",
+      "type": "device",
+      "description": "A palm-sized brass beetle in the style of Argus the owl. Wind it with one Steam-pressure charge and it carries a 25-word message to a place you know within 1 mile, then waits there.",
+      "valueGold": 25,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "spellId": "messenger-beetle",
+      "chargeLevel": 1,
+      "mechanical": true,
+      "effects": []
+    },
+    {
+      "id": "scalding-bolt",
+      "name": "Scalding Bolt",
+      "type": "device",
+      "description": "Bolt Repeater ammunition with a boiling-water core. Fires as a Bolt Repeater shot: 2d6 fire and the target is scalded (burn). One bolt per shot.",
+      "valueGold": 3,
+      "weight": 0.1,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "spellId": "scalding-bolt-shot",
+      "chargeLevel": 0,
+      "mechanical": true,
+      "effects": [
+        "burn"
+      ]
+    },
+    {
+      "id": "flash-bomb",
+      "name": "Flash Bomb",
+      "type": "device",
+      "description": "A glass ball of magnesium salts. Thrown 9 m, it bursts in a 10 ft blinding flash (1d4 radiant, CON save or blinded until the end of its next turn). Consumed on use.",
+      "valueGold": 8,
+      "weight": 0.3,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "spellId": "flash-bomb-throw",
+      "chargeLevel": 0,
+      "mechanical": true,
+      "effects": [
+        "blinded"
+      ]
+    },
+    {
+      "id": "shock-dart",
+      "name": "Shock Dart",
+      "type": "device",
+      "description": "A finned dart with a charged copper coil. Thrown 9 m: 1d8 lightning and the target is shocked. Consumed on use.",
+      "valueGold": 4,
+      "weight": 0.1,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "spellId": "shock-dart-throw",
+      "chargeLevel": 0,
+      "mechanical": true,
+      "effects": [
+        "shock"
+      ]
+    },
+    {
+      "id": "steam-jet-gauntlet",
+      "name": "Steam-Jet Gauntlet",
+      "type": "device",
+      "description": "A brass gauntlet with a pressure valve. Vent one Steam-pressure charge: 15 ft cone, 2d6 fire and the targets are pushed back.",
+      "valueGold": 40,
+      "weight": 2.0,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "spellId": "steam-jet-blast",
+      "chargeLevel": 1,
+      "mechanical": true,
+      "effects": [
+        "knockback"
+      ]
+    },
+    {
+      "id": "thermal-grenade",
+      "name": "Thermal Grenade",
+      "type": "device",
+      "description": "A thick brass shell holding a Thermal charge that is released all at once. Thrown 12 m: 10 ft radius, 3d6 fire and burning. Consumed on use.",
+      "valueGold": 20,
+      "weight": 0.8,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "spellId": "thermal-grenade-throw",
+      "chargeLevel": 0,
+      "mechanical": true,
+      "effects": [
+        "burn",
+        "area_damage"
+      ]
+    },
+    {
+      "id": "pressure-ram",
+      "name": "Pressure Ram",
+      "type": "device",
+      "description": "A steel forearm piston driven by a Thermal charge. Melee: 3d8 bludgeoning, the target is knocked back and prone.",
+      "valueGold": 80,
+      "weight": 6.0,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "spellId": "pressure-ram-strike",
+      "chargeLevel": 2,
+      "mechanical": true,
+      "effects": [
+        "knockback",
+        "prone"
+      ]
+    },
+    {
+      "id": "concussion-bolt",
+      "name": "Concussion Bolt",
+      "type": "device",
+      "description": "Bolt Repeater ammunition packed with powder. On impact it bursts in a 5 ft radius: 3d6 thunder and the target is concussed. One bolt per shot.",
+      "valueGold": 10,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "spellId": "concussion-bolt-shot",
+      "chargeLevel": 0,
+      "mechanical": true,
+      "effects": [
+        "concussed",
+        "area_damage"
+      ]
+    },
+    {
+      "id": "bp-smoke-canister",
+      "name": "Blueprint: Smoke Canister",
+      "type": "blueprint",
+      "description": "Cover for a retreat or a hidden approach. No charge needed to build or use.",
+      "valueGold": 25,
+      "weight": 0.1,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "productId": "smoke-canister",
+      "productQuantity": 2,
+      "category": "Utility / control",
+      "minLevel": 1,
+      "craftMinutes": 10,
+      "materials": [
+        {
+          "itemId": "brass-scrap",
+          "quantity": 1
+        },
+        {
+          "itemId": "alchemical-salts",
+          "quantity": 1
+        }
+      ],
+      "toolIds": [
+        "tinkers-tools"
+      ],
+      "charges": [],
+      "effects": []
+    },
+    {
+      "id": "bp-tripwire-alarm",
+      "name": "Blueprint: Tripwire Alarm",
+      "type": "blueprint",
+      "description": "Camp security. No charge needed to build or use.",
+      "valueGold": 25,
+      "weight": 0.1,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "productId": "tripwire-alarm",
+      "productQuantity": 1,
+      "category": "Utility / support",
+      "minLevel": 1,
+      "craftMinutes": 10,
+      "materials": [
+        {
+          "itemId": "copper-wire",
+          "quantity": 1
+        },
+        {
+          "itemId": "clockwork-springs",
+          "quantity": 1
+        }
+      ],
+      "toolIds": [
+        "tinkers-tools"
+      ],
+      "charges": [],
+      "effects": []
+    },
+    {
+      "id": "bp-grapnel-launcher",
+      "name": "Blueprint: Steam Grapnel Launcher",
+      "type": "blueprint",
+      "description": "Built once (needs a Steam-pressure charge to seal the boiler); each shot costs one more.",
+      "valueGold": 35,
+      "weight": 0.1,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "productId": "grapnel-launcher",
+      "productQuantity": 1,
+      "category": "Utility / mobility",
+      "minLevel": 2,
+      "craftMinutes": 60,
+      "materials": [
+        {
+          "itemId": "steel-stock",
+          "quantity": 1
+        },
+        {
+          "itemId": "clockwork-springs",
+          "quantity": 2
+        },
+        {
+          "itemId": "leather-strap",
+          "quantity": 1
+        }
+      ],
+      "toolIds": [
+        "tinkers-tools",
+        "smiths-tools"
+      ],
+      "charges": [
+        {
+          "level": 1,
+          "count": 1
+        }
+      ],
+      "effects": []
+    },
+    {
+      "id": "bp-sticky-foam",
+      "name": "Blueprint: Sticky Foam Flask",
+      "type": "blueprint",
+      "description": "A Steam-pressure charge pressurises the flasks; using them needs no charge.",
+      "valueGold": 25,
+      "weight": 0.1,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "productId": "sticky-foam-flask",
+      "productQuantity": 2,
+      "category": "Control",
+      "minLevel": 1,
+      "craftMinutes": 20,
+      "materials": [
+        {
+          "itemId": "alchemical-salts",
+          "quantity": 2
+        },
+        {
+          "itemId": "glass-lens",
+          "quantity": 1
+        }
+      ],
+      "toolIds": [
+        "tinkers-tools"
+      ],
+      "charges": [
+        {
+          "level": 1,
+          "count": 1
+        }
+      ],
+      "effects": []
+    },
+    {
+      "id": "bp-messenger-beetle",
+      "name": "Blueprint: Clockwork Messenger Beetle",
+      "type": "blueprint",
+      "description": "No charge to build; each flight costs a Steam-pressure charge.",
+      "valueGold": 25,
+      "weight": 0.1,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "productId": "messenger-beetle",
+      "productQuantity": 1,
+      "category": "Utility / support",
+      "minLevel": 1,
+      "craftMinutes": 60,
+      "materials": [
+        {
+          "itemId": "brass-scrap",
+          "quantity": 1
+        },
+        {
+          "itemId": "clockwork-springs",
+          "quantity": 1
+        },
+        {
+          "itemId": "glass-lens",
+          "quantity": 1
+        }
+      ],
+      "toolIds": [
+        "tinkers-tools",
+        "woodcarvers-tools"
+      ],
+      "charges": [],
+      "effects": []
+    },
+    {
+      "id": "bp-scalding-bolts",
+      "name": "Blueprint: Scalding Bolts",
+      "type": "blueprint",
+      "description": "Bolt Repeater ammunition. A Steam-pressure charge seals the boiling cores.",
+      "valueGold": 25,
+      "weight": 0.1,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "productId": "scalding-bolt",
+      "productQuantity": 4,
+      "category": "Light combat (ammo)",
+      "minLevel": 1,
+      "craftMinutes": 20,
+      "materials": [
+        {
+          "itemId": "steel-stock",
+          "quantity": 1
+        },
+        {
+          "itemId": "brass-scrap",
+          "quantity": 1
+        }
+      ],
+      "toolIds": [
+        "smiths-tools"
+      ],
+      "charges": [
+        {
+          "level": 1,
+          "count": 1
+        }
+      ],
+      "effects": []
+    },
+    {
+      "id": "bp-flash-bomb",
+      "name": "Blueprint: Flash Bomb",
+      "type": "blueprint",
+      "description": "No charge to build or use.",
+      "valueGold": 25,
+      "weight": 0.1,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "productId": "flash-bomb",
+      "productQuantity": 2,
+      "category": "Light combat",
+      "minLevel": 1,
+      "craftMinutes": 20,
+      "materials": [
+        {
+          "itemId": "glass-lens",
+          "quantity": 1
+        },
+        {
+          "itemId": "alchemical-salts",
+          "quantity": 1
+        },
+        {
+          "itemId": "black-powder",
+          "quantity": 1
+        }
+      ],
+      "toolIds": [
+        "tinkers-tools"
+      ],
+      "charges": [],
+      "effects": []
+    },
+    {
+      "id": "bp-shock-darts",
+      "name": "Blueprint: Shock Darts",
+      "type": "blueprint",
+      "description": "A Steam-pressure charge winds the coils; throwing needs no charge.",
+      "valueGold": 35,
+      "weight": 0.1,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "productId": "shock-dart",
+      "productQuantity": 3,
+      "category": "Light combat",
+      "minLevel": 2,
+      "craftMinutes": 20,
+      "materials": [
+        {
+          "itemId": "copper-wire",
+          "quantity": 1
+        },
+        {
+          "itemId": "steel-stock",
+          "quantity": 1
+        }
+      ],
+      "toolIds": [
+        "tinkers-tools"
+      ],
+      "charges": [
+        {
+          "level": 1,
+          "count": 1
+        }
+      ],
+      "effects": []
+    },
+    {
+      "id": "bp-steam-jet-gauntlet",
+      "name": "Blueprint: Steam-Jet Gauntlet",
+      "type": "blueprint",
+      "description": "Built once; each blast costs a Steam-pressure charge.",
+      "valueGold": 35,
+      "weight": 0.1,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "productId": "steam-jet-gauntlet",
+      "productQuantity": 1,
+      "category": "Light combat",
+      "minLevel": 2,
+      "craftMinutes": 60,
+      "materials": [
+        {
+          "itemId": "brass-scrap",
+          "quantity": 2
+        },
+        {
+          "itemId": "leather-strap",
+          "quantity": 1
+        },
+        {
+          "itemId": "clockwork-springs",
+          "quantity": 1
+        }
+      ],
+      "toolIds": [
+        "tinkers-tools",
+        "smiths-tools"
+      ],
+      "charges": [
+        {
+          "level": 1,
+          "count": 1
+        }
+      ],
+      "effects": []
+    },
+    {
+      "id": "bp-thermal-grenade",
+      "name": "Blueprint: Thermal Grenade",
+      "type": "blueprint",
+      "description": "Each pair stores a Thermal charge (or stronger). Throwing needs no charge.",
+      "valueGold": 45,
+      "weight": 0.1,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "productId": "thermal-grenade",
+      "productQuantity": 2,
+      "category": "Medium combat",
+      "minLevel": 3,
+      "craftMinutes": 30,
+      "materials": [
+        {
+          "itemId": "brass-scrap",
+          "quantity": 1
+        },
+        {
+          "itemId": "black-powder",
+          "quantity": 2
+        },
+        {
+          "itemId": "alchemical-salts",
+          "quantity": 1
+        }
+      ],
+      "toolIds": [
+        "tinkers-tools",
+        "smiths-tools"
+      ],
+      "charges": [
+        {
+          "level": 2,
+          "count": 1
+        }
+      ],
+      "effects": []
+    },
+    {
+      "id": "bp-pressure-ram",
+      "name": "Blueprint: Pressure Ram",
+      "type": "blueprint",
+      "description": "Built once; each strike costs a Thermal charge.",
+      "valueGold": 65,
+      "weight": 0.1,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "productId": "pressure-ram",
+      "productQuantity": 1,
+      "category": "Medium combat",
+      "minLevel": 5,
+      "craftMinutes": 120,
+      "materials": [
+        {
+          "itemId": "steel-stock",
+          "quantity": 3
+        },
+        {
+          "itemId": "clockwork-springs",
+          "quantity": 2
+        },
+        {
+          "itemId": "brass-scrap",
+          "quantity": 2
+        }
+      ],
+      "toolIds": [
+        "smiths-tools",
+        "tinkers-tools"
+      ],
+      "charges": [
+        {
+          "level": 2,
+          "count": 1
+        }
+      ],
+      "effects": []
+    },
+    {
+      "id": "bp-concussion-bolts",
+      "name": "Blueprint: Concussion Bolts",
+      "type": "blueprint",
+      "description": "Bolt Repeater ammunition. A Thermal charge primes the powder.",
+      "valueGold": 65,
+      "weight": 0.1,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "productId": "concussion-bolt",
+      "productQuantity": 3,
+      "category": "Medium combat (ammo)",
+      "minLevel": 5,
+      "craftMinutes": 30,
+      "materials": [
+        {
+          "itemId": "steel-stock",
+          "quantity": 1
+        },
+        {
+          "itemId": "black-powder",
+          "quantity": 1
+        },
+        {
+          "itemId": "copper-wire",
+          "quantity": 1
+        }
+      ],
+      "toolIds": [
+        "smiths-tools"
+      ],
+      "charges": [
+        {
+          "level": 2,
+          "count": 1
+        }
+      ],
+      "effects": []
+    },
+    {
+      "id": "valebrick-folding-bracer",
+      "name": "Valebrick Folding Bracer",
+      "type": "armor",
+      "description": "A metal bracer covering the whole left forearm. With a flick it unfolds into a round light shield, 25 cm in radius. Stops arrows, bolts and light blades, but it is too light to absorb blunt blows (no bonus against bludgeoning). DM item - found in the storage world.",
+      "valueGold": 150,
+      "weight": 1.5,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "material": "STEEL",
+      "armorClassBonus": 2
+    },
+    {
+      "id": "thermal-smoke-grenade",
+      "name": "Thermal Smoke Grenade",
+      "type": "device",
+      "description": "A reusable brass canister with a heating coil and a cartridge of smoke salts. Slot in a Thermal capsule and throw: the coil flash-boils the salts into a 20 ft cloud that heavily obscures the area for 1 minute; then pick it up and reload it. Tuned to Thermal capsules ONLY - steam pressure cannot heat the coil and an Electric capsule would burn it out.",
+      "valueGold": 45,
+      "weight": 1.0,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "spellId": "thermal-smoke-burst",
+      "chargeLevel": 2,
+      "mechanical": false,
+      "effects": [
+        "blinded"
+      ]
+    },
+    {
+      "id": "bp-thermal-smoke-grenade",
+      "name": "Blueprint: Thermal Smoke Grenade",
+      "type": "blueprint",
+      "description": "Reusable smoke grenade. Building it needs no charge, but every throw needs exactly one Thermal capsule.",
+      "valueGold": 45,
+      "weight": 0.1,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "productId": "thermal-smoke-grenade",
+      "productQuantity": 1,
+      "category": "Utility / control",
+      "minLevel": 3,
+      "craftMinutes": 60,
+      "materials": [
+        {
+          "itemId": "brass-scrap",
+          "quantity": 2
+        },
+        {
+          "itemId": "copper-wire",
+          "quantity": 1
+        },
+        {
+          "itemId": "alchemical-salts",
+          "quantity": 2
+        }
+      ],
+      "toolIds": [
+        "tinkers-tools",
+        "smiths-tools"
+      ],
+      "charges": [],
+      "effects": []
     }
   ]
 }

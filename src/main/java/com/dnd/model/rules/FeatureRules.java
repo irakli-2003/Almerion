@@ -334,6 +334,16 @@ public final class FeatureRules {
             case "arcane recovery" -> kit.add(new Action("arcane-recovery", "Arcane Recovery",
                 "After a short rest, recover spell slots totalling up to half your wizard level.",
                 Kind.COUNTER, 1, Recharge.LONG_REST));
+            case "combat fabrication" -> kit.add(new Action("combat-fabrication", "Combat Fabrication",
+                "Bonus action: Emergency Patch (ally regains 1d8 + INT), Quick Cover (half cover until your next"
+                    + " turn) or Special Charge (next device shot +1d6).", Kind.COUNTER, 3, Recharge.LONG_REST));
+            case "flash of genius" -> kit.add(new Action("flash-of-genius", "Flash of Genius",
+                "Reaction: add your Intelligence modifier to an ally's ability check or saving throw within 30 ft.",
+                Kind.COUNTER, Math.max(1, mod(stats, "int")), Recharge.LONG_REST));
+            case "bolt repeater" -> kit.add(new Action("bolt-repeater", "Deploy Bolt Repeater",
+                "Action: unfold the turret within 5 ft (AC 8, HP " + Math.max(12, 5 * level - 13)
+                    + "; Mending restores 1d6). Fire it as a bonus action. Free deployment once per long rest, later ones cost a charge.",
+                Kind.COUNTER, 1, Recharge.LONG_REST));
             default -> kit.note(raw, desc);
         }
     }

@@ -44,6 +44,11 @@ public final class EntityInstanceFactory {
     private static final List<Class<?>> ITEM_TYPES = Arrays.asList(
         Armor.class,
         Book.class,
+        com.dnd.model.item.crafting.Blueprint.class,
+        com.dnd.model.item.crafting.Device.class,
+        com.dnd.model.item.crafting.Tool.class,
+        com.dnd.model.item.crafting.Material.class,
+        com.dnd.model.item.crafting.Fuel.class,
         Potion.class,
         Poison.class,
         Oil.class,

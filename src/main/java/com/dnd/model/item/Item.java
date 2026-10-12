@@ -14,7 +14,12 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     @JsonSubTypes.Type(value = Book.class, name = "book"),
     @JsonSubTypes.Type(value = BodyArmor.class, name = "armor"),
     @JsonSubTypes.Type(value = MeleeWeapon.class, name = "weapon"),
-    @JsonSubTypes.Type(value = Potion.class, name = "alchemy")
+    @JsonSubTypes.Type(value = Potion.class, name = "alchemy"),
+    @JsonSubTypes.Type(value = com.dnd.model.item.crafting.Blueprint.class, name = "blueprint"),
+    @JsonSubTypes.Type(value = com.dnd.model.item.crafting.Fuel.class, name = "fuel"),
+    @JsonSubTypes.Type(value = com.dnd.model.item.crafting.Tool.class, name = "tool"),
+    @JsonSubTypes.Type(value = com.dnd.model.item.crafting.Material.class, name = "material"),
+    @JsonSubTypes.Type(value = com.dnd.model.item.crafting.Device.class, name = "device")
 })
 public abstract class Item implements Printable, Pickable {
     private String id;

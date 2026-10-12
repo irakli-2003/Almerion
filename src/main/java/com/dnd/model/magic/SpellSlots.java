@@ -46,7 +46,7 @@ public final class SpellSlots {
         int lvl = Math.min(20, level);
         switch (type) {
             case FULL -> copyRow(FULL[lvl - 1], out);
-            case HALF -> {
+            case HALF, ENERGY -> {
                 if (lvl >= 2) copyRow(FULL[(lvl + 1) / 2 - 1], out);
             }
             case THIRD -> {
@@ -143,6 +143,24 @@ public final class SpellSlots {
             if (slot != null) out.add(slot.copy());
         }
         return out;
+    }
+
+    /** "a 2nd-level slot", or "a Thermal charge" for energy casters. */
+    public static String slotName(int level, CastingResource resource) {
+        if (resource == CastingResource.ENERGY_CHARGES) return "a " + EnergyCharges.name(level) + " charge";
+        return "a " + ordinal(level) + "-level slot";
+    }
+
+    /** Row label for slot editors: "2nd-level slots" or "Thermal charges (L2)". */
+    public static String rowLabel(int level, CastingResource resource) {
+        if (resource == CastingResource.ENERGY_CHARGES) return EnergyCharges.name(level) + " charges (L" + level + ")";
+        return ordinal(level) + "-level slots";
+    }
+
+    /** {@link #describe(List)} using charge names when {@code resource} is energy charges. */
+    public static String describe(List<SpellSlot> slots, CastingResource resource) {
+        if (resource != CastingResource.ENERGY_CHARGES) return describe(slots);
+        return EnergyCharges.describe(slots);
     }
 
     /** Compact "1st 3/4 · 2nd 1/3" style summary; empty string when there are no slots. */

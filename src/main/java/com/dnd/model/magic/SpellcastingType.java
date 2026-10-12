@@ -11,7 +11,9 @@ public enum SpellcastingType {
     /** Eldritch Knight / Arcane Trickster subclasses. */
     THIRD("Third caster"),
     /** Warlock: few slots, all of the same level, back on a short rest. */
-    PACT("Pact magic");
+    PACT("Pact magic"),
+    /** Homebrew artificer: half-caster progression, paid with energy charges instead of slots. */
+    ENERGY("Energy charges (half caster)");
 
     private final String label;
 

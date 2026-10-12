@@ -48,8 +48,8 @@ final class ProgressionPanel {
         if (pc.getMaxHitPoints() > 0) facts.add("HP " + pc.getCurrentHitPoints() + "/" + pc.getMaxHitPoints());
         CastingResource resource = Progression.resourceOf(pc, cls);
         if (pc.getMaxMana() > 0) facts.add("Mana " + pc.getCurrentMana() + "/" + pc.getMaxMana());
-        String slots = SpellSlots.describe(pc.getSpellSlots());
-        if (!slots.isBlank()) facts.add("Slots " + slots);
+        String slots = SpellSlots.describe(pc.getSpellSlots(), resource);
+        if (!slots.isBlank()) facts.add((resource == CastingResource.ENERGY_CHARGES ? "Charges " : "Slots ") + slots);
         facts.add("Casts with: " + resource);
         if (!pc.getCooldowns().isEmpty()) facts.add("Cooling down: " + pc.getCooldowns());
         if (!pc.getActiveEffects().isEmpty()) facts.add("Effects: " + pc.getActiveEffects());
@@ -76,19 +76,21 @@ final class ProgressionPanel {
                 } catch (NumberFormatException ex) {
                     hp = 0;
                 }
-                Progression.shortRest(pc, cls, hp);
+                Progression.shortRest(pc, cls, hp, repos.items()::getById);
                 repos.players().save(pc);
                 onChanged.run();
             });
         });
-        shortRest.setTooltip(new Tooltip("HP from hit dice, pact slots back, half the missing mana, timed effects end"));
+        shortRest.setTooltip(new Tooltip("HP from hit dice, pact slots back, half the missing mana, timed effects end."
+            + " The workshop furnace refills each energy charge type up to half of its maximum from the fuel in the pack."));
 
         Button longRest = owner.btn("Long Rest", () -> {
-            Progression.longRest(pc);
+            Progression.longRest(pc, repos.items()::getById);
             repos.players().save(pc);
             onChanged.run();
         });
-        longRest.setTooltip(new Tooltip("Full HP, mana and spell slots; every effect and cooldown cleared"));
+        longRest.setTooltip(new Tooltip("Full HP, mana and spell slots; every effect and cooldown cleared."
+            + " Energy charges are refilled by the workshop furnace from the fuel in the pack."));
 
         box.getChildren().add(new FlowPane(8, 8, levelUp, shortRest, longRest));
         return box;
@@ -122,7 +124,7 @@ final class ProgressionPanel {
         }
 
         List<Spinner<Integer>> slotSpinners = new ArrayList<>();
-        if (plan.resource == CastingResource.SPELL_SLOTS) {
+        if (plan.resource.usesSlots()) {
             for (int i = 0; i < 9; i++) {
                 if (plan.slotsAfter[i] == 0 && plan.slotsBefore[i] == 0) {
                     slotSpinners.add(null);
@@ -131,7 +133,7 @@ final class ProgressionPanel {
                 Spinner<Integer> s = new Spinner<>(0, 9, plan.slotsAfter[i]);
                 s.setEditable(true);
                 slotSpinners.add(s);
-                grid.addRow(row++, new Label(SpellSlots.ordinal(i + 1) + "-level slots:"), s,
+                grid.addRow(row++, new Label(SpellSlots.rowLabel(i + 1, plan.resource) + ":"), s,
                     new Label("was " + plan.slotsBefore[i]));
             }
         }

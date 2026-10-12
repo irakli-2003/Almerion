@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import com.dnd.model.crafting.Workshop;
 import java.util.function.IntConsumer;
 import java.util.function.Supplier;
 
@@ -418,8 +419,144 @@ final class ManagePlayersPanel {
             ProgressionPanel.build(owner, repos, pc, () -> showPlayer(pc)),
             subLabel("Vitals"), vitals,
             subLabel("Class & Race Features"), featuresBox(pc, persist),
+            workshopBox(pc, persist),
             headerRow("Items", addItem), itemPicker, itemsBox,
             headerRow("Active Effects", addEffect), effectPicker, effectsBox);
+    }
+
+    /**
+     * The artificer's workshop: energy charges, the furnace (burn fuel, make charges) and the
+     * blueprint book (learn carried blueprints, build from known ones). Hidden for characters
+     * with no charges, no blueprints and no workshop tools.
+     */
+    private Node workshopBox(PlayerCharacter pc, Runnable persist) {
+        java.util.function.Function<String, Item> items = repos.items()::getById;
+        boolean energy = pc.getCastingResource() == com.dnd.model.magic.CastingResource.ENERGY_CHARGES;
+        int tier = Workshop.furnaceTier(pc, items);
+        List<com.dnd.model.item.crafting.Blueprint> carriedPlans = new ArrayList<>();
+        List<com.dnd.model.item.crafting.Fuel> fuels = new ArrayList<>();
+        if (pc.getItems() != null) {
+            for (PlayerCharacter.PlayerItem carried : pc.getItems()) {
+                Item item = carried == null ? null : items.apply(carried.getItemId());
+                if (item instanceof com.dnd.model.item.crafting.Blueprint bp && !carriedPlans.contains(bp)) carriedPlans.add(bp);
+                if (item instanceof com.dnd.model.item.crafting.Fuel f && !fuels.contains(f)) fuels.add(f);
+            }
+        }
+        if (!energy && tier == 0 && carriedPlans.isEmpty() && pc.getKnownBlueprints().isEmpty()) return new VBox();
+
+        Runnable redraw = () -> {
+            persist.run();
+            showPlayer(pc);
+        };
+        VBox box = new VBox(6);
+        box.getChildren().add(subLabel("Workshop & Blueprint Book"));
+
+        // Charges
+        String charges = com.dnd.model.magic.EnergyCharges.describe(pc.getSpellSlots());
+        box.getChildren().add(owner.body("⚡ Energy charges: " + (charges.isBlank() ? "none yet" : charges)));
+
+        // Furnace
+        box.getChildren().add(hint(tier == 0
+            ? "No workshop furnace in the pack - carry a tool with a furnace tier to make charges."
+            : "🔥 Furnace makes charges up to " + com.dnd.model.magic.EnergyCharges.name(tier)
+                + " · fuel burning: " + pc.getFurnaceFuel() + " units"));
+        if (tier > 0) {
+            javafx.scene.layout.FlowPane burnRow = new javafx.scene.layout.FlowPane(6, 6);
+            for (com.dnd.model.item.crafting.Fuel fuel : fuels) {
+                Button burn = smallBtn("Burn " + fuel.getName() + " (+" + fuel.getFuelValue() + ")", () -> {
+                    int units = Workshop.burn(pc, fuel.getId(), 1, items);
+                    status.accept(pc.getName() + " feeds " + fuel.getName() + " into the furnace (+" + units + " units).");
+                    redraw.run();
+                });
+                burn.setTooltip(new Tooltip("Uses one " + fuel.getName() + " from the pack"));
+                burnRow.getChildren().add(burn);
+            }
+            if (fuels.isEmpty()) burnRow.getChildren().add(hint("No fuel carried (wood, charcoal, coal, oil...)."));
+            box.getChildren().add(burnRow);
+
+            javafx.scene.layout.FlowPane chargeRow = new javafx.scene.layout.FlowPane(6, 6);
+            for (com.dnd.model.magic.SpellSlot slot : pc.getSpellSlots()) {
+                if (slot == null || slot.getMax() <= 0) continue;
+                int level = slot.getLevel();
+                String chargeName = com.dnd.model.magic.EnergyCharges.name(level);
+                Button make = smallBtn("+1 " + chargeName + " (" + com.dnd.model.magic.EnergyCharges.fuelCost(level) + " fuel)", () -> {
+                    String problem = Workshop.makeCharge(pc, level, items);
+                    status.accept(problem == null ? pc.getName() + " charges a " + chargeName + " cell." : problem);
+                    redraw.run();
+                });
+                String problem = Workshop.chargeProblem(pc, level, items);
+                make.setDisable(problem != null);
+                make.setTooltip(new Tooltip((problem == null ? "" : problem + "\n") + com.dnd.model.magic.EnergyCharges.note(level)));
+                chargeRow.getChildren().add(make);
+            }
+            box.getChildren().add(chargeRow);
+        }
+
+        // Learn carried blueprints
+        for (com.dnd.model.item.crafting.Blueprint bp : carriedPlans) {
+            if (Workshop.knows(pc, bp.getId())) continue;
+            Button learn = smallBtn("📖 Copy \"" + bp.getName() + "\" into the book", () -> {
+                Workshop.learn(pc, bp.getId());
+                status.accept(pc.getName() + " copies " + bp.getName() + " into the blueprint book.");
+                redraw.run();
+            });
+            box.getChildren().add(learn);
+        }
+
+        // Known blueprints
+        if (pc.getKnownBlueprints().isEmpty()) {
+            box.getChildren().add(hint("The blueprint book is empty. Carry a blueprint and copy it in."));
+        }
+        for (String id : new ArrayList<>(pc.getKnownBlueprints())) {
+            Item item = items.apply(id);
+            if (!(item instanceof com.dnd.model.item.crafting.Blueprint bp)) {
+                box.getChildren().add(hint("(missing blueprint " + id + ")"));
+                continue;
+            }
+            List<String> problems = Workshop.problems(pc, bp, items);
+            Label name = owner.body((problems.isEmpty() ? "✔ " : "• ") + bp.getName()
+                + (bp.getCategory() == null || bp.getCategory().isBlank() ? "" : "   · " + bp.getCategory()));
+            name.setWrapText(true);
+            name.setMaxWidth(Double.MAX_VALUE);
+            HBox.setHgrow(name, Priority.ALWAYS);
+            Button build = quick("🔧", "Build " + bp.getName(), () -> {
+                try {
+                    List<String> log = Workshop.craft(pc, bp, items);
+                    status.accept(pc.getName() + " " + String.join(", ", log) + ".");
+                } catch (IllegalStateException ex) {
+                    status.accept(ex.getMessage());
+                }
+                redraw.run();
+            });
+            build.setDisable(!problems.isEmpty());
+            Button forget = quick("✖", "Tear out of the book", () -> {
+                Workshop.forget(pc, id);
+                redraw.run();
+            });
+            HBox row = new HBox(6, name, build, forget);
+            row.setAlignment(Pos.CENTER_LEFT);
+            Label needs = hint(blueprintNeeds(bp) + (problems.isEmpty() ? "" : "\n⚠ " + String.join(" ", problems)));
+            box.getChildren().addAll(row, needs);
+        }
+        return box;
+    }
+
+    /** "Needs: 2× Brass Scrap, Tinker's Tools, 1× Thermal charge → 6× Steam Bolt". */
+    private String blueprintNeeds(com.dnd.model.item.crafting.Blueprint bp) {
+        List<String> parts = new ArrayList<>();
+        for (var m : bp.getMaterials()) {
+            Item it = m == null ? null : repos.items().getById(m.getItemId());
+            if (m != null) parts.add(m.getQuantity() + "× " + (it == null ? m.getItemId() : it.getName()));
+        }
+        for (String t : bp.getToolIds()) {
+            Item it = repos.items().getById(t);
+            parts.add(it == null ? t : it.getName());
+        }
+        for (var c : bp.getCharges()) if (c != null) parts.add(c.toString() + " charge" + (c.getCount() == 1 ? "" : "s"));
+        Item product = bp.getProductId() == null ? null : repos.items().getById(bp.getProductId());
+        return "Needs: " + (parts.isEmpty() ? "nothing" : String.join(", ", parts))
+            + " → " + bp.getProductQuantity() + "× " + (product == null ? bp.getProductId() : product.getName())
+            + (bp.getMinLevel() > 1 ? "  (level " + bp.getMinLevel() + "+)" : "");
     }
 
     /**
@@ -722,38 +859,63 @@ final class ManagePlayersPanel {
     private Node newItemForm(VBox host, Consumer<Item> onCreated) {
         TextField name = formField("Name");
         ToggleGroup kinds = new ToggleGroup();
-        HBox kindRow = new HBox(4);
-        for (String[] k : new String[][] {{"gear", "Gear"}, {"weapon", "Weapon"}, {"armor", "Armor"}, {"alchemy", "Alchemy"}}) {
-            ToggleButton t = new ToggleButton(k[1]);
-            t.setUserData(k[0]);
+        javafx.scene.layout.FlowPane kindRow = new javafx.scene.layout.FlowPane(4, 4);
+        for (com.dnd.ui.components.ItemKinds.Kind k : com.dnd.ui.components.ItemKinds.ALL) {
+            ToggleButton t = new ToggleButton(k.label());
+            t.setUserData(k);
             t.setToggleGroup(kinds);
             t.getStyleClass().add("tool-toggle-button");
             kindRow.getChildren().add(t);
         }
+        Label kindNote = hint("");
+        // The kind's own fields (a blueprint's materials and charges, a fuel's value...) come
+        // from the same reflective form the DM panel uses, so both places can build anything.
+        VBox fieldsHost = new VBox();
+        java.util.Map<String, List<com.dnd.ui.components.EntityForm.Ref>> catalogs = EntityDetailScene.catalogsFor(repos);
+        com.dnd.ui.components.EntityForm[] fields = new com.dnd.ui.components.EntityForm[1];
+        Runnable rebuild = () -> {
+            var kind = (com.dnd.ui.components.ItemKinds.Kind) kinds.getSelectedToggle().getUserData();
+            kindNote.setText(kind.note());
+            fields[0] = com.dnd.ui.components.EntityForm.of(kind.javaClass(), null,
+                java.util.Set.of("id", "name", "type", "imagePath"), catalogs);
+            fieldsHost.getChildren().setAll(fields[0].getNode());
+        };
         kinds.selectToggle(kinds.getToggles().get(0));
-        kinds.selectedToggleProperty().addListener((o, old, v) -> { if (v == null) kinds.selectToggle(old); });
-        TextArea description = new TextArea();
-        description.setPromptText("Description (optional)");
-        description.setWrapText(true);
-        description.setPrefRowCount(2);
+        kinds.selectedToggleProperty().addListener((o, old, v) -> {
+            if (v == null) kinds.selectToggle(old);
+            else rebuild.run();
+        });
+        rebuild.run();
 
         Label error = new Label();
         error.getStyleClass().add("error-label");
+        error.setWrapText(true);
         Button create = smallBtn("Create & Add", () -> {
             if (name.getText() == null || name.getText().isBlank()) {
                 error.setText("Give the item a name.");
                 return;
             }
-            Item item = newItem(
-                newId("item", name.getText(), repos.items().list().stream().map(Item::getId).toList()),
-                name.getText().trim(), (String) kinds.getSelectedToggle().getUserData(), description.getText());
+            var kind = (com.dnd.ui.components.ItemKinds.Kind) kinds.getSelectedToggle().getUserData();
+            Item item = kind.create();
+            try {
+                fields[0].writeTo(item);
+            } catch (Exception ex) {
+                error.setText(ex.getMessage());
+                return;
+            }
+            item.setId(newId("item", name.getText(), repos.items().list().stream().map(Item::getId).toList()));
+            item.setName(name.getText().trim());
+            item.setType(kind.type());
+            if (item.getDurability() == null || item.getDurability().getMax() == 0) {
+                item.setDurability(new Item.ItemDurability(100, 100));
+            }
             repos.items().save(item);
             onCreated.accept(item);
             host.getChildren().setAll(itemPicker(host, onCreated));
         });
         Button cancel = smallBtn("Cancel", () -> host.getChildren().setAll(itemPicker(host, onCreated)));
         name.setOnAction(e -> create.fire());
-        return form("New item", error, create, cancel, name, kindRow, description);
+        return form("New item", error, create, cancel, name, kindRow, kindNote, fieldsHost);
     }
 
     /** Creates a catalog effect right here and applies it in one step. */

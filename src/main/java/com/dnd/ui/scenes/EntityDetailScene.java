@@ -86,8 +86,45 @@ public class EntityDetailScene extends BaseScene {
                 () -> uiSession.getRouter().goTo(SceneType.ENTITY_DETAIL)));
         }
 
-        EntityForm form = EntityForm.of(getEntityClass(cat), entity, skippedProperties(cat), catalogsFor(repos));
-        content.getChildren().add(form.getNode());
+        Map<String, List<EntityForm.Ref>> catalogs = catalogsFor(repos);
+        final EntityForm[] form = new EntityForm[1];
+        final com.dnd.ui.components.ItemKinds.Kind[] itemKind = {null};
+        VBox formHolder = new VBox();
+        if (cat == EntityCategory.ITEM) {
+            // Each item kind has its own fields (a blueprint's materials, a fuel's value...), so
+            // the form is built from the concrete class, and new items pick their kind first.
+            itemKind[0] = com.dnd.ui.components.ItemKinds.of((com.dnd.model.item.Item) entity);
+            Label kindNote = body(itemKind[0].note());
+            kindNote.setWrapText(true);
+            kindNote.setStyle(EntityForm.HINT_STYLE);
+            Runnable rebuild = () -> {
+                Class<?> type = entity != null ? entity.getClass() : itemKind[0].javaClass();
+                form[0] = EntityForm.of(type, entity, skippedProperties(cat), catalogs);
+                formHolder.getChildren().setAll(form[0].getNode());
+                kindNote.setText(itemKind[0].note());
+            };
+            if (isNew) {
+                ComboBox<com.dnd.ui.components.ItemKinds.Kind> kinds = new ComboBox<>(
+                    javafx.collections.FXCollections.observableArrayList(com.dnd.ui.components.ItemKinds.ALL));
+                kinds.setValue(itemKind[0]);
+                kinds.valueProperty().addListener((obs, o, n) -> {
+                    if (n == null) return;
+                    itemKind[0] = n;
+                    rebuild.run();
+                });
+                HBox kindRow = new HBox(10, body("Item kind:"), kinds);
+                kindRow.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+                content.getChildren().add(kindRow);
+            } else {
+                content.getChildren().add(body("Item kind: " + itemKind[0].label()));
+            }
+            content.getChildren().add(kindNote);
+            rebuild.run();
+        } else {
+            form[0] = EntityForm.of(getEntityClass(cat), entity, skippedProperties(cat), catalogs);
+            formHolder.getChildren().setAll(form[0].getNode());
+        }
+        content.getChildren().add(formHolder);
 
         Label errorLabel = body("");
         errorLabel.setStyle("-fx-text-fill: #e07070;");
@@ -96,8 +133,9 @@ public class EntityDetailScene extends BaseScene {
         if (uiSession.isDm()) {
             Button saveBtn = btn("Save", () -> {
                 try {
-                    Object target = isNew ? createNewEntity(cat) : entity;
-                    form.writeTo(target);
+                    Object target = isNew
+                        ? (itemKind[0] != null ? itemKind[0].create() : createNewEntity(cat)) : entity;
+                    form[0].writeTo(target);
                     setImagePath(target, newImagePath[0]);
                     // Width/height are edited here as plain fields, but only GameMap's own
                     // constructor builds a matching grid - keep grid dimensions in sync so the
@@ -222,6 +260,13 @@ public class EntityDetailScene extends BaseScene {
         catalogs.put("languages", refs(repos.languages().list()));
         catalogs.put("effects", refs(repos.effects().list()));
         catalogs.put("triggeredEffects", refs(repos.effects().list()));
+        catalogs.put("productId", refs(repos.items().list()));
+        catalogs.put("toolIds", refs(repos.items().list().stream()
+            .filter(i -> i instanceof com.dnd.model.item.crafting.Tool).toList()));
+        catalogs.put("knownBlueprints", refs(repos.items().list().stream()
+            .filter(i -> i instanceof com.dnd.model.item.crafting.Blueprint).toList()));
+        catalogs.put("defaultSpells", refs(repos.spells().list()));
+        catalogs.put("defaultItems", refs(repos.items().list()));
         return catalogs;
     }
 

@@ -82,7 +82,9 @@ public final class EntityForm {
     private static final List<String> LEADING = List.of("id", "name", "description");
     private static final Set<String> LONG_TEXT = Set.of("description", "overview", "backstory");
     private static final String LABEL_STYLE = "-fx-text-fill: #a89060; -fx-font-size: 12px;";
-    private static final String HINT_STYLE = "-fx-text-fill: #6a5a3a; -fx-font-size: 11px;";
+    public static final String HINT_STYLE = "-fx-text-fill: #6a5a3a; -fx-font-size: 11px;";
+    private static final String HELP_STYLE = "-fx-text-fill: #8a7a5a; -fx-font-size: 11px; -fx-font-style: italic;";
+    private static final String OPTION_STYLE = "-fx-text-fill: #b8a070; -fx-font-size: 11px;";
     private static final String GROUP_STYLE =
         "-fx-border-color: #c9a84c66; -fx-border-width: 1px; -fx-padding: 10; -fx-background-color: #ffffff08;";
 
@@ -100,11 +102,14 @@ public final class EntityForm {
     private final List<Binding> bindings = new ArrayList<>();
     private final Map<String, List<Ref>> catalogs;
     private final int depth;
+    /** Class whose properties this form edits; picks context-specific {@link FieldHelp}. */
+    private final Class<?> ownerType;
 
     private EntityForm(Class<?> type, Object value, Set<String> skip,
                        Map<String, List<Ref>> catalogs, int depth) {
         this.catalogs = catalogs;
         this.depth = depth;
+        this.ownerType = type;
         for (Prop prop : properties(type, skip)) {
             addEditor(prop, value);
         }
@@ -388,7 +393,22 @@ public final class EntityForm {
             }
         });
         combo.getSelectionModel().select(current);
-        node.getChildren().add(labelled(prop.name(), combo));
+        VBox box = labelled(prop.name(), combo);
+        // Explain the option currently picked, so the choice can be learned while making it.
+        Label optionNote = new Label();
+        optionNote.setWrapText(true);
+        optionNote.setMaxWidth(620);
+        optionNote.setStyle(OPTION_STYLE);
+        Runnable explain = () -> {
+            String text = FieldHelp.option(combo.getSelectionModel().getSelectedItem());
+            optionNote.setText(text == null ? "" : "\u2192 " + text);
+            optionNote.setVisible(text != null);
+            optionNote.setManaged(text != null);
+        };
+        combo.valueProperty().addListener((obs, o, n) -> explain.run());
+        explain.run();
+        box.getChildren().add(optionNote);
+        node.getChildren().add(box);
         bind(prop, combo.getSelectionModel()::getSelectedItem);
     }
 
@@ -755,13 +775,28 @@ public final class EntityForm {
     private VBox labelled(String propertyName, Node editor) {
         Label label = new Label(humanize(propertyName));
         label.setStyle(LABEL_STYLE);
-        return new VBox(4, label, editor);
+        VBox box = new VBox(4, label, editor);
+        Label help = helpLabel(propertyName);
+        if (help != null) box.getChildren().add(help);
+        return box;
+    }
+
+    /** The grey explanatory line under a field, or null when there is nothing to explain. */
+    private Label helpLabel(String propertyName) {
+        String text = FieldHelp.field(ownerType, propertyName);
+        if (text == null) return null;
+        Label help = new Label(text);
+        help.setWrapText(true);
+        help.setMaxWidth(620);
+        help.setStyle(HELP_STYLE);
+        return help;
     }
 
     private Node group(String propertyName, Node content) {
         Label label = new Label(humanize(propertyName));
         label.getStyleClass().add("section-label");
-        VBox box = new VBox(8, label, content);
+        Label help = helpLabel(propertyName);
+        VBox box = help == null ? new VBox(8, label, content) : new VBox(8, label, help, content);
         box.setStyle(GROUP_STYLE);
         box.setPadding(new Insets(10));
         box.setMaxWidth(680);

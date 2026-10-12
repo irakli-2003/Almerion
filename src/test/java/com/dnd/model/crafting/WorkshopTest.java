@@ -149,15 +149,18 @@ public class WorkshopTest {
     }
 
     @Test
-    public void shortRestRefuelsOnlyHalfTheMissingCharges() {
+    public void shortRestRefuelsUpToHalfOfMaxCharges() {
         Workshop.add(pc, "furnace", 1);
         Workshop.add(pc, "coal", 10);
 
         Progression.shortRest(pc, null, 0, items);
 
-        // 3 Steam-pressure + 2 Thermal missing = 5; a short rest makes 3, weakest first.
-        assertEquals(4, pc.getSpellSlots().get(0).getCurrent());
-        assertEquals(0, pc.getSpellSlots().get(1).getCurrent());
+        // Steam-pressure 1/4 -> 2/4 and Thermal 0/2 -> 1/2: half of each maximum.
+        assertEquals(2, pc.getSpellSlots().get(0).getCurrent());
+        assertEquals(1, pc.getSpellSlots().get(1).getCurrent());
+
+        Progression.shortRest(pc, null, 0, items);
+        assertEquals(2, pc.getSpellSlots().get(0).getCurrent());
         assertTrue(Workshop.count(pc, "coal") > 0);
     }
 

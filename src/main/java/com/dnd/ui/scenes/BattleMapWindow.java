@@ -2277,7 +2277,7 @@ public class BattleMapWindow {
 
     /**
      * An energy caster's furnace burns the pack's fuel during a rest: a long rest refills every
-     * charge it can, a short rest up to half of the missing ones.
+     * charge it can, a short rest each type up to half of its maximum.
      */
     private List<String> refuelOnRest(MapObject token, CombatState state, boolean longRest) {
         if (!(token instanceof PlayerToken pt) || pt.getCharacter() == null

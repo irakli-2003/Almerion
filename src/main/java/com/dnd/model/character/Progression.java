@@ -161,7 +161,7 @@ public final class Progression {
         return log;
     }
 
-    /** {@link #shortRest} plus a partial refuel of an energy caster's charges (half the missing ones). */
+    /** {@link #shortRest} plus a partial refuel of an energy caster's charges (each type up to half its maximum). */
     public static List<String> shortRest(PlayerCharacter pc, CharacterClass cls, int hitPointsRecovered,
                                          java.util.function.Function<String, com.dnd.model.item.Item> items) {
         List<String> log = shortRest(pc, cls, hitPointsRecovered);

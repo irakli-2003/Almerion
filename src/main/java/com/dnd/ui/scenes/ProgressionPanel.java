@@ -82,7 +82,7 @@ final class ProgressionPanel {
             });
         });
         shortRest.setTooltip(new Tooltip("HP from hit dice, pact slots back, half the missing mana, timed effects end."
-            + " The workshop furnace refills up to half of the missing energy charges from the fuel in the pack."));
+            + " The workshop furnace refills each energy charge type up to half of its maximum from the fuel in the pack."));
 
         Button longRest = owner.btn("Long Rest", () -> {
             Progression.longRest(pc, repos.items()::getById);

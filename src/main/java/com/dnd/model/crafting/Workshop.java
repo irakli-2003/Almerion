@@ -209,36 +209,29 @@ public final class Workshop {
      * @return what happened, e.g. "burns 2x Coal Lump", "+3 Steam-pressure charges"; empty if nothing
      */
     public static List<String> restRefill(PlayerCharacter pc, List<SpellSlot> slots, Function<String, Item> items) {
-        return restRefill(pc, slots, items, Integer.MAX_VALUE);
+        return restRefill(pc, slots, items, SpellSlot::getMax);
     }
 
     /**
-     * Short-rest refuel: the furnace only has time for half of the missing charges (rounded up),
-     * weakest first, within the furnace tier.
+     * Short-rest refuel: each charge type is only topped up to half of its maximum (rounded up),
+     * weakest first, within the furnace tier. Types already at half or more are left alone.
      */
     public static List<String> shortRestRefill(PlayerCharacter pc, List<SpellSlot> slots, Function<String, Item> items) {
-        int tier = furnaceTier(pc, items);
-        if (pc == null || slots == null || tier <= 0) return new ArrayList<>();
-        int missing = 0;
-        for (SpellSlot slot : slots) {
-            if (slot != null && slot.getLevel() <= tier) missing += Math.max(0, slot.getMax() - slot.getCurrent());
-        }
-        return restRefill(pc, slots, items, (missing + 1) / 2);
+        return restRefill(pc, slots, items, slot -> (slot.getMax() + 1) / 2);
     }
 
-    /** {@link #restRefill(PlayerCharacter, List, Function)} that makes at most {@code maxCharges}. */
-    public static List<String> restRefill(PlayerCharacter pc, List<SpellSlot> slots, Function<String, Item> items,
-                                          int maxCharges) {
+    private static List<String> restRefill(PlayerCharacter pc, List<SpellSlot> slots, Function<String, Item> items,
+                                           java.util.function.ToIntFunction<SpellSlot> target) {
         List<String> log = new ArrayList<>();
         int tier = furnaceTier(pc, items);
         if (pc == null || slots == null || tier <= 0) return log;
         java.util.Map<String, Integer> burned = new java.util.LinkedHashMap<>();
-        int budget = maxCharges;
         for (SpellSlot slot : slots.stream().sorted(java.util.Comparator.comparingInt(SpellSlot::getLevel)).toList()) {
             if (slot == null || slot.getLevel() > tier) continue;
             int cost = EnergyCharges.fuelCost(slot.getLevel());
             int made = 0;
-            while (slot.getCurrent() < slot.getMax() && budget > 0) {
+            int upTo = Math.min(slot.getMax(), target.applyAsInt(slot));
+            while (slot.getCurrent() < upTo) {
                 if (pc.getFurnaceFuel() + carriedFuelUnits(pc, items) < cost) break;
                 while (pc.getFurnaceFuel() < cost) {
                     Fuel fuel = weakestFuel(pc, items);
@@ -248,7 +241,6 @@ public final class Workshop {
                 pc.setFurnaceFuel(pc.getFurnaceFuel() - cost);
                 slot.setCurrent(slot.getCurrent() + 1);
                 made++;
-                budget--;
             }
             if (made > 0) log.add("+" + made + " " + EnergyCharges.name(slot.getLevel()) + " charge" + (made == 1 ? "" : "s"));
         }

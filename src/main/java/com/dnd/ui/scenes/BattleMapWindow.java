@@ -1987,6 +1987,12 @@ public class BattleMapWindow {
             Spell spell = repos.spells().getById(id);
             if (spell != null) spells.add(spell);
         }
+        // Crafted devices in the pack lend their action to whoever carries them.
+        for (String id : TokenSupport.itemIdsOf(token)) {
+            if (!(repos.items().getById(id) instanceof com.dnd.model.item.crafting.Device device)) continue;
+            Spell spell = device.getSpellId() == null ? null : repos.spells().getById(device.getSpellId());
+            if (spell != null && spells.stream().noneMatch(s -> s.getId().equals(spell.getId()))) spells.add(spell);
+        }
         return spells;
     }
 
@@ -2200,7 +2206,7 @@ public class BattleMapWindow {
                     dirty = true;
                     pushToSheet(token);
                 });
-                grid.addRow(row++, owner.body(com.dnd.model.magic.SpellSlots.ordinal(slot.getLevel()) + "-level slots:"),
+                grid.addRow(row++, owner.body(com.dnd.model.magic.SpellSlots.rowLabel(slot.getLevel(), resource) + ":"),
                     current, owner.body("/ " + slot.getMax()));
             }
             box.getChildren().add(grid);

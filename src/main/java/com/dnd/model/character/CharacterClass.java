@@ -77,6 +77,27 @@ public class CharacterClass implements Printable {
     private com.dnd.model.magic.SpellcastingType spellcasting = com.dnd.model.magic.SpellcastingType.NONE;
     /** Subclass names offered at character creation (e.g. Path of the Berserker). */
     private List<String> subclasses = new java.util.ArrayList<>();
+    /** Spells pre-ticked for this class in the character creation wizard (still changeable). */
+    private List<String> defaultSpells = new java.util.ArrayList<>();
+    /** Starting equipment pre-ticked in the character creation wizard (still changeable). */
+    private List<String> defaultItems = new java.util.ArrayList<>();
+
+    public List<String> getDefaultSpells() {
+        return defaultSpells;
+    }
+
+    public void setDefaultSpells(List<String> defaultSpells) {
+        this.defaultSpells = defaultSpells == null ? new java.util.ArrayList<>() : defaultSpells;
+    }
+
+    public List<String> getDefaultItems() {
+        return defaultItems;
+    }
+
+    public void setDefaultItems(List<String> defaultItems) {
+        this.defaultItems = defaultItems == null ? new java.util.ArrayList<>() : defaultItems;
+    }
+
     /** Everything the class unlocks, level by level. */
     private List<ClassFeature> features = new java.util.ArrayList<>();
 

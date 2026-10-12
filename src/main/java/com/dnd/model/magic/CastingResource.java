@@ -9,6 +9,12 @@ package com.dnd.model.magic;
  */
 public enum CastingResource {
     SPELL_SLOTS("Spell slots"),
+    /**
+     * Artificer homebrew: works exactly like spell slots (one charge per levelled spell, higher
+     * levels can stand in for lower ones) but each level is a kind of stored energy - steam
+     * pressure, heat, electricity... - and rests do not refill them: the workshop furnace does.
+     */
+    ENERGY_CHARGES("Energy charges"),
     MANA("Mana"),
     HIT_POINTS("Hit points"),
     NONE("None");
@@ -17,6 +23,11 @@ public enum CastingResource {
 
     CastingResource(String label) {
         this.label = label;
+    }
+
+    /** True for the resources that are tracked per level with {@link SpellSlot}s. */
+    public boolean usesSlots() {
+        return this == SPELL_SLOTS || this == ENERGY_CHARGES;
     }
 
     @Override

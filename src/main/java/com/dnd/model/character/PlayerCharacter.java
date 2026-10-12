@@ -307,6 +307,21 @@ public class PlayerCharacter implements Printable {
         this.spellSlots = spellSlots != null ? spellSlots : new ArrayList<>();
     }
 
+    /** Blueprint item ids copied into this character's blueprint book (artificers). */
+    private List<String> knownBlueprints = new ArrayList<>();
+    public List<String> getKnownBlueprints() {
+        if (knownBlueprints == null) knownBlueprints = new ArrayList<>();
+        return knownBlueprints;
+    }
+    public void setKnownBlueprints(List<String> knownBlueprints) {
+        this.knownBlueprints = knownBlueprints != null ? knownBlueprints : new ArrayList<>();
+    }
+
+    /** Fuel units already burning in this character's workshop furnace, not yet turned into charges. */
+    private int furnaceFuel;
+    public int getFurnaceFuel() { return furnaceFuel; }
+    public void setFurnaceFuel(int furnaceFuel) { this.furnaceFuel = Math.max(0, furnaceFuel); }
+
     /** Spell/ability id → rounds left before it can be used again; persists between fights. */
     private java.util.Map<String, Integer> cooldowns = new java.util.LinkedHashMap<>();
     public java.util.Map<String, Integer> getCooldowns() { return cooldowns; }

@@ -212,6 +212,14 @@
           "name": "Primal Champion",
           "description": "Your Strength and Constitution scores each grow by 4, up to a new maximum of 24."
         }
+      ],
+      "defaultSpells": [],
+      "defaultItems": [
+        "greataxe",
+        "handaxe",
+        "javelin",
+        "rations",
+        "waterskin"
       ]
     },
     {
@@ -434,6 +442,20 @@
           "name": "Superior Inspiration",
           "description": "If you roll initiative with no Bardic Inspiration uses left, you regain one."
         }
+      ],
+      "defaultSpells": [
+        "minor-illusion",
+        "prestidigitation",
+        "charm-person",
+        "healing-word",
+        "thunderwave",
+        "faerie-fire"
+      ],
+      "defaultItems": [
+        "rapier",
+        "leather-armor",
+        "dagger",
+        "component-pouch"
       ]
     },
     {
@@ -699,6 +721,20 @@
           "name": "Divine Intervention Improvement",
           "description": "Your calls for divine intervention succeed automatically."
         }
+      ],
+      "defaultSpells": [
+        "sacred-flame",
+        "guidance",
+        "thaumaturgy",
+        "cure-wounds",
+        "bless",
+        "healing-word"
+      ],
+      "defaultItems": [
+        "mace",
+        "scale-mail",
+        "shield",
+        "holy-symbol"
       ]
     },
     {
@@ -901,6 +937,18 @@
           "name": "Archdruid",
           "description": "You can use Wild Shape without limit and ignore many spell components."
         }
+      ],
+      "defaultSpells": [
+        "guidance",
+        "poison-spray",
+        "entangle",
+        "cure-wounds",
+        "faerie-fire"
+      ],
+      "defaultItems": [
+        "quarterstaff",
+        "leather-armor",
+        "component-pouch"
       ]
     },
     {
@@ -1123,6 +1171,13 @@
           "name": "Extra Attack (3)",
           "description": "You now attack four times with the Attack action."
         }
+      ],
+      "defaultSpells": [],
+      "defaultItems": [
+        "longsword",
+        "chain-mail",
+        "shield",
+        "light-crossbow"
       ]
     },
     {
@@ -1345,6 +1400,11 @@
           "name": "Perfect Self",
           "description": "If you roll initiative with no ki remaining, you regain 4 ki points."
         }
+      ],
+      "defaultSpells": [],
+      "defaultItems": [
+        "shortsword",
+        "dart"
       ]
     },
     {
@@ -1555,6 +1615,16 @@
           "description": "Radiate bright sunlight that damages nearby enemies and grants advantage on saves against fiend and undead spells.",
           "subclass": "Oath of Devotion"
         }
+      ],
+      "defaultSpells": [
+        "bless",
+        "cure-wounds"
+      ],
+      "defaultItems": [
+        "longsword",
+        "chain-mail",
+        "shield",
+        "holy-symbol"
       ]
     },
     {
@@ -1774,6 +1844,15 @@
           "name": "Foe Slayer",
           "description": "Once per turn, add your Wisdom modifier to an attack or damage roll against a favored enemy."
         }
+      ],
+      "defaultSpells": [
+        "hunters-mark",
+        "cure-wounds"
+      ],
+      "defaultItems": [
+        "longbow",
+        "shortsword",
+        "leather-armor"
       ]
     },
     {
@@ -1989,6 +2068,13 @@
           "name": "Stroke of Luck",
           "description": "Turn a miss into a hit or a failed check into a 20 once per short rest."
         }
+      ],
+      "defaultSpells": [],
+      "defaultItems": [
+        "rapier",
+        "shortbow",
+        "leather-armor",
+        "thieves-tools"
       ]
     },
     {
@@ -2169,6 +2255,18 @@
           "name": "Sorcerous Restoration",
           "description": "Regain 4 sorcery points whenever you finish a short rest."
         }
+      ],
+      "defaultSpells": [
+        "fire-bolt",
+        "light",
+        "mage-hand",
+        "prestidigitation",
+        "magic-missile",
+        "shield-spell"
+      ],
+      "defaultItems": [
+        "dagger",
+        "arcane-focus"
       ]
     },
     {
@@ -2341,6 +2439,17 @@
           "name": "Eldritch Master",
           "description": "Spend a minute pleading with your patron to regain all Pact Magic slots once per long rest."
         }
+      ],
+      "defaultSpells": [
+        "chill-touch",
+        "mage-hand",
+        "minor-illusion",
+        "charm-person"
+      ],
+      "defaultItems": [
+        "dagger",
+        "arcane-focus",
+        "leather-armor"
       ]
     },
     {
@@ -2511,6 +2620,208 @@
           "name": "Signature Spells",
           "description": "Two chosen 3rd-level spells are always prepared and can each be cast once per rest without a slot."
         }
+      ],
+      "defaultSpells": [
+        "fire-bolt",
+        "mage-hand",
+        "light",
+        "magic-missile",
+        "shield-spell",
+        "mage-armor",
+        "sleep",
+        "detect-magic"
+      ],
+      "defaultItems": [
+        "quarterstaff",
+        "spellbook",
+        "component-pouch"
+      ]
+    },
+    {
+      "id": "artificer",
+      "name": "Artificer",
+      "description": "An inventor who explains 'magic' as engineering. Instead of spell slots the artificer spends energy charges (Steam-pressure, Thermal, Electric...) that are refilled at a fuel-burning workshop furnace - not by resting - and builds devices from a growing blueprint book.",
+      "hitDie": {
+        "id": "d8",
+        "name": "d8",
+        "sides": 8
+      },
+      "primaryAbilities": [
+        "intelligence",
+        "constitution"
+      ],
+      "savingThrowBonuses": {
+        "strength": 0,
+        "dexterity": 0,
+        "constitution": 2,
+        "intelligence": 2,
+        "wisdom": 0,
+        "charisma": 0
+      },
+      "spellcasting": "ENERGY",
+      "subclasses": [
+        "Artillerist",
+        "Alchemist",
+        "Armorer"
+      ],
+      "features": [
+        {
+          "level": 1,
+          "name": "Magical Tinkering",
+          "description": "Give a tiny object a light, a recorded message, a smell or a moving picture."
+        },
+        {
+          "level": 1,
+          "name": "Energy Charges",
+          "description": "Your spells and devices run on energy charges instead of spell slots. Level 1 = Steam-pressure, 2 = Thermal, 3 = Electric, 4 = Magnetic, 5 = Resonance. Charges do NOT come back on rests - make them at a workshop furnace from fuel. A stronger charge can always stand in for a weaker one."
+        },
+        {
+          "level": 1,
+          "name": "Blueprint Book",
+          "description": "Copy blueprints you find or buy into your book. A known blueprint can be built at any time from its materials, tools and (sometimes) charges."
+        },
+        {
+          "level": 1,
+          "name": "Workshop Furnace",
+          "description": "A carried furnace (tool with a furnace tier) burns fuel - wood 2, charcoal 3, coal 4, oil 5 units - and turns it into charges: 2 / 4 / 7 / 10 / 14 units per charge level. Upgraded furnaces unlock stronger charges."
+        },
+        {
+          "level": 2,
+          "name": "Infuse Item",
+          "description": "Infuse mundane gear with a lasting enhancement (e.g. +1 weapon, enhanced defense) for a long time."
+        },
+        {
+          "level": 3,
+          "name": "Artificer Specialist",
+          "description": "Choose Artillerist, Alchemist or Armorer."
+        },
+        {
+          "level": 3,
+          "name": "The Right Tool for the Job",
+          "description": "With tinker's tools, spend an hour to make any set of artisan's tools."
+        },
+        {
+          "level": 3,
+          "name": "Bolt Repeater",
+          "description": "Artillerist turret (Eldritch Cannon - Force Ballista): deploy with an action, fire with a bonus action, 2d6 force and a 5 ft push.",
+          "subclass": "Artillerist"
+        },
+        {
+          "level": 3,
+          "name": "Combat Fabrication",
+          "description": "3 per long rest, bonus action: Emergency Patch, Quick Cover or Special Charge from prepared parts.",
+          "subclass": "Artillerist"
+        },
+        {
+          "level": 3,
+          "name": "Experimental Elixir",
+          "description": "After a long rest, brew a random elixir (healing, swiftness, resilience, boldness, flight, transformation).",
+          "subclass": "Alchemist"
+        },
+        {
+          "level": 3,
+          "name": "Arcane Armor",
+          "description": "Turn a suit of armor into a powered suit; choose the Guardian or Infiltrator model.",
+          "subclass": "Armorer"
+        },
+        {
+          "level": 4,
+          "name": "Ability Score Improvement",
+          "description": "Raise one ability score by 2 or two scores by 1 (to a maximum of 20), or take a feat instead."
+        },
+        {
+          "level": 5,
+          "name": "Arcane Firearm",
+          "description": "Spells channelled through your Bolt Repeater or a carved firearm add 1d8 to one damage roll.",
+          "subclass": "Artillerist"
+        },
+        {
+          "level": 5,
+          "name": "Alchemical Savant",
+          "description": "Add your INT modifier to healing, acid, fire, necrotic or poison spells cast with alchemist's supplies.",
+          "subclass": "Alchemist"
+        },
+        {
+          "level": 5,
+          "name": "Extra Attack",
+          "description": "Attack twice when you take the Attack action.",
+          "subclass": "Armorer"
+        },
+        {
+          "level": 6,
+          "name": "Tool Expertise",
+          "description": "Double proficiency bonus with any tool you are proficient with."
+        },
+        {
+          "level": 7,
+          "name": "Flash of Genius",
+          "description": "Reaction: add your INT modifier to an ally's ability check or saving throw."
+        },
+        {
+          "level": 8,
+          "name": "Ability Score Improvement",
+          "description": "Raise one ability score by 2 or two scores by 1 (to a maximum of 20), or take a feat instead."
+        },
+        {
+          "level": 9,
+          "name": "Furnace Upgrade: Electric Coils",
+          "description": "With an upgraded workshop (furnace tier 3) you can make Electric charges."
+        },
+        {
+          "level": 10,
+          "name": "Magic Item Adept",
+          "description": "Attune to 4 items and craft common/uncommon items in a quarter of the time."
+        },
+        {
+          "level": 12,
+          "name": "Ability Score Improvement",
+          "description": "Raise one ability score by 2 or two scores by 1 (to a maximum of 20), or take a feat instead."
+        },
+        {
+          "level": 14,
+          "name": "Spell-Storing Item",
+          "description": "Store a level 1 or 2 spell in an item; anyone can trigger it INT-mod x2 times."
+        },
+        {
+          "level": 16,
+          "name": "Ability Score Improvement",
+          "description": "Raise one ability score by 2 or two scores by 1 (to a maximum of 20), or take a feat instead."
+        },
+        {
+          "level": 18,
+          "name": "Magic Item Master",
+          "description": "Attune to up to 6 items."
+        },
+        {
+          "level": 19,
+          "name": "Ability Score Improvement",
+          "description": "Raise one ability score by 2 or two scores by 1 (to a maximum of 20), or take a feat instead."
+        },
+        {
+          "level": 20,
+          "name": "Soul of Artifice",
+          "description": "+1 to all saves per attuned item; once, drop to 1 HP instead of 0 by ending an infusion."
+        }
+      ],
+      "defaultSpells": [
+        "mending",
+        "guidance",
+        "cure-wounds",
+        "detect-magic",
+        "faerie-fire"
+      ],
+      "defaultItems": [
+        "tinkers-tools",
+        "smiths-tools",
+        "portable-forge",
+        "firewood",
+        "coal",
+        "brass-scrap",
+        "alchemical-salts",
+        "light-crossbow",
+        "studded-leather",
+        "bp-smoke-canister",
+        "bp-scalding-bolts"
       ]
     }
   ]

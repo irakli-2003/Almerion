@@ -225,6 +225,62 @@ Features**, with uses left and what brings them back.
 - New characters get their race's ability bonuses added to their scores. Existing sheets are
   treated as final.
 
+### Artificer: energy charges, blueprints and the workshop furnace
+
+The **Artificer** is a homebrew half caster. It uses **energy charges** instead of spell slots.
+The counts are the same as a half caster's slots, but each level is a type of charge:
+
+| Level | Charge | Fuel units per charge |
+|---|---|---|
+| 1 | Steam-pressure | 2 |
+| 2 | Thermal | 4 |
+| 3 | Electric | 7 |
+| 4 | Magnetic | 10 |
+| 5 | Resonance | 14 |
+
+- **Rests don't refill charges.** You make them at a **workshop furnace**, which is a *Tool*
+  item with a furnace tier. The tier is the highest charge level it can make. The Tinkerer's
+  Portable Forge is tier 1 and the Valebrick Portable Field Workshop is tier 2.
+- **The furnace burns fuel.** Each *Fuel* item has a value: firewood 2, charcoal 3, coal 4,
+  lamp oil 5.
+- **Stronger charges can stand in for weaker ones**, both when casting and when crafting.
+- **Blueprints are an item type.** A blueprint lists:
+  - its product;
+  - its materials, which are used up;
+  - its tools, which are kept;
+  - the charges it needs, if any;
+  - a minimum level.
+
+  Copy a carried blueprint into the **blueprint book**, then build from it whenever you have the
+  parts.
+- **Devices are an item type.** A device can link a spell. Carrying it adds the spell to the
+  token, and the spell's level decides which charge it uses (level 0 needs no charge).
+  Ammunition and grenades are devices whose spell uses up one of them.
+- **There are 12 bundled blueprints:**
+  - Utility and control: Smoke Canister, Tripwire Alarm, Steam Grapnel Launcher, Sticky Foam,
+    Messenger Beetle.
+  - Light combat: Scalding Bolts, Flash Bomb, Shock Darts, Steam-Jet Gauntlet.
+  - Medium combat: Thermal Grenade, Pressure Ram, Concussion Bolts.
+- **The Workshop section in Manage Players** shows charges and furnace fuel, and has buttons to:
+  - burn a fuel;
+  - make a charge;
+  - copy a blueprint into the book;
+  - build a known blueprint. When something is missing, the button explains what.
+- **New item kinds:** Blueprint, Device, Tool, Material and Fuel. You can create any of them
+  from the DM panel or from the Manage Players **+ New item** form. Both show the kind's own
+  fields.
+- **Toren Valebrick** (Human Artificer 5, Artillerist) is in the zurabaach party. He has the
+  field workshop, the Bolt Repeater, materials and fuel.
+
+### Creation help and class defaults
+
+Every option in the character wizard and the DM creation forms (class, race, character, spell,
+item) has a short note explaining what it does. Choices from a list show a live explanation
+of the selected value.
+
+Each class has default spells and items. When you pick a class in the wizard, its defaults are
+pre-selected, and you can still change them.
+
 ## Background music
 
 Music comes from **YouTube links** and plays only on the DM's computer. Open it with **🎵 Music** in the DM menu, the battle map toolbar, or the session text editor.

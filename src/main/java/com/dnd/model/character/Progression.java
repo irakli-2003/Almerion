@@ -43,7 +43,8 @@ public final class Progression {
     public static CastingResource resourceOf(PlayerCharacter pc, CharacterClass cls) {
         if (pc != null && pc.getCastingResource() != null) return pc.getCastingResource();
         SpellcastingType type = cls == null ? SpellcastingType.NONE : cls.getSpellcasting();
-        return type == SpellcastingType.NONE ? CastingResource.MANA : CastingResource.SPELL_SLOTS;
+        if (type == SpellcastingType.NONE) return CastingResource.MANA;
+        return type == SpellcastingType.ENERGY ? CastingResource.ENERGY_CHARGES : CastingResource.SPELL_SLOTS;
     }
 
     /** Everything that changes when {@code pc} reaches the next level - shown before applying. */
@@ -78,7 +79,7 @@ public final class Progression {
             plan.manaGain = Math.max(1, 2 + intMod);
         }
         SpellcastingType type = cls == null ? SpellcastingType.NONE : cls.getSpellcasting();
-        if (plan.resource == CastingResource.SPELL_SLOTS) {
+        if (plan.resource.usesSlots()) {
             plan.slotsBefore = SpellSlots.maxSlots(type, plan.fromLevel);
             plan.slotsAfter = SpellSlots.maxSlots(type, plan.toLevel);
         }
@@ -112,14 +113,17 @@ public final class Progression {
             pc.setMaxMana(pc.getMaxMana() + plan.manaGain);
             pc.setCurrentMana(pc.getCurrentMana() + plan.manaGain);
         }
-        if (plan.resource == CastingResource.SPELL_SLOTS) {
+        if (plan.resource.usesSlots()) {
             pc.setSpellSlots(SpellSlots.withMax(pc.getSpellSlots(), plan.slotsAfter));
         }
     }
 
     /** Fills in slot maxima for a caster who has none yet (older sheets), all unspent. */
     public static boolean ensureSlots(PlayerCharacter pc, CharacterClass cls) {
-        if (pc == null || resourceOf(pc, cls) != CastingResource.SPELL_SLOTS) return false;
+        if (pc == null || !resourceOf(pc, cls).usesSlots()) return false;
+        if (pc.getCastingResource() == null && cls != null && cls.getSpellcasting() == SpellcastingType.ENERGY) {
+            pc.setCastingResource(CastingResource.ENERGY_CHARGES);
+        }
         if (pc.getSpellSlots() != null && !pc.getSpellSlots().isEmpty()) return false;
         SpellcastingType type = cls == null ? SpellcastingType.NONE : cls.getSpellcasting();
         List<SpellSlot> slots = SpellSlots.fresh(SpellSlots.maxSlots(type, pc.getLevel()));
@@ -162,12 +166,13 @@ public final class Progression {
         List<String> log = new ArrayList<>();
         if (pc.getMaxHitPoints() > 0) pc.setCurrentHitPoints(pc.getMaxHitPoints());
         pc.setCurrentMana(pc.getMaxMana());
-        SpellSlots.restoreAll(pc.getSpellSlots());
+        boolean energy = pc.getCastingResource() == CastingResource.ENERGY_CHARGES;
+        if (!energy) SpellSlots.restoreAll(pc.getSpellSlots());
         int effects = pc.getActiveEffects() == null ? 0 : pc.getActiveEffects().size();
         pc.getActiveEffects().clear();
         pc.getCooldowns().clear();
         pc.getFeatureUses().clear();
-        log.add("fully rested (HP, mana and spell slots restored"
+        log.add("fully rested (HP, mana and " + (energy ? "features" : "spell slots") + " restored"
             + (effects > 0 ? ", " + effects + " effect" + (effects == 1 ? "" : "s") + " cleared" : "") + ")");
         return log;
     }
@@ -193,7 +198,7 @@ public final class Progression {
             state.revive();
             state.setCurrentMana(state.getMaxMana());
         }
-        SpellSlots.restoreAll(state.getSpellSlots());
+        if (state.effectiveCastingResource() != CastingResource.ENERGY_CHARGES) SpellSlots.restoreAll(state.getSpellSlots());
         state.getActiveEffects().clear();
         state.getCooldowns().clear();
         state.getFeatureUses().clear();

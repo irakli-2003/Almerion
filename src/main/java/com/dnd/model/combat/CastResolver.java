@@ -272,9 +272,12 @@ public final class CastResolver {
             return action.getName() + " costs " + hpNeeded + " HP but only "
                 + state.getCurrentHitPoints() + " HP remain.";
         }
-        if (resource == CastingResource.SPELL_SLOTS && levelled) {
+        if (resource.usesSlots() && levelled) {
             if (SpellSlots.lowestAvailable(state.getSpellSlots(), action.getSpellLevel()) < 0) {
-                return "No spell slot of level " + action.getSpellLevel() + " or higher left.";
+                return resource == CastingResource.ENERGY_CHARGES
+                    ? "No " + com.dnd.model.magic.EnergyCharges.name(action.getSpellLevel())
+                        + " charge (or stronger) left - refill at the workshop furnace."
+                    : "No spell slot of level " + action.getSpellLevel() + " or higher left.";
             }
         } else if (resource == CastingResource.MANA && action.getManaCost() > state.getCurrentMana()) {
             return "Not enough mana - needs " + action.getManaCost()
@@ -289,10 +292,10 @@ public final class CastResolver {
         CastingResource resource = state.effectiveCastingResource();
         int hp = action.getHpCost();
         if (resource == CastingResource.HIT_POINTS) hp += action.getManaCost();
-        if (resource == CastingResource.SPELL_SLOTS && action.isSpell() && action.getSpellLevel() > 0) {
+        if (resource.usesSlots() && action.isSpell() && action.getSpellLevel() > 0) {
             int slot = SpellSlots.lowestAvailable(state.getSpellSlots(), action.getSpellLevel());
             if (slot > 0 && SpellSlots.spend(state.getSpellSlots(), slot)) {
-                parts.add("spends a " + SpellSlots.ordinal(slot) + "-level slot");
+                parts.add("spends " + SpellSlots.slotName(slot, resource));
             }
         } else if (resource == CastingResource.MANA && action.getManaCost() > 0) {
             state.setCurrentMana(state.getCurrentMana() - action.getManaCost());

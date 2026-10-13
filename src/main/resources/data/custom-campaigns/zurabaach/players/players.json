@@ -19,43 +19,50 @@
       "condition" : {
         "durability" : 100
       },
-      "equipped" : true
+      "equipped" : true,
+      "quantity" : 1
     }, {
       "itemId" : "rapier",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : true
+      "equipped" : true,
+      "quantity" : 1
     }, {
       "itemId" : "leather-armor",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : true
+      "equipped" : true,
+      "quantity" : 1
     }, {
       "itemId" : "dagger",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : false
+      "equipped" : false,
+      "quantity" : 1
     }, {
       "itemId" : "component-pouch",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : false
+      "equipped" : false,
+      "quantity" : 1
     }, {
       "itemId" : "potion-of-healing",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : false
+      "equipped" : false,
+      "quantity" : 1
     }, {
       "itemId" : "waterskin",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : false
+      "equipped" : false,
+      "quantity" : 1
     } ],
     "spells" : [ {
       "spellId" : "minor-illusion",
@@ -104,15 +111,49 @@
     } ],
     "passwordHash" : null,
     "passwordSalt" : null,
-    "imagePath" : null,
+    "imagePath" : "images/players/player-balthazar.png",
     "playerName" : "Unassigned",
-    "ownerUsername" : null,
-    "description" : null,
+    "ownerUsername" : "",
+    "description" : "",
     "maxHitPoints" : 30,
     "currentHitPoints" : 30,
     "maxMana" : 0,
     "currentMana" : 0,
-    "activeEffects" : [ ]
+    "activeEffects" : [ ],
+    "subclass" : "",
+    "backstory" : "",
+    "castingResource" : null,
+    "spellSlots" : [ {
+      "level" : 1,
+      "max" : 4,
+      "current" : 4
+    }, {
+      "level" : 2,
+      "max" : 3,
+      "current" : 3
+    }, {
+      "level" : 3,
+      "max" : 2,
+      "current" : 2
+    } ],
+    "knownBlueprints" : [ ],
+    "furnaceFuel" : 0,
+    "cooldowns" : {
+      "strength" : 0,
+      "dexterity" : 0,
+      "constitution" : 0,
+      "intelligence" : 0,
+      "wisdom" : 0,
+      "charisma" : 0
+    },
+    "featureUses" : {
+      "strength" : 0,
+      "dexterity" : 0,
+      "constitution" : 0,
+      "intelligence" : 0,
+      "wisdom" : 0,
+      "charisma" : 0
+    }
   }, {
     "id" : "player-silvan",
     "name" : "Silvan",
@@ -133,49 +174,57 @@
       "condition" : {
         "durability" : 100
       },
-      "equipped" : true
+      "equipped" : true,
+      "quantity" : 1
     }, {
       "itemId" : "shortbow",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : true
+      "equipped" : true,
+      "quantity" : 1
     }, {
       "itemId" : "studded-leather",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : true
+      "equipped" : true,
+      "quantity" : 1
     }, {
       "itemId" : "elven-cloak",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : true
+      "equipped" : true,
+      "quantity" : 1
     }, {
       "itemId" : "leaf-pendant",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : true
+      "equipped" : true,
+      "quantity" : 1
     }, {
       "itemId" : "rope-hempen",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : false
+      "equipped" : false,
+      "quantity" : 1
     }, {
       "itemId" : "rations",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : false
+      "equipped" : false,
+      "quantity" : 1
     }, {
       "itemId" : "bedroll",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : false
+      "equipped" : false,
+      "quantity" : 1
     } ],
     "spells" : [ {
       "spellId" : "hunters-mark",
@@ -200,7 +249,7 @@
     } ],
     "passwordHash" : null,
     "passwordSalt" : null,
-    "imagePath" : null,
+    "imagePath" : "images/players/player-silvan.jpg",
     "playerName" : "Unassigned",
     "ownerUsername" : "",
     "description" : "",
@@ -211,13 +260,43 @@
     "activeEffects" : [ {
       "effectId" : "advantage_on_attack",
       "name" : "Advantage on Attack",
-      "description" : null,
+      "description" : "",
       "remainingRounds" : 3,
       "damagePerRound" : 0,
       "healingPerRound" : 0,
       "source" : "DM",
       "expired" : false
-    } ]
+    } ],
+    "subclass" : "",
+    "backstory" : "",
+    "castingResource" : null,
+    "spellSlots" : [ {
+      "level" : 1,
+      "max" : 4,
+      "current" : 4
+    }, {
+      "level" : 2,
+      "max" : 2,
+      "current" : 2
+    } ],
+    "knownBlueprints" : [ ],
+    "furnaceFuel" : 0,
+    "cooldowns" : {
+      "strength" : 0,
+      "dexterity" : 0,
+      "constitution" : 0,
+      "intelligence" : 0,
+      "wisdom" : 0,
+      "charisma" : 0
+    },
+    "featureUses" : {
+      "strength" : 0,
+      "dexterity" : 0,
+      "constitution" : 0,
+      "intelligence" : 0,
+      "wisdom" : 0,
+      "charisma" : 0
+    }
   }, {
     "id" : "player-vaerak",
     "name" : "Vaerak",
@@ -238,37 +317,43 @@
       "condition" : {
         "durability" : 100
       },
-      "equipped" : true
+      "equipped" : true,
+      "quantity" : 1
     }, {
       "itemId" : "kaavor-whip",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : true
+      "equipped" : true,
+      "quantity" : 1
     }, {
       "itemId" : "hide-armor",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : true
+      "equipped" : true,
+      "quantity" : 1
     }, {
       "itemId" : "rations",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : false
+      "equipped" : false,
+      "quantity" : 1
     }, {
       "itemId" : "waterskin",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : false
+      "equipped" : false,
+      "quantity" : 1
     }, {
       "itemId" : "potion-of-greater-healing",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : false
+      "equipped" : false,
+      "quantity" : 1
     } ],
     "spells" : [ {
       "spellId" : "raaz-horn-strike",
@@ -293,7 +378,7 @@
     } ],
     "passwordHash" : null,
     "passwordSalt" : null,
-    "imagePath" : null,
+    "imagePath" : "images/players/player-vaerak.jpg",
     "playerName" : "magro",
     "ownerUsername" : "",
     "description" : "3 მეტრის სიმაღლის რქიანი რევენანტი თეთრი თვალებითა და ტატუებით დაფარული სხეულით.\n\nCombat rules:\n• Full HP: 100. No mana / spell slots — every summon and spirit strike is paid with his own HP (castingResource = HIT_POINTS).\n• Raaz partial summon (Horn Strike / Uppercut): 10 HP per hit. Unavailable while Raaz is fully summoned.\n• Kaavor partial summon (Talon Lash): 5 HP per hit. Unavailable while Kaavor is fully summoned.\n• Summon Raaz: 60 HP + 5 HP every turn he keeps the body. Needs 300 L of water and 400 kg of living soil nearby.\n• Summon Kaavor: 30 HP + 3 HP every turn. Needs 4 L of water and 2 kg of soil.\n\nPassives:\n• Three souls (Vaerak, Vorash, Kael'mir) — DM may call for a Wisdom save when Vorash's rage or Kael'mir's fear takes over.\n• Déjà vu — he often knows the right path in places he does not remember visiting (DM may grant advantage on Survival to find a way).\n• Living runes — new tattoos appear when he feels strong emotions.",
@@ -302,11 +387,28 @@
     "maxMana" : 0,
     "currentMana" : 0,
     "activeEffects" : [ ],
-    "subclass" : null,
+    "subclass" : "",
     "backstory" : "ვაერაკი — Taur-keth (ბუნების სხეული)\n\nგარეგნობა: თეთრი თვალები, 3 მეტრი სიმაღლე, ტატუებით დაფარული სხეული, რქები.\n\n═══════════════════════════════════════\nწარსული\n═══════════════════════════════════════\n1) დაიბადა Taur-vael-ში, vey'kay-ს დასახლებაში, სადაც ბუნების მოყვარული ელფები ცხოვრობენ.\n2) მეტსახელად Taur-keth-ს (ბუნების სხეული) ეძახდნენ.\n3) პირველი მოგზაური ვაერაკის ბაბუა იყო. ვაერაკს უყვარდა, როცა მას კუდში დასდევდა და მისი მოგზაურობის ისტორიებს ისმენდა, რომლებიც ხშირად დაუჯერებელი ჩანდა. რაც უფრო იზრდებოდა, ვაერაკიც უფრო მეტად ემხრობოდა სხვებს, რომ მოხუცი ტყეში დაეხეტებოდა და ისტორიებს იგონებდა.\n4) მონადირე და გზამკვლევი იყო თავის ხალხში, მაგრამ ცხოველები უყვარდა და უმიზეზოდ არ კლავდა.\n5) ჰყავდა ცოლი Saelyra, უფროსი ვაჟი Aren და გოგონა Eira.\n6) ვაერაკს არ ახსოვს მისი სიკვდილამდელი ცხოვრება, მხოლოდ დროდადრო სიზმრებად ხედავს გავლილ წარსულს და მთელი ძალით ცდილობს ნელ-ნელა გაიხსენოს. გამუდმებით გრძნობს დეჟავიუს, როცა ნაცნობ ადგილებში მოხვდება; იცის სწორი გზები იქ, სადაც არ ახსოვს, როდისმე თუ ყოფილა. მან იცის, რომ როცა გამოეღვიძა, ქვეყანა დიდი ბრძოლის ველებით იყო დაფარული, მაგრამ არ ახსოვს ვინ და რატომ იბრძოდა.\n7) ვაერაკი სამი არმიის ბრძოლაში უცნობმა მეომარმა მოკლა, რომელმაც სიკვდილის წინ რაღაც ჩაჩურჩულა.\n8) სიკვდილის მერე მასში 2 სული შესახლდა:\n   • Vorash — აგრესიული და ველური სული\n   • Kael'mir — მფრთხალი, მაგრამ ძლიერი\n   ამის მერე ვაერაკი გაცოცხლდა, სხეულში სამი სულით.\n\n═══════════════════════════════════════\nრუნული ტატუები\n═══════════════════════════════════════\nროცა დაბინდდა, მის სხეულზე ტატუებმა დაიწყო გაჩენა. პირველები იყო:\n   • Shael — სული\n   • Veth — სისხლი\n   • Mora — სიკვდილი\n   • Eira — სიცოცხლე\nახალი რუნები ჩნდება ძლიერი ემოციების განცდისას. მან ყველა რუნის მნიშვნელობა არ იცის.\n\n═══════════════════════════════════════\nრააზი და კაავორი\n═══════════════════════════════════════\nვაერაკი ორ ცხოველს დაუმეგობრდა:\n   • Rhaz — რა'აზ — მარტორქა, რომელიც მომაკვდავი იპოვა, გადაარჩინა და დაიმეგობრა.\n   • Kaavor — კა'ვორ — შევარდენი, რომელიც ჯერ კიდევ ბარტყი იყო, როცა მიტოვებული იპოვა და გამოზარდა.\nცხოველების სიკვდილის მერე ვაერაკმა მათი სულები იარაღებში მოაქცია.\n\nვაერაკმა რააზის რქისგან საბრძოლო ურო გააკეთა, რომლის ერთი მხარე (რქის ძირი) ბლაგვია, მეორე მხარე კი (რქის წვერი) წაწვეტებული.\nკაავორის ბრჭყალებისგან მტკიცე მათრახი დაწნა და შიგ კაავორის ბრჭყალები ჩააყოლა.\n\nრააზმა და კაავორმა მის ხელებზე ტატუებადაც იჩინეს თავი: რააზმა ბინა მის მარჯვენა ხელის მტევანზე დაიდო, სადაც შეტევაზე გადასული მარტორქის ტატუ გაუჩნდა; მარცხენა ხელზე კაავორი დასახლდა, სადაც მსხვერპლისკენ დაშვებული შევარდენის გამოსახულება გაჩნდა.\n\nვაერაკს შეუძლია მათი სრული ან ნაწილობრივი მოხმობა (იხ. შელოცვები: Raaz Horn Strike, Raaz Uppercut, Kaavor Talon Lash, Summon Raaz, Summon Kaavor).",
     "castingResource" : "HIT_POINTS",
     "spellSlots" : [ ],
-    "cooldowns" : { }
+    "knownBlueprints" : [ ],
+    "furnaceFuel" : 0,
+    "cooldowns" : {
+      "strength" : 0,
+      "dexterity" : 0,
+      "constitution" : 0,
+      "intelligence" : 0,
+      "wisdom" : 0,
+      "charisma" : 0
+    },
+    "featureUses" : {
+      "strength" : 0,
+      "dexterity" : 0,
+      "constitution" : 0,
+      "intelligence" : 0,
+      "wisdom" : 0,
+      "charisma" : 0
+    }
   }, {
     "id" : "player-cucaratcha",
     "name" : "Zoinks - El Cucaratcha",
@@ -327,43 +429,50 @@
       "condition" : {
         "durability" : 100
       },
-      "equipped" : true
+      "equipped" : true,
+      "quantity" : 1
     }, {
       "itemId" : "monokatana",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : true
+      "equipped" : true,
+      "quantity" : 1
     }, {
       "itemId" : "studded-leather",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : true
+      "equipped" : true,
+      "quantity" : 1
     }, {
       "itemId" : "gravitic-anchor-node",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : true
+      "equipped" : true,
+      "quantity" : 1
     }, {
       "itemId" : "thieves-tools",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : false
+      "equipped" : false,
+      "quantity" : 1
     }, {
       "itemId" : "manacles",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : false
+      "equipped" : false,
+      "quantity" : 1
     }, {
       "itemId" : "potion-of-healing",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : false
+      "equipped" : false,
+      "quantity" : 1
     }, {
       "itemId" : "sixfold-cartridge",
       "condition" : {
@@ -395,7 +504,7 @@
     } ],
     "passwordHash" : null,
     "passwordSalt" : null,
-    "imagePath" : null,
+    "imagePath" : "images/players/player-cucaratcha.jpg",
     "playerName" : "Unassigned",
     "ownerUsername" : "",
     "description" : "Bounty hunter. Always finishes the hunt.\n\nResources:\n• Mana = revolver chambers. Max 6. Every Sixfold Judgment shot costs 1. The Gravitic Anchor Node refills all six chambers during a long rest — nobody can reload it by hand.\n• Singularity Round: 1 per short rest. Anchor Round: 1 per long rest. Their cooldowns are set to 100 rounds so they cannot be used again in the same fight.\n• Shot save DC (Crushing / Anchor): 13 (8 + proficiency 3 + DEX 2).\n\nPassives:\n• Sneak Attack (rogue, level 5): +3d6 once per turn on a hit with advantage, or when an ally stands next to the target.\n• Bound artifacts — the Sixfold Judgment only works while the Gravitic Anchor Node is attached to him.",
@@ -406,18 +515,35 @@
     "activeEffects" : [ {
       "effectId" : "advantage_on_attack",
       "name" : "Advantage on Attack",
-      "description" : null,
+      "description" : "",
       "remainingRounds" : 3,
       "damagePerRound" : 0,
       "healingPerRound" : 0,
       "source" : "DM",
       "expired" : false
     } ],
-    "subclass" : null,
+    "subclass" : "",
     "backstory" : "A bounty hunter in a world ruled by corporations, cybernetics, and violence. He wasn't famous, nor was he trying to be. He took contracts, tracked his targets, collected his pay, and moved on to the next job. He had a reputation for always finishing the hunt, whether it took days or months.\n\nWhen he crossed into this world, his cybernetics transformed into magical relics. His combat implants became enchanted artifacts, his trusted revolver still carried only six bullets — though no one could explain how they replenished after periods of rest — and his monokatana stayed the same.\n\nThe implant along his spine changed the most. What had once been a military combat enhancement became a magical relic known as the Gravitic Anchor Node — a spine of arcane cores that lets him manipulate his own gravity. He doesn't understand how it works, only that it feels strangely familiar, as if technology and magic are simply different languages describing the same thing.",
     "castingResource" : "MANA",
     "spellSlots" : [ ],
-    "cooldowns" : { }
+    "knownBlueprints" : [ ],
+    "furnaceFuel" : 0,
+    "cooldowns" : {
+      "strength" : 0,
+      "dexterity" : 0,
+      "constitution" : 0,
+      "intelligence" : 0,
+      "wisdom" : 0,
+      "charisma" : 0
+    },
+    "featureUses" : {
+      "strength" : 0,
+      "dexterity" : 0,
+      "constitution" : 0,
+      "intelligence" : 0,
+      "wisdom" : 0,
+      "charisma" : 0
+    }
   }, {
     "id" : "player-lavenos",
     "name" : "Lavenos",
@@ -438,97 +564,113 @@
       "condition" : {
         "durability" : 100
       },
-      "equipped" : false
+      "equipped" : false,
+      "quantity" : 1
     }, {
       "itemId" : "shield",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : false
+      "equipped" : false,
+      "quantity" : 1
     }, {
       "itemId" : "breastplate",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : true
+      "equipped" : true,
+      "quantity" : 1
     }, {
       "itemId" : "dagger",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : false
+      "equipped" : false,
+      "quantity" : 1
     }, {
       "itemId" : "word-lavenos",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : false
+      "equipped" : false,
+      "quantity" : 1
     }, {
       "itemId" : "rations",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : false
+      "equipped" : false,
+      "quantity" : 1
     }, {
       "itemId" : "potion-of-healing",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : false
+      "equipped" : false,
+      "quantity" : 1
     }, {
       "itemId" : "ladies-blade",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : true
+      "equipped" : true,
+      "quantity" : 1
     }, {
       "itemId" : "forgotten-blade",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : true
+      "equipped" : true,
+      "quantity" : 1
     }, {
       "itemId" : "explorers-pack",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : false
+      "equipped" : false,
+      "quantity" : 1
     }, {
       "itemId" : "simple-clothes",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : false
+      "equipped" : false,
+      "quantity" : 1
     }, {
       "itemId" : "visage-glasses",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : true
+      "equipped" : true,
+      "quantity" : 1
     }, {
       "itemId" : "philter-of-love",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : false
+      "equipped" : false,
+      "quantity" : 1
     }, {
       "itemId" : "dust-powder",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : false
+      "equipped" : false,
+      "quantity" : 1
     }, {
       "itemId" : "advantage-wisdom",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : false
+      "equipped" : false,
+      "quantity" : 1
     }, {
       "itemId" : "null-monet",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : false
+      "equipped" : false,
+      "quantity" : 1
     } ],
     "spells" : [ {
       "spellId" : "blade-oath",
@@ -619,7 +761,10 @@
     "backstory" : null,
     "castingResource" : null,
     "spellSlots" : [ ],
-    "cooldowns" : { }
+    "knownBlueprints" : [ ],
+    "furnaceFuel" : 0,
+    "cooldowns" : { },
+    "featureUses" : { }
   }, {
     "id" : "player-gorlok",
     "name" : "Gorlok the Destroyer",
@@ -640,50 +785,78 @@
       "condition" : {
         "durability" : 100
       },
-      "equipped" : true
+      "equipped" : true,
+      "quantity" : 1
     }, {
       "itemId" : "dwarven-heavy-plate",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : true
+      "equipped" : true,
+      "quantity" : 1
     }, {
       "itemId" : "handaxe",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : false
+      "equipped" : false,
+      "quantity" : 1
     }, {
       "itemId" : "rations",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : false
+      "equipped" : false,
+      "quantity" : 1
     }, {
       "itemId" : "torch",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : false
+      "equipped" : false,
+      "quantity" : 1
     }, {
       "itemId" : "tinderbox",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : false
+      "equipped" : false,
+      "quantity" : 1
     } ],
     "spells" : [ ],
     "passwordHash" : null,
     "passwordSalt" : null,
-    "imagePath" : null,
+    "imagePath" : "images/players/player-gorlok.jpg",
     "playerName" : "Unassigned",
-    "ownerUsername" : null,
-    "description" : null,
+    "ownerUsername" : "",
+    "description" : "",
     "maxHitPoints" : 30,
     "currentHitPoints" : 30,
     "maxMana" : 0,
     "currentMana" : 0,
-    "activeEffects" : [ ]
+    "activeEffects" : [ ],
+    "subclass" : "",
+    "backstory" : "",
+    "castingResource" : null,
+    "spellSlots" : [ ],
+    "knownBlueprints" : [ ],
+    "furnaceFuel" : 0,
+    "cooldowns" : {
+      "strength" : 0,
+      "dexterity" : 0,
+      "constitution" : 0,
+      "intelligence" : 0,
+      "wisdom" : 0,
+      "charisma" : 0
+    },
+    "featureUses" : {
+      "strength" : 0,
+      "dexterity" : 0,
+      "constitution" : 0,
+      "intelligence" : 0,
+      "wisdom" : 0,
+      "charisma" : 0
+    }
   }, {
     "id" : "player-tasha",
     "name" : "Tasha",
@@ -704,43 +877,50 @@
       "condition" : {
         "durability" : 100
       },
-      "equipped" : true
+      "equipped" : true,
+      "quantity" : 1
     }, {
       "itemId" : "light-crossbow",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : true
+      "equipped" : true,
+      "quantity" : 1
     }, {
       "itemId" : "shield",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : true
+      "equipped" : true,
+      "quantity" : 1
     }, {
       "itemId" : "leather-armor",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : true
+      "equipped" : true,
+      "quantity" : 1
     }, {
       "itemId" : "holy-symbol",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : true
+      "equipped" : true,
+      "quantity" : 1
     }, {
       "itemId" : "healers-kit",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : false
+      "equipped" : false,
+      "quantity" : 1
     }, {
       "itemId" : "holy-water",
       "condition" : {
         "durability" : 100
       },
-      "equipped" : false
+      "equipped" : false,
+      "quantity" : 1
     } ],
     "spells" : [ {
       "spellId" : "sacred-flame",
@@ -859,7 +1039,10 @@
       "max" : 2,
       "current" : 2
     } ],
-    "cooldowns" : { }
+    "knownBlueprints" : [ ],
+    "furnaceFuel" : 0,
+    "cooldowns" : { },
+    "featureUses" : { }
   }, {
     "id" : "darius",
     "name" : "Darius",
@@ -911,10 +1094,13 @@
       "expired" : false
     } ],
     "subclass" : null,
-    "backstory" : "═══════════════════════════════════════\nდარიუსის რუნების გზა — ᚱᚢᚾᛖ — Rune Mastery\n═══════════════════════════════════════\n(ეს არ არის მისი მიმდინარე სტატი — რუნები თავგადასავლის წინსვლასთან ერთად გაიხსნება: პირველი რუნა მე-5 დონისთვისაა, მეორე — მე-6-სთვის და ა.შ.)\n\nიდეა: რუნა უბრალოდ „საჩუქრად“ არ გეძლევა — უნდა გაიგო მისი მნიშვნელობა და დაამტკიცო, რომ მისი ტარება შეგიძლია.\n\nპერსონაჟის გზა იყოფა 4 საფეხურად:\nI. მხეცი → II. მეომარი → III. მცოდნე → IV. რუნების ოსტატი\n\nთავიდან დარიუსს საერთოდ არ ესმის რუნების ნამდვილი არსი. ის რუნებს იმიტომ კი არ სწავლობს, რომ მაგიის გამოყენება უნდა — უბრალოდ აინტერესებს, რატომ აქვს ამ პატარა ნიშნებს ასეთი ძალა. ასე მისი ინტელექტუალური განვითარება ბუნებრივად დაიწყება.\n\n═══════════════════════════════════════\nბრინჯაოს სამკლავური და ზოგადი წესები\n═══════════════════════════════════════\nდარიუსი პოულობს ბრინჯაოს სამკლავურს, რომელსაც ზედ ჯაჭვის ერთი რგოლი აქვს ჩამაგრებული. რგოლს რუნებით აწერია „ურუზ“. დარიუსი ცნობს ამ სამაჯურს — ის მისი ტომის ქურუმმა აჩუქა, თუმცა ამაზე მეტი არაფერი ახსოვს.\n\n• პირველი გააქტიურება: სამკლავური პირველად მაშინ იღვიძებს, როცა დარიუსი სადმე გააგორებს Strength check-ს > 20 (modifier-ების ჩათვლით). თავად მან ეს არ იცის.\n• გამოყენება: გააქტიურების მერე რუნა გამოიყენება მისი სახელის წარმოთქმით.\n• ხანგრძლივობა: რუნა ერთი სვლის მანძილზე მოქმედებს (თუ რუნის აღწერაში სხვა რამ არ წერია — მაგ. Reaction-ები ერთ კონკრეტულ მომენტზე მოქმედებს).\n• ფასი: ბრძოლაში პირველი რუნის გამოყენება 1 HP ჯდება, ყოველი შემდგომი რუნა 1-ით მეტი HP ღირს (1, 2, 3, 4 ...).\n• Cooldown: თითოეულ რუნას cooldown აქვს მისი რიგითი დონის ტოლი — ე.ი. I დონის რუნა ურუზ-ს გადასატენად 1 სვლა სჭირდება, II დონის ალგიზს — 2 სვლა და ა.შ.\n• ჯაჭვი: ყოველი ახალი რუნისთვის დარიუსს მოუწევს თავის ჯაჭვს ახალი რგოლი დაამატოს.\n\n═══════════════════════════════════════\nდონე 5 — ᚢ URUZ (რუნა I) — პირველყოფილი ძალა 🐂\n═══════════════════════════════════════\nთემა: პირველყოფილი ძალა, სხეული, გამძლეობა, ნებისყოფა. როლი: შეტევა / მუშტი.\nCooldown: 1 სვლა.\n\nქვესტი — პირველი გამოცდა\nდარიუსმა უნდა იპოვოს ძველი ქვა, ძვალი, ამულეტი ან სხვა ნივთი, რომელზეც ᚢ არის ამოკვეთილი (მისთვის ეს თავად სამკლავურის რგოლია). მაგრამ იქ არ წერია „Uruz = ძალა“ — ამის აღმოჩენა თავად მოუწევს. DM აძლევს მინიშნებებს — მაგალითად, ძველ ნახატს, სადაც გიგანტური ველური ხარი ან ძველი მეომარია გამოსახული. უნდა მიხვდეს: „ეს რუნა პირველყოფილ ძალასთანაა დაკავშირებული.“\n\nგამოცდა: DM აძლევს სიტუაციას, სადაც იარაღის გამოყენება არ შეუძლია — უნდა დაამარცხოს ძლიერი მოწინააღმდეგე ან დაიცვას თავი და/ან ვინმე სხვა მხოლოდ საკუთარი სხეულით, მუშტებით. როცა ბრძოლაში ისეთ მომენტს მიაღწევს, სადაც უკვე თითქმის აღარ შეუძლია გაგრძელება, DM აღწერს: „შენს ხელისგულზე ᚢ ნიშანი ცხელდება. რამდენიმე წამით გრძნობ, თითქოს შენს სხეულში ველური მხეცის ძალა მოძრაობს.“ თუ გამოცდას გადალახავს, Uruz მის პირველ რუნად გაიხსნება და ხელზე გამოჩნდება.\n\nმექანიკა (გააქტიურებისას სხეულის ზედაპირზე ᚢ ჩნდება):\n• Unarmed Strike-ის damage იზრდება +1d4.\n• Advantage Strength (Athletics)-ზე.\n• ერთხელ თითოეულ სვლაზე, თუ Unarmed Strike-ით დაარტყამს, შეუძლია მიზანი დამატებით 5 ფუტით (1.5 მ) უკან გასწიოს.\n• განსაკუთრებული მომენტი: თუ გააქტიურებისას Rage-შია, პირველი წარმატებული მუშტი დამატებით აკეთებს 1d6 force damage-ს.\nმოგვიანებით, როცა Uruz-ს სრულად დაეუფლება, შეიძლება გაიხსნას Uruz Mastery და ბევრად უფრო ძლიერი გახდეს — მის სრულ შესწავლას თავისი პატარა ქვესტი ექნება.\n\n═══════════════════════════════════════\nდონე 6 — ᛉ ALGIZ (რუნა II) — დაცვის ინსტინქტი 🛡️\n═══════════════════════════════════════\nთემა: დაცვა. როლი: თავდაცვა.\nCooldown: 2 სვლა.\n\nქვესტი — ინსტინქტის გამოცდა\nეს გამოცდა პირიქითაა: მოწინააღმდეგე კი არ უნდა დაამარცხოს — ვინმე უნდა დაიცვას. მაგალითად: NPC, ბავშვი, დაშავებული თანამებრძოლი ან თუნდაც მთელი სოფელი. მოწინააღმდეგე შეიძლება მასზე ძლიერიც იყოს. მიზანია: „ისინი ჩემ უკან ვერ გაივლიან.“ სწორედ აქ აღმოაჩენს პირველად დარიუსი, რომ ძალა მხოლოდ თავდასხმა არ არის. ჯილდო: ᛉ Algiz და რუნის თავდაცვითი ეფექტი.\n\nმექანიკა — Reaction, როცა მტერი მასზე თავდასხმას აკეთებს:\n• +2 AC ამ კონკრეტული შეტევის წინააღმდეგ.\n• თუ ამის გამო თავდასხმა აცდა, შეუძლია 5 ფუტით (1.5 მ) გადაადგილდეს Opportunity Attack-ის გამოწვევის გარეშე.\n„სხეულმა იფიქრა მანამდე, სანამ გონება მოასწრებდა.“\n\n═══════════════════════════════════════\nდონე 7 — ᛏ TIWAZ (რუნა III) — მებრძოლის ნება ⚔️\n═══════════════════════════════════════\nთემა: მებრძოლი, ღირსება. როლი: დუელი / თავდასხმა.\nCooldown: 3 სვლა.\n\nქვესტი — ღირსების გამოცდა\nეს რუნა უბრალოდ ძლიერი მეომრისთვის არ არის. მოუწევს ბრძოლა, რომლის მოგებაც ძალით, ყველაზე მარტივი გზით, შეუძლებელია — მაგალითად, მოწინააღმდეგე მასზე ბევრად ძლიერია. შეუძლია: გაქცევა; მოტყუება; მოკავშირეების გამოყენება; ან ბოლომდე ბრძოლა. მაგრამ გამოცდის ნამდვილი კითხვაა: რატომ იბრძვი? DM აყენებს არჩევანის წინაშე: „მოგება ნებისმიერ ფასად“ VS „ღირსეულად ბრძოლა“. თუ სწორ არჩევანს გააკეთებს, Tiwaz მას მიიღებს. მისი ძალა განსაკუთრებით ძლიერდება Rage-ის დროს.\n\nმექანიკა — აირჩევს ერთ მოწინააღმდეგეს; მის წინააღმდეგ:\n• +1 attack roll\n• +1 damage\n• ვერ მიიღებს Disadvantage-ს Frightened მდგომარეობის გამო.\n• თუ სამიზნეს მოკლავს/დააგდებს, შეუძლია უფასოდ გადაიტანოს რუნის ეფექტი სხვა მოწინააღმდეგეზე. ერთდროულად მხოლოდ ერთი სამიზნე.\n\n═══════════════════════════════════════\nდონე 8 — ᚲ KENAZ (რუნა IV) — ცოდნის ცეცხლი 🔥\n═══════════════════════════════════════\nთემა: ცოდნა — აქ იწყება პერსონაჟის ინტელექტუალური გარდაქმნა.\nCooldown: 4 სვლა.\n\nქვესტი — ცოდნის გამოცდა\nპოულობს ძველ რუნულ წარწერას, რომლის მნიშვნელობაც არავინ იცის. Wizard-მა შეიძლება თქვას: „ეს ჩემთვის უცნობი დამწერლობაა.“ დარიუსი იწყებს კვლევას: უნდა შეადაროს სხვა რუნებს; მოძებნოს მსგავსი სიმბოლოები; დაიმახსოვროს განმეორებადი ნიშნები; ივარაუდოს მნიშვნელობა. მნიშვნელოვანი წესი: DM პასუხს მაშინვე არ აძლევს — თვითონ უნდა გაარკვიოს. როცა სწორად გაშიფრავს, ᚲ Kenaz მის კანზე ჩნდება და რუნული ცოდნის ახალი დონე ეხსნება.\n\nმექანიკა:\n• ხედავს ჩვეულებრივ სიბნელეში 60 ფუტამდე (18 მ).\n• Advantage Investigation-ზე, როცა რაღაცის გაშიფვრას/დაკვირვებას ცდილობს.\n• შეუძლია შეამჩნიოს დამალული მაგიური კვალი, თუ DM ჩათვლის, რომ მისი დანახვა შესაძლებელია.\n• სპეციალური გამოყენება: თუ ხედავს მტერს, რომელსაც ადრე არ იცნობდა, შეუძლია DM-ს ჰკითხოს: „რას მეუბნება ჩემი რუნა ამ არსების შესახებ?“ — DM აძლევს ერთ მცირე, მაგრამ სასარგებლო ინფორმაციას (სისუსტე, ბუნება ან თავდასხმის ტიპი).\n\n═══════════════════════════════════════\nდონე 9 — ᚨ ANSUZ (რუნა V) — ცოდნისა და სიტყვის რუნა 🧠\n═══════════════════════════════════════\nთემა: სიბრძნე.\nCooldown: 5 სვლა.\n\nქვესტი — სიბრძნის გამოცდა\nდარიუსი უკვე სწავლობს რუნებს, მაგრამ ახლა უნდა ისწავლოს: „როდის არ უნდა გამოვიყენო ძალა?“ DM აძლევს სიტუაციას, სადაც ბრძოლა შესაძლებელია, მაგრამ პრობლემის მოგვარება სიტყვითაც შეიძლება. თუ უბრალოდ მუშტს გამოიყენებს — შეიძლება ვერ ჩააბაროს. თუ მოუსმენს, იფიქრებს, კითხვებს დასვამს და ინფორმაციას შეაგროვებს — Ansuz გაიხსნება და პერსონაჟი რეალურად იწყებს სწავლას („ჩემი პერსონაჟი ცდილობს ძველი ენების, ისტორიისა და რუნების შესწავლას“).\n\nმექანიკა — Reaction, როცა Ability Check-ს აკეთებს:\n• d20-ის გაგორების შემდეგ შეუძლია დაამატოს 1d6.\n• ლეველებთან ერთად იზრდება: Level 9 → 1d10, Level 13 → 1d12.\n• „Rune Memory“: თუ ერთხელ უკვე ნახა კონკრეტული რუნა, სიმბოლო, ენა ან მაგიური წარწერა, DM-ს შეუძლია დაუშვას, რომ მომავალში გაიხსენოს მისი მნიშვნელობა, მიუხედავად იმისა, რომ თავიდან ამის ცოდნა არ ჰქონდა. ამით დარიუსი რეალურად ხდება მკვლევარი.\n\n═══════════════════════════════════════\nდონე 10 — ᚦ THURISAZ (რუნა VI) — დამანგრეველი ძალა 🩸\n═══════════════════════════════════════\nთემა: განადგურება და კონტროლი. ერთ-ერთი ყველაზე საშიში რუნა.\nCooldown: 6 სვლა.\n\nქვესტი — განადგურების გამოცდა\nეს რუნა არ უნდა მიიღოს ადამიანმა, რომელსაც მხოლოდ ძალა უნდა. დარიუსი ხვდება სიტუაციას, სადაც შეუძლია რაღაცის განადგურება, მაგრამ უნდა გადაწყვიტოს, რა უნდა გაანადგუროს და რა — არა. მაგალითად, შეიძლება ჰქონდეს შესაძლებლობა გაანადგუროს მტრის ძლიერი მაგიური არტეფაქტი, მაგრამ ამით უდანაშაულო ხალხიც დაზიანდება. უნდა იპოვოს მესამე გზა. ეს ასწავლის: ძალას კონტროლი სჭირდება.\n\nმექანიკა — როცა Unarmed Strike-ით მოხვდება, შეუძლია Bonus Action-ით:\n• +2d6 damage.\n• შემდეგ სამიზნე აკეთებს Strength Saving Throw-ს: ვერ შეძლო → Prone ხდება; შეძლო → არ ვარდება, მაგრამ მისი მოძრაობა მომდევნო ტურამდე 10 ფუტით (3 მ) მცირდება.\n• Uses: Proficiency Bonus / Long Rest.\n\n═══════════════════════════════════════\nდონე 11 — ᛊ SOWILO (რუნა VII) — მზე / გამარჯვება 🌞\n═══════════════════════════════════════\nთემა: გამარჯვება, სიცოცხლის ძალა.\nCooldown: 7 სვლა.\n\nქვესტი — გამარჯვების გამოცდა\nაქ აღარ კმარა ბრძოლაში გამარჯვება — უნდა გაიმარჯვოს მაშინ, როცა დანებება ყველაზე მარტივია. მაგალითად: ჯგუფი დამარცხებულია, თვითონაც თითქმის მკვდარია, მტერი ეუბნება: „დაწექი და ყველაფერი დასრულდება.“ მისი პასუხი უნდა იყოს მოქმედება — არა აუცილებლად შეტევა. უბრალოდ: „არა.“\n\nმექანიკა — Reaction, როცა HP 50%-ზე დაბლა ჩამოუვა:\n• აღიდგენს 2d6 + Constitution modifier HP-ს.\n• სანამ შემდეგი სვლა დაიწყება, Unarmed Strike-ის პირველი დარტყმა აკეთებს დამატებით 1d8 radiant damage-ს.\n\n═══════════════════════════════════════\nდონე 12 — ᛖ EHWAZ (რუნა VIII) — მოძრაობა 🐎\n═══════════════════════════════════════\nთემა: მოძრაობა, ბალანსი, პარტნიორთან სინქრონი.\nCooldown: 8 სვლა.\n\nქვესტი — სინქრონის გამოცდა (DM-ის შემოთავაზება)\nცხენი და მხედარი ერთად მოძრაობენ. დარიუსი აღმოჩნდება დევნაში ან გაქცევაში, სადაც ჯგუფი მხოლოდ ერთად გადარჩება: უნდა შეუწყოს ნაბიჯი მოკავშირეს, დაელოდოს მას და ენდოს — სიჩქარეზე მეტად ბალანსი და ნდობა.\n\nმექანიკა:\n• Speed +10 ft (3 მ).\n• Prone-დან წამოდგომა აღარ მოითხოვს დამატებით movement-ს.\n• შეუძლია მტრის გვერდით გადაადგილდეს ისე, რომ მისი Opportunity Attack არ გამოიწვიოს, თუ იმავე სვლაში მას Unarmed Strike-ით ერთხელ მაინც დაარტყამს.\n\n═══════════════════════════════════════\nდონე 13 — ᛁ ISA (რუნა IX) — უძრაობა 🧊\n═══════════════════════════════════════\nთემა: ყინული, საკუთარი სხეულის სრული კონტროლი.\nCooldown: 9 სვლა · 1 გამოყენება / Short Rest.\n\nქვესტი — სიმშვიდის გამოცდა (DM-ის შემოთავაზება)\nყინული არ მოძრაობს. დარიუსმა უნდა გაუძლოს ტკივილს ან პროვოკაციას ისე, რომ არ შეუტიოს — მაგალითად, თხელ ყინულზე, მტრის დაცინვის ქვეშ ან მოლაპარაკებისას, სადაც ერთი აჩქარებული მოძრაობა ყველაფერს დაღუპავს.\n\nმექანიკა — Reaction, როცა damage-ს მიიღებს:\n• იღებს Resistance-ს იმ damage-ის წინააღმდეგ (მაგ. 20 fire damage → იღებს 10-ს).\n• ძალიან ძლიერია, ამიტომ: 1 გამოყენება / Short Rest.\n\n═══════════════════════════════════════\nდონე 14 — ᛚ LAGUZ (რუნა X) — წყალი / ინტუიცია 🌊\n═══════════════════════════════════════\nთემა: ინტუიცია და სხეულის ინსტინქტი. უფრო „მისტიკური“ რუნა.\nCooldown: 10 სვლა.\n\nქვესტი — ინტუიციის გამოცდა (DM-ის შემოთავაზება)\nწყალი გზას თავად პოულობს. დარიუსმა უნდა მიჰყვეს ინსტინქტს იქ, სადაც ლოგიკა აღარ შველის — ნისლში ან წყალქვეშა გამოქვაბულში გზის პოვნა, ან ტყუილის შეგრძნება NPC-ში მტკიცებულებების გარეშე.\n\nმექანიკა:\n• Advantage Perception-ზე.\n• Advantage Insight-ზე.\n• შეუძლია იგრძნოს ახლოს არსებული ცოცხალი არსება, თუ ის სპეციალურად მაგიით არ არის დამალული.\n• შეუძლია DM-ს ჰკითხოს: „ჩემი ინსტინქტი რას მეუბნება ამ ადამიანზე?“ — პასუხი არ არის სრული სიმართლე/ტყუილი, არამედ ინტუიციური მინიშნება.\n\n═══════════════════════════════════════\nდონე 15 — ᛗ MANNAZ (რუნა XI) — ადამიანი / თვითშემეცნება 🧬\n═══════════════════════════════════════\nთემა: საკუთარი თავი. ერთ-ერთი ყველაზე მნიშვნელოვანი გონებრივი განვითარების რუნა.\nCooldown: 11 სვლა · 1 / Long Rest.\n\nქვესტი — საკუთარი თავის გამოცდა\nშეიძლება ყველაზე რთული. დარიუსი უნდა შეხვდეს საკუთარ თავს — მაგიურად, ილუზიით ან სხვა გზით. შეიძლება შეხვდეს თავის იმ ვერსიას, რომელიც: მხოლოდ ძალას ენდობა; ყველას ებრძვის; არაფერს სწავლობს; საკუთარ სისუსტეს ვერ აღიარებს. და უნდა დაამარცხოს არა მუშტით, არამედ იმის გააზრებით, თუ ვინ არის სინამდვილეში. ეს ის მომენტია, როცა DM-ს შეუძლია თქვას: „შენი პერსონაჟი უკვე აღარ არის მხოლოდ ბარბარიანი.“\n\nმექანიკა — Passive:\n• თუ რომელიმე Intelligence/Wisdom/Charisma Ability Check-ზე 1-ით ჩავარდება, შეუძლია დაამატოს +1d4 და გადაარჩინოს შედეგი. 1 / Long Rest.\n• ლეველებთან ერთად: Level 5 → 1d6, Level 9 → 1d8, Level 13 → 1d10 (მე-15 დონეზე მიღებისას უკვე 1d10).\nსიმბოლურად: პერსონაჟი აღარ ეყრდნობა მხოლოდ კუნთს — ის სწავლობს ფიქრს.\n\n═══════════════════════════════════════\nდონე 16 — ᛇ EIHWAZ (რუნა XII) — გამძლეობა / სიკვდილის წინააღმდეგობა 🐺\n═══════════════════════════════════════\nთემა: ურთხელი (yew) — სიცოცხლისა და სიკვდილის ხე.\nCooldown: 12 სვლა · 1 / Long Rest.\n\nქვესტი — სიკვდილის გამოცდა (DM-ის შემოთავაზება)\nდარიუსი სიკვდილს პირისპირ უნდა შეხვდეს — Death Saving Throw-ებიდან დაბრუნდეს, ან სასიკვდილო საფრთხეს გაუძლოს სხვის გადასარჩენად, და მიხვდეს, რომ გადარჩენა ნებისყოფის არჩევანიცაა.\n\nმექანიკა — Reaction, როცა 0 HP-ზე უნდა ჩამოვიდეს:\n• რჩება 1 HP-ზე. 1 / Long Rest.\nეს ბარბარიანისთვის ძალიან ბუნებრივია.\n\n═══════════════════════════════════════\nდონე 17 — ᛈ PERTHRO (რუნა XIII) — ბედი 🎲\n═══════════════════════════════════════\nთემა: ბედი, შემთხვევითობა — ყველაზე უცნაური და იდუმალი რუნა (მისი ისტორიული მნიშვნელობა ბოლომდე გარკვეული არ არის).\nCooldown: 13 სვლა.\n\nქვესტი — ბედის გამოცდა\nდარიუსი აღმოჩნდება სიტუაციაში, სადაც სრული ინფორმაცია არ აქვს და მაინც უნდა აირჩიოს. მარცხნივ? მარჯვნივ? ენდობა უცნობს? იღებს დაწყევლილ ნივთს? Perthro-ს იდეა უცნობთან და ბედთან ურთიერთობაა. ჯილდო: შესაძლებლობა თამაშში ბედს ენდოს — ქვემოთ აღწერილი d20 მექანიკით.\n\nმექანიკა:\n• როცა d20-ს აგორებს, შეუძლია მანამდე, სანამ შედეგს გაიგებს, თქვას: „ბედს ვანდობ.“ შემდეგ აგორებს დამატებით d20-ს.\n• თუ მეორე შედეგი უფრო მაღალია → იყენებს მეორეს.\n• თუ უფრო დაბალია → მაინც მეორეს იყენებს — ბედს უკან ვერ დაიბრუნებ. (ორიგინალი ჩანაწერი აქ შეწყვეტილი იყო; ეს დასასრული DM-ის შემოთავაზებაა.)\n\n═══════════════════════════════════════\nმომავალი — ᛟ OTHALA — წინაპრების გამოცდა 🏠\n═══════════════════════════════════════\nჩანაწერი დაუსრულებელია. იდეა: წინაპრების ძალა და ცოდნა, მემკვიდრეობა/წინაპართა მიწა — შესაძლოა დაკავშირებული იყოს დარიუსის ტომსა და ქურუმთან, რომელმაც სამკლავური აჩუქა.\n\n═══════════════════════════════════════\nElder Futhark — რუნების ცნობარი\n═══════════════════════════════════════\nრუნა · სახელი · მნიშვნელობა · თამაშის იდეა\nᚠ Fehu — პირუტყვი, ქონება — ენერგიის დაგროვება; დარტყმის შემდეგ ძალის შენარჩუნება\nᚢ Uruz — ველური ხარი — სხეულის პირველყოფილი ძალა; მუშტის გაძლიერება\nᚦ Thurisaz — გოლიათი/Thurs — დამანგრეველი დარტყმა; მტრის დაცვაში გარღვევა\nᚨ Ansuz — ღმერთთან/სიტყვასთან დაკავშირებული — გონება, ცოდნა, ინტუიცია\nᚱ Raidho — გზა, მოგზაურობა — მოძრაობა და სწრაფი რეაქცია\nᚲ Kenaz — ჩირაღდანი/ცეცხლი — ცოდნის „ანთება“; დამალულის დანახვა\nᚷ Gebo — საჩუქარი — ძალის გაზიარება მოკავშირესთან\nᚹ Wunjo — სიხარული — შიშისა და გონებრივი დაძაბულობის წინააღმდეგ\nᚺ Hagalaz — სეტყვა — ქაოსური დამანგრეველი ძალა\nᚾ Nauthiz — საჭიროება/გაჭირვება — როცა HP დაბალია, გაძლევს უკანასკნელ ძალას\nᛁ Isa — ყინული — საკუთარი სხეულის სრული კონტროლი\nᛃ Jera — წელი/მოსავალი — მოთმინება და დაგროვილი შედეგი\nᛇ Eihwaz — ურთხელი (yew) — გამძლეობა და სიკვდილის წინააღმდეგობა\nᛈ Perthro — მნიშვნელობა გაურკვეველია — ბედი/შემთხვევითობა; განსაკუთრებული რუნა\nᛉ Algiz — მნიშვნელობა სადავოა; დაკავშირებულია elk/დაცვასთან — ძლიერი თავდაცვითი ინსტინქტი\nᛊ Sowilo — მზე — ენერგია, სიცოცხლის ძალა, გამარჯვება\nᛏ Tiwaz — ღმერთი Tiwaz/Týr — მეომრის ნება, სიმამაცე, ბრძოლა\nᛒ Berkano — არყის ხე — აღდგენა და ზრდა\nᛖ Ehwaz — ცხენი — მოძრაობა, ბალანსი, პარტნიორთან სინქრონი\nᛗ Mannaz — ადამიანი — ადამიანური გონება და თვითშემეცნება\nᛚ Laguz — წყალი/ტბა — ინტუიცია და სხეულის ინსტინქტი\nᛜ Ingwaz — Ing — შინაგანი ენერგიის დაგროვება\nᛞ Dagaz — დღე — ცვლილება, ახალი მდგომარეობის მიღწევა\nᛟ Othala — მემკვიდრეობა/წინაპართა მიწა — წინაპრების ძალა და ცოდნა",
+    "backstory" : "═══════════════════════════════════════\nდარიუსის რუნების გზა — ᚱᚢᚾᛖ — Rune Mastery\n═══════════════════════════════════════\n(ეს არ არის მისი მიმდინარე სტატი — რუნები თავგადასავლის წინსვლასთან ერთად გაიხსნება: პირველი რუნა მე-5 დონისთვისაა, მეორე — მე-6-სთვის და ა.შ.)\n\nიდეა: რუნა უბრალოდ „საჩუქრად“ არ გეძლევა — უნდა გაიგო მისი მნიშვნელობა და დაამტკიცო, რომ მისი ტარება შეგიძლია.\n\nპერსონაჟის გზა იყოფა 4 საფეხურად:\nI. მხეცი → II. მეომარი → III. მცოდნე → IV. რუნების ოსტატი\n\nთავიდან დარიუსს საერთოდ არ ესმის რუნების ნამდვილი არსი. ის რუნებს იმიტომ კი არ სწავლობს, რომ მაგიის გამოყენება უნდა — უბრალოდ აინტერესებს, რატომ აქვს ამ პატარა ნიშნებს ასეთი ძალა. ასე მისი ინტელექტუალური განვითარება ბუნებრივად დაიწყება.\n\n═══════════════════════════════════════\nბრინჯაოს სამკლავური და ზოგადი წესები\n═══════════════════════════════════════\nდარიუსი პოულობს ბრინჯაოს სამკლავურს, რომელსაც ზედ ჯაჭვის ერთი რგოლი აქვს ჩამაგრებული. რგოლს რუნებით აწერია „ურუზ“. დარიუსი ცნობს ამ სამაჯურს — ის მისი ტომის ქურუმმა აჩუქა, თუმცა ამაზე მეტი არაფერი ახსოვს.\n\n• პირველი გააქტიურება: სამკლავური პირველად მაშინ იღვიძებს, როცა დარიუსი სადმე გააგორებს Strength check-ს > 20 (modifier-ების ჩათვლით). თავად მან ეს არ იცის.\n• გამოყენება: გააქტიურების მერე რუნა გამოიყენება მისი სახელის წარმოთქმით.\n• ხანგრძლივობა: რუნა ერთი სვლის მანძილზე მოქმედებს (თუ რუნის აღწერაში სხვა რამ არ წერია — მაგ. Reaction-ები ერთ კონკრეტულ მომენტზე მოქმედებს).\n• ფასი: ბრძოლაში პირველი რუნის გამოყენება 1 HP ჯდება, ყოველი შემდგომი რუნა 1-ით მეტი HP ღირს (1, 2, 3, 4 ...).\n• Cooldown: თითოეულ რუნას cooldown აქვს მისი რიგითი დონის ტოლი — ე.ი. I დონის რუნა ურუზ-ს გადასატენად 1 სვლა სჭირდება, II დონის ალგიზს — 2 სვლა და ა.შ.\n• ჯაჭვი: ყოველი ახალი რუნისთვის დარიუსს მოუწევს თავის ჯაჭვს ახალი რგოლი დაამატოს.\n\n═══════════════════════════════════════\nდონე 5 — ᚢ URUZ (რუნა I) — პირველყოფილი ძალა \uD83D\uDC02\n═══════════════════════════════════════\nთემა: პირველყოფილი ძალა, სხეული, გამძლეობა, ნებისყოფა. როლი: შეტევა / მუშტი.\nCooldown: 1 სვლა.\n\nქვესტი — პირველი გამოცდა\nდარიუსმა უნდა იპოვოს ძველი ქვა, ძვალი, ამულეტი ან სხვა ნივთი, რომელზეც ᚢ არის ამოკვეთილი (მისთვის ეს თავად სამკლავურის რგოლია). მაგრამ იქ არ წერია „Uruz = ძალა“ — ამის აღმოჩენა თავად მოუწევს. DM აძლევს მინიშნებებს — მაგალითად, ძველ ნახატს, სადაც გიგანტური ველური ხარი ან ძველი მეომარია გამოსახული. უნდა მიხვდეს: „ეს რუნა პირველყოფილ ძალასთანაა დაკავშირებული.“\n\nგამოცდა: DM აძლევს სიტუაციას, სადაც იარაღის გამოყენება არ შეუძლია — უნდა დაამარცხოს ძლიერი მოწინააღმდეგე ან დაიცვას თავი და/ან ვინმე სხვა მხოლოდ საკუთარი სხეულით, მუშტებით. როცა ბრძოლაში ისეთ მომენტს მიაღწევს, სადაც უკვე თითქმის აღარ შეუძლია გაგრძელება, DM აღწერს: „შენს ხელისგულზე ᚢ ნიშანი ცხელდება. რამდენიმე წამით გრძნობ, თითქოს შენს სხეულში ველური მხეცის ძალა მოძრაობს.“ თუ გამოცდას გადალახავს, Uruz მის პირველ რუნად გაიხსნება და ხელზე გამოჩნდება.\n\nმექანიკა (გააქტიურებისას სხეულის ზედაპირზე ᚢ ჩნდება):\n• Unarmed Strike-ის damage იზრდება +1d4.\n• Advantage Strength (Athletics)-ზე.\n• ერთხელ თითოეულ სვლაზე, თუ Unarmed Strike-ით დაარტყამს, შეუძლია მიზანი დამატებით 5 ფუტით (1.5 მ) უკან გასწიოს.\n• განსაკუთრებული მომენტი: თუ გააქტიურებისას Rage-შია, პირველი წარმატებული მუშტი დამატებით აკეთებს 1d6 force damage-ს.\nმოგვიანებით, როცა Uruz-ს სრულად დაეუფლება, შეიძლება გაიხსნას Uruz Mastery და ბევრად უფრო ძლიერი გახდეს — მის სრულ შესწავლას თავისი პატარა ქვესტი ექნება.\n\n═══════════════════════════════════════\nდონე 6 — ᛉ ALGIZ (რუნა II) — დაცვის ინსტინქტი \uD83D\uDEE1️\n═══════════════════════════════════════\nთემა: დაცვა. როლი: თავდაცვა.\nCooldown: 2 სვლა.\n\nქვესტი — ინსტინქტის გამოცდა\nეს გამოცდა პირიქითაა: მოწინააღმდეგე კი არ უნდა დაამარცხოს — ვინმე უნდა დაიცვას. მაგალითად: NPC, ბავშვი, დაშავებული თანამებრძოლი ან თუნდაც მთელი სოფელი. მოწინააღმდეგე შეიძლება მასზე ძლიერიც იყოს. მიზანია: „ისინი ჩემ უკან ვერ გაივლიან.“ სწორედ აქ აღმოაჩენს პირველად დარიუსი, რომ ძალა მხოლოდ თავდასხმა არ არის. ჯილდო: ᛉ Algiz და რუნის თავდაცვითი ეფექტი.\n\nმექანიკა — Reaction, როცა მტერი მასზე თავდასხმას აკეთებს:\n• +2 AC ამ კონკრეტული შეტევის წინააღმდეგ.\n• თუ ამის გამო თავდასხმა აცდა, შეუძლია 5 ფუტით (1.5 მ) გადაადგილდეს Opportunity Attack-ის გამოწვევის გარეშე.\n„სხეულმა იფიქრა მანამდე, სანამ გონება მოასწრებდა.“\n\n═══════════════════════════════════════\nდონე 7 — ᛏ TIWAZ (რუნა III) — მებრძოლის ნება ⚔️\n═══════════════════════════════════════\nთემა: მებრძოლი, ღირსება. როლი: დუელი / თავდასხმა.\nCooldown: 3 სვლა.\n\nქვესტი — ღირსების გამოცდა\nეს რუნა უბრალოდ ძლიერი მეომრისთვის არ არის. მოუწევს ბრძოლა, რომლის მოგებაც ძალით, ყველაზე მარტივი გზით, შეუძლებელია — მაგალითად, მოწინააღმდეგე მასზე ბევრად ძლიერია. შეუძლია: გაქცევა; მოტყუება; მოკავშირეების გამოყენება; ან ბოლომდე ბრძოლა. მაგრამ გამოცდის ნამდვილი კითხვაა: რატომ იბრძვი? DM აყენებს არჩევანის წინაშე: „მოგება ნებისმიერ ფასად“ VS „ღირსეულად ბრძოლა“. თუ სწორ არჩევანს გააკეთებს, Tiwaz მას მიიღებს. მისი ძალა განსაკუთრებით ძლიერდება Rage-ის დროს.\n\nმექანიკა — აირჩევს ერთ მოწინააღმდეგეს; მის წინააღმდეგ:\n• +1 attack roll\n• +1 damage\n• ვერ მიიღებს Disadvantage-ს Frightened მდგომარეობის გამო.\n• თუ სამიზნეს მოკლავს/დააგდებს, შეუძლია უფასოდ გადაიტანოს რუნის ეფექტი სხვა მოწინააღმდეგეზე. ერთდროულად მხოლოდ ერთი სამიზნე.\n\n═══════════════════════════════════════\nდონე 8 — ᚲ KENAZ (რუნა IV) — ცოდნის ცეცხლი \uD83D\uDD25\n═══════════════════════════════════════\nთემა: ცოდნა — აქ იწყება პერსონაჟის ინტელექტუალური გარდაქმნა.\nCooldown: 4 სვლა.\n\nქვესტი — ცოდნის გამოცდა\nპოულობს ძველ რუნულ წარწერას, რომლის მნიშვნელობაც არავინ იცის. Wizard-მა შეიძლება თქვას: „ეს ჩემთვის უცნობი დამწერლობაა.“ დარიუსი იწყებს კვლევას: უნდა შეადაროს სხვა რუნებს; მოძებნოს მსგავსი სიმბოლოები; დაიმახსოვროს განმეორებადი ნიშნები; ივარაუდოს მნიშვნელობა. მნიშვნელოვანი წესი: DM პასუხს მაშინვე არ აძლევს — თვითონ უნდა გაარკვიოს. როცა სწორად გაშიფრავს, ᚲ Kenaz მის კანზე ჩნდება და რუნული ცოდნის ახალი დონე ეხსნება.\n\nმექანიკა:\n• ხედავს ჩვეულებრივ სიბნელეში 60 ფუტამდე (18 მ).\n• Advantage Investigation-ზე, როცა რაღაცის გაშიფვრას/დაკვირვებას ცდილობს.\n• შეუძლია შეამჩნიოს დამალული მაგიური კვალი, თუ DM ჩათვლის, რომ მისი დანახვა შესაძლებელია.\n• სპეციალური გამოყენება: თუ ხედავს მტერს, რომელსაც ადრე არ იცნობდა, შეუძლია DM-ს ჰკითხოს: „რას მეუბნება ჩემი რუნა ამ არსების შესახებ?“ — DM აძლევს ერთ მცირე, მაგრამ სასარგებლო ინფორმაციას (სისუსტე, ბუნება ან თავდასხმის ტიპი).\n\n═══════════════════════════════════════\nდონე 9 — ᚨ ANSUZ (რუნა V) — ცოდნისა და სიტყვის რუნა \uD83E\uDDE0\n═══════════════════════════════════════\nთემა: სიბრძნე.\nCooldown: 5 სვლა.\n\nქვესტი — სიბრძნის გამოცდა\nდარიუსი უკვე სწავლობს რუნებს, მაგრამ ახლა უნდა ისწავლოს: „როდის არ უნდა გამოვიყენო ძალა?“ DM აძლევს სიტუაციას, სადაც ბრძოლა შესაძლებელია, მაგრამ პრობლემის მოგვარება სიტყვითაც შეიძლება. თუ უბრალოდ მუშტს გამოიყენებს — შეიძლება ვერ ჩააბაროს. თუ მოუსმენს, იფიქრებს, კითხვებს დასვამს და ინფორმაციას შეაგროვებს — Ansuz გაიხსნება და პერსონაჟი რეალურად იწყებს სწავლას („ჩემი პერსონაჟი ცდილობს ძველი ენების, ისტორიისა და რუნების შესწავლას“).\n\nმექანიკა — Reaction, როცა Ability Check-ს აკეთებს:\n• d20-ის გაგორების შემდეგ შეუძლია დაამატოს 1d6.\n• ლეველებთან ერთად იზრდება: Level 9 → 1d10, Level 13 → 1d12.\n• „Rune Memory“: თუ ერთხელ უკვე ნახა კონკრეტული რუნა, სიმბოლო, ენა ან მაგიური წარწერა, DM-ს შეუძლია დაუშვას, რომ მომავალში გაიხსენოს მისი მნიშვნელობა, მიუხედავად იმისა, რომ თავიდან ამის ცოდნა არ ჰქონდა. ამით დარიუსი რეალურად ხდება მკვლევარი.\n\n═══════════════════════════════════════\nდონე 10 — ᚦ THURISAZ (რუნა VI) — დამანგრეველი ძალა \uD83E\uDE78\n═══════════════════════════════════════\nთემა: განადგურება და კონტროლი. ერთ-ერთი ყველაზე საშიში რუნა.\nCooldown: 6 სვლა.\n\nქვესტი — განადგურების გამოცდა\nეს რუნა არ უნდა მიიღოს ადამიანმა, რომელსაც მხოლოდ ძალა უნდა. დარიუსი ხვდება სიტუაციას, სადაც შეუძლია რაღაცის განადგურება, მაგრამ უნდა გადაწყვიტოს, რა უნდა გაანადგუროს და რა — არა. მაგალითად, შეიძლება ჰქონდეს შესაძლებლობა გაანადგუროს მტრის ძლიერი მაგიური არტეფაქტი, მაგრამ ამით უდანაშაულო ხალხიც დაზიანდება. უნდა იპოვოს მესამე გზა. ეს ასწავლის: ძალას კონტროლი სჭირდება.\n\nმექანიკა — როცა Unarmed Strike-ით მოხვდება, შეუძლია Bonus Action-ით:\n• +2d6 damage.\n• შემდეგ სამიზნე აკეთებს Strength Saving Throw-ს: ვერ შეძლო → Prone ხდება; შეძლო → არ ვარდება, მაგრამ მისი მოძრაობა მომდევნო ტურამდე 10 ფუტით (3 მ) მცირდება.\n• Uses: Proficiency Bonus / Long Rest.\n\n═══════════════════════════════════════\nდონე 11 — ᛊ SOWILO (რუნა VII) — მზე / გამარჯვება \uD83C\uDF1E\n═══════════════════════════════════════\nთემა: გამარჯვება, სიცოცხლის ძალა.\nCooldown: 7 სვლა.\n\nქვესტი — გამარჯვების გამოცდა\nაქ აღარ კმარა ბრძოლაში გამარჯვება — უნდა გაიმარჯვოს მაშინ, როცა დანებება ყველაზე მარტივია. მაგალითად: ჯგუფი დამარცხებულია, თვითონაც თითქმის მკვდარია, მტერი ეუბნება: „დაწექი და ყველაფერი დასრულდება.“ მისი პასუხი უნდა იყოს მოქმედება — არა აუცილებლად შეტევა. უბრალოდ: „არა.“\n\nმექანიკა — Reaction, როცა HP 50%-ზე დაბლა ჩამოუვა:\n• აღიდგენს 2d6 + Constitution modifier HP-ს.\n• სანამ შემდეგი სვლა დაიწყება, Unarmed Strike-ის პირველი დარტყმა აკეთებს დამატებით 1d8 radiant damage-ს.\n\n═══════════════════════════════════════\nდონე 12 — ᛖ EHWAZ (რუნა VIII) — მოძრაობა \uD83D\uDC0E\n═══════════════════════════════════════\nთემა: მოძრაობა, ბალანსი, პარტნიორთან სინქრონი.\nCooldown: 8 სვლა.\n\nქვესტი — სინქრონის გამოცდა (DM-ის შემოთავაზება)\nცხენი და მხედარი ერთად მოძრაობენ. დარიუსი აღმოჩნდება დევნაში ან გაქცევაში, სადაც ჯგუფი მხოლოდ ერთად გადარჩება: უნდა შეუწყოს ნაბიჯი მოკავშირეს, დაელოდოს მას და ენდოს — სიჩქარეზე მეტად ბალანსი და ნდობა.\n\nმექანიკა:\n• Speed +10 ft (3 მ).\n• Prone-დან წამოდგომა აღარ მოითხოვს დამატებით movement-ს.\n• შეუძლია მტრის გვერდით გადაადგილდეს ისე, რომ მისი Opportunity Attack არ გამოიწვიოს, თუ იმავე სვლაში მას Unarmed Strike-ით ერთხელ მაინც დაარტყამს.\n\n═══════════════════════════════════════\nდონე 13 — ᛁ ISA (რუნა IX) — უძრაობა \uD83E\uDDCA\n═══════════════════════════════════════\nთემა: ყინული, საკუთარი სხეულის სრული კონტროლი.\nCooldown: 9 სვლა · 1 გამოყენება / Short Rest.\n\nქვესტი — სიმშვიდის გამოცდა (DM-ის შემოთავაზება)\nყინული არ მოძრაობს. დარიუსმა უნდა გაუძლოს ტკივილს ან პროვოკაციას ისე, რომ არ შეუტიოს — მაგალითად, თხელ ყინულზე, მტრის დაცინვის ქვეშ ან მოლაპარაკებისას, სადაც ერთი აჩქარებული მოძრაობა ყველაფერს დაღუპავს.\n\nმექანიკა — Reaction, როცა damage-ს მიიღებს:\n• იღებს Resistance-ს იმ damage-ის წინააღმდეგ (მაგ. 20 fire damage → იღებს 10-ს).\n• ძალიან ძლიერია, ამიტომ: 1 გამოყენება / Short Rest.\n\n═══════════════════════════════════════\nდონე 14 — ᛚ LAGUZ (რუნა X) — წყალი / ინტუიცია \uD83C\uDF0A\n═══════════════════════════════════════\nთემა: ინტუიცია და სხეულის ინსტინქტი. უფრო „მისტიკური“ რუნა.\nCooldown: 10 სვლა.\n\nქვესტი — ინტუიციის გამოცდა (DM-ის შემოთავაზება)\nწყალი გზას თავად პოულობს. დარიუსმა უნდა მიჰყვეს ინსტინქტს იქ, სადაც ლოგიკა აღარ შველის — ნისლში ან წყალქვეშა გამოქვაბულში გზის პოვნა, ან ტყუილის შეგრძნება NPC-ში მტკიცებულებების გარეშე.\n\nმექანიკა:\n• Advantage Perception-ზე.\n• Advantage Insight-ზე.\n• შეუძლია იგრძნოს ახლოს არსებული ცოცხალი არსება, თუ ის სპეციალურად მაგიით არ არის დამალული.\n• შეუძლია DM-ს ჰკითხოს: „ჩემი ინსტინქტი რას მეუბნება ამ ადამიანზე?“ — პასუხი არ არის სრული სიმართლე/ტყუილი, არამედ ინტუიციური მინიშნება.\n\n═══════════════════════════════════════\nდონე 15 — ᛗ MANNAZ (რუნა XI) — ადამიანი / თვითშემეცნება \uD83E\uDDEC\n═══════════════════════════════════════\nთემა: საკუთარი თავი. ერთ-ერთი ყველაზე მნიშვნელოვანი გონებრივი განვითარების რუნა.\nCooldown: 11 სვლა · 1 / Long Rest.\n\nქვესტი — საკუთარი თავის გამოცდა\nშეიძლება ყველაზე რთული. დარიუსი უნდა შეხვდეს საკუთარ თავს — მაგიურად, ილუზიით ან სხვა გზით. შეიძლება შეხვდეს თავის იმ ვერსიას, რომელიც: მხოლოდ ძალას ენდობა; ყველას ებრძვის; არაფერს სწავლობს; საკუთარ სისუსტეს ვერ აღიარებს. და უნდა დაამარცხოს არა მუშტით, არამედ იმის გააზრებით, თუ ვინ არის სინამდვილეში. ეს ის მომენტია, როცა DM-ს შეუძლია თქვას: „შენი პერსონაჟი უკვე აღარ არის მხოლოდ ბარბარიანი.“\n\nმექანიკა — Passive:\n• თუ რომელიმე Intelligence/Wisdom/Charisma Ability Check-ზე 1-ით ჩავარდება, შეუძლია დაამატოს +1d4 და გადაარჩინოს შედეგი. 1 / Long Rest.\n• ლეველებთან ერთად: Level 5 → 1d6, Level 9 → 1d8, Level 13 → 1d10 (მე-15 დონეზე მიღებისას უკვე 1d10).\nსიმბოლურად: პერსონაჟი აღარ ეყრდნობა მხოლოდ კუნთს — ის სწავლობს ფიქრს.\n\n═══════════════════════════════════════\nდონე 16 — ᛇ EIHWAZ (რუნა XII) — გამძლეობა / სიკვდილის წინააღმდეგობა \uD83D\uDC3A\n═══════════════════════════════════════\nთემა: ურთხელი (yew) — სიცოცხლისა და სიკვდილის ხე.\nCooldown: 12 სვლა · 1 / Long Rest.\n\nქვესტი — სიკვდილის გამოცდა (DM-ის შემოთავაზება)\nდარიუსი სიკვდილს პირისპირ უნდა შეხვდეს — Death Saving Throw-ებიდან დაბრუნდეს, ან სასიკვდილო საფრთხეს გაუძლოს სხვის გადასარჩენად, და მიხვდეს, რომ გადარჩენა ნებისყოფის არჩევანიცაა.\n\nმექანიკა — Reaction, როცა 0 HP-ზე უნდა ჩამოვიდეს:\n• რჩება 1 HP-ზე. 1 / Long Rest.\nეს ბარბარიანისთვის ძალიან ბუნებრივია.\n\n═══════════════════════════════════════\nდონე 17 — ᛈ PERTHRO (რუნა XIII) — ბედი \uD83C\uDFB2\n═══════════════════════════════════════\nთემა: ბედი, შემთხვევითობა — ყველაზე უცნაური და იდუმალი რუნა (მისი ისტორიული მნიშვნელობა ბოლომდე გარკვეული არ არის).\nCooldown: 13 სვლა.\n\nქვესტი — ბედის გამოცდა\nდარიუსი აღმოჩნდება სიტუაციაში, სადაც სრული ინფორმაცია არ აქვს და მაინც უნდა აირჩიოს. მარცხნივ? მარჯვნივ? ენდობა უცნობს? იღებს დაწყევლილ ნივთს? Perthro-ს იდეა უცნობთან და ბედთან ურთიერთობაა. ჯილდო: შესაძლებლობა თამაშში ბედს ენდოს — ქვემოთ აღწერილი d20 მექანიკით.\n\nმექანიკა:\n• როცა d20-ს აგორებს, შეუძლია მანამდე, სანამ შედეგს გაიგებს, თქვას: „ბედს ვანდობ.“ შემდეგ აგორებს დამატებით d20-ს.\n• თუ მეორე შედეგი უფრო მაღალია → იყენებს მეორეს.\n• თუ უფრო დაბალია → მაინც მეორეს იყენებს — ბედს უკან ვერ დაიბრუნებ. (ორიგინალი ჩანაწერი აქ შეწყვეტილი იყო; ეს დასასრული DM-ის შემოთავაზებაა.)\n\n═══════════════════════════════════════\nმომავალი — ᛟ OTHALA — წინაპრების გამოცდა \uD83C\uDFE0\n═══════════════════════════════════════\nჩანაწერი დაუსრულებელია. იდეა: წინაპრების ძალა და ცოდნა, მემკვიდრეობა/წინაპართა მიწა — შესაძლოა დაკავშირებული იყოს დარიუსის ტომსა და ქურუმთან, რომელმაც სამკლავური აჩუქა.\n\n═══════════════════════════════════════\nElder Futhark — რუნების ცნობარი\n═══════════════════════════════════════\nრუნა · სახელი · მნიშვნელობა · თამაშის იდეა\nᚠ Fehu — პირუტყვი, ქონება — ენერგიის დაგროვება; დარტყმის შემდეგ ძალის შენარჩუნება\nᚢ Uruz — ველური ხარი — სხეულის პირველყოფილი ძალა; მუშტის გაძლიერება\nᚦ Thurisaz — გოლიათი/Thurs — დამანგრეველი დარტყმა; მტრის დაცვაში გარღვევა\nᚨ Ansuz — ღმერთთან/სიტყვასთან დაკავშირებული — გონება, ცოდნა, ინტუიცია\nᚱ Raidho — გზა, მოგზაურობა — მოძრაობა და სწრაფი რეაქცია\nᚲ Kenaz — ჩირაღდანი/ცეცხლი — ცოდნის „ანთება“; დამალულის დანახვა\nᚷ Gebo — საჩუქარი — ძალის გაზიარება მოკავშირესთან\nᚹ Wunjo — სიხარული — შიშისა და გონებრივი დაძაბულობის წინააღმდეგ\nᚺ Hagalaz — სეტყვა — ქაოსური დამანგრეველი ძალა\nᚾ Nauthiz — საჭიროება/გაჭირვება — როცა HP დაბალია, გაძლევს უკანასკნელ ძალას\nᛁ Isa — ყინული — საკუთარი სხეულის სრული კონტროლი\nᛃ Jera — წელი/მოსავალი — მოთმინება და დაგროვილი შედეგი\nᛇ Eihwaz — ურთხელი (yew) — გამძლეობა და სიკვდილის წინააღმდეგობა\nᛈ Perthro — მნიშვნელობა გაურკვეველია — ბედი/შემთხვევითობა; განსაკუთრებული რუნა\nᛉ Algiz — მნიშვნელობა სადავოა; დაკავშირებულია elk/დაცვასთან — ძლიერი თავდაცვითი ინსტინქტი\nᛊ Sowilo — მზე — ენერგია, სიცოცხლის ძალა, გამარჯვება\nᛏ Tiwaz — ღმერთი Tiwaz/Týr — მეომრის ნება, სიმამაცე, ბრძოლა\nᛒ Berkano — არყის ხე — აღდგენა და ზრდა\nᛖ Ehwaz — ცხენი — მოძრაობა, ბალანსი, პარტნიორთან სინქრონი\nᛗ Mannaz — ადამიანი — ადამიანური გონება და თვითშემეცნება\nᛚ Laguz — წყალი/ტბა — ინტუიცია და სხეულის ინსტინქტი\nᛜ Ingwaz — Ing — შინაგანი ენერგიის დაგროვება\nᛞ Dagaz — დღე — ცვლილება, ახალი მდგომარეობის მიღწევა\nᛟ Othala — მემკვიდრეობა/წინაპართა მიწა — წინაპრების ძალა და ცოდნა",
     "castingResource" : null,
     "spellSlots" : [ ],
-    "cooldowns" : { }
+    "knownBlueprints" : [ ],
+    "furnaceFuel" : 0,
+    "cooldowns" : { },
+    "featureUses" : { }
   }, {
     "id" : "player-toren",
     "name" : "Toren Valebrick",
@@ -1109,9 +1295,9 @@
     } ],
     "passwordHash" : null,
     "passwordSalt" : null,
-    "imagePath" : null,
-    "playerName" : "Unassigned",
-    "ownerUsername" : null,
+    "imagePath" : "images/players/player-toren.jpg",
+    "playerName" : "Giorgi",
+    "ownerUsername" : "",
     "description" : "22 years, 185 cm. Young human noble engineer of House Valebrick - curious, suspicious, heavily sarcastic, composed and educated. Carries a 32-36 kg portable field workshop on his back with a Resonance Core and a removable stationary Bolt Repeater. \"Don't ask what humans were given. Ask what we built.\"",
     "maxHitPoints" : 28,
     "currentHitPoints" : 28,
@@ -1131,6 +1317,123 @@
       "current" : 2
     } ],
     "knownBlueprints" : [ "bp-smoke-canister", "bp-tripwire-alarm", "bp-grapnel-launcher", "bp-sticky-foam", "bp-messenger-beetle", "bp-thermal-smoke-grenade", "bp-scalding-bolts", "bp-flash-bomb", "bp-shock-darts", "bp-steam-jet-gauntlet", "bp-thermal-grenade", "bp-pressure-ram", "bp-concussion-bolts" ],
-    "furnaceFuel" : 0
+    "furnaceFuel" : 0,
+    "cooldowns" : {
+      "strength" : 0,
+      "dexterity" : 0,
+      "constitution" : 0,
+      "intelligence" : 0,
+      "wisdom" : 0,
+      "charisma" : 0
+    },
+    "featureUses" : {
+      "strength" : 0,
+      "dexterity" : 0,
+      "constitution" : 0,
+      "intelligence" : 0,
+      "wisdom" : 0,
+      "charisma" : 0
+    }
+  }, {
+    "id" : "player-elros",
+    "name" : "Elros",
+    "classId" : "wizard",
+    "raceId" : "elf",
+    "level" : 5,
+    "xp" : 0,
+    "stats" : {
+      "strength" : 8,
+      "dexterity" : 10,
+      "constitution" : 15,
+      "intelligence" : 15,
+      "wisdom" : 15,
+      "charisma" : 8
+    },
+    "items" : [ {
+      "itemId" : "quarterstaff",
+      "condition" : {
+        "durability" : 100
+      },
+      "equipped" : false,
+      "quantity" : 1
+    }, {
+      "itemId" : "spellbook",
+      "condition" : {
+        "durability" : 100
+      },
+      "equipped" : false,
+      "quantity" : 1
+    }, {
+      "itemId" : "component-pouch",
+      "condition" : {
+        "durability" : 100
+      },
+      "equipped" : false,
+      "quantity" : 1
+    } ],
+    "spells" : [ {
+      "spellId" : "fire-bolt",
+      "rank" : 1,
+      "active" : true
+    }, {
+      "spellId" : "mage-hand",
+      "rank" : 1,
+      "active" : true
+    }, {
+      "spellId" : "light",
+      "rank" : 1,
+      "active" : true
+    }, {
+      "spellId" : "magic-missile",
+      "rank" : 1,
+      "active" : true
+    }, {
+      "spellId" : "shield-spell",
+      "rank" : 1,
+      "active" : true
+    }, {
+      "spellId" : "mage-armor",
+      "rank" : 1,
+      "active" : true
+    }, {
+      "spellId" : "sleep",
+      "rank" : 1,
+      "active" : true
+    }, {
+      "spellId" : "detect-magic",
+      "rank" : 1,
+      "active" : true
+    } ],
+    "passwordHash" : null,
+    "passwordSalt" : null,
+    "imagePath" : "images/players/player-elros.png",
+    "playerName" : "Shako",
+    "ownerUsername" : "Shako",
+    "description" : null,
+    "maxHitPoints" : 32,
+    "currentHitPoints" : 32,
+    "maxMana" : 0,
+    "currentMana" : 0,
+    "activeEffects" : [ ],
+    "subclass" : "School of Evocation",
+    "backstory" : "Raised in a human village, he grew up surrounded by people who loved him, even if they occasionally wished he were a little less inventive. He was a kind boy, curious about everything, and somehow always in trouble.\n\nHis magic first appeared without warning and rarely at a convenient moment. Once, he accidentally turned himself invisible, causing the entire village to search for him for two days. He spent much of that time trying to explain that he was right there, but frightened villagers hearing a voice from nowhere only made the situation worse.\n\nOther incidents followed. The final straw came when a neighbourâ€™s cow began floating above its enclosure. After they managed to get it down, he admitted that perhaps he needed help. The village agreed with unusual enthusiasm. Everyone contributed what they could to send him to a magic school. The cowâ€™s owner contributed first.\n\nAt school, he learned to recognise and direct the magic that had always come naturally to him. He was an eager student, though his enthusiasm often outlasted his energy. He would practise late into the night, forget to sleep, and spend the next day exhausted, struggling with spells he could normally manage easily. Despite repeated warnings from his teachers, he still treats â€œjust one more attemptâ€ as a perfectly reasonable bedtime.\n\nAs he gained control of his powers, another question began occupying his thoughts: where had he come from? He loved his village and considered its people his family, but he had never known another elf well. He wanted to find his own kin, learn about their lives, and perhaps discover something about his birth family.\n\nNow he has set out into the world, carrying his training, his curiosity, and a firm promise to write home. He is happy to travel with others and quick to offer helpâ€”occasionally before checking whether he actually knows how.\n\n**Goal:** Find his elven kin and learn where he comes from.\n\n**Weakness:** He gets absorbed in whatever he is doing and neglects rest, leaving himself exhausted and his magic unreliable.\n\n**Alignment: Neutral Good.** He generally follows the law and respects sensible rules, but helping people matters more to him than obeying every instruction. If the proper route fails, he is willing to take a shortcutâ€”and feel slightly guilty about it afterward.",
+    "castingResource" : null,
+    "spellSlots" : [ {
+      "level" : 1,
+      "max" : 4,
+      "current" : 4
+    }, {
+      "level" : 2,
+      "max" : 3,
+      "current" : 3
+    }, {
+      "level" : 3,
+      "max" : 2,
+      "current" : 2
+    } ],
+    "knownBlueprints" : [ ],
+    "furnaceFuel" : 0,
+    "cooldowns" : { },
+    "featureUses" : { }
   } ]
 }

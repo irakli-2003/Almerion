@@ -12,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -80,11 +81,16 @@ public final class EntityForm {
     /** Nesting limit, so a self-referencing model can never build an infinite form. */
     private static final int MAX_DEPTH = 3;
     private static final List<String> LEADING = List.of("id", "name", "description");
-    private static final Set<String> LONG_TEXT = Set.of("description", "overview", "backstory");
+    private static final Set<String> LONG_TEXT = Set.of("description", "overview", "backstory", "notes");
+    /** Fields that usually hold several paragraphs get a tall editor; other long text a medium one. */
+    private static final Set<String> TALL_TEXT = Set.of("description", "overview", "backstory");
     private static final String LABEL_STYLE = "-fx-text-fill: #a89060; -fx-font-size: 12px;";
     public static final String HINT_STYLE = "-fx-text-fill: #6a5a3a; -fx-font-size: 11px;";
     private static final String HELP_STYLE = "-fx-text-fill: #8a7a5a; -fx-font-size: 11px; -fx-font-style: italic;";
     private static final String OPTION_STYLE = "-fx-text-fill: #b8a070; -fx-font-size: 11px;";
+    private static final String COMPACT_REMOVE_STYLE = "-fx-min-width: 0; -fx-padding: 3 8 3 8; -fx-font-size: 11px;";
+    private static final String COMPACT_ROW_STYLE =
+        "-fx-border-color: #c9a84c33; -fx-border-width: 0 0 1 0; -fx-padding: 4 6 4 6; -fx-background-color: #ffffff05;";
     private static final String GROUP_STYLE =
         "-fx-border-color: #c9a84c66; -fx-border-width: 1px; -fx-padding: 10; -fx-background-color: #ffffff08;";
 
@@ -98,7 +104,12 @@ public final class EntityForm {
         abstract void write(Object target) throws Exception;
     }
 
-    private final VBox node = new VBox(14);
+    private final javafx.scene.layout.Pane node;
+    /**
+     * Rows inside an object list (spell slots, carried items, abilities...) are drawn compactly:
+     * fields side by side with inline labels, help text as a tooltip instead of a line below.
+     */
+    private final boolean compact;
     private final List<Binding> bindings = new ArrayList<>();
     private final Map<String, List<Ref>> catalogs;
     private final int depth;
@@ -107,6 +118,25 @@ public final class EntityForm {
 
     private EntityForm(Class<?> type, Object value, Set<String> skip,
                        Map<String, List<Ref>> catalogs, int depth) {
+        this(type, value, skip, catalogs, depth, false, false);
+    }
+
+    /** @param inline a nested part of a compact row (e.g. an item's condition): one line, no wrapping */
+    private EntityForm(Class<?> type, Object value, Set<String> skip,
+                       Map<String, List<Ref>> catalogs, int depth, boolean compact, boolean inline) {
+        this.compact = compact;
+        if (inline) {
+            HBox line = new HBox(8);
+            line.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+            this.node = line;
+        } else if (compact) {
+            javafx.scene.layout.FlowPane flow = new javafx.scene.layout.FlowPane(12, 6);
+            flow.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+            flow.setPrefWrapLength(820);
+            this.node = flow;
+        } else {
+            this.node = new VBox(14);
+        }
         this.catalogs = catalogs;
         this.depth = depth;
         this.ownerType = type;
@@ -336,12 +366,14 @@ public final class EntityForm {
         if (longText) {
             TextArea area = new TextArea(text);
             area.setWrapText(true);
-            area.setPrefRowCount(3);
-            area.setMaxWidth(620);
+            area.setPrefRowCount(compact ? 2 : TALL_TEXT.contains(prop.name()) ? 12 : 6);
+            area.setMaxWidth(820);
+            if (compact) area.setPrefWidth(420);
             editor = area;
         } else {
             TextField field = new TextField(text);
             field.setMaxWidth(type == String.class ? 500 : 160);
+            if (compact) field.setPrefWidth(type == String.class ? 150 : 56);
             field.getStyleClass().add("dnd-text-field");
             editor = field;
         }
@@ -393,7 +425,7 @@ public final class EntityForm {
             }
         });
         combo.getSelectionModel().select(current);
-        VBox box = labelled(prop.name(), combo);
+        javafx.scene.layout.Pane box = labelled(prop.name(), combo);
         // Explain the option currently picked, so the choice can be learned while making it.
         Label optionNote = new Label();
         optionNote.setWrapText(true);
@@ -407,7 +439,16 @@ public final class EntityForm {
         };
         combo.valueProperty().addListener((obs, o, n) -> explain.run());
         explain.run();
-        box.getChildren().add(optionNote);
+        if (compact) {
+            Tooltip tip = new Tooltip();
+            tip.setWrapText(true);
+            tip.setMaxWidth(420);
+            combo.valueProperty().addListener((obs, o, n) -> tip.setText(optionNote.getText()));
+            tip.setText(optionNote.getText());
+            combo.setTooltip(tip);
+        } else {
+            box.getChildren().add(optionNote);
+        }
         node.getChildren().add(box);
         bind(prop, combo.getSelectionModel()::getSelectedItem);
     }
@@ -558,7 +599,7 @@ public final class EntityForm {
             }
         }
 
-        VBox rows = new VBox(6);
+        VBox rows = new VBox(4);
         List<Map.Entry<TextField, TextField>> pairs = new ArrayList<>();
         for (Map.Entry<String, Object> entry : existing.entrySet()) {
             pairs.add(mapRow(rows, pairs, entry.getKey(),
@@ -589,14 +630,15 @@ public final class EntityForm {
                                                    String key, String value) {
         TextField keyField = new TextField(key);
         keyField.getStyleClass().add("dnd-text-field");
-        keyField.setPrefWidth(200);
+        keyField.setPrefWidth(180);
         keyField.setPromptText("key");
         TextField valueField = new TextField(value);
         valueField.getStyleClass().add("dnd-text-field");
-        valueField.setPrefWidth(260);
+        valueField.setPrefWidth(120);
         valueField.setPromptText("value");
         Button remove = new Button("✕");
         remove.getStyleClass().add("danger-button");
+        remove.setStyle(COMPACT_REMOVE_STYLE);
 
         HBox row = new HBox(8, keyField, valueField, remove);
         row.setAlignment(Pos.CENTER_LEFT);
@@ -631,8 +673,9 @@ public final class EntityForm {
         field.setMaxWidth(560);
         Label hint = new Label("comma separated");
         hint.setStyle(HINT_STYLE);
-        VBox box = labelled(prop.name(), field);
-        box.getChildren().add(hint);
+        if (compact) field.setPromptText("comma separated");
+        javafx.scene.layout.Pane box = labelled(prop.name(), field);
+        if (!compact) box.getChildren().add(hint);
         node.getChildren().add(box);
         bind(prop, () -> Arrays.stream(field.getText().split(","))
             .map(String::trim).filter(part -> !part.isEmpty()).toList());
@@ -672,7 +715,7 @@ public final class EntityForm {
     }
 
     private void addObjectListEditor(Prop prop, List<?> values, Class<?> elementClass) {
-        VBox rows = new VBox(10);
+        VBox rows = new VBox(4);
         List<Map.Entry<Object, EntityForm>> entries = new ArrayList<>();
         for (Object value : values) {
             if (value != null) {
@@ -702,12 +745,16 @@ public final class EntityForm {
 
     private Map.Entry<Object, EntityForm> objectRow(VBox rows, List<Map.Entry<Object, EntityForm>> entries,
                                                     Object value) {
-        EntityForm form = new EntityForm(value.getClass(), value, Set.of("imagePath"), catalogs, depth + 1);
-        Button remove = new Button("Remove");
+        EntityForm form = new EntityForm(value.getClass(), value, Set.of("imagePath"), catalogs, depth + 1, true, false);
+        Button remove = new Button("\u2715");
         remove.getStyleClass().add("danger-button");
+        remove.setStyle(COMPACT_REMOVE_STYLE);
+        remove.setTooltip(new Tooltip("Remove"));
 
-        VBox card = new VBox(8, form.getNode(), remove);
-        card.setStyle(GROUP_STYLE);
+        HBox card = new HBox(8, form.getNode(), remove);
+        card.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        card.setStyle(COMPACT_ROW_STYLE);
+        HBox.setHgrow(form.getNode(), javafx.scene.layout.Priority.ALWAYS);
         remove.setOnAction(e -> {
             rows.getChildren().remove(card);
             entries.removeIf(entry -> entry.getValue() == form);
@@ -730,7 +777,7 @@ public final class EntityForm {
             return;
         }
         EntityForm form = new EntityForm(instance.getClass(), instance, Set.of("imagePath"),
-            catalogs, depth + 1);
+            catalogs, depth + 1, compact, compact);
         if (form.isEmpty()) {
             return;
         }
@@ -772,9 +819,22 @@ public final class EntityForm {
         });
     }
 
-    private VBox labelled(String propertyName, Node editor) {
+    private javafx.scene.layout.Pane labelled(String propertyName, Node editor) {
         Label label = new Label(humanize(propertyName));
         label.setStyle(LABEL_STYLE);
+        if (compact) {
+            String text = FieldHelp.field(ownerType, propertyName);
+            if (text != null) {
+                Tooltip tip = new Tooltip(text);
+                tip.setWrapText(true);
+                tip.setMaxWidth(420);
+                label.setTooltip(tip);
+                if (editor instanceof Control c && c.getTooltip() == null) c.setTooltip(tip);
+            }
+            HBox row = new HBox(5, label, editor);
+            row.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+            return row;
+        }
         VBox box = new VBox(4, label, editor);
         Label help = helpLabel(propertyName);
         if (help != null) box.getChildren().add(help);
@@ -793,13 +853,20 @@ public final class EntityForm {
     }
 
     private Node group(String propertyName, Node content) {
+        if (compact) {
+            Label small = new Label(humanize(propertyName) + ":");
+            small.setStyle(LABEL_STYLE);
+            HBox inline = new HBox(6, small, content);
+            inline.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+            return inline;
+        }
         Label label = new Label(humanize(propertyName));
         label.getStyleClass().add("section-label");
         Label help = helpLabel(propertyName);
         VBox box = help == null ? new VBox(8, label, content) : new VBox(8, label, help, content);
         box.setStyle(GROUP_STYLE);
         box.setPadding(new Insets(10));
-        box.setMaxWidth(680);
+        box.setMaxWidth(920);
         return box;
     }
 }

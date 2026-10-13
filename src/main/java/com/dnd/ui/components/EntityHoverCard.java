@@ -12,7 +12,13 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.skin.TextAreaSkin;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Window;
 import javafx.util.Duration;
 
@@ -51,37 +57,42 @@ public final class EntityHoverCard {
         node.getProperties().put(KEY, tip);
     }
 
+    /**
+     * A card sized to its content: lines wrap at {@link #MAX_WIDTH}, shorter text gives a
+     * narrower card, and the height is exactly what the wrapped text needs.
+     */
     public static Tooltip tooltip(String title, String summary, String body) {
-        Label head = new Label(title);
-        head.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #f4e4c1;");
-        head.setWrapText(true);
-        head.setMaxWidth(MAX_WIDTH);
-        VBox box = new VBox(4, head);
+        String family = Font.getDefault().getFamily();
+        double size = Font.getDefault().getSize();
+        VBox box = new VBox(4, text(title, Font.font(family, FontWeight.BOLD, 14), "#f4e4c1"));
         if (summary != null && !summary.isBlank()) {
-            Label sub = new Label(summary);
-            sub.setStyle("-fx-font-style: italic; -fx-text-fill: #d8c79a;");
-            sub.setWrapText(true);
-            sub.setMaxWidth(MAX_WIDTH);
-            box.getChildren().add(sub);
+            box.getChildren().add(text(summary, Font.font(family, FontWeight.NORMAL, FontPosture.ITALIC, size), "#d8c79a"));
         }
         if (body != null && !body.isBlank()) {
-            Label text = new Label(body);
-            text.setStyle("-fx-text-fill: #eeeeee;");
-            text.setWrapText(true);
-            text.setMaxWidth(MAX_WIDTH);
-            text.setMinHeight(Label.USE_PREF_SIZE);
-            box.getChildren().add(text);
+            box.getChildren().add(text(body, Font.font(family, size), "#eeeeee"));
         }
-        box.setPadding(new Insets(4));
-        box.setMaxWidth(MAX_WIDTH + 8);
+        box.setPadding(new Insets(8, 10, 8, 10));
+        box.setStyle("-fx-background-color: rgba(28,24,20,0.97); -fx-border-color: #8b6b3a;"
+            + " -fx-border-width: 1; -fx-background-radius: 4; -fx-border-radius: 4;");
+        box.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+
         Tooltip tip = new Tooltip();
         tip.setGraphic(box);
-        tip.setStyle("-fx-background-color: rgba(28,24,20,0.97); -fx-border-color: #8b6b3a; -fx-border-width: 1;");
+        tip.setContentDisplay(javafx.scene.control.ContentDisplay.GRAPHIC_ONLY);
+        tip.setStyle("-fx-background-color: transparent; -fx-padding: 0; -fx-background-insets: 0;");
         tip.setShowDelay(Duration.millis(250));
         tip.setHideDelay(Duration.millis(120));
         tip.setShowDuration(Duration.INDEFINITE);
-        tip.setWrapText(true);
         return tip;
+    }
+
+    private static Text text(String s, Font font, String color) {
+        Text t = new Text(s);
+        t.setFont(font);
+        t.setFill(Color.web(color));
+        double natural = t.getLayoutBounds().getWidth();
+        t.setWrappingWidth(Math.min(MAX_WIDTH, Math.ceil(natural) + 1));
+        return t;
     }
 
     /**

@@ -247,6 +247,9 @@ public final class CharacterSheetPrintDialog {
     private static Button button(String text) {
         Button b = new Button(text);
         b.getStyleClass().add("dnd-button");
+        // the theme's 180px minimum would push the last button out of this small window
+        b.setStyle("-fx-min-width: 0; -fx-padding: 6 16;");
+        b.setMinWidth(Region.USE_PREF_SIZE);
         return b;
     }
 

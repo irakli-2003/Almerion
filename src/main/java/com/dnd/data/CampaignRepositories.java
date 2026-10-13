@@ -62,6 +62,11 @@ public class CampaignRepositories {
         this.mapper = JsonMappers.create();
     }
 
+    /** Folder holding this campaign's data; relative image paths resolve against it. */
+    public Path campaignRoot() {
+        return paths.getRoot();
+    }
+
     public JsonRepository<CharacterClass, CharacterClassCatalog> classes() {
         if (classes == null) {
             classes = new JsonRepository<>(

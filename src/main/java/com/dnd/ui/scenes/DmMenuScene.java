@@ -24,7 +24,8 @@ public class DmMenuScene extends BaseScene {
 
     /** Every entity category managed in the Worldbuilding section (everything except players). */
 
-    private static final double CARD_WIDTH = 120;
+    private static final double CARD_WIDTH = 170;
+    private static final double PORTRAIT_SIZE = 150;
 
     public DmMenuScene(UiSession uiSession) { super(uiSession); }
 
@@ -103,53 +104,29 @@ public class DmMenuScene extends BaseScene {
     };
 
     /**
-     * "Worldbuilding": one button per non-player entity category, in labeled groups that share
-     * the full page width (one column each), with the larger groups split into two button columns
-     * so the whole section stays two rows of buttons high.
+     * "Worldbuilding": one compact button per non-player entity category, in labeled groups.
+     * Groups and buttons wrap with the window width, so the section never forces horizontal
+     * scrolling and stays only a couple of rows high.
      */
     private VBox worldbuildingSection() {
-        javafx.scene.layout.GridPane groups = new javafx.scene.layout.GridPane();
-        groups.setHgap(12);
-        int[] weights = new int[WORLDBUILDING_GROUPS.length];
-        int total = 0;
-        for (int i = 0; i < WORLDBUILDING_GROUPS.length; i++) {
-            weights[i] = WORLDBUILDING_GROUPS[i].length > 2 ? 2 : 1;
-            total += weights[i];
-        }
+        FlowPane groups = new FlowPane(10, 10);
         for (int i = 0; i < WORLDBUILDING_GROUPS.length; i++) {
             Label caption = new Label(WORLDBUILDING_GROUP_NAMES[i]);
             caption.getStyleClass().add("sub-label");
-            javafx.scene.layout.GridPane buttons = new javafx.scene.layout.GridPane();
-            buttons.setHgap(6);
-            buttons.setVgap(6);
-            int cols = weights[i];
-            for (int c = 0; c < cols; c++) {
-                javafx.scene.layout.ColumnConstraints cc = new javafx.scene.layout.ColumnConstraints();
-                cc.setPercentWidth(100.0 / cols);
-                buttons.getColumnConstraints().add(cc);
-            }
-            EntityCategory[] cats = WORLDBUILDING_GROUPS[i];
-            for (int k = 0; k < cats.length; k++) {
-                EntityCategory cat = cats[k];
-                Button b = btn(categoryLabel(cat), () -> {
+            HBox buttons = new HBox(6);
+            for (EntityCategory cat : WORLDBUILDING_GROUPS[i]) {
+                buttons.getChildren().add(btn(categoryLabel(cat), () -> {
                     uiSession.setActiveEntityCategory(cat);
                     uiSession.getRouter().goTo(SceneType.ENTITY_LIST);
-                });
-                b.setMaxWidth(Double.MAX_VALUE);
-                b.setMinWidth(0);
-                buttons.add(b, k % cols, k / cols);
+                }));
             }
-            VBox group = new VBox(6, caption, buttons);
-            group.getStyleClass().add("dm-subgroup");
-            group.setMaxWidth(Double.MAX_VALUE);
-            javafx.scene.layout.ColumnConstraints col = new javafx.scene.layout.ColumnConstraints();
-            col.setPercentWidth(100.0 * weights[i] / total);
-            col.setFillWidth(true);
-            groups.getColumnConstraints().add(col);
-            groups.add(group, i, 0);
-            javafx.scene.layout.GridPane.setFillHeight(group, true);
+            VBox group = new VBox(5, caption, buttons);
+            group.getStyleClass().addAll("dm-subgroup", "tool-group");
+            groups.getChildren().add(group);
         }
-        return card("🏰 Worldbuilding", groups);
+        VBox card = card("🏰 Worldbuilding", groups);
+        groups.prefWrapLengthProperty().bind(card.widthProperty().subtract(30));
+        return card;
     }
 
     /** "Players": horizontally scrollable row of mini character cards, with scroll arrows. */
@@ -172,7 +149,7 @@ public class DmMenuScene extends BaseScene {
 
         ScrollPane scroll = new ScrollPane(cardRow);
         scroll.setFitToHeight(true);
-        scroll.setPrefViewportHeight(215);
+        scroll.setPrefViewportHeight(340);
         scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scroll.setStyle("-fx-background: #1a1a2e; -fx-background-color: #1a1a2e;");
@@ -203,8 +180,9 @@ public class DmMenuScene extends BaseScene {
 
     private VBox playerCard(PlayerCharacter pc, CampaignRepositories repos) {
         ImageView img = new ImageView(ImageStore.loadOrPlaceholder(uiSession.campaignRoot(), pc.getImagePath()));
-        img.setFitWidth(72);
-        img.setFitHeight(72);
+        img.setFitWidth(PORTRAIT_SIZE);
+        img.setFitHeight(PORTRAIT_SIZE);
+        img.setSmooth(true);
         img.setPreserveRatio(true);
 
         String className = lookupName(repos.classes().list(), pc.getClassId(), CharacterClass::getId, CharacterClass::getName);
@@ -238,7 +216,7 @@ public class DmMenuScene extends BaseScene {
         l.setWrapText(true);
         l.setMaxWidth(CARD_WIDTH - 8);
         l.setStyle("-fx-text-fill: " + (emphasis ? "#c9a84c" : "#a89060") + "; -fx-font-size: "
-            + (emphasis ? "11px" : "10px") + "; -fx-text-alignment: center;");
+            + (emphasis ? "13px" : "11px") + "; -fx-text-alignment: center;");
         return l;
     }
 

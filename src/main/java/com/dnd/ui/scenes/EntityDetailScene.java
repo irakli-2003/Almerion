@@ -128,10 +128,11 @@ public class EntityDetailScene extends BaseScene {
 
         Label errorLabel = body("");
         errorLabel.setStyle("-fx-text-fill: #e07070;");
-        content.getChildren().add(errorLabel);
+        errorLabel.setWrapText(true);
 
+        Button saveBtn = null;
         if (uiSession.isDm()) {
-            Button saveBtn = btn("Save", () -> {
+            saveBtn = btn("Save", () -> {
                 try {
                     Object target = isNew
                         ? (itemKind[0] != null ? itemKind[0].create() : createNewEntity(cat)) : entity;
@@ -149,12 +150,21 @@ public class EntityDetailScene extends BaseScene {
                     errorLabel.setText("Save failed: " + ex.getMessage());
                 }
             });
-            content.getChildren().add(saveBtn);
         }
 
         scroll.setContent(content);
         root.getChildren().add(scroll);
         VBox.setVgrow(scroll, Priority.ALWAYS);
+
+        if (saveBtn != null) {
+            // Kept outside the scroll pane so Save stays at the bottom of the window on long forms.
+            HBox saveBar = new HBox(16, saveBtn, errorLabel);
+            saveBar.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+            saveBar.setPadding(new Insets(10, 60, 10, 60));
+            saveBar.setStyle("-fx-background-color: #14142a; -fx-border-color: #4a3c1c; -fx-border-width: 1 0 0 0;");
+            HBox.setHgrow(errorLabel, Priority.ALWAYS);
+            root.getChildren().add(saveBar);
+        }
         return wrapInScene(root);
     }
 

@@ -43,14 +43,14 @@ public class DmMenuScene extends BaseScene {
 
         HBox header = new HBox(12);
         header.setAlignment(Pos.CENTER_LEFT);
-        header.getChildren().add(title("Dungeon Master"));
+        header.getChildren().add(title("Dungeon Master of campaign: " + campaignName));
         if (uiSession.getSession().isOnline()) {
             Label badge = new Label("● LIVE");
             badge.getStyleClass().add("success-badge");
             header.getChildren().add(badge);
         }
 
-        content.getChildren().addAll(header, subtitle("Campaign: " + campaignName));
+        content.getChildren().add(header);
 
         content.getChildren().add(sessionSection());
         content.getChildren().add(playersSection());
@@ -79,6 +79,12 @@ public class DmMenuScene extends BaseScene {
         FlowPane row = new FlowPane(10, 10,
             btn("📜 Open Storyline", () -> uiSession.getRouter().goTo(SceneType.STORYLINE)),
             btn("🎵 Music", () -> MusicPanel.open(this, uiSession.campaignRoot())),
+            btn("🖨 Print Character Sheets", () -> {
+                if (uiSession.campaignRoot() == null) return;
+                var ctx = uiSession.getSession().getCampaignContext();
+                com.dnd.ui.print.CharacterSheetPrintDialog.show(
+                    com.dnd.ui.WindowOrder.current(), new CampaignRepositories(uiSession.campaignRoot()), ctx != null ? ctx.getName() : null);
+            }),
             btn("🌐 Online Session" + (uiSession.getSession().isOnline() ? "  ●" : ""),
                 () -> uiSession.getRouter().goTo(SceneType.DM_ONLINE_SESSION)));
         return card("▶ Run the Session", row);
@@ -96,24 +102,52 @@ public class DmMenuScene extends BaseScene {
         {EntityCategory.CLASS, EntityCategory.RACE, EntityCategory.LANGUAGE}
     };
 
-    /** "Worldbuilding": one button per non-player entity category, in labeled groups. */
+    /**
+     * "Worldbuilding": one button per non-player entity category, in labeled groups that share
+     * the full page width (one column each), with the larger groups split into two button columns
+     * so the whole section stays two rows of buttons high.
+     */
     private VBox worldbuildingSection() {
-        FlowPane groups = new FlowPane(12, 12);
+        javafx.scene.layout.GridPane groups = new javafx.scene.layout.GridPane();
+        groups.setHgap(12);
+        int[] weights = new int[WORLDBUILDING_GROUPS.length];
+        int total = 0;
+        for (int i = 0; i < WORLDBUILDING_GROUPS.length; i++) {
+            weights[i] = WORLDBUILDING_GROUPS[i].length > 2 ? 2 : 1;
+            total += weights[i];
+        }
         for (int i = 0; i < WORLDBUILDING_GROUPS.length; i++) {
             Label caption = new Label(WORLDBUILDING_GROUP_NAMES[i]);
             caption.getStyleClass().add("sub-label");
-            VBox buttons = new VBox(6);
-            for (EntityCategory cat : WORLDBUILDING_GROUPS[i]) {
+            javafx.scene.layout.GridPane buttons = new javafx.scene.layout.GridPane();
+            buttons.setHgap(6);
+            buttons.setVgap(6);
+            int cols = weights[i];
+            for (int c = 0; c < cols; c++) {
+                javafx.scene.layout.ColumnConstraints cc = new javafx.scene.layout.ColumnConstraints();
+                cc.setPercentWidth(100.0 / cols);
+                buttons.getColumnConstraints().add(cc);
+            }
+            EntityCategory[] cats = WORLDBUILDING_GROUPS[i];
+            for (int k = 0; k < cats.length; k++) {
+                EntityCategory cat = cats[k];
                 Button b = btn(categoryLabel(cat), () -> {
                     uiSession.setActiveEntityCategory(cat);
                     uiSession.getRouter().goTo(SceneType.ENTITY_LIST);
                 });
                 b.setMaxWidth(Double.MAX_VALUE);
-                buttons.getChildren().add(b);
+                b.setMinWidth(0);
+                buttons.add(b, k % cols, k / cols);
             }
             VBox group = new VBox(6, caption, buttons);
             group.getStyleClass().add("dm-subgroup");
-            groups.getChildren().add(group);
+            group.setMaxWidth(Double.MAX_VALUE);
+            javafx.scene.layout.ColumnConstraints col = new javafx.scene.layout.ColumnConstraints();
+            col.setPercentWidth(100.0 * weights[i] / total);
+            col.setFillWidth(true);
+            groups.getColumnConstraints().add(col);
+            groups.add(group, i, 0);
+            javafx.scene.layout.GridPane.setFillHeight(group, true);
         }
         return card("🏰 Worldbuilding", groups);
     }
@@ -138,7 +172,7 @@ public class DmMenuScene extends BaseScene {
 
         ScrollPane scroll = new ScrollPane(cardRow);
         scroll.setFitToHeight(true);
-        scroll.setPrefViewportHeight(150);
+        scroll.setPrefViewportHeight(215);
         scroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scroll.setStyle("-fx-background: #1a1a2e; -fx-background-color: #1a1a2e;");
@@ -158,15 +192,19 @@ public class DmMenuScene extends BaseScene {
             }
         });
 
-        HBox playerButtons = new HBox(10, createCharacterBtn);
-        section.getChildren().addAll(scrollRow, playerButtons);
-        return card("☻ Players", section);
+        Label heading = sectionLabel("☻ Players");
+        HBox headingRow = new HBox(14, heading, createCharacterBtn);
+        headingRow.setAlignment(Pos.CENTER_LEFT);
+        section.getChildren().add(scrollRow);
+        VBox card = new VBox(10, headingRow, section);
+        card.getStyleClass().add("dm-card");
+        return card;
     }
 
     private VBox playerCard(PlayerCharacter pc, CampaignRepositories repos) {
         ImageView img = new ImageView(ImageStore.loadOrPlaceholder(uiSession.campaignRoot(), pc.getImagePath()));
-        img.setFitWidth(56);
-        img.setFitHeight(56);
+        img.setFitWidth(72);
+        img.setFitHeight(72);
         img.setPreserveRatio(true);
 
         String className = lookupName(repos.classes().list(), pc.getClassId(), CharacterClass::getId, CharacterClass::getName);
@@ -179,7 +217,8 @@ public class DmMenuScene extends BaseScene {
         Label player = smallLabel(pc.getPlayerName() != null && !pc.getPlayerName().isBlank()
             ? "Player: " + pc.getPlayerName() : "Player: -", false);
 
-        VBox card = new VBox(3, img, name, level, cls, race, player);
+        Label hp = smallLabel("HP " + pc.getCurrentHitPoints() + "/" + pc.getMaxHitPoints(), false);
+        VBox card = new VBox(3, img, name, level, cls, race, hp, player);
         card.setAlignment(Pos.TOP_CENTER);
         card.setPadding(new Insets(8));
         card.setPrefWidth(CARD_WIDTH);

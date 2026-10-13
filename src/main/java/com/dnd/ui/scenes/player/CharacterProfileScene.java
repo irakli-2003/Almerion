@@ -107,6 +107,7 @@ public class CharacterProfileScene extends BaseScene {
                     if (itemImg != null) itemThumb.setImage(itemImg);
                 }
                 Label itemLabel = body(itemName + (pi.isEquipped() ? " ✓" : ""));
+                if (item != null) com.dnd.ui.components.EntityHoverCard.item(itemLabel, item, repos);
                 row.getChildren().addAll(itemThumb, itemLabel);
                 content.getChildren().add(row);
             }
@@ -119,7 +120,9 @@ public class CharacterProfileScene extends BaseScene {
             for (var ps : pc.getSpells()) {
                 var spell = repos.spells().getById(ps.getSpellId());
                 String spellName = spell != null ? spell.getName() : ps.getSpellId();
-                content.getChildren().add(body("• " + spellName + " (Rank " + ps.getRank() + ")"));
+                Label spellLabel = body("• " + spellName + " (Rank " + ps.getRank() + ")");
+                if (spell != null) com.dnd.ui.components.EntityHoverCard.spell(spellLabel, spell, repos);
+                content.getChildren().add(spellLabel);
             }
         } else {
             content.getChildren().add(body("No spells."));

@@ -590,6 +590,13 @@ public class CharacterCreationWizard extends BaseScene {
         List<CheckBox> all = new ArrayList<>();
         for (String[] e : entries) {
             CheckBox cb = checkBox(e[1]);
+            if (selected == state.spellIds) {
+                Spell spell = repos.spells().getById(e[0]);
+                if (spell != null) com.dnd.ui.components.EntityHoverCard.spell(cb, spell, repos);
+            } else {
+                Item item = repos.items().getById(e[0]);
+                if (item != null) com.dnd.ui.components.EntityHoverCard.item(cb, item, repos);
+            }
             cb.setSelected(selected.contains(e[0]));
             cb.selectedProperty().addListener((o, a, b) -> {
                 if (b) selected.add(e[0]); else selected.remove(e[0]);

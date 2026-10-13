@@ -103,7 +103,14 @@ public final class Workshop {
             out.add("Nothing selected.");
             return out;
         }
-        if (bp.getProductId() == null || bp.getProductId().isBlank()) out.add("The blueprint has no product set.");
+        if (bp.getProducesChargeLevel() > 0) {
+            SpellSlot slot = SpellSlots.find(pc.getSpellSlots(), bp.getProducesChargeLevel());
+            String charge = EnergyCharges.name(bp.getProducesChargeLevel());
+            if (slot == null || slot.getMax() <= 0) out.add("No " + charge + " charge capacity yet.");
+            else if (slot.getCurrent() >= slot.getMax()) out.add(charge + " charges are already full.");
+        } else if (bp.getProductId() == null || bp.getProductId().isBlank()) {
+            out.add("The blueprint has no product set.");
+        }
         if (pc.getLevel() < bp.getMinLevel()) out.add("Needs character level " + bp.getMinLevel() + ".");
         for (Blueprint.MaterialCost m : bp.getMaterials()) {
             if (m == null || m.getItemId() == null) continue;
@@ -153,9 +160,60 @@ public final class Workshop {
                 log.add("spends a " + EnergyCharges.name(slot) + " charge");
             }
         }
-        add(pc, bp.getProductId(), bp.getProductQuantity());
-        log.add("builds " + bp.getProductQuantity() + "\u00d7 " + nameOf(bp.getProductId(), items));
+        if (bp.getProducesChargeLevel() > 0) {
+            SpellSlot slot = SpellSlots.find(pc.getSpellSlots(), bp.getProducesChargeLevel());
+            slot.setCurrent(Math.min(slot.getMax(), slot.getCurrent() + 1));
+            log.add("fills a " + EnergyCharges.name(bp.getProducesChargeLevel()) + " capsule");
+        } else {
+            add(pc, bp.getProductId(), bp.getProductQuantity());
+            log.add("builds " + bp.getProductQuantity() + "\u00d7 " + nameOf(bp.getProductId(), items));
+        }
         return log;
+    }
+
+    /** Crafting check bonus: Intelligence modifier + proficiency bonus (the artificer is proficient with its tools). */
+    public static int craftBonus(PlayerCharacter pc) {
+        if (pc == null) return 0;
+        int intMod = pc.getStats() == null ? 0 : com.dnd.model.character.Progression.modifier(pc.getStats().getIntelligence());
+        return intMod + com.dnd.model.character.Progression.proficiencyBonus(Math.max(1, pc.getLevel()));
+    }
+
+    /** Outcome of a crafting attempt with a check. */
+    public record Attempt(boolean success, boolean materialsWasted, int roll, int total, int dc, List<String> log) {
+        public String summary() {
+            String check = dc > 0 ? "d20 " + roll + " → " + total + " vs DC " + dc + ": " : "";
+            if (success) return check + String.join(", ", log);
+            return check + (materialsWasted
+                ? "failed badly - " + String.join(", ", log) + " are ruined"
+                : "failed - nothing is used up, try again");
+        }
+    }
+
+    /**
+     * Tries to build {@code bp} with a crafting check (d20 + {@link #craftBonus} vs the
+     * blueprint's DC). Success builds it. Failing by less than 5 wastes nothing; failing by
+     * 5 or more ruins the materials (tools and charges are kept). Blueprints with no DC always succeed.
+     *
+     * @param d20 the natural die roll (1-20); a natural 20 always succeeds, a natural 1 always fails
+     * @throws IllegalStateException when {@link #problems} is not empty
+     */
+    public static Attempt attempt(PlayerCharacter pc, Blueprint bp, Function<String, Item> items, int d20) {
+        List<String> problems = problems(pc, bp, items);
+        if (!problems.isEmpty()) throw new IllegalStateException(String.join(" ", problems));
+        int dc = bp.getCheckDc();
+        int total = d20 + craftBonus(pc);
+        boolean success = dc <= 0 || d20 == 20 || (d20 != 1 && total >= dc);
+        if (success) return new Attempt(true, false, d20, total, dc, craft(pc, bp, items));
+        boolean wasted = dc - total >= 5;
+        List<String> lost = new ArrayList<>();
+        if (wasted) {
+            for (Blueprint.MaterialCost m : bp.getMaterials()) {
+                if (m == null || m.getItemId() == null) continue;
+                remove(pc, m.getItemId(), m.getQuantity());
+                lost.add(m.getQuantity() + "\u00d7 " + nameOf(m.getItemId(), items));
+            }
+        }
+        return new Attempt(false, wasted, d20, total, dc, lost);
     }
 
     // ── Furnace ─────────────────────────────────────────────────────────────

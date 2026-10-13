@@ -2701,7 +2701,7 @@
     {
       "id": "artificer",
       "name": "Artificer",
-      "description": "An inventor who explains 'magic' as engineering. Instead of spell slots the artificer spends energy charges (Steam-pressure, Thermal, Electric...) that are refilled at a fuel-burning workshop furnace - not by resting - and builds devices from a growing blueprint book.",
+      "description": "An inventor who explains 'magic' as engineering. Instead of spell slots the artificer spends energy charges (Steam-pressure, Thermal, Shock...) made at a fuel-burning workshop furnace (rests run the furnace on carried fuel) and builds devices from a growing blueprint book.",
       "hitDie": {
         "id": "d8",
         "name": "d8",
@@ -2739,7 +2739,7 @@
         {
           "level": 1,
           "name": "Energy Charges",
-          "description": "Your spells and devices run on energy charges instead of spell slots. Level 1 = Steam-pressure, 2 = Thermal, 3 = Electric, 4 = Magnetic, 5 = Resonance. Charges do NOT come back on rests - make them at a workshop furnace from fuel. A stronger charge can always stand in for a weaker one."
+          "description": "Your spells and devices run on energy charges instead of spell slots. Level 1 = Steam-pressure, 2 = Thermal, 3 = Shock, 4 = Force, 5 = Arcane Resonance. Charges are made at a workshop furnace from fuel: a long rest refills them all and a short rest up to half, if fuel is carried. Capsule blueprints can also refill one charge from parts. Mechanical devices take a stronger charge; tuned devices need their exact type."
         },
         {
           "level": 1,
@@ -2830,8 +2830,8 @@
         },
         {
           "level": 9,
-          "name": "Furnace Upgrade: Electric Coils",
-          "description": "With an upgraded workshop (furnace tier 3) you can make Electric charges."
+          "name": "Furnace Upgrade: Shock Coils",
+          "description": "With an upgraded workshop (furnace tier 3) you can make Shock charges."
         },
         {
           "level": 10,
@@ -2882,12 +2882,13 @@
         "portable-forge",
         "firewood",
         "coal",
-        "brass-scrap",
-        "alchemical-salts",
+        "smoke-compound",
+        "vented-shell",
+        "timed-valve",
         "light-crossbow",
         "studded-leather",
         "bp-smoke-canister",
-        "bp-scalding-bolts"
+        "bp-steam-capsule"
       ]
     }
   ]

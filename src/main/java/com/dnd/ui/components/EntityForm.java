@@ -5,11 +5,9 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
@@ -112,6 +110,7 @@ public final class EntityForm {
     private final boolean compact;
     private final List<Binding> bindings = new ArrayList<>();
     private final Map<String, List<Ref>> catalogs;
+    private Button firstPicker;
     private final int depth;
     /** Class whose properties this form edits; picks context-specific {@link FieldHelp}. */
     private final Class<?> ownerType;
@@ -466,37 +465,29 @@ public final class EntityForm {
         return ((Enum<?>) constant).name().toLowerCase(Locale.ROOT).replace('_', ' ');
     }
 
+    /** Id reference (item, spell, class, ...) as a searchable picker: the DM never types a raw id. */
     private void addRefEditor(Prop prop, String currentId, List<Ref> options) {
-        ComboBox<Ref> combo = new ComboBox<>();
-        combo.getItems().add(null);
-        combo.getItems().addAll(options);
-        combo.setMaxWidth(500);
-        combo.setConverter(new javafx.util.StringConverter<>() {
-            @Override
-            public String toString(Ref ref) {
-                return ref == null ? "(none)" : ref.toString();
-            }
-
-            @Override
-            public Ref fromString(String text) {
-                return combo.getItems().stream()
-                    .filter(item -> toString(item).equals(text))
-                    .findFirst().orElse(null);
-            }
-        });
-        options.stream().filter(ref -> ref.id().equals(currentId)).findFirst()
-            .ifPresent(combo.getSelectionModel()::select);
-        if (combo.getSelectionModel().getSelectedItem() == null && currentId != null && !currentId.isBlank()) {
+        List<Ref> all = new ArrayList<>(options);
+        Ref[] selected = {all.stream().filter(ref -> ref.id().equals(currentId)).findFirst().orElse(null)};
+        if (selected[0] == null && currentId != null && !currentId.isBlank()) {
             // An id that is not in the catalogue any more: keep it rather than silently dropping it.
-            Ref orphan = new Ref(currentId, "(missing)");
-            combo.getItems().add(orphan);
-            combo.getSelectionModel().select(orphan);
+            selected[0] = new Ref(currentId, "(missing)");
+            all.add(selected[0]);
         }
-        node.getChildren().add(labelled(prop.name(), combo));
-        bind(prop, () -> {
-            Ref selected = combo.getSelectionModel().getSelectedItem();
-            return selected == null ? null : selected.id();
-        });
+        Button picker = SearchPicker.single(all, selected[0], Ref::toString, true, ref -> selected[0] = ref);
+        if (compact) picker.setPrefWidth(260);
+        else {
+            picker.setPrefWidth(420);
+            picker.setMaxWidth(500);
+        }
+        if (firstPicker == null) firstPicker = picker;
+        node.getChildren().add(labelled(prop.name(), picker));
+        bind(prop, () -> selected[0] == null ? null : selected[0].id());
+    }
+
+    /** Opens the search of this form's first id picker (used right after adding a row). */
+    void openFirstPicker() {
+        if (firstPicker != null) firstPicker.fire();
     }
 
     private static final List<String> ABILITIES =
@@ -684,33 +675,23 @@ public final class EntityForm {
     /** Id lists (languages, triggered effects) as a tick list of catalogue names. */
     private void addRefListEditor(Prop prop, List<?> values, List<Ref> options) {
         List<String> selected = new ArrayList<>(values.stream().map(String::valueOf).toList());
-        MenuButton menu = new MenuButton();
-        menu.setMaxWidth(560);
-        menu.getStyleClass().add("dnd-button");
-
         List<Ref> all = new ArrayList<>(options);
         for (String id : selected) {
             if (all.stream().noneMatch(ref -> ref.id().equals(id))) {
                 all.add(new Ref(id, "(missing)"));
             }
         }
-        Runnable refreshText = () -> menu.setText(selected.isEmpty() ? "(none)" : String.join(", ", selected));
-        for (Ref ref : all) {
-            CheckMenuItem item = new CheckMenuItem(ref.toString());
-            item.setSelected(selected.contains(ref.id()));
-            item.selectedProperty().addListener((obs, was, is) -> {
-                if (is) {
-                    if (!selected.contains(ref.id())) selected.add(ref.id());
-                } else {
-                    selected.remove(ref.id());
-                }
-                refreshText.run();
+        List<Ref> initial = selected.stream()
+            .map(id -> all.stream().filter(ref -> ref.id().equals(id)).findFirst().orElseThrow())
+            .toList();
+        Button picker = SearchPicker.multi(all, initial, ref -> ref.label == null || ref.label.isBlank() ? ref.id() : ref.label,
+            refs -> {
+                selected.clear();
+                refs.forEach(ref -> selected.add(ref.id()));
             });
-            menu.getItems().add(item);
-        }
-        refreshText.run();
-
-        node.getChildren().add(labelled(prop.name(), menu));
+        picker.setPrefWidth(compact ? 260 : 560);
+        picker.setMaxWidth(560);
+        node.getChildren().add(labelled(prop.name(), picker));
         bind(prop, () -> List.copyOf(selected));
     }
 
@@ -728,7 +709,9 @@ public final class EntityForm {
         add.setOnAction(e -> {
             Object created = instantiate(elementClass);
             if (created != null) {
-                entries.add(objectRow(rows, entries, created));
+                Map.Entry<Object, EntityForm> row = objectRow(rows, entries, created);
+                entries.add(row);
+                javafx.application.Platform.runLater(row.getValue()::openFirstPicker);
             }
         });
 

@@ -42,6 +42,13 @@ public class CampaignSelectionScene extends BaseScene {
             uiSession.getRouter().goTo(SceneType.DM_MENU);
         });
 
+        list.setOnMouseClicked(e -> {
+            if (e.getButton() == javafx.scene.input.MouseButton.PRIMARY && e.getClickCount() == 2
+                    && list.getSelectionModel().getSelectedItem() != null) {
+                openBtn.fire();
+            }
+        });
+
         Button createBtn = btn("Create New Campaign", () ->
             uiSession.getRouter().goTo(SceneType.CREATE_CAMPAIGN));
 

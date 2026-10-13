@@ -239,12 +239,13 @@ public class EntityFormTest {
                 addDiceButton);
             addDiceButton.fire();
 
-            javafx.scene.control.ComboBox<EntityForm.Ref> diceCombo = findComboBoxWithOption(form.getNode(), "d6");
-            assertNotNull("the new dice row must offer a dropdown of catalogue dice", diceCombo);
-            EntityForm.Ref d6 = diceCombo.getItems().stream()
-                .filter(r -> r != null && "d6".equals(r.id())).findFirst().orElse(null);
+            javafx.scene.Node dicePicker = findPickerWithOption(form.getNode(), "d6");
+            assertNotNull("the new dice row must offer a searchable list of catalogue dice", dicePicker);
+            EntityForm.Ref d6 = SearchPicker.options(dicePicker).stream()
+                .map(EntityForm.Ref.class::cast)
+                .filter(r -> "d6".equals(r.id())).findFirst().orElse(null);
             assertNotNull("catalogue dice must be selectable", d6);
-            diceCombo.getSelectionModel().select(d6);
+            SearchPicker.choose(dicePicker, d6);
 
             com.dnd.model.magic.Spell saved = new com.dnd.model.magic.Spell();
             form.writeTo(saved);
@@ -259,6 +260,20 @@ public class EntityFormTest {
         if (root instanceof javafx.scene.Parent p) {
             for (javafx.scene.Node child : p.getChildrenUnmodifiable()) {
                 javafx.scene.control.Button found = findButton(child, text);
+                if (found != null) return found;
+            }
+        }
+        return null;
+    }
+
+    private static javafx.scene.Node findPickerWithOption(javafx.scene.Node root, String optionId) {
+        List<?> options = SearchPicker.options(root);
+        if (options != null && options.stream().anyMatch(o -> o instanceof EntityForm.Ref ref && optionId.equals(ref.id()))) {
+            return root;
+        }
+        if (root instanceof javafx.scene.Parent p) {
+            for (javafx.scene.Node child : p.getChildrenUnmodifiable()) {
+                javafx.scene.Node found = findPickerWithOption(child, optionId);
                 if (found != null) return found;
             }
         }

@@ -22,6 +22,7 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -100,19 +101,38 @@ public final class CharacterSheetPdf {
             List<Spell> spellList = safe(() -> repos.spells().list());
             if (spellList != null) for (Spell s : spellList) if (s != null && s.getId() != null) spells.put(s.getId(), s);
         }
-        write(pc, cls, race, items::get, spells::get, campaignName, out);
+        Path portrait = repos == null ? null : portraitFile(repos.campaignRoot(), pc.getImagePath());
+        write(pc, cls, race, items::get, spells::get, campaignName, portrait, out);
+    }
+
+    /** The character's picture on disk, or null when none is set or the file is gone. */
+    static Path portraitFile(Path campaignRoot, String imagePath) {
+        if (campaignRoot == null || blank(imagePath)) return null;
+        try {
+            Path p = campaignRoot.resolve(imagePath);
+            return Files.isRegularFile(p) ? p : null;
+        } catch (RuntimeException e) {
+            return null;
+        }
     }
 
     /** Lookup-based variant for callers that already hold the catalog data; any argument but pc/out may be null. */
     public static void write(PlayerCharacter pc, CharacterClass cls, CharacterRace race,
                              Function<String, Item> items, Function<String, Spell> spells,
                              String campaignName, Path out) throws IOException {
+        write(pc, cls, race, items, spells, campaignName, null, out);
+    }
+
+    /** As above, with the character's picture ({@code portrait} may be null: the frame is left empty). */
+    public static void write(PlayerCharacter pc, CharacterClass cls, CharacterRace race,
+                             Function<String, Item> items, Function<String, Spell> spells,
+                             String campaignName, Path portrait, Path out) throws IOException {
         if (pc == null) throw new IllegalArgumentException("No character to print");
         Path parent = out.toAbsolutePath().getParent();
         if (parent != null) Files.createDirectories(parent);
         try (PDDocument doc = new PDDocument()) {
             Sheet sheet = new Sheet(doc, pc, cls, race,
-                    items == null ? id -> null : items, spells == null ? id -> null : spells, campaignName);
+                    items == null ? id -> null : items, spells == null ? id -> null : spells, campaignName, portrait);
             sheet.render();
             doc.getDocumentInformation().setTitle(nz(pc.getName()) + " - Character Sheet");
             doc.getDocumentInformation().setCreator("DnD Campaign Manager");
@@ -174,6 +194,7 @@ public final class CharacterSheetPdf {
         private final Function<String, Item> items;
         private final Function<String, Spell> spells;
         private final String campaign;
+        private final Path portrait;
 
         private PDFont serif;
         private PDFont bold;
@@ -193,7 +214,8 @@ public final class CharacterSheetPdf {
         private final List<ClassFeature> features;
 
         Sheet(PDDocument doc, PlayerCharacter pc, CharacterClass cls, CharacterRace race,
-              Function<String, Item> items, Function<String, Spell> spells, String campaign) {
+              Function<String, Item> items, Function<String, Spell> spells, String campaign, Path portrait) {
+            this.portrait = portrait;
             this.doc = doc;
             this.pc = pc;
             this.cls = cls;
@@ -918,6 +940,7 @@ public final class CharacterSheetPdf {
 
         private void flowPages() throws IOException {
             flowPage();
+            portraitSection();
             featuresSection();
             spellsSection();
             equipmentSection();
@@ -1149,14 +1172,62 @@ public final class CharacterSheetPdf {
             y += 13;
         }
 
-        private void storySection() throws IOException {
-            if (blank(pc.getDescription()) && blank(pc.getBackstory())) return;
-            section("Description & backstory");
-            if (!blank(pc.getDescription())) {
-                para(pc.getDescription(), serif, 8.2f, 0, INK);
-                y += 5;
+        /**
+         * Picture frame (the character's image, or empty to draw in) with the appearance /
+         * description text beside it; text longer than the frame continues full width below.
+         */
+        private void portraitSection() throws IOException {
+            final float bw = 150, bh = 190, gap = 12, size = 8.2f, lh = size * 1.32f;
+            section("Portrait & appearance");
+            float top = y - 8;
+            panel(M, top, bw, bh, "Character portrait");
+            drawPortrait(M + 3, top + 3, bw - 6, bh - 14);
+
+            float tx = M + bw + gap, tw = CW - bw - gap, limit = top + bh;
+            float ty = y;
+            String desc = pc.getDescription();
+            String rest = null;
+            if (blank(desc)) {
+                label("Appearance", tx, ty, 6f);
+                for (float ly = ty + 15; ly <= limit - 2; ly += 15) line(tx, ly, tx + tw, ly, 0.35f, RULE);
+            } else {
+                String[] paras = desc.replace("\r", "").split("\n", -1);
+                outer:
+                for (int pi = 0; pi < paras.length; pi++) {
+                    List<String> lines = wrap(paras[pi], serif, size, tw);
+                    for (int li = 0; li < lines.size(); li++) {
+                        if (ty > limit - 2) {
+                            StringBuilder sb = new StringBuilder(String.join(" ", lines.subList(li, lines.size())));
+                            for (int k = pi + 1; k < paras.length; k++) sb.append('\n').append(paras[k]);
+                            rest = sb.toString();
+                            break outer;
+                        }
+                        text(lines.get(li), tx, ty, serif, size, INK);
+                        ty += lh;
+                    }
+                }
             }
-            if (!blank(pc.getBackstory())) para(pc.getBackstory(), serif, 8, 0, INK);
+            y = top + bh + 14;
+            if (rest != null && !rest.isBlank()) para(rest.strip(), serif, size, 0, INK);
+        }
+
+        private void drawPortrait(float x, float top, float w, float h) {
+            if (portrait == null) return;
+            try {
+                PDImageXObject img = PDImageXObject.createFromFileByContent(portrait.toFile(), doc);
+                float scale = Math.min(w / img.getWidth(), h / img.getHeight());
+                float iw = img.getWidth() * scale, ih = img.getHeight() * scale;
+                float ix = x + (w - iw) / 2f, itop = top + (h - ih) / 2f;
+                cs.drawImage(img, ix, PH - itop - ih, iw, ih);
+            } catch (Exception | LinkageError e) {
+                // unreadable picture: leave the frame empty, like a character without one
+            }
+        }
+
+        private void storySection() throws IOException {
+            if (blank(pc.getBackstory())) return;
+            section("Backstory");
+            para(pc.getBackstory(), serif, 8, 0, INK);
         }
 
         private void notesSection() throws IOException {

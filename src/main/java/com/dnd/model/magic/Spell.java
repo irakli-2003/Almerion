@@ -25,6 +25,14 @@ public class Spell implements Printable {
     private Concentration concentration;
     private List<Effect> effects;
     private Damage damage;
+    /** D&D components: any of "V" (spoken words), "S" (gestures), "M" (a material). */
+    private List<String> components = new java.util.ArrayList<>();
+    /** What the material component is, e.g. "a pinch of sulfur and bat guano". */
+    private String materialComponent;
+    /** Gold value of a costly material (0 = trivial, covered by a component pouch or focus). */
+    private int materialCost;
+    /** True when casting uses the material up. */
+    private boolean materialConsumed;
 
     public Spell() {
     }
@@ -46,6 +54,51 @@ public class Spell implements Printable {
         this.concentration = concentration;
         this.effects = effects;
         this.damage = damage;
+    }
+
+    public List<String> getComponents() {
+        return components;
+    }
+
+    public void setComponents(List<String> components) {
+        this.components = components == null ? new java.util.ArrayList<>() : components;
+    }
+
+    public String getMaterialComponent() {
+        return materialComponent;
+    }
+
+    public void setMaterialComponent(String materialComponent) {
+        this.materialComponent = materialComponent;
+    }
+
+    public int getMaterialCost() {
+        return materialCost;
+    }
+
+    public void setMaterialCost(int materialCost) {
+        this.materialCost = Math.max(0, materialCost);
+    }
+
+    public boolean isMaterialConsumed() {
+        return materialConsumed;
+    }
+
+    public void setMaterialConsumed(boolean materialConsumed) {
+        this.materialConsumed = materialConsumed;
+    }
+
+    /** Short component line, e.g. "V, S, M (a bit of fleece)" or "V"; empty when none are listed. */
+    public String componentsText() {
+        if (components == null || components.isEmpty()) return "";
+        StringBuilder sb = new StringBuilder(String.join(", ", components));
+        if (components.contains("M") && materialComponent != null && !materialComponent.isBlank()) {
+            sb.append(" (").append(materialComponent);
+            if (materialCost > 0) sb.append(", worth ").append(materialCost).append(" gp");
+            if (materialConsumed) sb.append(", consumed");
+            sb.append(")");
+        }
+        return sb.toString();
     }
 
     public String getId() {

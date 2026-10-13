@@ -31,7 +31,14 @@
           "sides": 6
         },
         "typeId": "acid"
-      }
+      },
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "chill-touch",
@@ -64,7 +71,14 @@
           "sides": 8
         },
         "typeId": "necrotic"
-      }
+      },
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "fire-bolt",
@@ -97,7 +111,14 @@
           "sides": 10
         },
         "typeId": "fire"
-      }
+      },
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "frost-bolt",
@@ -130,7 +151,15 @@
           "sides": 6
         },
         "typeId": "cold"
-      }
+      },
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a sliver of river ice or a cold iron needle",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "light",
@@ -146,7 +175,14 @@
       "requiredTools": [],
       "concentration": null,
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "M"
+      ],
+      "materialComponent": "a firefly or a smear of phosphorescent moss",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "mage-hand",
@@ -162,7 +198,14 @@
       "requiredTools": [],
       "concentration": null,
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "minor-illusion",
@@ -178,7 +221,14 @@
       "requiredTools": [],
       "concentration": null,
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "S",
+        "M"
+      ],
+      "materialComponent": "a scrap of fleece",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "poison-spray",
@@ -211,7 +261,14 @@
           "sides": 12
         },
         "typeId": "poison"
-      }
+      },
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "prestidigitation",
@@ -227,7 +284,14 @@
       "requiredTools": [],
       "concentration": null,
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "ray-of-frost",
@@ -260,7 +324,14 @@
           "sides": 8
         },
         "typeId": "cold"
-      }
+      },
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "sacred-flame",
@@ -283,7 +354,14 @@
           "sides": 8
         },
         "typeId": "radiant"
-      }
+      },
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "shocking-grasp",
@@ -316,7 +394,14 @@
           "sides": 8
         },
         "typeId": "lightning"
-      }
+      },
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "thaumaturgy",
@@ -332,7 +417,13 @@
       "requiredTools": [],
       "concentration": null,
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "guidance",
@@ -361,7 +452,14 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "burning-hands",
@@ -403,7 +501,14 @@
           "sides": 6
         },
         "typeId": "fire"
-      }
+      },
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "charm-person",
@@ -429,7 +534,14 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "cure-wounds",
@@ -455,7 +567,14 @@
           "healingAmount": 8
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "detect-magic",
@@ -474,7 +593,14 @@
         "preventsMovement": false
       },
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "faerie-fire",
@@ -493,7 +619,13 @@
         "preventsMovement": false
       },
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "healing-word",
@@ -519,7 +651,13 @@
           "healingAmount": 4
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "mage-armor",
@@ -545,7 +683,15 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a scrap of cured leather",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "magic-missile",
@@ -568,7 +714,14 @@
           "sides": 4
         },
         "typeId": "force"
-      }
+      },
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "shield-spell",
@@ -594,7 +747,14 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "sleep",
@@ -620,7 +780,15 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a pinch of fine sand, rose petals or a cricket",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "thunderwave",
@@ -653,7 +821,14 @@
           "sides": 8
         },
         "typeId": "thunder"
-      }
+      },
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "bless",
@@ -682,7 +857,15 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a sprinkle of holy water",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "entangle",
@@ -720,7 +903,14 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "hunters-mark",
@@ -749,7 +939,13 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "blur",
@@ -778,7 +974,13 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "darkness",
@@ -807,7 +1009,14 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "M"
+      ],
+      "materialComponent": "bat fur and a drop of pitch or a lump of coal",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "hold-person",
@@ -836,7 +1045,15 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a small straight piece of iron",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "invisibility",
@@ -865,7 +1082,15 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "an eyelash sealed in gum arabic",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "misty-step",
@@ -881,7 +1106,13 @@
       "requiredTools": [],
       "concentration": null,
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "scorching-ray",
@@ -914,7 +1145,14 @@
           "sides": 6
         },
         "typeId": "fire"
-      }
+      },
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "spiritual-weapon",
@@ -937,7 +1175,14 @@
           "sides": 8
         },
         "typeId": "force"
-      }
+      },
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "web",
@@ -966,7 +1211,15 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a bit of spiderweb",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "lesser-restoration",
@@ -992,7 +1245,14 @@
           "healingAmount": 2
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "moonbeam",
@@ -1028,7 +1288,15 @@
           "sides": 10
         },
         "typeId": "radiant"
-      }
+      },
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "seeds of a moonseed plant and a piece of opalescent feldspar",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "fireball",
@@ -1070,7 +1338,15 @@
           "sides": 6
         },
         "typeId": "fire"
-      }
+      },
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a tiny ball of bat guano and sulfur",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "lightning-bolt",
@@ -1103,7 +1379,15 @@
           "sides": 6
         },
         "typeId": "lightning"
-      }
+      },
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a bit of fur and a rod of amber, crystal or glass",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "counterspell",
@@ -1119,7 +1403,13 @@
       "requiredTools": [],
       "concentration": null,
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "dispel-magic",
@@ -1135,7 +1425,14 @@
       "requiredTools": [],
       "concentration": null,
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "fly",
@@ -1164,7 +1461,15 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a wing feather from any bird",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "revivify",
@@ -1190,7 +1495,15 @@
           "healingAmount": 1
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "diamonds worth 300 gp",
+      "materialCost": 300,
+      "materialConsumed": true
     },
     {
       "id": "haste",
@@ -1219,7 +1532,15 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a shaving of licorice root",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "slow",
@@ -1248,7 +1569,15 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a drop of molasses",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "animate-dead",
@@ -1264,7 +1593,15 @@
       "requiredTools": [],
       "concentration": null,
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a drop of blood, a piece of flesh and a pinch of bone dust",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "vampiric-touch",
@@ -1300,7 +1637,14 @@
           "sides": 6
         },
         "typeId": "necrotic"
-      }
+      },
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "greater-invisibility",
@@ -1329,7 +1673,14 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "ice-storm",
@@ -1371,7 +1722,15 @@
           "sides": 8
         },
         "typeId": "cold"
-      }
+      },
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a pinch of dust and a few drops of water",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "polymorph",
@@ -1390,7 +1749,15 @@
         "preventsMovement": false
       },
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a caterpillar cocoon",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "wall-of-fire",
@@ -1426,7 +1793,15 @@
           "sides": 8
         },
         "typeId": "fire"
-      }
+      },
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a small piece of phosphorus",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "cone-of-cold",
@@ -1468,7 +1843,15 @@
           "sides": 8
         },
         "typeId": "cold"
-      }
+      },
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a small crystal or glass cone",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "hold-monster",
@@ -1497,7 +1880,15 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a small straight piece of iron",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "raise-dead",
@@ -1523,7 +1914,15 @@
           "healingAmount": 10
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a diamond worth at least 500 gp",
+      "materialCost": 500,
+      "materialConsumed": true
     },
     {
       "id": "wall-of-force",
@@ -1542,7 +1941,15 @@
         "preventsMovement": false
       },
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a pinch of powder from a crushed clear gemstone",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "chain-lightning",
@@ -1584,7 +1991,15 @@
           "sides": 8
         },
         "typeId": "lightning"
-      }
+      },
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a bit of fur, a piece of amber, glass or crystal rod, and three silver pins",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "disintegrate",
@@ -1607,7 +2022,15 @@
           "sides": 6
         },
         "typeId": "force"
-      }
+      },
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a lodestone and a pinch of dust",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "true-seeing",
@@ -1623,7 +2046,15 @@
       "requiredTools": [],
       "concentration": null,
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "an ointment of mushroom powder, saffron and fat worth 25 gp",
+      "materialCost": 25,
+      "materialConsumed": true
     },
     {
       "id": "finger-of-death",
@@ -1656,7 +2087,14 @@
           "sides": 8
         },
         "typeId": "necrotic"
-      }
+      },
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "teleport",
@@ -1672,7 +2110,13 @@
       "requiredTools": [],
       "concentration": null,
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "dominate-monster",
@@ -1701,7 +2145,14 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "sunburst",
@@ -1743,7 +2194,15 @@
           "sides": 6
         },
         "typeId": "radiant"
-      }
+      },
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "fire and a piece of sunstone",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "meteor-swarm",
@@ -1794,7 +2253,14 @@
           "sides": 6
         },
         "typeId": "fire"
-      }
+      },
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "power-word-kill",
@@ -1810,7 +2276,13 @@
       "requiredTools": [],
       "concentration": null,
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "time-stop",
@@ -1826,7 +2298,13 @@
       "requiredTools": [],
       "concentration": null,
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "wish",
@@ -1842,7 +2320,13 @@
       "requiredTools": [],
       "concentration": null,
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "mending",
@@ -1860,7 +2344,15 @@
       "effects": [],
       "damage": null,
       "cooldownRounds": 0,
-      "areaSpell": false
+      "areaSpell": false,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "two lodestones",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "bolt-repeater-shot",
@@ -1896,12 +2388,19 @@
         "typeId": "force"
       },
       "cooldownRounds": 0,
-      "areaSpell": false
+      "areaSpell": false,
+      "components": [
+        "S",
+        "M"
+      ],
+      "materialComponent": "the deployed Bolt Repeater and its heavy rivets",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "smoke-canister-burst",
       "name": "Smoke Canister",
-      "description": "Throw 9 m: 15 ft cloud that heavily obscures the area. Uses one Smoke Canister.",
+      "description": "Throw 9 m: a 15 ft radius cloud heavily obscures the area for up to 1 minute. Uses one Smoke Canister.",
       "level": 0,
       "school": "conjuration",
       "manaCost": 0,
@@ -1913,8 +2412,8 @@
           "id": "smoke-canister",
           "name": "Smoke Canister",
           "type": "device",
-          "description": "Pull the pin and throw: a 15 ft cloud of thick grey smoke heavily obscures the area for 1 minute. Consumed on use.",
-          "valueGold": 5,
+          "description": "Pull the pin and throw: a 15 ft radius cloud of thick smoke heavily obscures the area for up to 1 minute unless a strong wind disperses it. Consumed on use.",
+          "valueGold": 10,
           "weight": 0.5,
           "damage": null,
           "durability": {
@@ -1944,12 +2443,19 @@
       ],
       "damage": null,
       "cooldownRounds": 0,
-      "areaSpell": true
+      "areaSpell": true,
+      "components": [
+        "S",
+        "M"
+      ],
+      "materialComponent": "a Smoke Canister (thrown)",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "grapnel-shot",
       "name": "Grapnel Shot",
-      "description": "Steam Grapnel Launcher: fire the hook up to 18 m and reel yourself to it, or pull a light object to you. Costs a Steam-pressure charge.",
+      "description": "Steam Grapnel Launcher: fire the anchor up to 60 ft to climb, cross a gap, anchor a line or pull a light object to you. Costs a Steam-pressure charge.",
       "level": 1,
       "school": "transmutation",
       "manaCost": 3,
@@ -1962,25 +2468,32 @@
       "effects": [],
       "damage": null,
       "cooldownRounds": 0,
-      "areaSpell": false
+      "areaSpell": false,
+      "components": [
+        "S",
+        "M"
+      ],
+      "materialComponent": "the Steam Grapnel Launcher",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "sticky-foam",
       "name": "Sticky Foam",
-      "description": "Throw 6 m: the target is restrained (STR save DC 13 to break free). Uses one Sticky Foam Flask.",
+      "description": "Throw 6 m: a 5 ft area becomes difficult terrain; a creature hit directly makes a DEX save DC 15 or is restrained until it uses an action to escape. Uses one Sticky Foam Flask.",
       "level": 0,
       "school": "conjuration",
       "manaCost": 0,
       "range": 20,
-      "radius": 0,
+      "radius": 5,
       "castingMethod": "hand-movement",
       "requiredConsumables": [
         {
           "id": "sticky-foam-flask",
           "name": "Sticky Foam Flask",
           "type": "device",
-          "description": "A pressurised flask of expanding foam. Thrown 6 m, it glues a creature's feet in place (restrained, STR save DC 13 ends it). Consumed on use.",
-          "valueGold": 10,
+          "description": "Thrown: the foam turns a 5 ft square into difficult terrain. A creature hit directly makes a DEX save DC 15 or is restrained until it uses an action to escape. Consumed on use.",
+          "valueGold": 15,
           "weight": 0.5,
           "damage": null,
           "durability": {
@@ -2010,15 +2523,22 @@
       ],
       "damage": null,
       "cooldownRounds": 0,
-      "areaSpell": false
+      "areaSpell": false,
+      "components": [
+        "S",
+        "M"
+      ],
+      "materialComponent": "a Sticky Foam Flask (thrown)",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "messenger-beetle",
       "name": "Messenger Beetle",
-      "description": "Wind the beetle: it carries a 25-word message to a place you know within 1 mile. Costs a Steam-pressure charge.",
-      "level": 1,
+      "description": "Send the beetle: it carries a short note or a tiny object to a beacon or a place you know, then waits there. Runs on its own resonance cell - no charge.",
+      "level": 0,
       "school": "divination",
-      "manaCost": 3,
+      "manaCost": 0,
       "range": 5,
       "radius": 0,
       "castingMethod": "hand-movement",
@@ -2028,12 +2548,19 @@
       "effects": [],
       "damage": null,
       "cooldownRounds": 0,
-      "areaSpell": false
+      "areaSpell": false,
+      "components": [
+        "S",
+        "M"
+      ],
+      "materialComponent": "a wind-up Messenger Beetle",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "scalding-bolt-shot",
       "name": "Bolt Repeater: Scalding Bolt",
-      "description": "Bonus action: the Bolt Repeater fires a Scalding Bolt. Ranged attack with INT, 30 m: 2d6 fire and burning. Uses one Scalding Bolt.",
+      "description": "Bonus action: the Bolt Repeater fires a Scalding Bolt. Ranged attack with INT, 30 m: bolt damage 2d6 + 1d4 fire. Uses one Scalding Bolt.",
       "level": 0,
       "school": "evocation",
       "manaCost": 0,
@@ -2045,8 +2572,8 @@
           "id": "scalding-bolt",
           "name": "Scalding Bolt",
           "type": "device",
-          "description": "Bolt Repeater ammunition with a boiling-water core. Fires as a Bolt Repeater shot: 2d6 fire and the target is scalded (burn). One bolt per shot.",
-          "valueGold": 3,
+          "description": "Bolt ammunition with a heat-jacketed core. On hit: normal bolt damage + 1d4 fire. One bolt per shot.",
+          "valueGold": 6,
           "weight": 0.1,
           "damage": null,
           "durability": {
@@ -2079,17 +2606,28 @@
           {
             "diceId": "d6",
             "count": 2
+          },
+          {
+            "diceId": "d4",
+            "count": 1
           }
         ],
         "typeId": "fire"
       },
       "cooldownRounds": 0,
-      "areaSpell": false
+      "areaSpell": false,
+      "components": [
+        "S",
+        "M"
+      ],
+      "materialComponent": "the Bolt Repeater loaded with a Scalding Bolt",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "flash-bomb-throw",
       "name": "Flash Bomb",
-      "description": "Throw 9 m: 10 ft burst, 1d4 radiant and blinded (CON save). Uses one Flash Bomb.",
+      "description": "Throw 9 m: 10 ft radius flash. CON save DC 15 or blinded until the start of the creature's next turn. Uses one Flash Bomb.",
       "level": 0,
       "school": "evocation",
       "manaCost": 0,
@@ -2101,8 +2639,8 @@
           "id": "flash-bomb",
           "name": "Flash Bomb",
           "type": "device",
-          "description": "A glass ball of magnesium salts. Thrown 9 m, it bursts in a 10 ft blinding flash (1d4 radiant, CON save or blinded until the end of its next turn). Consumed on use.",
-          "valueGold": 8,
+          "description": "Thrown device. 10 ft radius burst of light: CON save DC 15 or blinded until the start of the creature's next turn. Consumed on use.",
+          "valueGold": 20,
           "weight": 0.3,
           "damage": null,
           "durability": {
@@ -2130,22 +2668,21 @@
           "healingAmount": 0
         }
       ],
-      "damage": {
-        "dice": [
-          {
-            "diceId": "d4",
-            "count": 1
-          }
-        ],
-        "typeId": "radiant"
-      },
+      "damage": null,
       "cooldownRounds": 0,
-      "areaSpell": true
+      "areaSpell": true,
+      "components": [
+        "S",
+        "M"
+      ],
+      "materialComponent": "a Flash Bomb (thrown)",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "shock-dart-throw",
       "name": "Shock Dart",
-      "description": "Throw 9 m (attack with DEX): 1d8 lightning and shocked. Uses one Shock Dart.",
+      "description": "Throw 9 m (attack with DEX): 1d4 piercing + 1d4 lightning; CON save DC 15 or no reactions until the start of its next turn. Uses one Shock Dart.",
       "level": 0,
       "school": "evocation",
       "manaCost": 0,
@@ -2157,8 +2694,8 @@
           "id": "shock-dart",
           "name": "Shock Dart",
           "type": "device",
-          "description": "A finned dart with a charged copper coil. Thrown 9 m: 1d8 lightning and the target is shocked. Consumed on use.",
-          "valueGold": 4,
+          "description": "A finned dart with a charged copper coil. 1d4 piercing + 1d4 lightning; on a failed CON save DC 15 the target cannot take reactions until the start of its next turn. Consumed on use.",
+          "valueGold": 6,
           "weight": 0.1,
           "damage": null,
           "durability": {
@@ -2189,26 +2726,184 @@
       "damage": {
         "dice": [
           {
-            "diceId": "d8",
-            "count": 1
+            "diceId": "d4",
+            "count": 2
           }
         ],
         "typeId": "lightning"
       },
       "cooldownRounds": 0,
-      "areaSpell": false
+      "areaSpell": false,
+      "components": [
+        "S",
+        "M"
+      ],
+      "materialComponent": "a Shock Dart (thrown)",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "steam-jet-blast",
       "name": "Steam-Jet Blast",
-      "description": "Steam-Jet Gauntlet: 15 ft cone of scalding steam, 2d6 fire and pushed back (DEX save for half). Costs a Steam-pressure charge.",
+      "description": "Steam-Jet Gauntlet (once per short rest): a creature within 5 ft makes a STR save DC 15 or is pushed 10 ft. Costs a Steam-pressure charge.",
       "level": 1,
       "school": "evocation",
       "manaCost": 3,
-      "range": 15,
-      "radius": 15,
+      "range": 5,
+      "radius": 0,
       "castingMethod": "hand-movement",
       "requiredConsumables": [],
+      "requiredTools": [],
+      "concentration": null,
+      "effects": [
+        {
+          "id": "knockback",
+          "name": "Knockback",
+          "description": "Force enough to hurl the target away from its attacker.",
+          "damaging": false,
+          "healing": false,
+          "damageAmount": 0,
+          "healingAmount": 0
+        }
+      ],
+      "damage": null,
+      "cooldownRounds": 0,
+      "areaSpell": false,
+      "components": [
+        "S",
+        "M"
+      ],
+      "materialComponent": "the Steam-Jet Gauntlet",
+      "materialCost": 0,
+      "materialConsumed": false
+    },
+    {
+      "id": "thermal-grenade-throw",
+      "name": "Thermal Grenade",
+      "description": "Throw 12 m: 10 ft radius, DEX save DC 15 - 2d6 fire on a failure, half on a success. Uses one Thermal Grenade.",
+      "level": 0,
+      "school": "evocation",
+      "manaCost": 0,
+      "range": 40,
+      "radius": 10,
+      "castingMethod": "hand-movement",
+      "requiredConsumables": [
+        {
+          "id": "thermal-grenade",
+          "name": "Thermal Grenade",
+          "type": "device",
+          "description": "A ceramic shell that releases a Thermal capsule's heat all at once. 10 ft radius, DEX save DC 15: 2d6 fire on a failure, half on a success. Consumed on use.",
+          "valueGold": 25,
+          "weight": 0.8,
+          "damage": null,
+          "durability": {
+            "max": 1,
+            "current": 1
+          },
+          "spellId": "thermal-grenade-throw",
+          "chargeLevel": 0,
+          "mechanical": true,
+          "effects": [
+            "area_damage"
+          ]
+        }
+      ],
+      "requiredTools": [],
+      "concentration": null,
+      "effects": [],
+      "damage": {
+        "dice": [
+          {
+            "diceId": "d6",
+            "count": 2
+          }
+        ],
+        "typeId": "fire"
+      },
+      "cooldownRounds": 0,
+      "areaSpell": true,
+      "components": [
+        "S",
+        "M"
+      ],
+      "materialComponent": "a Thermal Grenade (thrown)",
+      "materialCost": 0,
+      "materialConsumed": false
+    },
+    {
+      "id": "pressure-ram-strike",
+      "name": "Pressure Ram",
+      "description": "Fire the piston at a door, gate, object or creature within 5 ft: 3d6 force and the target is knocked back; advantage on checks to force doors. Costs a Steam-pressure charge.",
+      "level": 1,
+      "school": "evocation",
+      "manaCost": 3,
+      "range": 5,
+      "radius": 0,
+      "castingMethod": "hand-movement",
+      "requiredConsumables": [],
+      "requiredTools": [],
+      "concentration": null,
+      "effects": [
+        {
+          "id": "knockback",
+          "name": "Knockback",
+          "description": "Force enough to hurl the target away from its attacker.",
+          "damaging": false,
+          "healing": false,
+          "damageAmount": 0,
+          "healingAmount": 0
+        }
+      ],
+      "damage": {
+        "dice": [
+          {
+            "diceId": "d6",
+            "count": 3
+          }
+        ],
+        "typeId": "force"
+      },
+      "cooldownRounds": 0,
+      "areaSpell": false,
+      "components": [
+        "S",
+        "M"
+      ],
+      "materialComponent": "the forearm Pressure Ram piston",
+      "materialCost": 0,
+      "materialConsumed": false
+    },
+    {
+      "id": "concussion-bolt-shot",
+      "name": "Bolt Repeater: Concussion Bolt",
+      "description": "Bonus action: the Bolt Repeater fires a Concussion Bolt. Ranged attack with INT, 30 m: bolt damage 2d6 + 1d4 force, STR save DC 15 or pushed 5 ft. Uses one Concussion Bolt.",
+      "level": 0,
+      "school": "evocation",
+      "manaCost": 0,
+      "range": 100,
+      "radius": 0,
+      "castingMethod": "hand-movement",
+      "requiredConsumables": [
+        {
+          "id": "concussion-bolt",
+          "name": "Concussion Bolt",
+          "type": "device",
+          "description": "Bolt ammunition with a reinforced tip and a Force capsule core. On hit: normal bolt damage + 1d4 force, and the target makes a STR save DC 15 or is pushed 5 ft. One bolt per shot.",
+          "valueGold": 5,
+          "weight": 0.2,
+          "damage": null,
+          "durability": {
+            "max": 1,
+            "current": 1
+          },
+          "spellId": "concussion-bolt-shot",
+          "chargeLevel": 0,
+          "mechanical": true,
+          "effects": [
+            "knockback"
+          ]
+        }
+      ],
       "requiredTools": [],
       "concentration": null,
       "effects": [
@@ -2227,192 +2922,33 @@
           {
             "diceId": "d6",
             "count": 2
-          }
-        ],
-        "typeId": "fire"
-      },
-      "cooldownRounds": 0,
-      "areaSpell": true
-    },
-    {
-      "id": "thermal-grenade-throw",
-      "name": "Thermal Grenade",
-      "description": "Throw 12 m: 10 ft radius, 3d6 fire and burning (DEX save for half). Uses one Thermal Grenade.",
-      "level": 0,
-      "school": "evocation",
-      "manaCost": 0,
-      "range": 40,
-      "radius": 10,
-      "castingMethod": "hand-movement",
-      "requiredConsumables": [
-        {
-          "id": "thermal-grenade",
-          "name": "Thermal Grenade",
-          "type": "device",
-          "description": "A thick brass shell holding a Thermal charge that is released all at once. Thrown 12 m: 10 ft radius, 3d6 fire and burning. Consumed on use.",
-          "valueGold": 20,
-          "weight": 0.8,
-          "damage": null,
-          "durability": {
-            "max": 1,
-            "current": 1
           },
-          "spellId": "thermal-grenade-throw",
-          "chargeLevel": 0,
-          "mechanical": true,
-          "effects": [
-            "burn",
-            "area_damage"
-          ]
-        }
-      ],
-      "requiredTools": [],
-      "concentration": null,
-      "effects": [
-        {
-          "id": "burn",
-          "name": "Burning",
-          "description": "Flames cling to the target and keep searing it each round.",
-          "damaging": true,
-          "healing": false,
-          "damageAmount": 3,
-          "healingAmount": 0
-        }
-      ],
-      "damage": {
-        "dice": [
           {
-            "diceId": "d6",
-            "count": 3
+            "diceId": "d4",
+            "count": 1
           }
         ],
-        "typeId": "fire"
+        "typeId": "force"
       },
       "cooldownRounds": 0,
-      "areaSpell": true
-    },
-    {
-      "id": "pressure-ram-strike",
-      "name": "Pressure Ram",
-      "description": "Melee strike with the forearm piston: 3d8 bludgeoning, the target is knocked back and prone. Costs a Thermal charge.",
-      "level": 2,
-      "school": "evocation",
-      "manaCost": 6,
-      "range": 5,
-      "radius": 0,
-      "castingMethod": "hand-movement",
-      "requiredConsumables": [],
-      "requiredTools": [],
-      "concentration": null,
-      "effects": [
-        {
-          "id": "knockback",
-          "name": "Knockback",
-          "description": "Force enough to hurl the target away from its attacker.",
-          "damaging": false,
-          "healing": false,
-          "damageAmount": 0,
-          "healingAmount": 0
-        },
-        {
-          "id": "prone",
-          "name": "Prone",
-          "description": "Knocked flat; movement costs double and melee attackers gain advantage.",
-          "damaging": false,
-          "healing": false,
-          "damageAmount": 0,
-          "healingAmount": 0
-        }
+      "areaSpell": false,
+      "components": [
+        "S",
+        "M"
       ],
-      "damage": {
-        "dice": [
-          {
-            "diceId": "d8",
-            "count": 3
-          }
-        ],
-        "typeId": "bludgeoning"
-      },
-      "cooldownRounds": 0,
-      "areaSpell": false
-    },
-    {
-      "id": "concussion-bolt-shot",
-      "name": "Bolt Repeater: Concussion Bolt",
-      "description": "Bonus action: the Bolt Repeater fires a Concussion Bolt. Ranged attack with INT, 30 m: bursts in 5 ft, 3d6 thunder and concussed. Uses one Concussion Bolt.",
-      "level": 0,
-      "school": "evocation",
-      "manaCost": 0,
-      "range": 100,
-      "radius": 5,
-      "castingMethod": "hand-movement",
-      "requiredConsumables": [
-        {
-          "id": "concussion-bolt",
-          "name": "Concussion Bolt",
-          "type": "device",
-          "description": "Bolt Repeater ammunition packed with powder. On impact it bursts in a 5 ft radius: 3d6 thunder and the target is concussed. One bolt per shot.",
-          "valueGold": 10,
-          "weight": 0.2,
-          "damage": null,
-          "durability": {
-            "max": 1,
-            "current": 1
-          },
-          "spellId": "concussion-bolt-shot",
-          "chargeLevel": 0,
-          "mechanical": true,
-          "effects": [
-            "concussed",
-            "area_damage"
-          ]
-        }
-      ],
-      "requiredTools": [],
-      "concentration": null,
-      "effects": [
-        {
-          "id": "concussed",
-          "name": "Concussed",
-          "description": "Head ringing: disadvantage on attacks and ability checks until the end of its next turn.",
-          "damaging": false,
-          "healing": false,
-          "damageAmount": 0,
-          "healingAmount": 0,
-          "durationRounds": 1,
-          "lasting": true
-        },
-        {
-          "id": "stunned",
-          "name": "Stunned",
-          "description": "Incapacitated, unable to move, and barely able to speak.",
-          "damaging": false,
-          "healing": false,
-          "damageAmount": 0,
-          "healingAmount": 0
-        }
-      ],
-      "damage": {
-        "dice": [
-          {
-            "diceId": "d6",
-            "count": 3
-          }
-        ],
-        "typeId": "thunder"
-      },
-      "cooldownRounds": 0,
-      "areaSpell": true
+      "materialComponent": "the Bolt Repeater loaded with a Concussion Bolt",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "thermal-smoke-burst",
       "name": "Thermal Smoke Grenade",
-      "description": "Throw 12 m: a 20 ft cloud heavily obscures the area for 1 minute. Needs exactly one Thermal capsule (no other type works).",
+      "description": "Throw 12 m: a 10 ft radius cloud of hot smoke heavily obscures the area; a creature entering or starting its turn inside takes 1d4 fire. Needs exactly one Thermal capsule (no other type works).",
       "level": 2,
       "school": "conjuration",
       "manaCost": 6,
       "range": 40,
-      "radius": 20,
+      "radius": 10,
       "castingMethod": "hand-movement",
       "requiredConsumables": [],
       "requiredTools": [],
@@ -2426,11 +2962,35 @@
           "healing": false,
           "damageAmount": 0,
           "healingAmount": 0
+        },
+        {
+          "id": "burn",
+          "name": "Burning",
+          "description": "Flames cling to the target and keep searing it each round.",
+          "damaging": true,
+          "healing": false,
+          "damageAmount": 3,
+          "healingAmount": 0
         }
       ],
-      "damage": null,
+      "damage": {
+        "dice": [
+          {
+            "diceId": "d4",
+            "count": 1
+          }
+        ],
+        "typeId": "fire"
+      },
       "cooldownRounds": 0,
-      "areaSpell": true
+      "areaSpell": true,
+      "components": [
+        "S",
+        "M"
+      ],
+      "materialComponent": "a Thermal Smoke Grenade primed with a Thermal capsule (thrown)",
+      "materialCost": 0,
+      "materialConsumed": false
     }
   ]
 }

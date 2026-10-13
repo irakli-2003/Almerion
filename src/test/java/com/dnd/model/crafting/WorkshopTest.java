@@ -254,4 +254,76 @@ public class WorkshopTest {
         assertFalse(s.itemIds.contains("tinkers"));
         assertTrue(s.itemIds.containsAll(List.of("rope", "longsword")));
     }
+
+    private void stockForGrenade() {
+        Workshop.add(pc, "brass", 2);
+        Workshop.add(pc, "tinkers", 1);
+    }
+
+    @Test
+    public void passingTheCraftingCheckBuildsTheItem() {
+        stockForGrenade();
+        bp.setCheckDc(12);
+        int roll = Math.max(2, Math.min(19, 12 - Workshop.craftBonus(pc)));
+        Workshop.Attempt a = Workshop.attempt(pc, bp, items, roll);
+        assertTrue(a.success());
+        assertEquals(2, Workshop.count(pc, "grenade"));
+        assertEquals(0, Workshop.count(pc, "brass"));
+    }
+
+    @Test
+    public void narrowFailureWastesNothing() {
+        stockForGrenade();
+        bp.setCheckDc(15);
+        int roll = 15 - Workshop.craftBonus(pc) - 2;
+        assertTrue(roll > 1 && roll < 20);
+        Workshop.Attempt a = Workshop.attempt(pc, bp, items, roll);
+        assertFalse(a.success());
+        assertFalse(a.materialsWasted());
+        assertEquals(2, Workshop.count(pc, "brass"));
+        assertEquals(1, pc.getSpellSlots().get(0).getCurrent());
+    }
+
+    @Test
+    public void badFailureRuinsMaterialsButKeepsToolsAndCharges() {
+        stockForGrenade();
+        bp.setCheckDc(25);
+        Workshop.Attempt a = Workshop.attempt(pc, bp, items, 2);
+        assertFalse(a.success());
+        assertTrue(a.materialsWasted());
+        assertEquals(0, Workshop.count(pc, "brass"));
+        assertEquals(1, Workshop.count(pc, "tinkers"));
+        assertEquals(1, pc.getSpellSlots().get(0).getCurrent());
+        assertEquals(0, Workshop.count(pc, "grenade"));
+    }
+
+    @Test
+    public void naturalTwentyAndOneOverrideTheTotal() {
+        stockForGrenade();
+        bp.setCheckDc(30);
+        assertTrue(Workshop.attempt(pc, bp, items, 20).success());
+        stockForGrenade();
+        pc.getSpellSlots().get(0).setCurrent(1);
+        bp.setCheckDc(2);
+        assertFalse(Workshop.attempt(pc, bp, items, 1).success());
+    }
+
+    @Test
+    public void capsuleBlueprintFillsAChargeInsteadOfMakingAnItem() {
+        Blueprint capsule = reg(new Blueprint(), "bp-thermal-capsule");
+        capsule.setProducesChargeLevel(2);
+        capsule.getMaterials().add(new Blueprint.MaterialCost("brass", 1));
+        capsule.getToolIds().add("tinkers");
+        stockForGrenade();
+
+        assertTrue(Workshop.problems(pc, capsule, items).isEmpty());
+        Workshop.craft(pc, capsule, items);
+        assertEquals(1, pc.getSpellSlots().get(1).getCurrent());
+        assertEquals(1, Workshop.count(pc, "brass"));
+
+        pc.getSpellSlots().get(1).setCurrent(2);
+        assertFalse(Workshop.problems(pc, capsule, items).isEmpty());
+        capsule.setProducesChargeLevel(3);
+        assertTrue(Workshop.problems(pc, capsule, items).stream().anyMatch(s -> s.contains("capacity")));
+    }
 }

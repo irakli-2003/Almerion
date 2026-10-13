@@ -1077,6 +1077,132 @@
       },
       "equipped" : false,
       "quantity" : 1
+    }, {
+      "itemId" : "heavy-bolt",
+      "condition" : {
+        "durability" : 100
+      },
+      "equipped" : false,
+      "quantity" : 6
+    }, {
+      "itemId" : "smoke-compound",
+      "condition" : {
+        "durability" : 100
+      },
+      "equipped" : false,
+      "quantity" : 2
+    }, {
+      "itemId" : "vented-shell",
+      "condition" : {
+        "durability" : 100
+      },
+      "equipped" : false,
+      "quantity" : 2
+    }, {
+      "itemId" : "timed-valve",
+      "condition" : {
+        "durability" : 100
+      },
+      "equipped" : false,
+      "quantity" : 1
+    }, {
+      "itemId" : "timed-trigger",
+      "condition" : {
+        "durability" : 100
+      },
+      "equipped" : false,
+      "quantity" : 1
+    }, {
+      "itemId" : "heat-jacket",
+      "condition" : {
+        "durability" : 100
+      },
+      "equipped" : false,
+      "quantity" : 1
+    }, {
+      "itemId" : "ceramic-seal",
+      "condition" : {
+        "durability" : 100
+      },
+      "equipped" : false,
+      "quantity" : 1
+    }, {
+      "itemId" : "ceramic-shell",
+      "condition" : {
+        "durability" : 100
+      },
+      "equipped" : false,
+      "quantity" : 1
+    }, {
+      "itemId" : "heat-vents",
+      "condition" : {
+        "durability" : 100
+      },
+      "equipped" : false,
+      "quantity" : 1
+    }, {
+      "itemId" : "impact-trigger",
+      "condition" : {
+        "durability" : 100
+      },
+      "equipped" : false,
+      "quantity" : 1
+    }, {
+      "itemId" : "fine-wire",
+      "condition" : {
+        "durability" : 100
+      },
+      "equipped" : false,
+      "quantity" : 1
+    }, {
+      "itemId" : "spring-trigger",
+      "condition" : {
+        "durability" : 100
+      },
+      "equipped" : false,
+      "quantity" : 1
+    }, {
+      "itemId" : "alarm-bell",
+      "condition" : {
+        "durability" : 100
+      },
+      "equipped" : false,
+      "quantity" : 1
+    }, {
+      "itemId" : "clamp-set",
+      "condition" : {
+        "durability" : 100
+      },
+      "equipped" : false,
+      "quantity" : 1
+    }, {
+      "itemId" : "pressure-chamber",
+      "condition" : {
+        "durability" : 100
+      },
+      "equipped" : false,
+      "quantity" : 1
+    }, {
+      "itemId" : "treated-steam-medium",
+      "condition" : {
+        "durability" : 100
+      },
+      "equipped" : false,
+      "quantity" : 1
+    }, {
+      "itemId" : "spring-valve",
+      "condition" : {
+        "durability" : 100
+      },
+      "equipped" : false,
+      "quantity" : 1
+    }, {
+      "itemId" : "heat-seal",
+      "condition" : {
+        "durability" : 100
+      },
+      "equipped" : false,
+      "quantity" : 1
     } ],
     "spells" : [ {
       "spellId" : "mending",
@@ -1130,7 +1256,7 @@
       "max" : 2,
       "current" : 2
     } ],
-    "knownBlueprints" : [ "bp-smoke-canister", "bp-tripwire-alarm", "bp-grapnel-launcher", "bp-sticky-foam", "bp-messenger-beetle", "bp-thermal-smoke-grenade", "bp-scalding-bolts", "bp-flash-bomb", "bp-shock-darts", "bp-steam-jet-gauntlet", "bp-thermal-grenade", "bp-pressure-ram", "bp-concussion-bolts" ],
+    "knownBlueprints" : [ "bp-smoke-canister", "bp-tripwire-alarm", "bp-grapnel-launcher", "bp-sticky-foam", "bp-messenger-beetle", "bp-thermal-smoke-grenade", "bp-scalding-bolts", "bp-flash-bomb", "bp-steam-jet-gauntlet", "bp-thermal-grenade", "bp-pressure-ram", "bp-steam-capsule", "bp-thermal-capsule" ],
     "furnaceFuel" : 0
   } ]
 }

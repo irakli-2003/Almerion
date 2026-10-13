@@ -80,6 +80,7 @@ final class StorylineEditorWindow {
 
         area = new TextArea(service.readText(file));
         area.setWrapText(true);
+        com.dnd.ui.components.EntityHoverCard.installMentions(area, repos);
         area.getStyleClass().add("storyline-editor");
         // Without an explicit grow the TextArea keeps its preferred height and leaves a blank
         // gap when the window is maximized, which is the whole point of this editor being

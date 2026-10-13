@@ -519,10 +519,13 @@ final class ManagePlayersPanel {
             name.setWrapText(true);
             name.setMaxWidth(Double.MAX_VALUE);
             HBox.setHgrow(name, Priority.ALWAYS);
-            Button build = quick("🔧", "Build " + bp.getName(), () -> {
+            com.dnd.ui.components.EntityHoverCard.item(name, bp, repos);
+            Button build = quick("🔧", "Build " + bp.getName() + (bp.getCheckDc() > 0
+                ? " (roll d20 + " + Workshop.craftBonus(pc) + " vs DC " + bp.getCheckDc() + ")" : ""), () -> {
                 try {
-                    List<String> log = Workshop.craft(pc, bp, items);
-                    status.accept(pc.getName() + " " + String.join(", ", log) + ".");
+                    int d20 = java.util.concurrent.ThreadLocalRandom.current().nextInt(1, 21);
+                    Workshop.Attempt attempt = Workshop.attempt(pc, bp, items, d20);
+                    status.accept(pc.getName() + " crafts " + bp.getName() + " - " + attempt.summary() + ".");
                 } catch (IllegalStateException ex) {
                     status.accept(ex.getMessage());
                 }
@@ -554,8 +557,12 @@ final class ManagePlayersPanel {
         }
         for (var c : bp.getCharges()) if (c != null) parts.add(c.toString() + " charge" + (c.getCount() == 1 ? "" : "s"));
         Item product = bp.getProductId() == null ? null : repos.items().getById(bp.getProductId());
+        String makes = bp.getProducesChargeLevel() > 0
+            ? "1 " + com.dnd.model.magic.EnergyCharges.name(bp.getProducesChargeLevel()) + " charge"
+            : bp.getProductQuantity() + "× " + (product == null ? bp.getProductId() : product.getName());
         return "Needs: " + (parts.isEmpty() ? "nothing" : String.join(", ", parts))
-            + " → " + bp.getProductQuantity() + "× " + (product == null ? bp.getProductId() : product.getName())
+            + " → " + makes
+            + (bp.getCheckDc() > 0 ? "  · DC " + bp.getCheckDc() : "")
             + (bp.getMinLevel() > 1 ? "  (level " + bp.getMinLevel() + "+)" : "");
     }
 
@@ -707,6 +714,7 @@ final class ManagePlayersPanel {
             label.setWrapText(true);
             HBox.setHgrow(label, Priority.ALWAYS);
             label.setMaxWidth(Double.MAX_VALUE);
+            if (catalogItem != null) com.dnd.ui.components.EntityHoverCard.item(label, catalogItem, repos);
             Button less = quick("−", "Use up / lose one", () -> {
                 if (item.getQuantity() > 1) item.setQuantity(item.getQuantity() - 1);
                 else items.remove(item);
@@ -790,6 +798,11 @@ final class ManagePlayersPanel {
             protected void updateItem(T item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(empty || item == null ? null : label.apply(item));
+                if (item instanceof Item it) com.dnd.ui.components.EntityHoverCard.item(this, it, repos);
+                else if (item instanceof com.dnd.model.magic.Spell sp) com.dnd.ui.components.EntityHoverCard.spell(this, sp, repos);
+                else if (item instanceof Effect ef && ef.getDescription() != null && !ef.getDescription().isBlank())
+                    com.dnd.ui.components.EntityHoverCard.install(this, ef.getName(), null, ef.getDescription());
+                else setTooltip(null);
             }
         });
         Runnable filter = () -> {

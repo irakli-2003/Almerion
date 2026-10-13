@@ -2118,7 +2118,7 @@
       "id": "valebrick-field-workshop",
       "name": "Valebrick Portable Field Workshop",
       "type": "tool",
-      "description": "Toren's 32-36 kg backpack workshop: tool panels, a compact hardened-steel anvil, a small forge chamber, sealed blueprint tubes and the Valebrick Resonance Core - a refined crystal in a brass stabilisation cage. Deploys into a workbench in 30-60 seconds. Its furnace burns any fuel to fill Steam-pressure (L1) and Thermal (L2) charges; upgrades will unlock Electric charges and beyond.",
+      "description": "Toren's 32-36 kg backpack workshop: tool panels, a compact hardened-steel anvil, a small forge chamber, sealed blueprint tubes and the Valebrick Resonance Core - a refined crystal in a brass stabilisation cage. Deploys into a workbench in 30-60 seconds. Its furnace burns any fuel to fill Steam-pressure (L1) and Thermal (L2) charges; upgrades will unlock Shock charges and beyond.",
       "valueGold": 500,
       "weight": 34.0,
       "damage": null,
@@ -2311,8 +2311,8 @@
       "id": "smoke-canister",
       "name": "Smoke Canister",
       "type": "device",
-      "description": "Pull the pin and throw: a 15 ft cloud of thick grey smoke heavily obscures the area for 1 minute. Consumed on use.",
-      "valueGold": 5,
+      "description": "Pull the pin and throw: a 15 ft radius cloud of thick smoke heavily obscures the area for up to 1 minute unless a strong wind disperses it. Consumed on use.",
+      "valueGold": 10,
       "weight": 0.5,
       "damage": null,
       "durability": {
@@ -2330,8 +2330,8 @@
       "id": "tripwire-alarm",
       "name": "Tripwire Alarm",
       "type": "device",
-      "description": "A spring-loaded bell with 15 m of copper tripwire. Anything crossing the wire rings it loudly; set up in 1 minute around a camp or doorway. Needs no charge.",
-      "valueGold": 5,
+      "description": "Covers a doorway or a narrow path. When the wire is crossed it rings a loud bell or gives a bright flash. Noticing the concealed wire takes an Investigation check DC 15. Needs no charge.",
+      "valueGold": 8,
       "weight": 1.0,
       "damage": null,
       "durability": {
@@ -2347,8 +2347,8 @@
       "id": "grapnel-launcher",
       "name": "Steam Grapnel Launcher",
       "type": "device",
-      "description": "Wrist-mounted grapnel with 18 m of line. Each shot vents one Steam-pressure charge and can pull you up to the hook or yank a light object to you.",
-      "valueGold": 30,
+      "description": "Reusable wrist launcher. Fires an anchor about 60 ft to climb, cross gaps, anchor a line or pull a light object to you. Each shot vents one Steam-pressure charge.",
+      "valueGold": 40,
       "weight": 3.0,
       "damage": null,
       "durability": {
@@ -2364,8 +2364,8 @@
       "id": "sticky-foam-flask",
       "name": "Sticky Foam Flask",
       "type": "device",
-      "description": "A pressurised flask of expanding foam. Thrown 6 m, it glues a creature's feet in place (restrained, STR save DC 13 ends it). Consumed on use.",
-      "valueGold": 10,
+      "description": "Thrown: the foam turns a 5 ft square into difficult terrain. A creature hit directly makes a DEX save DC 15 or is restrained until it uses an action to escape. Consumed on use.",
+      "valueGold": 15,
       "weight": 0.5,
       "damage": null,
       "durability": {
@@ -2383,7 +2383,7 @@
       "id": "messenger-beetle",
       "name": "Clockwork Messenger Beetle",
       "type": "device",
-      "description": "A palm-sized brass beetle in the style of Argus the owl. Wind it with one Steam-pressure charge and it carries a 25-word message to a place you know within 1 mile, then waits there.",
+      "description": "A palm-sized brass beetle in the style of Argus the owl, powered by its own tiny resonance cell. It carries a short note or a tiny object and follows a simple beacon or destination routine, then waits there.",
       "valueGold": 25,
       "weight": 0.2,
       "damage": null,
@@ -2392,7 +2392,7 @@
         "current": 100
       },
       "spellId": "messenger-beetle",
-      "chargeLevel": 1,
+      "chargeLevel": 0,
       "mechanical": true,
       "effects": []
     },
@@ -2400,8 +2400,8 @@
       "id": "scalding-bolt",
       "name": "Scalding Bolt",
       "type": "device",
-      "description": "Bolt Repeater ammunition with a boiling-water core. Fires as a Bolt Repeater shot: 2d6 fire and the target is scalded (burn). One bolt per shot.",
-      "valueGold": 3,
+      "description": "Bolt ammunition with a heat-jacketed core. On hit: normal bolt damage + 1d4 fire. One bolt per shot.",
+      "valueGold": 6,
       "weight": 0.1,
       "damage": null,
       "durability": {
@@ -2419,8 +2419,8 @@
       "id": "flash-bomb",
       "name": "Flash Bomb",
       "type": "device",
-      "description": "A glass ball of magnesium salts. Thrown 9 m, it bursts in a 10 ft blinding flash (1d4 radiant, CON save or blinded until the end of its next turn). Consumed on use.",
-      "valueGold": 8,
+      "description": "Thrown device. 10 ft radius burst of light: CON save DC 15 or blinded until the start of the creature's next turn. Consumed on use.",
+      "valueGold": 20,
       "weight": 0.3,
       "damage": null,
       "durability": {
@@ -2438,8 +2438,8 @@
       "id": "shock-dart",
       "name": "Shock Dart",
       "type": "device",
-      "description": "A finned dart with a charged copper coil. Thrown 9 m: 1d8 lightning and the target is shocked. Consumed on use.",
-      "valueGold": 4,
+      "description": "A finned dart with a charged copper coil. 1d4 piercing + 1d4 lightning; on a failed CON save DC 15 the target cannot take reactions until the start of its next turn. Consumed on use.",
+      "valueGold": 6,
       "weight": 0.1,
       "damage": null,
       "durability": {
@@ -2457,8 +2457,8 @@
       "id": "steam-jet-gauntlet",
       "name": "Steam-Jet Gauntlet",
       "type": "device",
-      "description": "A brass gauntlet with a pressure valve. Vent one Steam-pressure charge: 15 ft cone, 2d6 fire and the targets are pushed back.",
-      "valueGold": 40,
+      "description": "Reusable brass gauntlet. Once per short rest, vent a Steam-pressure charge at a creature within 5 ft: STR save DC 15 or it is pushed 10 ft.",
+      "valueGold": 45,
       "weight": 2.0,
       "damage": null,
       "durability": {
@@ -2476,8 +2476,8 @@
       "id": "thermal-grenade",
       "name": "Thermal Grenade",
       "type": "device",
-      "description": "A thick brass shell holding a Thermal charge that is released all at once. Thrown 12 m: 10 ft radius, 3d6 fire and burning. Consumed on use.",
-      "valueGold": 20,
+      "description": "A ceramic shell that releases a Thermal capsule's heat all at once. 10 ft radius, DEX save DC 15: 2d6 fire on a failure, half on a success. Consumed on use.",
+      "valueGold": 25,
       "weight": 0.8,
       "damage": null,
       "durability": {
@@ -2488,7 +2488,6 @@
       "chargeLevel": 0,
       "mechanical": true,
       "effects": [
-        "burn",
         "area_damage"
       ]
     },
@@ -2496,8 +2495,8 @@
       "id": "pressure-ram",
       "name": "Pressure Ram",
       "type": "device",
-      "description": "A steel forearm piston driven by a Thermal charge. Melee: 3d8 bludgeoning, the target is knocked back and prone.",
-      "valueGold": 80,
+      "description": "Portable breaching tool: a telescopic piston driven by a Steam-pressure charge. Advantage on checks to force doors and gates; can deal 3d6 force to an object or a creature in front of it.",
+      "valueGold": 30,
       "weight": 6.0,
       "damage": null,
       "durability": {
@@ -2505,19 +2504,18 @@
         "current": 100
       },
       "spellId": "pressure-ram-strike",
-      "chargeLevel": 2,
+      "chargeLevel": 1,
       "mechanical": true,
       "effects": [
-        "knockback",
-        "prone"
+        "knockback"
       ]
     },
     {
       "id": "concussion-bolt",
       "name": "Concussion Bolt",
       "type": "device",
-      "description": "Bolt Repeater ammunition packed with powder. On impact it bursts in a 5 ft radius: 3d6 thunder and the target is concussed. One bolt per shot.",
-      "valueGold": 10,
+      "description": "Bolt ammunition with a reinforced tip and a Force capsule core. On hit: normal bolt damage + 1d4 force, and the target makes a STR save DC 15 or is pushed 5 ft. One bolt per shot.",
+      "valueGold": 5,
       "weight": 0.2,
       "damage": null,
       "durability": {
@@ -2528,15 +2526,14 @@
       "chargeLevel": 0,
       "mechanical": true,
       "effects": [
-        "concussed",
-        "area_damage"
+        "knockback"
       ]
     },
     {
       "id": "bp-smoke-canister",
       "name": "Blueprint: Smoke Canister",
       "type": "blueprint",
-      "description": "Cover for a retreat or a hidden approach. No charge needed to build or use.",
+      "description": "Smoke Compound + Steam Pressure Capsule + Vented Shell + Timed Valve. Parts cost 10 gp.",
       "valueGold": 25,
       "weight": 0.1,
       "damage": null,
@@ -2545,31 +2542,42 @@
         "current": 100
       },
       "productId": "smoke-canister",
-      "productQuantity": 2,
+      "productQuantity": 1,
       "category": "Utility / control",
       "minLevel": 1,
       "craftMinutes": 10,
       "materials": [
         {
-          "itemId": "brass-scrap",
+          "itemId": "smoke-compound",
           "quantity": 1
         },
         {
-          "itemId": "alchemical-salts",
+          "itemId": "vented-shell",
+          "quantity": 1
+        },
+        {
+          "itemId": "timed-valve",
           "quantity": 1
         }
       ],
       "toolIds": [
         "tinkers-tools"
       ],
-      "charges": [],
-      "effects": []
+      "charges": [
+        {
+          "level": 1,
+          "count": 1
+        }
+      ],
+      "effects": [],
+      "checkDc": 12,
+      "producesChargeLevel": 0
     },
     {
       "id": "bp-tripwire-alarm",
       "name": "Blueprint: Tripwire Alarm",
       "type": "blueprint",
-      "description": "Camp security. No charge needed to build or use.",
+      "description": "Fine Wire + Spring Trigger + Bell or Flash Capsule + Clamp Set. Parts cost 8 gp.",
       "valueGold": 25,
       "weight": 0.1,
       "damage": null,
@@ -2584,11 +2592,19 @@
       "craftMinutes": 10,
       "materials": [
         {
-          "itemId": "copper-wire",
+          "itemId": "fine-wire",
           "quantity": 1
         },
         {
-          "itemId": "clockwork-springs",
+          "itemId": "spring-trigger",
+          "quantity": 1
+        },
+        {
+          "itemId": "alarm-bell",
+          "quantity": 1
+        },
+        {
+          "itemId": "clamp-set",
           "quantity": 1
         }
       ],
@@ -2596,14 +2612,16 @@
         "tinkers-tools"
       ],
       "charges": [],
-      "effects": []
+      "effects": [],
+      "checkDc": 12,
+      "producesChargeLevel": 0
     },
     {
       "id": "bp-grapnel-launcher",
       "name": "Blueprint: Steam Grapnel Launcher",
       "type": "blueprint",
-      "description": "Built once (needs a Steam-pressure charge to seal the boiler); each shot costs one more.",
-      "valueGold": 35,
+      "description": "Grapnel Head + Cable Drum + Steam Pressure Capsule + Launch Tube + Brake Gear. Advanced prototype; parts cost 40 gp.",
+      "valueGold": 45,
       "weight": 0.1,
       "damage": null,
       "durability": {
@@ -2613,19 +2631,23 @@
       "productId": "grapnel-launcher",
       "productQuantity": 1,
       "category": "Utility / mobility",
-      "minLevel": 2,
+      "minLevel": 3,
       "craftMinutes": 60,
       "materials": [
         {
-          "itemId": "steel-stock",
+          "itemId": "grapnel-head",
           "quantity": 1
         },
         {
-          "itemId": "clockwork-springs",
-          "quantity": 2
+          "itemId": "cable-drum",
+          "quantity": 1
         },
         {
-          "itemId": "leather-strap",
+          "itemId": "launch-tube",
+          "quantity": 1
+        },
+        {
+          "itemId": "brake-gear",
           "quantity": 1
         }
       ],
@@ -2639,13 +2661,15 @@
           "count": 1
         }
       ],
-      "effects": []
+      "effects": [],
+      "checkDc": 15,
+      "producesChargeLevel": 0
     },
     {
       "id": "bp-sticky-foam",
       "name": "Blueprint: Sticky Foam Flask",
       "type": "blueprint",
-      "description": "A Steam-pressure charge pressurises the flasks; using them needs no charge.",
+      "description": "Expansion Binder + Filament Compound + Breakable Flask + Activator Capsule. Parts cost 15 gp.",
       "valueGold": 25,
       "weight": 0.1,
       "damage": null,
@@ -2654,36 +2678,41 @@
         "current": 100
       },
       "productId": "sticky-foam-flask",
-      "productQuantity": 2,
+      "productQuantity": 1,
       "category": "Control",
       "minLevel": 1,
       "craftMinutes": 20,
       "materials": [
         {
-          "itemId": "alchemical-salts",
-          "quantity": 2
+          "itemId": "expansion-binder",
+          "quantity": 1
         },
         {
-          "itemId": "glass-lens",
+          "itemId": "filament-compound",
+          "quantity": 1
+        },
+        {
+          "itemId": "breakable-flask",
+          "quantity": 1
+        },
+        {
+          "itemId": "activator-capsule",
           "quantity": 1
         }
       ],
       "toolIds": [
         "tinkers-tools"
       ],
-      "charges": [
-        {
-          "level": 1,
-          "count": 1
-        }
-      ],
-      "effects": []
+      "charges": [],
+      "effects": [],
+      "checkDc": 13,
+      "producesChargeLevel": 0
     },
     {
       "id": "bp-messenger-beetle",
       "name": "Blueprint: Clockwork Messenger Beetle",
       "type": "blueprint",
-      "description": "No charge to build; each flight costs a Steam-pressure charge.",
+      "description": "Clockwork Frame + Tiny Resonance Cell + Gear Set + Lens + Message Tube. Parts cost 25 gp.",
       "valueGold": 25,
       "weight": 0.1,
       "damage": null,
@@ -2698,31 +2727,40 @@
       "craftMinutes": 60,
       "materials": [
         {
-          "itemId": "brass-scrap",
+          "itemId": "clockwork-frame",
           "quantity": 1
         },
         {
-          "itemId": "clockwork-springs",
+          "itemId": "tiny-resonance-cell",
+          "quantity": 1
+        },
+        {
+          "itemId": "gear-set",
           "quantity": 1
         },
         {
           "itemId": "glass-lens",
           "quantity": 1
+        },
+        {
+          "itemId": "message-tube",
+          "quantity": 1
         }
       ],
       "toolIds": [
-        "tinkers-tools",
-        "woodcarvers-tools"
+        "tinkers-tools"
       ],
       "charges": [],
-      "effects": []
+      "effects": [],
+      "checkDc": 14,
+      "producesChargeLevel": 0
     },
     {
       "id": "bp-scalding-bolts",
       "name": "Blueprint: Scalding Bolts",
       "type": "blueprint",
-      "description": "Bolt Repeater ammunition. A Steam-pressure charge seals the boiling cores.",
-      "valueGold": 25,
+      "description": "3 Heavy Bolts + Thermal Capsule + Heat Jacket + Ceramic Seal = 3 Scalding Bolts. Parts cost 18 gp.",
+      "valueGold": 65,
       "weight": 0.1,
       "damage": null,
       "durability": {
@@ -2730,36 +2768,42 @@
         "current": 100
       },
       "productId": "scalding-bolt",
-      "productQuantity": 4,
+      "productQuantity": 3,
       "category": "Light combat (ammo)",
-      "minLevel": 1,
+      "minLevel": 5,
       "craftMinutes": 20,
       "materials": [
         {
-          "itemId": "steel-stock",
+          "itemId": "heavy-bolt",
+          "quantity": 3
+        },
+        {
+          "itemId": "heat-jacket",
           "quantity": 1
         },
         {
-          "itemId": "brass-scrap",
+          "itemId": "ceramic-seal",
           "quantity": 1
         }
       ],
       "toolIds": [
-        "smiths-tools"
+        "tinkers-tools"
       ],
       "charges": [
         {
-          "level": 1,
+          "level": 2,
           "count": 1
         }
       ],
-      "effects": []
+      "effects": [],
+      "checkDc": 13,
+      "producesChargeLevel": 0
     },
     {
       "id": "bp-flash-bomb",
       "name": "Blueprint: Flash Bomb",
       "type": "blueprint",
-      "description": "No charge to build or use.",
+      "description": "Flash Compound Capsule + Brass Shell + Resonance Igniter + Timed Trigger. Parts cost 20 gp.",
       "valueGold": 25,
       "weight": 0.1,
       "damage": null,
@@ -2768,21 +2812,25 @@
         "current": 100
       },
       "productId": "flash-bomb",
-      "productQuantity": 2,
-      "category": "Light combat",
+      "productQuantity": 1,
+      "category": "Light combat / control",
       "minLevel": 1,
       "craftMinutes": 20,
       "materials": [
         {
-          "itemId": "glass-lens",
+          "itemId": "flash-compound-capsule",
           "quantity": 1
         },
         {
-          "itemId": "alchemical-salts",
+          "itemId": "brass-shell",
           "quantity": 1
         },
         {
-          "itemId": "black-powder",
+          "itemId": "resonance-igniter",
+          "quantity": 1
+        },
+        {
+          "itemId": "timed-trigger",
           "quantity": 1
         }
       ],
@@ -2790,14 +2838,16 @@
         "tinkers-tools"
       ],
       "charges": [],
-      "effects": []
+      "effects": [],
+      "checkDc": 13,
+      "producesChargeLevel": 0
     },
     {
       "id": "bp-shock-darts",
       "name": "Blueprint: Shock Darts",
       "type": "blueprint",
-      "description": "A Steam-pressure charge winds the coils; throwing needs no charge.",
-      "valueGold": 35,
+      "description": "3 Metal Darts + Shock Capsule + Copper Coil + Ceramic Insulator = 3 Shock Darts. Parts cost 18 gp.",
+      "valueGold": 105,
       "weight": 0.1,
       "damage": null,
       "durability": {
@@ -2807,15 +2857,19 @@
       "productId": "shock-dart",
       "productQuantity": 3,
       "category": "Light combat",
-      "minLevel": 2,
+      "minLevel": 9,
       "craftMinutes": 20,
       "materials": [
         {
-          "itemId": "copper-wire",
+          "itemId": "metal-dart",
+          "quantity": 3
+        },
+        {
+          "itemId": "copper-coil",
           "quantity": 1
         },
         {
-          "itemId": "steel-stock",
+          "itemId": "ceramic-insulator",
           "quantity": 1
         }
       ],
@@ -2824,18 +2878,20 @@
       ],
       "charges": [
         {
-          "level": 1,
+          "level": 3,
           "count": 1
         }
       ],
-      "effects": []
+      "effects": [],
+      "checkDc": 13,
+      "producesChargeLevel": 0
     },
     {
       "id": "bp-steam-jet-gauntlet",
       "name": "Blueprint: Steam-Jet Gauntlet",
       "type": "blueprint",
-      "description": "Built once; each blast costs a Steam-pressure charge.",
-      "valueGold": 35,
+      "description": "Steam Pressure Capsule + Reinforced Glove + Directional Nozzle + Heat Shield + Valve. Advanced prototype; parts cost 45 gp.",
+      "valueGold": 45,
       "weight": 0.1,
       "damage": null,
       "durability": {
@@ -2845,19 +2901,23 @@
       "productId": "steam-jet-gauntlet",
       "productQuantity": 1,
       "category": "Light combat",
-      "minLevel": 2,
+      "minLevel": 3,
       "craftMinutes": 60,
       "materials": [
         {
-          "itemId": "brass-scrap",
-          "quantity": 2
-        },
-        {
-          "itemId": "leather-strap",
+          "itemId": "reinforced-glove",
           "quantity": 1
         },
         {
-          "itemId": "clockwork-springs",
+          "itemId": "directional-nozzle",
+          "quantity": 1
+        },
+        {
+          "itemId": "heat-shield",
+          "quantity": 1
+        },
+        {
+          "itemId": "spring-valve",
           "quantity": 1
         }
       ],
@@ -2871,14 +2931,16 @@
           "count": 1
         }
       ],
-      "effects": []
+      "effects": [],
+      "checkDc": 15,
+      "producesChargeLevel": 0
     },
     {
       "id": "bp-thermal-grenade",
       "name": "Blueprint: Thermal Grenade",
       "type": "blueprint",
-      "description": "Each pair stores a Thermal charge (or stronger). Throwing needs no charge.",
-      "valueGold": 45,
+      "description": "Thermal Capsule + Ceramic Shell + Heat Vents + Impact Trigger. Parts cost 25 gp.",
+      "valueGold": 65,
       "weight": 0.1,
       "damage": null,
       "durability": {
@@ -2886,21 +2948,65 @@
         "current": 100
       },
       "productId": "thermal-grenade",
-      "productQuantity": 2,
+      "productQuantity": 1,
       "category": "Medium combat",
-      "minLevel": 3,
+      "minLevel": 5,
       "craftMinutes": 30,
       "materials": [
         {
-          "itemId": "brass-scrap",
+          "itemId": "ceramic-shell",
           "quantity": 1
         },
         {
-          "itemId": "black-powder",
-          "quantity": 2
+          "itemId": "heat-vents",
+          "quantity": 1
         },
         {
-          "itemId": "alchemical-salts",
+          "itemId": "impact-trigger",
+          "quantity": 1
+        }
+      ],
+      "toolIds": [
+        "tinkers-tools"
+      ],
+      "charges": [
+        {
+          "level": 2,
+          "count": 1
+        }
+      ],
+      "effects": [],
+      "checkDc": 14,
+      "producesChargeLevel": 0
+    },
+    {
+      "id": "bp-pressure-ram",
+      "name": "Blueprint: Pressure Ram",
+      "type": "blueprint",
+      "description": "Steam Pressure Capsule + Telescopic Piston + Steel Head + Release Valve. Parts cost 30 gp.",
+      "valueGold": 45,
+      "weight": 0.1,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "productId": "pressure-ram",
+      "productQuantity": 1,
+      "category": "Medium combat / breaching",
+      "minLevel": 3,
+      "craftMinutes": 60,
+      "materials": [
+        {
+          "itemId": "telescopic-piston",
+          "quantity": 1
+        },
+        {
+          "itemId": "steel-head",
+          "quantity": 1
+        },
+        {
+          "itemId": "release-valve",
           "quantity": 1
         }
       ],
@@ -2910,61 +3016,20 @@
       ],
       "charges": [
         {
-          "level": 2,
+          "level": 1,
           "count": 1
         }
       ],
-      "effects": []
-    },
-    {
-      "id": "bp-pressure-ram",
-      "name": "Blueprint: Pressure Ram",
-      "type": "blueprint",
-      "description": "Built once; each strike costs a Thermal charge.",
-      "valueGold": 65,
-      "weight": 0.1,
-      "damage": null,
-      "durability": {
-        "max": 100,
-        "current": 100
-      },
-      "productId": "pressure-ram",
-      "productQuantity": 1,
-      "category": "Medium combat",
-      "minLevel": 5,
-      "craftMinutes": 120,
-      "materials": [
-        {
-          "itemId": "steel-stock",
-          "quantity": 3
-        },
-        {
-          "itemId": "clockwork-springs",
-          "quantity": 2
-        },
-        {
-          "itemId": "brass-scrap",
-          "quantity": 2
-        }
-      ],
-      "toolIds": [
-        "smiths-tools",
-        "tinkers-tools"
-      ],
-      "charges": [
-        {
-          "level": 2,
-          "count": 1
-        }
-      ],
-      "effects": []
+      "effects": [],
+      "checkDc": 14,
+      "producesChargeLevel": 0
     },
     {
       "id": "bp-concussion-bolts",
       "name": "Blueprint: Concussion Bolts",
       "type": "blueprint",
-      "description": "Bolt Repeater ammunition. A Thermal charge primes the powder.",
-      "valueGold": 65,
+      "description": "3 Heavy Bolts + Force Capsule + Reinforced Tips + Stabilizer Rings = 3 Concussion Bolts. Parts cost 15 gp.",
+      "valueGold": 145,
       "weight": 0.1,
       "damage": null,
       "durability": {
@@ -2974,32 +3039,34 @@
       "productId": "concussion-bolt",
       "productQuantity": 3,
       "category": "Medium combat (ammo)",
-      "minLevel": 5,
+      "minLevel": 13,
       "craftMinutes": 30,
       "materials": [
         {
-          "itemId": "steel-stock",
+          "itemId": "heavy-bolt",
+          "quantity": 3
+        },
+        {
+          "itemId": "reinforced-tips",
           "quantity": 1
         },
         {
-          "itemId": "black-powder",
-          "quantity": 1
-        },
-        {
-          "itemId": "copper-wire",
+          "itemId": "stabilizer-rings",
           "quantity": 1
         }
       ],
       "toolIds": [
-        "smiths-tools"
+        "tinkers-tools"
       ],
       "charges": [
         {
-          "level": 2,
+          "level": 4,
           "count": 1
         }
       ],
-      "effects": []
+      "effects": [],
+      "checkDc": 13,
+      "producesChargeLevel": 0
     },
     {
       "id": "valebrick-folding-bracer",
@@ -3020,7 +3087,7 @@
       "id": "thermal-smoke-grenade",
       "name": "Thermal Smoke Grenade",
       "type": "device",
-      "description": "A reusable brass canister with a heating coil and a cartridge of smoke salts. Slot in a Thermal capsule and throw: the coil flash-boils the salts into a 20 ft cloud that heavily obscures the area for 1 minute; then pick it up and reload it. Tuned to Thermal capsules ONLY - steam pressure cannot heat the coil and an Electric capsule would burn it out.",
+      "description": "A reusable brass canister with a heating coil and a cartridge of smoke compound. Slot in a Thermal capsule and throw: a 10 ft radius cloud of hot smoke heavily obscures the area, and a creature entering or starting its turn inside takes 1d4 fire (once per turn). Tuned to Thermal capsules ONLY - steam cannot heat the coil and a Shock capsule would burn it out.",
       "valueGold": 45,
       "weight": 1.0,
       "damage": null,
@@ -3032,15 +3099,16 @@
       "chargeLevel": 2,
       "mechanical": false,
       "effects": [
-        "blinded"
+        "blinded",
+        "burn"
       ]
     },
     {
       "id": "bp-thermal-smoke-grenade",
       "name": "Blueprint: Thermal Smoke Grenade",
       "type": "blueprint",
-      "description": "Reusable smoke grenade. Building it needs no charge, but every throw needs exactly one Thermal capsule.",
-      "valueGold": 45,
+      "description": "Thermal Capsule + Smoke Compound + Vented Shell + Timed Trigger. Parts cost 25 gp. Every throw needs exactly one more Thermal capsule.",
+      "valueGold": 65,
       "weight": 0.1,
       "damage": null,
       "durability": {
@@ -3050,28 +3118,990 @@
       "productId": "thermal-smoke-grenade",
       "productQuantity": 1,
       "category": "Utility / control",
-      "minLevel": 3,
-      "craftMinutes": 60,
+      "minLevel": 5,
+      "craftMinutes": 30,
       "materials": [
         {
-          "itemId": "brass-scrap",
-          "quantity": 2
-        },
-        {
-          "itemId": "copper-wire",
+          "itemId": "smoke-compound",
           "quantity": 1
         },
         {
-          "itemId": "alchemical-salts",
-          "quantity": 2
+          "itemId": "vented-shell",
+          "quantity": 1
+        },
+        {
+          "itemId": "timed-trigger",
+          "quantity": 1
         }
       ],
       "toolIds": [
-        "tinkers-tools",
-        "smiths-tools"
+        "tinkers-tools"
+      ],
+      "charges": [
+        {
+          "level": 2,
+          "count": 1
+        }
+      ],
+      "effects": [],
+      "checkDc": 14,
+      "producesChargeLevel": 0
+    },
+    {
+      "id": "heavy-bolt",
+      "name": "Heavy Bolt",
+      "type": "material",
+      "description": "Common part. A thick crossbow bolt blank, ready to be fitted with special tips.",
+      "valueGold": 0.5,
+      "weight": 0.1,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "metal-dart",
+      "name": "Metal Dart",
+      "type": "material",
+      "description": "Common part. A balanced throwing dart with a hollow body.",
+      "valueGold": 0.5,
+      "weight": 0.1,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "brass-shell",
+      "name": "Brass Shell",
+      "type": "material",
+      "description": "Common part. A hollow brass sphere that screws shut - the body of a thrown device.",
+      "valueGold": 2,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "ceramic-shell",
+      "name": "Ceramic Shell",
+      "type": "material",
+      "description": "Common part. A fired-clay casing that shatters on impact and survives great heat.",
+      "valueGold": 2,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "vented-shell",
+      "name": "Vented Shell",
+      "type": "material",
+      "description": "Common part. A perforated tin can that lets smoke out evenly.",
+      "valueGold": 1,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "breakable-flask",
+      "name": "Breakable Flask",
+      "type": "material",
+      "description": "Common part. Thin glass that bursts on impact.",
+      "valueGold": 1,
+      "weight": 0.3,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "clamp-set",
+      "name": "Clamp Set",
+      "type": "material",
+      "description": "Common part. Small screw clamps to fix a device to a frame, post or wall.",
+      "valueGold": 1,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "fine-wire",
+      "name": "Fine Wire",
+      "type": "material",
+      "description": "Common part. A spool of thin, nearly invisible steel wire.",
+      "valueGold": 1,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "alarm-bell",
+      "name": "Alarm Bell",
+      "type": "material",
+      "description": "Common part. A loud brass bell (or a pinch of flash powder in a cap) for alarms.",
+      "valueGold": 1,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "copper-coil",
+      "name": "Copper Coil",
+      "type": "material",
+      "description": "Common part. Tightly wound copper that carries and stores a spark.",
+      "valueGold": 2,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "copper-conductor",
+      "name": "Copper Conductor",
+      "type": "material",
+      "description": "Common part. A copper rod that carries resonance or current.",
+      "valueGold": 1,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "brass-conductor",
+      "name": "Brass Conductor",
+      "type": "material",
+      "description": "Common part. A heavy brass bar that carries strong force without warping.",
+      "valueGold": 2,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "ceramic-insulator",
+      "name": "Ceramic Insulator",
+      "type": "material",
+      "description": "Common part. Fired ceramic that blocks heat and current - keeps the user safe.",
+      "valueGold": 1,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "ceramic-seal",
+      "name": "Ceramic Seal",
+      "type": "material",
+      "description": "Common part. A ceramic plug that holds heat inside a bolt until impact.",
+      "valueGold": 1,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "ceramic-sleeve",
+      "name": "Ceramic Sleeve",
+      "type": "material",
+      "description": "Common part. A ceramic tube that holds a heat crystal.",
+      "valueGold": 1,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "heat-seal",
+      "name": "Heat Seal",
+      "type": "material",
+      "description": "Common part. A gasket that keeps steam from leaking at the joins.",
+      "valueGold": 1,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "heat-shield",
+      "name": "Heat Shield",
+      "type": "material",
+      "description": "Common part. A plate that protects the hand from venting steam.",
+      "valueGold": 2,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "reinforced-glove",
+      "name": "Reinforced Glove",
+      "type": "material",
+      "description": "Common part. A heavy leather glove with steel plates over the knuckles.",
+      "valueGold": 3,
+      "weight": 1.0,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "steel-head",
+      "name": "Steel Head",
+      "type": "material",
+      "description": "Common part. A solid steel ram face.",
+      "valueGold": 3,
+      "weight": 1.5,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "reinforced-housing",
+      "name": "Reinforced Housing",
+      "type": "material",
+      "description": "Common part. A thick steel casing for a violent burst of force.",
+      "valueGold": 3,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "gear-set",
+      "name": "Gear Set",
+      "type": "material",
+      "description": "Common part. Tiny brass gears and pinions for clockwork.",
+      "valueGold": 3,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "message-tube",
+      "name": "Message Tube",
+      "type": "material",
+      "description": "Common part. A tiny watertight tube for a rolled note.",
+      "valueGold": 1,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "pressure-chamber",
+      "name": "Reinforced Pressure Chamber",
+      "type": "material",
+      "description": "Specialized part. A thick-walled brass cylinder that holds steam under pressure.",
+      "valueGold": 3,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "treated-steam-medium",
+      "name": "Treated Steam Medium",
+      "type": "material",
+      "description": "Specialized part. Mineral-treated water that holds pressure longer than plain water.",
+      "valueGold": 2,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "spring-valve",
+      "name": "Spring Valve",
+      "type": "material",
+      "description": "Specialized part. A self-closing valve that releases pressure on demand.",
+      "valueGold": 2,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "release-valve",
+      "name": "Release Valve",
+      "type": "material",
+      "description": "Specialized part. A quick-dump valve that releases all the pressure at once.",
+      "valueGold": 3,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "timed-valve",
+      "name": "Timed Valve",
+      "type": "material",
+      "description": "Specialized part. A valve on a clockwork delay of a few seconds.",
+      "valueGold": 3,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "timed-trigger",
+      "name": "Timed Trigger",
+      "type": "material",
+      "description": "Specialized part. A clockwork fuse that fires a device a few seconds after arming.",
+      "valueGold": 3,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "impact-trigger",
+      "name": "Impact Trigger",
+      "type": "material",
+      "description": "Specialized part. A striker that fires the device the moment it hits something.",
+      "valueGold": 3,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "spring-trigger",
+      "name": "Spring Trigger",
+      "type": "material",
+      "description": "Specialized part. A spring catch that snaps when the tripwire is pulled.",
+      "valueGold": 2,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "heat-vents",
+      "name": "Heat Vents",
+      "type": "material",
+      "description": "Specialized part. Fins that direct a heat burst outward.",
+      "valueGold": 3,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "vent-regulator",
+      "name": "Vent Regulator",
+      "type": "material",
+      "description": "Specialized part. Controls how fast a heat cell lets its heat out.",
+      "valueGold": 3,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "heat-conductor",
+      "name": "Heat Conductor",
+      "type": "material",
+      "description": "Specialized part. A copper-silver rod that carries heat from the crystal to the device.",
+      "valueGold": 3,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "heat-jacket",
+      "name": "Heat Jacket",
+      "type": "material",
+      "description": "Specialized part. A sleeve that keeps a bolt's core scalding until impact.",
+      "valueGold": 2,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "telescopic-piston",
+      "name": "Telescopic Piston",
+      "type": "material",
+      "description": "Specialized part. A nested piston that shoots out with great force.",
+      "valueGold": 8,
+      "weight": 2.0,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "stabilizer-rings",
+      "name": "Stabilizer Rings",
+      "type": "material",
+      "description": "Specialized part. Rings that keep a heavy-tipped bolt flying straight.",
+      "valueGold": 2,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "reinforced-tips",
+      "name": "Reinforced Tips",
+      "type": "material",
+      "description": "Specialized part. Blunt steel caps that deliver force instead of piercing.",
+      "valueGold": 2,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "compression-ring",
+      "name": "Compression Ring",
+      "type": "material",
+      "description": "Specialized part. Holds a force crystal under tension until release.",
+      "valueGold": 3,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "discharge-contact",
+      "name": "Discharge Contact",
+      "type": "material",
+      "description": "Specialized part. Releases stored current when it touches a target.",
+      "valueGold": 2,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "directional-nozzle",
+      "name": "Directional Nozzle",
+      "type": "material",
+      "description": "Specialized part. Aims a jet of steam in one direction.",
+      "valueGold": 5,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "cable-drum",
+      "name": "Cable Drum",
+      "type": "material",
+      "description": "Specialized part. A spring-loaded drum with 60 ft of thin steel cable.",
+      "valueGold": 8,
+      "weight": 2.0,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "launch-tube",
+      "name": "Launch Tube",
+      "type": "material",
+      "description": "Specialized part. A barrel that fires a grapnel with a burst of steam.",
+      "valueGold": 8,
+      "weight": 1.5,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "brake-gear",
+      "name": "Brake Gear",
+      "type": "material",
+      "description": "Specialized part. Stops the cable drum smoothly so the line does not snap.",
+      "valueGold": 6,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "grapnel-head",
+      "name": "Grapnel Head",
+      "type": "material",
+      "description": "Specialized part. Folding steel hooks that open on impact.",
+      "valueGold": 5,
+      "weight": 1.0,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "clockwork-frame",
+      "name": "Clockwork Frame",
+      "type": "material",
+      "description": "Specialized part. A beetle-shaped brass chassis with folding wings.",
+      "valueGold": 8,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "resonance-igniter",
+      "name": "Resonance Igniter",
+      "type": "material",
+      "description": "Specialized part. A crystal sliver that sparks when struck.",
+      "valueGold": 5,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "smoke-compound",
+      "name": "Smoke Compound",
+      "type": "material",
+      "description": "Specialized part. Treated salts that turn into thick smoke when heated or pressurised.",
+      "valueGold": 3,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "filament-compound",
+      "name": "Filament Compound",
+      "type": "material",
+      "description": "Specialized part. Fibres that turn into sticky strands when mixed with the binder.",
+      "valueGold": 4,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "expansion-binder",
+      "name": "Expansion Binder",
+      "type": "material",
+      "description": "Specialized part. A resin that swells a hundred times over in seconds.",
+      "valueGold": 4,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "flash-compound-capsule",
+      "name": "Flash Compound Capsule",
+      "type": "material",
+      "description": "Specialized part. Magnesium salts sealed in a capsule - a blinding flash on ignition.",
+      "valueGold": 6,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "activator-capsule",
+      "name": "Activator Capsule",
+      "type": "material",
+      "description": "Specialized part. A small capsule that mixes and pressurises foam when broken.",
+      "valueGold": 4,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "brass-stabilizer-cage",
+      "name": "Brass Stabilizer Cage",
+      "type": "material",
+      "description": "Specialized part. A small caged frame that keeps a crystal from vibrating apart.",
+      "valueGold": 4,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "tiny-resonance-cell",
+      "name": "Tiny Resonance Cell",
+      "type": "material",
+      "description": "Rare part (DM reward). A crystal chip that powers small clockwork for days.",
+      "valueGold": 10,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "cut-resonance-crystal",
+      "name": "Cut Resonance Crystal",
+      "type": "material",
+      "description": "Rare part (DM reward). A precisely cut arcane-reactive crystal.",
+      "valueGold": 4,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "thermic-crystal",
+      "name": "Thermic Crystal",
+      "type": "material",
+      "description": "Rare part (DM reward). A red crystal that gives off steady heat when struck.",
+      "valueGold": 6,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "charged-crystal",
+      "name": "Charged Crystal",
+      "type": "material",
+      "description": "Rare part (DM reward). A crystal that crackles with a stored spark.",
+      "valueGold": 6,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "dense-resonance-crystal",
+      "name": "Dense Resonance Crystal",
+      "type": "material",
+      "description": "Rare part (DM reward). A heavy, dark resonance crystal that releases force.",
+      "valueGold": 8,
+      "weight": 0.2,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      }
+    },
+    {
+      "id": "bp-steam-capsule",
+      "name": "Blueprint: Steam Pressure Capsule",
+      "type": "blueprint",
+      "description": "Fills one spent Steam-pressure (level 1) charge without the furnace: controlled mechanical pressure for launchers, rams, grapnels and steam tools. Parts cost 8 gp.",
+      "valueGold": 25,
+      "weight": 0.1,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "productId": null,
+      "productQuantity": 1,
+      "category": "Energy capsule",
+      "minLevel": 1,
+      "craftMinutes": 10,
+      "materials": [
+        {
+          "itemId": "pressure-chamber",
+          "quantity": 1
+        },
+        {
+          "itemId": "treated-steam-medium",
+          "quantity": 1
+        },
+        {
+          "itemId": "spring-valve",
+          "quantity": 1
+        },
+        {
+          "itemId": "heat-seal",
+          "quantity": 1
+        }
+      ],
+      "toolIds": [
+        "tinkers-tools"
       ],
       "charges": [],
-      "effects": []
+      "effects": [],
+      "checkDc": 12,
+      "producesChargeLevel": 1
+    },
+    {
+      "id": "bp-thermal-capsule",
+      "name": "Blueprint: Thermal Capsule",
+      "type": "blueprint",
+      "description": "Fills one spent Thermal (level 2) charge: controlled heat for thermal ammunition, cutting, welding and fire devices. Parts cost 12 gp.",
+      "valueGold": 65,
+      "weight": 0.1,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "productId": null,
+      "productQuantity": 1,
+      "category": "Energy capsule",
+      "minLevel": 5,
+      "craftMinutes": 10,
+      "materials": [
+        {
+          "itemId": "thermic-crystal",
+          "quantity": 1
+        },
+        {
+          "itemId": "ceramic-sleeve",
+          "quantity": 1
+        },
+        {
+          "itemId": "heat-conductor",
+          "quantity": 1
+        },
+        {
+          "itemId": "vent-regulator",
+          "quantity": 1
+        }
+      ],
+      "toolIds": [
+        "tinkers-tools"
+      ],
+      "charges": [],
+      "effects": [],
+      "checkDc": 13,
+      "producesChargeLevel": 2
+    },
+    {
+      "id": "bp-shock-capsule",
+      "name": "Blueprint: Shock Capsule",
+      "type": "blueprint",
+      "description": "Fills one spent Shock (level 3) charge: an electrical discharge for shock darts, alarms, traps and electrical tools. Parts cost 12 gp.",
+      "valueGold": 105,
+      "weight": 0.1,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "productId": null,
+      "productQuantity": 1,
+      "category": "Energy capsule",
+      "minLevel": 9,
+      "craftMinutes": 10,
+      "materials": [
+        {
+          "itemId": "charged-crystal",
+          "quantity": 1
+        },
+        {
+          "itemId": "copper-coil",
+          "quantity": 1
+        },
+        {
+          "itemId": "ceramic-insulator",
+          "quantity": 1
+        },
+        {
+          "itemId": "discharge-contact",
+          "quantity": 1
+        }
+      ],
+      "toolIds": [
+        "tinkers-tools"
+      ],
+      "charges": [],
+      "effects": [],
+      "checkDc": 13,
+      "producesChargeLevel": 3
+    },
+    {
+      "id": "bp-force-capsule",
+      "name": "Blueprint: Force Capsule",
+      "type": "blueprint",
+      "description": "Fills one spent Force (level 4) charge: a controlled kinetic burst for concussion ammunition, breaching tools and force projectors. Parts cost 15 gp.",
+      "valueGold": 145,
+      "weight": 0.1,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "productId": null,
+      "productQuantity": 1,
+      "category": "Energy capsule",
+      "minLevel": 13,
+      "craftMinutes": 10,
+      "materials": [
+        {
+          "itemId": "dense-resonance-crystal",
+          "quantity": 1
+        },
+        {
+          "itemId": "compression-ring",
+          "quantity": 1
+        },
+        {
+          "itemId": "brass-conductor",
+          "quantity": 1
+        },
+        {
+          "itemId": "reinforced-housing",
+          "quantity": 1
+        }
+      ],
+      "toolIds": [
+        "tinkers-tools"
+      ],
+      "charges": [],
+      "effects": [],
+      "checkDc": 14,
+      "producesChargeLevel": 4
+    },
+    {
+      "id": "bp-arcane-capsule",
+      "name": "Blueprint: Arcane Resonance Capsule",
+      "type": "blueprint",
+      "description": "Fills one spent Arcane Resonance (level 5) charge: a general-purpose energy cell for projectors, force devices and repair tools. Parts cost 10 gp.",
+      "valueGold": 185,
+      "weight": 0.1,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "productId": null,
+      "productQuantity": 1,
+      "category": "Energy capsule",
+      "minLevel": 17,
+      "craftMinutes": 10,
+      "materials": [
+        {
+          "itemId": "cut-resonance-crystal",
+          "quantity": 1
+        },
+        {
+          "itemId": "brass-stabilizer-cage",
+          "quantity": 1
+        },
+        {
+          "itemId": "copper-conductor",
+          "quantity": 1
+        },
+        {
+          "itemId": "ceramic-insulator",
+          "quantity": 1
+        }
+      ],
+      "toolIds": [
+        "tinkers-tools"
+      ],
+      "charges": [],
+      "effects": [],
+      "checkDc": 13,
+      "producesChargeLevel": 5
     }
   ]
 }

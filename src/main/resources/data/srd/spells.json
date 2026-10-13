@@ -31,7 +31,14 @@
           "sides": 6
         },
         "typeId": "acid"
-      }
+      },
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "chill-touch",
@@ -64,7 +71,14 @@
           "sides": 8
         },
         "typeId": "necrotic"
-      }
+      },
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "fire-bolt",
@@ -97,7 +111,14 @@
           "sides": 10
         },
         "typeId": "fire"
-      }
+      },
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "frost-bolt",
@@ -130,7 +151,15 @@
           "sides": 6
         },
         "typeId": "cold"
-      }
+      },
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a sliver of river ice or a cold iron needle",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "light",
@@ -146,7 +175,14 @@
       "requiredTools": [],
       "concentration": null,
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "M"
+      ],
+      "materialComponent": "a firefly or a smear of phosphorescent moss",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "mage-hand",
@@ -162,7 +198,14 @@
       "requiredTools": [],
       "concentration": null,
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "minor-illusion",
@@ -178,7 +221,14 @@
       "requiredTools": [],
       "concentration": null,
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "S",
+        "M"
+      ],
+      "materialComponent": "a scrap of fleece",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "poison-spray",
@@ -211,7 +261,14 @@
           "sides": 12
         },
         "typeId": "poison"
-      }
+      },
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "prestidigitation",
@@ -227,7 +284,14 @@
       "requiredTools": [],
       "concentration": null,
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "ray-of-frost",
@@ -260,7 +324,14 @@
           "sides": 8
         },
         "typeId": "cold"
-      }
+      },
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "sacred-flame",
@@ -283,7 +354,14 @@
           "sides": 8
         },
         "typeId": "radiant"
-      }
+      },
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "shocking-grasp",
@@ -316,7 +394,14 @@
           "sides": 8
         },
         "typeId": "lightning"
-      }
+      },
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "thaumaturgy",
@@ -332,7 +417,13 @@
       "requiredTools": [],
       "concentration": null,
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "guidance",
@@ -361,7 +452,14 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "burning-hands",
@@ -403,7 +501,14 @@
           "sides": 6
         },
         "typeId": "fire"
-      }
+      },
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "charm-person",
@@ -429,7 +534,14 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "cure-wounds",
@@ -455,7 +567,14 @@
           "healingAmount": 8
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "detect-magic",
@@ -474,7 +593,14 @@
         "preventsMovement": false
       },
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "faerie-fire",
@@ -493,7 +619,13 @@
         "preventsMovement": false
       },
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "healing-word",
@@ -519,7 +651,13 @@
           "healingAmount": 4
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "mage-armor",
@@ -545,7 +683,15 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a scrap of cured leather",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "magic-missile",
@@ -568,7 +714,14 @@
           "sides": 4
         },
         "typeId": "force"
-      }
+      },
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "shield-spell",
@@ -594,7 +747,14 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "sleep",
@@ -620,7 +780,15 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a pinch of fine sand, rose petals or a cricket",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "thunderwave",
@@ -653,7 +821,14 @@
           "sides": 8
         },
         "typeId": "thunder"
-      }
+      },
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "bless",
@@ -682,7 +857,15 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a sprinkle of holy water",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "entangle",
@@ -720,7 +903,14 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "hunters-mark",
@@ -749,7 +939,13 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "blur",
@@ -778,7 +974,13 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "darkness",
@@ -807,7 +1009,14 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "M"
+      ],
+      "materialComponent": "bat fur and a drop of pitch or a lump of coal",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "hold-person",
@@ -836,7 +1045,15 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a small straight piece of iron",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "invisibility",
@@ -865,7 +1082,15 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "an eyelash sealed in gum arabic",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "misty-step",
@@ -881,7 +1106,13 @@
       "requiredTools": [],
       "concentration": null,
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "scorching-ray",
@@ -914,7 +1145,14 @@
           "sides": 6
         },
         "typeId": "fire"
-      }
+      },
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "spiritual-weapon",
@@ -937,7 +1175,14 @@
           "sides": 8
         },
         "typeId": "force"
-      }
+      },
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "web",
@@ -966,7 +1211,15 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a bit of spiderweb",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "lesser-restoration",
@@ -992,7 +1245,14 @@
           "healingAmount": 2
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "moonbeam",
@@ -1028,7 +1288,15 @@
           "sides": 10
         },
         "typeId": "radiant"
-      }
+      },
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "seeds of a moonseed plant and a piece of opalescent feldspar",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "fireball",
@@ -1070,7 +1338,15 @@
           "sides": 6
         },
         "typeId": "fire"
-      }
+      },
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a tiny ball of bat guano and sulfur",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "lightning-bolt",
@@ -1103,7 +1379,15 @@
           "sides": 6
         },
         "typeId": "lightning"
-      }
+      },
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a bit of fur and a rod of amber, crystal or glass",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "counterspell",
@@ -1119,7 +1403,13 @@
       "requiredTools": [],
       "concentration": null,
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "dispel-magic",
@@ -1135,7 +1425,14 @@
       "requiredTools": [],
       "concentration": null,
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "fly",
@@ -1164,7 +1461,15 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a wing feather from any bird",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "revivify",
@@ -1190,7 +1495,15 @@
           "healingAmount": 1
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "diamonds worth 300 gp",
+      "materialCost": 300,
+      "materialConsumed": true
     },
     {
       "id": "haste",
@@ -1219,7 +1532,15 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a shaving of licorice root",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "slow",
@@ -1248,7 +1569,15 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a drop of molasses",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "animate-dead",
@@ -1264,7 +1593,15 @@
       "requiredTools": [],
       "concentration": null,
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a drop of blood, a piece of flesh and a pinch of bone dust",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "vampiric-touch",
@@ -1300,7 +1637,14 @@
           "sides": 6
         },
         "typeId": "necrotic"
-      }
+      },
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "greater-invisibility",
@@ -1329,7 +1673,14 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "ice-storm",
@@ -1371,7 +1722,15 @@
           "sides": 8
         },
         "typeId": "cold"
-      }
+      },
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a pinch of dust and a few drops of water",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "polymorph",
@@ -1390,7 +1749,15 @@
         "preventsMovement": false
       },
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a caterpillar cocoon",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "wall-of-fire",
@@ -1426,7 +1793,15 @@
           "sides": 8
         },
         "typeId": "fire"
-      }
+      },
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a small piece of phosphorus",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "cone-of-cold",
@@ -1468,7 +1843,15 @@
           "sides": 8
         },
         "typeId": "cold"
-      }
+      },
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a small crystal or glass cone",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "hold-monster",
@@ -1497,7 +1880,15 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a small straight piece of iron",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "raise-dead",
@@ -1523,7 +1914,15 @@
           "healingAmount": 10
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a diamond worth at least 500 gp",
+      "materialCost": 500,
+      "materialConsumed": true
     },
     {
       "id": "wall-of-force",
@@ -1542,7 +1941,15 @@
         "preventsMovement": false
       },
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a pinch of powder from a crushed clear gemstone",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "chain-lightning",
@@ -1584,7 +1991,15 @@
           "sides": 8
         },
         "typeId": "lightning"
-      }
+      },
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a bit of fur, a piece of amber, glass or crystal rod, and three silver pins",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "disintegrate",
@@ -1607,7 +2022,15 @@
           "sides": 6
         },
         "typeId": "force"
-      }
+      },
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "a lodestone and a pinch of dust",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "true-seeing",
@@ -1623,7 +2046,15 @@
       "requiredTools": [],
       "concentration": null,
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "an ointment of mushroom powder, saffron and fat worth 25 gp",
+      "materialCost": 25,
+      "materialConsumed": true
     },
     {
       "id": "finger-of-death",
@@ -1656,7 +2087,14 @@
           "sides": 8
         },
         "typeId": "necrotic"
-      }
+      },
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "teleport",
@@ -1672,7 +2110,13 @@
       "requiredTools": [],
       "concentration": null,
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "dominate-monster",
@@ -1701,7 +2145,14 @@
           "healingAmount": 0
         }
       ],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "sunburst",
@@ -1743,7 +2194,15 @@
           "sides": 6
         },
         "typeId": "radiant"
-      }
+      },
+      "components": [
+        "V",
+        "S",
+        "M"
+      ],
+      "materialComponent": "fire and a piece of sunstone",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "meteor-swarm",
@@ -1794,7 +2253,14 @@
           "sides": 6
         },
         "typeId": "fire"
-      }
+      },
+      "components": [
+        "V",
+        "S"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "power-word-kill",
@@ -1810,7 +2276,13 @@
       "requiredTools": [],
       "concentration": null,
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "time-stop",
@@ -1826,7 +2298,13 @@
       "requiredTools": [],
       "concentration": null,
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     },
     {
       "id": "wish",
@@ -1842,7 +2320,13 @@
       "requiredTools": [],
       "concentration": null,
       "effects": [],
-      "damage": null
+      "damage": null,
+      "components": [
+        "V"
+      ],
+      "materialComponent": "",
+      "materialCost": 0,
+      "materialConsumed": false
     }
   ]
 }

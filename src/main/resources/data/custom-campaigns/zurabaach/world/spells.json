@@ -32,7 +32,11 @@
       "typeId" : "acid"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : true
+    "areaSpell" : true,
+    "components" : [ "V", "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "chill-touch",
     "name" : "Chill Touch",
@@ -66,7 +70,11 @@
       "typeId" : "necrotic"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "fire-bolt",
     "name" : "Fire Bolt",
@@ -100,7 +108,11 @@
       "typeId" : "fire"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "frost-bolt",
     "name" : "Frost Bolt",
@@ -134,7 +146,11 @@
       "typeId" : "cold"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "a sliver of river ice or a cold iron needle",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "light",
     "name" : "Light",
@@ -151,7 +167,11 @@
     "effects" : [ ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : true
+    "areaSpell" : true,
+    "components" : [ "V", "M" ],
+    "materialComponent" : "a firefly or a smear of phosphorescent moss",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "mage-hand",
     "name" : "Mage Hand",
@@ -168,7 +188,11 @@
     "effects" : [ ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "minor-illusion",
     "name" : "Minor Illusion",
@@ -185,7 +209,11 @@
     "effects" : [ ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : true
+    "areaSpell" : true,
+    "components" : [ "S", "M" ],
+    "materialComponent" : "a scrap of fleece",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "poison-spray",
     "name" : "Poison Spray",
@@ -219,7 +247,11 @@
       "typeId" : "poison"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "prestidigitation",
     "name" : "Prestidigitation",
@@ -236,7 +268,11 @@
     "effects" : [ ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "ray-of-frost",
     "name" : "Ray of Frost",
@@ -270,7 +306,11 @@
       "typeId" : "cold"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "sacred-flame",
     "name" : "Sacred Flame",
@@ -294,7 +334,11 @@
       "typeId" : "radiant"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "shocking-grasp",
     "name" : "Shocking Grasp",
@@ -328,7 +372,11 @@
       "typeId" : "lightning"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "thaumaturgy",
     "name" : "Thaumaturgy",
@@ -345,7 +393,11 @@
     "effects" : [ ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "guidance",
     "name" : "Guidance",
@@ -376,7 +428,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "burning-hands",
     "name" : "Burning Hands",
@@ -420,7 +476,11 @@
       "typeId" : "fire"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : true
+    "areaSpell" : true,
+    "components" : [ "V", "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "charm-person",
     "name" : "Charm Person",
@@ -447,7 +507,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "cure-wounds",
     "name" : "Cure Wounds",
@@ -474,7 +538,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "detect-magic",
     "name" : "Detect Magic",
@@ -495,7 +563,11 @@
     "effects" : [ ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : true
+    "areaSpell" : true,
+    "components" : [ "V", "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "faerie-fire",
     "name" : "Faerie Fire",
@@ -516,7 +588,11 @@
     "effects" : [ ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : true
+    "areaSpell" : true,
+    "components" : [ "V" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "healing-word",
     "name" : "Healing Word",
@@ -543,7 +619,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "mage-armor",
     "name" : "Mage Armor",
@@ -570,7 +650,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "a scrap of cured leather",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "magic-missile",
     "name" : "Magic Missile",
@@ -594,7 +678,11 @@
       "typeId" : "force"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "shield-spell",
     "name" : "Shield",
@@ -621,7 +709,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "sleep",
     "name" : "Sleep",
@@ -648,7 +740,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : true
+    "areaSpell" : true,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "a pinch of fine sand, rose petals or a cricket",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "thunderwave",
     "name" : "Thunderwave",
@@ -682,7 +778,11 @@
       "typeId" : "thunder"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : true
+    "areaSpell" : true,
+    "components" : [ "V", "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "bless",
     "name" : "Bless",
@@ -713,7 +813,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : true
+    "areaSpell" : true,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "a sprinkle of holy water",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "entangle",
     "name" : "Entangle",
@@ -754,7 +858,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : true
+    "areaSpell" : true,
+    "components" : [ "V", "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "hunters-mark",
     "name" : "Hunter's Mark",
@@ -785,7 +893,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "blur",
     "name" : "Blur",
@@ -816,7 +928,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "darkness",
     "name" : "Darkness",
@@ -847,7 +963,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : true
+    "areaSpell" : true,
+    "components" : [ "V", "M" ],
+    "materialComponent" : "bat fur and a drop of pitch or a lump of coal",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "hold-person",
     "name" : "Hold Person",
@@ -878,7 +998,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "a small straight piece of iron",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "invisibility",
     "name" : "Invisibility",
@@ -909,7 +1033,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "an eyelash sealed in gum arabic",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "misty-step",
     "name" : "Misty Step",
@@ -926,7 +1054,11 @@
     "effects" : [ ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "scorching-ray",
     "name" : "Scorching Ray",
@@ -960,7 +1092,11 @@
       "typeId" : "fire"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "spiritual-weapon",
     "name" : "Spiritual Weapon",
@@ -993,7 +1129,11 @@
       "typeId" : "force"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "web",
     "name" : "Web",
@@ -1024,7 +1164,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : true
+    "areaSpell" : true,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "a bit of spiderweb",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "lesser-restoration",
     "name" : "Lesser Restoration",
@@ -1051,7 +1195,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "moonbeam",
     "name" : "Moonbeam",
@@ -1089,7 +1237,11 @@
       "typeId" : "radiant"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : true
+    "areaSpell" : true,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "seeds of a moonseed plant and a piece of opalescent feldspar",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "fireball",
     "name" : "Fireball",
@@ -1133,7 +1285,11 @@
       "typeId" : "fire"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : true
+    "areaSpell" : true,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "a tiny ball of bat guano and sulfur",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "lightning-bolt",
     "name" : "Lightning Bolt",
@@ -1167,7 +1323,11 @@
       "typeId" : "lightning"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : true
+    "areaSpell" : true,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "a bit of fur and a rod of amber, crystal or glass",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "counterspell",
     "name" : "Counterspell",
@@ -1184,7 +1344,11 @@
     "effects" : [ ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "dispel-magic",
     "name" : "Dispel Magic",
@@ -1201,7 +1365,11 @@
     "effects" : [ ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "fly",
     "name" : "Fly",
@@ -1232,7 +1400,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "a wing feather from any bird",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "revivify",
     "name" : "Revivify",
@@ -1259,7 +1431,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "diamonds worth 300 gp",
+    "materialCost" : 300,
+    "materialConsumed" : true
   }, {
     "id" : "haste",
     "name" : "Haste",
@@ -1290,7 +1466,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "a shaving of licorice root",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "slow",
     "name" : "Slow",
@@ -1321,7 +1501,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : true
+    "areaSpell" : true,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "a drop of molasses",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "animate-dead",
     "name" : "Animate Dead",
@@ -1338,7 +1522,11 @@
     "effects" : [ ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "a drop of blood, a piece of flesh and a pinch of bone dust",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "vampiric-touch",
     "name" : "Vampiric Touch",
@@ -1376,7 +1564,11 @@
       "typeId" : "necrotic"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "greater-invisibility",
     "name" : "Greater Invisibility",
@@ -1407,7 +1599,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "ice-storm",
     "name" : "Ice Storm",
@@ -1451,7 +1647,11 @@
       "typeId" : "cold"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : true
+    "areaSpell" : true,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "a pinch of dust and a few drops of water",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "polymorph",
     "name" : "Polymorph",
@@ -1472,7 +1672,11 @@
     "effects" : [ ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "a caterpillar cocoon",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "wall-of-fire",
     "name" : "Wall of Fire",
@@ -1510,7 +1714,11 @@
       "typeId" : "fire"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : true
+    "areaSpell" : true,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "a small piece of phosphorus",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "cone-of-cold",
     "name" : "Cone of Cold",
@@ -1554,7 +1762,11 @@
       "typeId" : "cold"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : true
+    "areaSpell" : true,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "a small crystal or glass cone",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "hold-monster",
     "name" : "Hold Monster",
@@ -1585,7 +1797,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "a small straight piece of iron",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "raise-dead",
     "name" : "Raise Dead",
@@ -1612,7 +1828,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "a diamond worth at least 500 gp",
+    "materialCost" : 500,
+    "materialConsumed" : true
   }, {
     "id" : "wall-of-force",
     "name" : "Wall of Force",
@@ -1633,7 +1853,11 @@
     "effects" : [ ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : true
+    "areaSpell" : true,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "a pinch of powder from a crushed clear gemstone",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "chain-lightning",
     "name" : "Chain Lightning",
@@ -1677,7 +1901,11 @@
       "typeId" : "lightning"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : true
+    "areaSpell" : true,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "a bit of fur, a piece of amber, glass or crystal rod, and three silver pins",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "disintegrate",
     "name" : "Disintegrate",
@@ -1701,7 +1929,11 @@
       "typeId" : "force"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "a lodestone and a pinch of dust",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "true-seeing",
     "name" : "True Seeing",
@@ -1718,7 +1950,11 @@
     "effects" : [ ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "an ointment of mushroom powder, saffron and fat worth 25 gp",
+    "materialCost" : 25,
+    "materialConsumed" : true
   }, {
     "id" : "finger-of-death",
     "name" : "Finger of Death",
@@ -1752,7 +1988,11 @@
       "typeId" : "necrotic"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "teleport",
     "name" : "Teleport",
@@ -1769,7 +2009,11 @@
     "effects" : [ ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "dominate-monster",
     "name" : "Dominate Monster",
@@ -1800,7 +2044,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "sunburst",
     "name" : "Sunburst",
@@ -1844,7 +2092,11 @@
       "typeId" : "radiant"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : true
+    "areaSpell" : true,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "fire and a piece of sunstone",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "meteor-swarm",
     "name" : "Meteor Swarm",
@@ -1898,7 +2150,11 @@
       "typeId" : "fire"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : true
+    "areaSpell" : true,
+    "components" : [ "V", "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "power-word-kill",
     "name" : "Power Word Kill",
@@ -1915,7 +2171,11 @@
     "effects" : [ ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "time-stop",
     "name" : "Time Stop",
@@ -1932,7 +2192,11 @@
     "effects" : [ ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "wish",
     "name" : "Wish",
@@ -1949,7 +2213,11 @@
     "effects" : [ ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "iron fist",
     "name" : "iron wrapped fist",
@@ -1973,7 +2241,11 @@
       "typeId" : "bludgeoning"
     },
     "cooldownRounds" : 2,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "S", "M" ],
+    "materialComponent" : "iron wrappings bound around the fist",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "raaz-horn-strike",
     "name" : "Raaz – Horn Strike (partial summon)",
@@ -2006,7 +2278,11 @@
       "typeId" : "bludgeoning"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "Rhaz, the Horn Hammer",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "raaz-uppercut",
     "name" : "Raaz – Uppercut (partial summon)",
@@ -2039,7 +2315,11 @@
       "typeId" : "bludgeoning"
     },
     "cooldownRounds" : 2,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "Rhaz, the Horn Hammer",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "kaavor-talon-lash",
     "name" : "Kaavor – Talon Lash (partial summon)",
@@ -2075,7 +2355,11 @@
       "typeId" : "slashing"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "Kaavor, the Sinew Lash",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "summon-raaz",
     "name" : "Summon Raaz (full summon)",
@@ -2102,7 +2386,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "Rhaz, the Horn Hammer, as the spirit's vessel",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "summon-kaavor",
     "name" : "Summon Kaavor (full summon)",
@@ -2129,7 +2417,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "Kaavor, the Sinew Lash, as the spirit's vessel",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "gravity-round",
     "name" : "Gravity Round",
@@ -2164,7 +2456,11 @@
       "typeId" : "force"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "S", "M" ],
+    "materialComponent" : "the Sixfold Judgment revolver and a Sixfold Cartridge",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "crushing-shot",
     "name" : "Crushing Shot",
@@ -2209,7 +2505,11 @@
       "typeId" : "force"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "S", "M" ],
+    "materialComponent" : "the Sixfold Judgment revolver and a Sixfold Cartridge",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "singularity-round",
     "name" : "Singularity Round",
@@ -2254,7 +2554,11 @@
       "typeId" : "force"
     },
     "cooldownRounds" : 100,
-    "areaSpell" : true
+    "areaSpell" : true,
+    "components" : [ "S", "M" ],
+    "materialComponent" : "the Sixfold Judgment revolver and a Sixfold Cartridge",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "anchor-round",
     "name" : "Anchor Round",
@@ -2299,7 +2603,11 @@
       "typeId" : "force"
     },
     "cooldownRounds" : 100,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "S", "M" ],
+    "materialComponent" : "the Sixfold Judgment revolver and a Sixfold Cartridge",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "gravitic-shift",
     "name" : "Gravitic Shift",
@@ -2326,7 +2634,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 3,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "S", "M" ],
+    "materialComponent" : "the Gravitic Anchor Node",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "dual-blade-strike",
     "name" : "Dual Blade Strike",
@@ -2352,7 +2664,11 @@
       "typeId" : "slashing"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "S", "M" ],
+    "materialComponent" : "the Ladies' Blade and the Forgotten Blade",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "blade-oath",
     "name" : "Blade Oath",
@@ -2379,7 +2695,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "a drawn blade to swear upon",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "echo-of-the-duelist",
     "name" : "Echo of the Duelist",
@@ -2406,7 +2726,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 3,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "quick-strike",
     "name" : "Quick Strike",
@@ -2439,7 +2763,11 @@
       "typeId" : "piercing"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "guard-shift",
     "name" : "Guard Shift",
@@ -2466,7 +2794,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "step-feint",
     "name" : "Step Feint",
@@ -2493,7 +2825,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 2,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "compelled-duel",
     "name" : "Compelled Duel",
@@ -2524,7 +2860,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 5,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "wrathful-strike",
     "name" : "Wrathful Strike",
@@ -2557,7 +2897,11 @@
       "typeId" : "psychic"
     },
     "cooldownRounds" : 3,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "armor-thrust",
     "name" : "Armor Thrust",
@@ -2590,7 +2934,11 @@
       "typeId" : "piercing"
     },
     "cooldownRounds" : 3,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "S", "M" ],
+    "materialComponent" : "the Ladies' Blade (rapier)",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "three-fast-stabs",
     "name" : "3 Fast Stabs",
@@ -2613,7 +2961,11 @@
       "typeId" : "piercing"
     },
     "cooldownRounds" : 3,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "crushing-strike",
     "name" : "Crushing Strike",
@@ -2646,7 +2998,11 @@
       "typeId" : "bludgeoning"
     },
     "cooldownRounds" : 4,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "blade-rush",
     "name" : "Charge / Blade Rush",
@@ -2669,7 +3025,11 @@
       "typeId" : "slashing"
     },
     "cooldownRounds" : 3,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "second-wind",
     "name" : "Second Wind",
@@ -2696,7 +3056,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 100,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "commanding-point",
     "name" : "Commanding Point",
@@ -2713,7 +3077,11 @@
     "effects" : [ ],
     "damage" : null,
     "cooldownRounds" : 5,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "combo-strike",
     "name" : "Combo Strike",
@@ -2730,7 +3098,11 @@
     "effects" : [ ],
     "damage" : null,
     "cooldownRounds" : 3,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "tlko-super-attack",
     "name" : "T.L.K.O. (super attack)",
@@ -2766,7 +3138,11 @@
       "typeId" : "slashing"
     },
     "cooldownRounds" : 100,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "the Ladies' Blade and the Forgotten Blade",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "shield-of-faith",
     "name" : "Shield of Faith",
@@ -2797,7 +3173,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "a small parchment with a bit of holy text written on it",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "spare-the-dying",
     "name" : "Spare the Dying",
@@ -2824,7 +3204,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "first-miracle",
     "name" : "First Miracle (homebrew)",
@@ -2851,7 +3235,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "a holy symbol and a drop of blessed wine",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "divine-embrace",
     "name" : "Divine Embrace (homebrew)",
@@ -2878,7 +3266,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 100,
-    "areaSpell" : true
+    "areaSpell" : true,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "a vial of holy water and a sprig of grapevine",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "hope-never-dies",
     "name" : "Hope Never Dies (homebrew)",
@@ -2905,7 +3297,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "a blessed beeswax candle, burned down by the casting",
+    "materialCost" : 0,
+    "materialConsumed" : true
   }, {
     "id" : "aid",
     "name" : "Aid",
@@ -2932,7 +3328,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : true
+    "areaSpell" : true,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "a tiny strip of white cloth",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "prayer-of-healing",
     "name" : "Prayer of Healing",
@@ -2959,7 +3359,11 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : true
+    "areaSpell" : true,
+    "components" : [ "V" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "mending",
     "name" : "Mending",
@@ -2976,7 +3380,11 @@
     "effects" : [ ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "two lodestones",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "bolt-repeater-shot",
     "name" : "Bolt Repeater: Rivet Shot",
@@ -3009,11 +3417,15 @@
       "typeId" : "force"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "S", "M" ],
+    "materialComponent" : "the deployed Bolt Repeater and its heavy rivets",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "smoke-canister-burst",
     "name" : "Smoke Canister",
-    "description" : "Throw 9 m: 15 ft cloud that heavily obscures the area. Uses one Smoke Canister.",
+    "description" : "Throw 9 m: a 15 ft radius cloud heavily obscures the area for up to 1 minute. Uses one Smoke Canister.",
     "level" : 0,
     "school" : "conjuration",
     "manaCost" : 0,
@@ -3024,8 +3436,8 @@
       "id" : "smoke-canister",
       "name" : "Smoke Canister",
       "type" : "device",
-      "description" : "Pull the pin and throw: a 15 ft cloud of thick grey smoke heavily obscures the area for 1 minute. Consumed on use.",
-      "valueGold" : 5,
+      "description" : "Pull the pin and throw: a 15 ft radius cloud of thick smoke heavily obscures the area for up to 1 minute unless a strong wind disperses it. Consumed on use.",
+      "valueGold" : 10,
       "weight" : 0.5,
       "damage" : null,
       "durability" : {
@@ -3052,11 +3464,15 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : true
+    "areaSpell" : true,
+    "components" : [ "S", "M" ],
+    "materialComponent" : "a Smoke Canister (thrown)",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "grapnel-shot",
     "name" : "Grapnel Shot",
-    "description" : "Steam Grapnel Launcher: fire the hook up to 18 m and reel yourself to it, or pull a light object to you. Costs a Steam-pressure charge.",
+    "description" : "Steam Grapnel Launcher: fire the anchor up to 60 ft to climb, cross a gap, anchor a line or pull a light object to you. Costs a Steam-pressure charge.",
     "level" : 1,
     "school" : "transmutation",
     "manaCost" : 3,
@@ -3069,23 +3485,27 @@
     "effects" : [ ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "S", "M" ],
+    "materialComponent" : "the Steam Grapnel Launcher",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "sticky-foam",
     "name" : "Sticky Foam",
-    "description" : "Throw 6 m: the target is restrained (STR save DC 13 to break free). Uses one Sticky Foam Flask.",
+    "description" : "Throw 6 m: a 5 ft area becomes difficult terrain; a creature hit directly makes a DEX save DC 15 or is restrained until it uses an action to escape. Uses one Sticky Foam Flask.",
     "level" : 0,
     "school" : "conjuration",
     "manaCost" : 0,
     "range" : 20,
-    "radius" : 0,
+    "radius" : 5,
     "castingMethod" : "hand-movement",
     "requiredConsumables" : [ {
       "id" : "sticky-foam-flask",
       "name" : "Sticky Foam Flask",
       "type" : "device",
-      "description" : "A pressurised flask of expanding foam. Thrown 6 m, it glues a creature's feet in place (restrained, STR save DC 13 ends it). Consumed on use.",
-      "valueGold" : 10,
+      "description" : "Thrown: the foam turns a 5 ft square into difficult terrain. A creature hit directly makes a DEX save DC 15 or is restrained until it uses an action to escape. Consumed on use.",
+      "valueGold" : 15,
       "weight" : 0.5,
       "damage" : null,
       "durability" : {
@@ -3112,14 +3532,18 @@
     } ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "S", "M" ],
+    "materialComponent" : "a Sticky Foam Flask (thrown)",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "messenger-beetle",
     "name" : "Messenger Beetle",
-    "description" : "Wind the beetle: it carries a 25-word message to a place you know within 1 mile. Costs a Steam-pressure charge.",
-    "level" : 1,
+    "description" : "Send the beetle: it carries a short note or a tiny object to a beacon or a place you know, then waits there. Runs on its own resonance cell - no charge.",
+    "level" : 0,
     "school" : "divination",
-    "manaCost" : 3,
+    "manaCost" : 0,
     "range" : 5,
     "radius" : 0,
     "castingMethod" : "hand-movement",
@@ -3129,11 +3553,15 @@
     "effects" : [ ],
     "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "S", "M" ],
+    "materialComponent" : "a wind-up Messenger Beetle",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "scalding-bolt-shot",
     "name" : "Bolt Repeater: Scalding Bolt",
-    "description" : "Bonus action: the Bolt Repeater fires a Scalding Bolt. Ranged attack with INT, 30 m: 2d6 fire and burning. Uses one Scalding Bolt.",
+    "description" : "Bonus action: the Bolt Repeater fires a Scalding Bolt. Ranged attack with INT, 30 m: bolt damage 2d6 + 1d4 fire. Uses one Scalding Bolt.",
     "level" : 0,
     "school" : "evocation",
     "manaCost" : 0,
@@ -3144,8 +3572,8 @@
       "id" : "scalding-bolt",
       "name" : "Scalding Bolt",
       "type" : "device",
-      "description" : "Bolt Repeater ammunition with a boiling-water core. Fires as a Bolt Repeater shot: 2d6 fire and the target is scalded (burn). One bolt per shot.",
-      "valueGold" : 3,
+      "description" : "Bolt ammunition with a heat-jacketed core. On hit: normal bolt damage + 1d4 fire. One bolt per shot.",
+      "valueGold" : 6,
       "weight" : 0.1,
       "damage" : null,
       "durability" : {
@@ -3174,15 +3602,22 @@
       "dice" : [ {
         "diceId" : "d6",
         "count" : 2
+      }, {
+        "diceId" : "d4",
+        "count" : 1
       } ],
       "typeId" : "fire"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "S", "M" ],
+    "materialComponent" : "the Bolt Repeater loaded with a Scalding Bolt",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "flash-bomb-throw",
     "name" : "Flash Bomb",
-    "description" : "Throw 9 m: 10 ft burst, 1d4 radiant and blinded (CON save). Uses one Flash Bomb.",
+    "description" : "Throw 9 m: 10 ft radius flash. CON save DC 15 or blinded until the start of the creature's next turn. Uses one Flash Bomb.",
     "level" : 0,
     "school" : "evocation",
     "manaCost" : 0,
@@ -3193,8 +3628,8 @@
       "id" : "flash-bomb",
       "name" : "Flash Bomb",
       "type" : "device",
-      "description" : "A glass ball of magnesium salts. Thrown 9 m, it bursts in a 10 ft blinding flash (1d4 radiant, CON save or blinded until the end of its next turn). Consumed on use.",
-      "valueGold" : 8,
+      "description" : "Thrown device. 10 ft radius burst of light: CON save DC 15 or blinded until the start of the creature's next turn. Consumed on use.",
+      "valueGold" : 20,
       "weight" : 0.3,
       "damage" : null,
       "durability" : {
@@ -3219,19 +3654,17 @@
       "durationRounds" : 0,
       "lasting" : false
     } ],
-    "damage" : {
-      "dice" : [ {
-        "diceId" : "d4",
-        "count" : 1
-      } ],
-      "typeId" : "radiant"
-    },
+    "damage" : null,
     "cooldownRounds" : 0,
-    "areaSpell" : true
+    "areaSpell" : true,
+    "components" : [ "S", "M" ],
+    "materialComponent" : "a Flash Bomb (thrown)",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "shock-dart-throw",
     "name" : "Shock Dart",
-    "description" : "Throw 9 m (attack with DEX): 1d8 lightning and shocked. Uses one Shock Dart.",
+    "description" : "Throw 9 m (attack with DEX): 1d4 piercing + 1d4 lightning; CON save DC 15 or no reactions until the start of its next turn. Uses one Shock Dart.",
     "level" : 0,
     "school" : "evocation",
     "manaCost" : 0,
@@ -3242,8 +3675,8 @@
       "id" : "shock-dart",
       "name" : "Shock Dart",
       "type" : "device",
-      "description" : "A finned dart with a charged copper coil. Thrown 9 m: 1d8 lightning and the target is shocked. Consumed on use.",
-      "valueGold" : 4,
+      "description" : "A finned dart with a charged copper coil. 1d4 piercing + 1d4 lightning; on a failed CON save DC 15 the target cannot take reactions until the start of its next turn. Consumed on use.",
+      "valueGold" : 6,
       "weight" : 0.1,
       "damage" : null,
       "durability" : {
@@ -3270,24 +3703,155 @@
     } ],
     "damage" : {
       "dice" : [ {
-        "diceId" : "d8",
-        "count" : 1
+        "diceId" : "d4",
+        "count" : 2
       } ],
       "typeId" : "lightning"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : false
+    "areaSpell" : false,
+    "components" : [ "S", "M" ],
+    "materialComponent" : "a Shock Dart (thrown)",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "steam-jet-blast",
     "name" : "Steam-Jet Blast",
-    "description" : "Steam-Jet Gauntlet: 15 ft cone of scalding steam, 2d6 fire and pushed back (DEX save for half). Costs a Steam-pressure charge.",
+    "description" : "Steam-Jet Gauntlet (once per short rest): a creature within 5 ft makes a STR save DC 15 or is pushed 10 ft. Costs a Steam-pressure charge.",
     "level" : 1,
     "school" : "evocation",
     "manaCost" : 3,
-    "range" : 15,
-    "radius" : 15,
+    "range" : 5,
+    "radius" : 0,
     "castingMethod" : "hand-movement",
     "requiredConsumables" : [ ],
+    "requiredTools" : [ ],
+    "concentration" : null,
+    "effects" : [ {
+      "id" : "knockback",
+      "name" : "Knockback",
+      "description" : "Force enough to hurl the target away from its attacker.",
+      "damaging" : false,
+      "healing" : false,
+      "damageAmount" : 0,
+      "healingAmount" : 0,
+      "durationRounds" : 0,
+      "lasting" : false
+    } ],
+    "damage" : null,
+    "cooldownRounds" : 0,
+    "areaSpell" : false,
+    "components" : [ "S", "M" ],
+    "materialComponent" : "the Steam-Jet Gauntlet",
+    "materialCost" : 0,
+    "materialConsumed" : false
+  }, {
+    "id" : "thermal-grenade-throw",
+    "name" : "Thermal Grenade",
+    "description" : "Throw 12 m: 10 ft radius, DEX save DC 15 - 2d6 fire on a failure, half on a success. Uses one Thermal Grenade.",
+    "level" : 0,
+    "school" : "evocation",
+    "manaCost" : 0,
+    "range" : 40,
+    "radius" : 10,
+    "castingMethod" : "hand-movement",
+    "requiredConsumables" : [ {
+      "id" : "thermal-grenade",
+      "name" : "Thermal Grenade",
+      "type" : "device",
+      "description" : "A ceramic shell that releases a Thermal capsule's heat all at once. 10 ft radius, DEX save DC 15: 2d6 fire on a failure, half on a success. Consumed on use.",
+      "valueGold" : 25,
+      "weight" : 0.8,
+      "damage" : null,
+      "durability" : {
+        "max" : 1,
+        "current" : 1
+      },
+      "spellId" : "thermal-grenade-throw",
+      "chargeLevel" : 0,
+      "mechanical" : true,
+      "effects" : [ "area_damage" ]
+    } ],
+    "requiredTools" : [ ],
+    "concentration" : null,
+    "effects" : [ ],
+    "damage" : {
+      "dice" : [ {
+        "diceId" : "d6",
+        "count" : 2
+      } ],
+      "typeId" : "fire"
+    },
+    "cooldownRounds" : 0,
+    "areaSpell" : true,
+    "components" : [ "S", "M" ],
+    "materialComponent" : "a Thermal Grenade (thrown)",
+    "materialCost" : 0,
+    "materialConsumed" : false
+  }, {
+    "id" : "pressure-ram-strike",
+    "name" : "Pressure Ram",
+    "description" : "Fire the piston at a door, gate, object or creature within 5 ft: 3d6 force and the target is knocked back; advantage on checks to force doors. Costs a Steam-pressure charge.",
+    "level" : 1,
+    "school" : "evocation",
+    "manaCost" : 3,
+    "range" : 5,
+    "radius" : 0,
+    "castingMethod" : "hand-movement",
+    "requiredConsumables" : [ ],
+    "requiredTools" : [ ],
+    "concentration" : null,
+    "effects" : [ {
+      "id" : "knockback",
+      "name" : "Knockback",
+      "description" : "Force enough to hurl the target away from its attacker.",
+      "damaging" : false,
+      "healing" : false,
+      "damageAmount" : 0,
+      "healingAmount" : 0,
+      "durationRounds" : 0,
+      "lasting" : false
+    } ],
+    "damage" : {
+      "dice" : [ {
+        "diceId" : "d6",
+        "count" : 3
+      } ],
+      "typeId" : "force"
+    },
+    "cooldownRounds" : 0,
+    "areaSpell" : false,
+    "components" : [ "S", "M" ],
+    "materialComponent" : "the forearm Pressure Ram piston",
+    "materialCost" : 0,
+    "materialConsumed" : false
+  }, {
+    "id" : "concussion-bolt-shot",
+    "name" : "Bolt Repeater: Concussion Bolt",
+    "description" : "Bonus action: the Bolt Repeater fires a Concussion Bolt. Ranged attack with INT, 30 m: bolt damage 2d6 + 1d4 force, STR save DC 15 or pushed 5 ft. Uses one Concussion Bolt.",
+    "level" : 0,
+    "school" : "evocation",
+    "manaCost" : 0,
+    "range" : 100,
+    "radius" : 0,
+    "castingMethod" : "hand-movement",
+    "requiredConsumables" : [ {
+      "id" : "concussion-bolt",
+      "name" : "Concussion Bolt",
+      "type" : "device",
+      "description" : "Bolt ammunition with a reinforced tip and a Force capsule core. On hit: normal bolt damage + 1d4 force, and the target makes a STR save DC 15 or is pushed 5 ft. One bolt per shot.",
+      "valueGold" : 5,
+      "weight" : 0.2,
+      "damage" : null,
+      "durability" : {
+        "max" : 1,
+        "current" : 1
+      },
+      "spellId" : "concussion-bolt-shot",
+      "chargeLevel" : 0,
+      "mechanical" : true,
+      "effects" : [ "knockback" ]
+    } ],
     "requiredTools" : [ ],
     "concentration" : null,
     "effects" : [ {
@@ -3305,171 +3869,27 @@
       "dice" : [ {
         "diceId" : "d6",
         "count" : 2
+      }, {
+        "diceId" : "d4",
+        "count" : 1
       } ],
-      "typeId" : "fire"
+      "typeId" : "force"
     },
     "cooldownRounds" : 0,
-    "areaSpell" : true
-  }, {
-    "id" : "thermal-grenade-throw",
-    "name" : "Thermal Grenade",
-    "description" : "Throw 12 m: 10 ft radius, 3d6 fire and burning (DEX save for half). Uses one Thermal Grenade.",
-    "level" : 0,
-    "school" : "evocation",
-    "manaCost" : 0,
-    "range" : 40,
-    "radius" : 10,
-    "castingMethod" : "hand-movement",
-    "requiredConsumables" : [ {
-      "id" : "thermal-grenade",
-      "name" : "Thermal Grenade",
-      "type" : "device",
-      "description" : "A thick brass shell holding a Thermal charge that is released all at once. Thrown 12 m: 10 ft radius, 3d6 fire and burning. Consumed on use.",
-      "valueGold" : 20,
-      "weight" : 0.8,
-      "damage" : null,
-      "durability" : {
-        "max" : 1,
-        "current" : 1
-      },
-      "spellId" : "thermal-grenade-throw",
-      "chargeLevel" : 0,
-      "mechanical" : true,
-      "effects" : [ "burn", "area_damage" ]
-    } ],
-    "requiredTools" : [ ],
-    "concentration" : null,
-    "effects" : [ {
-      "id" : "burn",
-      "name" : "Burning",
-      "description" : "Flames cling to the target and keep searing it each round.",
-      "damaging" : true,
-      "healing" : false,
-      "damageAmount" : 3,
-      "healingAmount" : 0,
-      "durationRounds" : 0,
-      "lasting" : false
-    } ],
-    "damage" : {
-      "dice" : [ {
-        "diceId" : "d6",
-        "count" : 3
-      } ],
-      "typeId" : "fire"
-    },
-    "cooldownRounds" : 0,
-    "areaSpell" : true
-  }, {
-    "id" : "pressure-ram-strike",
-    "name" : "Pressure Ram",
-    "description" : "Melee strike with the forearm piston: 3d8 bludgeoning, the target is knocked back and prone. Costs a Thermal charge.",
-    "level" : 2,
-    "school" : "evocation",
-    "manaCost" : 6,
-    "range" : 5,
-    "radius" : 0,
-    "castingMethod" : "hand-movement",
-    "requiredConsumables" : [ ],
-    "requiredTools" : [ ],
-    "concentration" : null,
-    "effects" : [ {
-      "id" : "knockback",
-      "name" : "Knockback",
-      "description" : "Force enough to hurl the target away from its attacker.",
-      "damaging" : false,
-      "healing" : false,
-      "damageAmount" : 0,
-      "healingAmount" : 0,
-      "durationRounds" : 0,
-      "lasting" : false
-    }, {
-      "id" : "prone",
-      "name" : "Prone",
-      "description" : "Knocked flat; movement costs double and melee attackers gain advantage.",
-      "damaging" : false,
-      "healing" : false,
-      "damageAmount" : 0,
-      "healingAmount" : 0,
-      "durationRounds" : 0,
-      "lasting" : false
-    } ],
-    "damage" : {
-      "dice" : [ {
-        "diceId" : "d8",
-        "count" : 3
-      } ],
-      "typeId" : "bludgeoning"
-    },
-    "cooldownRounds" : 0,
-    "areaSpell" : false
-  }, {
-    "id" : "concussion-bolt-shot",
-    "name" : "Bolt Repeater: Concussion Bolt",
-    "description" : "Bonus action: the Bolt Repeater fires a Concussion Bolt. Ranged attack with INT, 30 m: bursts in 5 ft, 3d6 thunder and concussed. Uses one Concussion Bolt.",
-    "level" : 0,
-    "school" : "evocation",
-    "manaCost" : 0,
-    "range" : 100,
-    "radius" : 5,
-    "castingMethod" : "hand-movement",
-    "requiredConsumables" : [ {
-      "id" : "concussion-bolt",
-      "name" : "Concussion Bolt",
-      "type" : "device",
-      "description" : "Bolt Repeater ammunition packed with powder. On impact it bursts in a 5 ft radius: 3d6 thunder and the target is concussed. One bolt per shot.",
-      "valueGold" : 10,
-      "weight" : 0.2,
-      "damage" : null,
-      "durability" : {
-        "max" : 1,
-        "current" : 1
-      },
-      "spellId" : "concussion-bolt-shot",
-      "chargeLevel" : 0,
-      "mechanical" : true,
-      "effects" : [ "concussed", "area_damage" ]
-    } ],
-    "requiredTools" : [ ],
-    "concentration" : null,
-    "effects" : [ {
-      "id" : "concussed",
-      "name" : "Concussed",
-      "description" : "Head ringing: disadvantage on attacks and ability checks until the end of its next turn.",
-      "damaging" : false,
-      "healing" : false,
-      "damageAmount" : 0,
-      "healingAmount" : 0,
-      "durationRounds" : 1,
-      "lasting" : true
-    }, {
-      "id" : "stunned",
-      "name" : "Stunned",
-      "description" : "Incapacitated, unable to move, and barely able to speak.",
-      "damaging" : false,
-      "healing" : false,
-      "damageAmount" : 0,
-      "healingAmount" : 0,
-      "durationRounds" : 0,
-      "lasting" : false
-    } ],
-    "damage" : {
-      "dice" : [ {
-        "diceId" : "d6",
-        "count" : 3
-      } ],
-      "typeId" : "thunder"
-    },
-    "cooldownRounds" : 0,
-    "areaSpell" : true
+    "areaSpell" : false,
+    "components" : [ "S", "M" ],
+    "materialComponent" : "the Bolt Repeater loaded with a Concussion Bolt",
+    "materialCost" : 0,
+    "materialConsumed" : false
   }, {
     "id" : "thermal-smoke-burst",
     "name" : "Thermal Smoke Grenade",
-    "description" : "Throw 12 m: a 20 ft cloud heavily obscures the area for 1 minute. Needs exactly one Thermal capsule (no other type works).",
+    "description" : "Throw 12 m: a 10 ft radius cloud of hot smoke heavily obscures the area; a creature entering or starting its turn inside takes 1d4 fire. Needs exactly one Thermal capsule (no other type works).",
     "level" : 2,
     "school" : "conjuration",
     "manaCost" : 6,
     "range" : 40,
-    "radius" : 20,
+    "radius" : 10,
     "castingMethod" : "hand-movement",
     "requiredConsumables" : [ ],
     "requiredTools" : [ ],
@@ -3484,9 +3904,29 @@
       "healingAmount" : 0,
       "durationRounds" : 0,
       "lasting" : false
+    }, {
+      "id" : "burn",
+      "name" : "Burning",
+      "description" : "Flames cling to the target and keep searing it each round.",
+      "damaging" : true,
+      "healing" : false,
+      "damageAmount" : 3,
+      "healingAmount" : 0,
+      "durationRounds" : 0,
+      "lasting" : false
     } ],
-    "damage" : null,
+    "damage" : {
+      "dice" : [ {
+        "diceId" : "d4",
+        "count" : 1
+      } ],
+      "typeId" : "fire"
+    },
     "cooldownRounds" : 0,
-    "areaSpell" : true
+    "areaSpell" : true,
+    "components" : [ "S", "M" ],
+    "materialComponent" : "a Thermal Smoke Grenade primed with a Thermal capsule (thrown)",
+    "materialCost" : 0,
+    "materialConsumed" : false
   } ]
 }

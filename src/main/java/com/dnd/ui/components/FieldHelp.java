@@ -70,6 +70,10 @@ public final class FieldHelp {
         f("Spell.cooldownRounds", "Rounds before it can be used again; 0 = no wait.");
         f("Spell.requiredConsumables", "Items used up every time (e.g. ammunition). Casting fails without them.");
         f("Spell.requiredTools", "Items that must be carried but are not used up.");
+        f("Spell.components", "V = spoken words, S = hand gestures, M = a material. A gagged or bound caster can't cast spells that need V or S.");
+        f("Spell.materialComponent", "The material the spell needs (the M component), e.g. 'a pinch of sulfur'.");
+        f("Spell.materialCost", "Gold value of the material; 0 = trivial, a component pouch covers it.");
+        f("Spell.materialConsumed", "Tick if casting destroys the material, so it must be bought again.");
         f("Spell.concentration", "Concentration spells end if the caster casts another one or is badly hurt.");
 
         // Crafting
@@ -80,9 +84,11 @@ public final class FieldHelp {
         f("Blueprint.craftMinutes", "In-game time the work takes, so the DM can judge whether there is time.");
         f("Blueprint.materials", "Items used up by crafting, with amounts.");
         f("Blueprint.toolIds", "Tool kits that must be in the pack. They are not used up.");
-        f("Blueprint.charges", "Energy charges poured into the build (level 1 steam-pressure, 2 thermal, 3 electric...).");
+        f("Blueprint.charges", "Energy charges poured into the build (level 1 Steam-pressure, 2 Thermal, 3 Shock...).");
+        f("Blueprint.checkDc", "Crafting check DC: d20 + INT + proficiency. Fail by 5 or more and the materials are ruined. 0 = no check.");
+        f("Blueprint.producesChargeLevel", "Capsule recipe: fills one energy charge of this level instead of making an item. 0 = makes the product.");
         f("MaterialCost.quantity", "How many of this material one crafting uses.");
-        f("ChargeCost.level", "Charge type: 1 Steam-pressure, 2 Thermal, 3 Electric, 4 Magnetic, 5 Resonance. Higher charges can stand in for lower.");
+        f("ChargeCost.level", "Charge type: 1 Steam-pressure, 2 Thermal, 3 Shock, 4 Force, 5 Arcane Resonance. Higher charges can stand in for lower.");
         f("ChargeCost.count", "How many charges of that type.");
         f("Fuel.fuelValue", "Furnace units per piece. A steam-pressure charge costs 2 units, thermal 4, electric 7, magnetic 10, resonance 14.");
         f("Tool.furnaceTier", "0 = ordinary tool. Above 0 = a workshop furnace that can make energy charges up to this level. Raise it to 'upgrade' the workshop.");

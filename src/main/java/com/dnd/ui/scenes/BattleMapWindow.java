@@ -633,6 +633,14 @@ public class BattleMapWindow {
         map.removeObject(token);
         initiative.remove(token);
         decorations.selected = null;
+        decorations.reachable = null;
+        if (decorations.rangeOrigin == token) {
+            decorations.rangeOrigin = null;
+            decorations.rangeCells = 0;
+            decorations.rangeRadiusCells = 0;
+        }
+        if (decorations.currentTurn == token) decorations.currentTurn = initiative.current();
+        clearDragOrigin();
         dirty = true;
         showRoster();
         refreshAll();
@@ -1346,14 +1354,14 @@ public class BattleMapWindow {
                 + (spell.getRadius() > 0 ? "  ·  " + spell.getRadius() + " ft blast" : "");
             com.dnd.model.item.crafting.Device device = devices.get(spell.getId());
             if (!energy || device == null || spell.getLevel() <= 0) {
-                box.getChildren().add(castRow(token, state, CastResolver.of(spell), label, spell.getDescription()));
+                box.getChildren().add(castRow(token, state, CastResolver.of(spell), label, spell.getDescription(), spell));
                 continue;
             }
             String level1 = com.dnd.model.magic.EnergyCharges.name(spell.getLevel());
             if (!device.isMechanical()) {
                 // Tuned devices run on exactly one charge type.
                 box.getChildren().add(castRow(token, state, CastResolver.of(spell).onCharge(spell.getLevel()),
-                    spell.getName() + "  ·  " + level1 + " charge only", spell.getDescription()));
+                    spell.getName() + "  ·  " + level1 + " charge only", spell.getDescription(), spell));
                 continue;
             }
             // Mechanical devices take any charge of their level or stronger; stronger hits harder.
@@ -1362,7 +1370,7 @@ public class BattleMapWindow {
                 int boost = slot.getLevel() - spell.getLevel();
                 box.getChildren().add(castRow(token, state, CastResolver.of(spell).onCharge(slot.getLevel()),
                     spell.getName() + "  ·  " + com.dnd.model.magic.EnergyCharges.name(slot.getLevel())
-                        + (boost > 0 ? " (+" + boost + " die)" : ""), spell.getDescription()));
+                        + (boost > 0 ? " (+" + boost + " die)" : ""), spell.getDescription(), spell));
             }
         }
         return box;
@@ -1376,7 +1384,7 @@ public class BattleMapWindow {
                 + (ability.getRange() > 0 ? "  ·  " + (int) ability.getRange() + " ft" : "")
                 + (ability.getRadius() > 0 ? "  ·  " + (int) ability.getRadius() + " ft blast" : "");
             CastResolver.Castable castable = CastResolver.of(ability, id -> repos.effects().getById(id));
-            box.getChildren().add(castRow(token, state, castable, label, ability.getDescription()));
+            box.getChildren().add(castRow(token, state, castable, label, ability.getDescription(), null));
         }
         return box;
     }
@@ -1386,7 +1394,7 @@ public class BattleMapWindow {
      * recharging entry says how long is left instead of pretending to be usable.
      */
     private Node castRow(MapObject token, CombatState state, CastResolver.Castable action,
-                         String label, String description) {
+                         String label, String description, Spell spell) {
         int cooldown = action == null ? 0 : state.cooldownFor(action.getId());
         Label row = new Label(label + (cooldown > 0 ? "  ·  recharging: " + cooldown + "" : ""));
         row.getStyleClass().add(cooldown > 0 ? "muted-label" : "hover-row");
@@ -1401,7 +1409,14 @@ public class BattleMapWindow {
 
         String blocked = CastResolver.blockedReason(token, action);
         String tip = description == null || description.isBlank() ? "" : description + "\n\n";
-        row.setTooltip(new Tooltip(tip + (blocked != null ? blocked : "Click to aim, then click a target.")));
+        String hint = blocked != null ? blocked : "Click to aim, then click a target.";
+        if (spell != null) {
+            var d = com.dnd.data.EntityDescriptions.of(repos);
+            com.dnd.ui.components.EntityHoverCard.install(row, "\u2726 " + spell.getName(), d.spellSummary(spell),
+                d.spellBody(spell) + "\n\n" + hint);
+        } else {
+            row.setTooltip(new Tooltip(tip + hint));
+        }
 
         row.setOnMouseEntered(e -> previewRange(token, action.getRangeFeet() / FEET_PER_CELL,
             action.getRadiusFeet() / FEET_PER_CELL));
@@ -1963,6 +1978,7 @@ public class BattleMapWindow {
             Label row = new Label("• " + item.getName() + (n > 1 ? "  ×" + n : ""));
             row.getStyleClass().add("body-label");
             row.setWrapText(true);
+            com.dnd.ui.components.EntityHoverCard.item(row, item, repos);
             box.getChildren().add(row);
         }
         return box;

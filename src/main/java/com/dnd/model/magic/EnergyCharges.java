@@ -8,14 +8,15 @@ import java.util.List;
  * <p>Energy charges are spell slots under another name: a level-1 spell costs a level-1
  * charge (or any stronger one), and the counts follow the half-caster table. What differs is
  * the flavour - each level is a different kind of stored energy, from cheap steam pressure up
- * to rare resonance - and the way they come back: not on a rest, but by burning fuel in a
- * workshop furnace (see {@link com.dnd.model.crafting.Workshop}).</p>
+ * to rare arcane resonance - and the way they come back: by burning fuel in a workshop furnace
+ * (rests run the furnace on carried fuel) or by building a capsule blueprint
+ * (see {@link com.dnd.model.crafting.Workshop}).</p>
  */
 public final class EnergyCharges {
 
     /** Charge name per level, index 0 = level 1. */
     private static final String[] NAMES = {
-        "Steam-pressure", "Thermal", "Electric", "Magnetic", "Resonance",
+        "Steam-pressure", "Thermal", "Shock", "Force", "Arcane Resonance",
         "Aether", "Aether", "Aether", "Aether"
     };
 
@@ -23,9 +24,9 @@ public final class EnergyCharges {
     private static final String[] NOTES = {
         "Compressed steam in a brass cylinder. Cheap and easy: any furnace makes it.",
         "Stored heat in a ceramic heat-cell. Needs a hot, steady fire.",
-        "A crackling Leyden battery. Needs an upgraded furnace with a dynamo coil.",
-        "A lodestone capacitor. Rare - needs an advanced, magnet-wound furnace.",
-        "A humming resonance crystal. Very rare - only a master workshop core can tune one.",
+        "A crackling shock capsule around a charged crystal. Needs an upgraded furnace with a dynamo coil.",
+        "A force capsule: a dense crystal under a compression ring. Rare - needs an advanced furnace.",
+        "An arcane resonance capsule: a cut crystal in a brass cage. Very rare - only a master workshop core can tune one.",
         "Raw aether, the stuff of legends.", "Raw aether, the stuff of legends.",
         "Raw aether, the stuff of legends.", "Raw aether, the stuff of legends."
     };

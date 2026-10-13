@@ -234,9 +234,9 @@ The counts are the same as a half caster's slots, but each level is a type of ch
 |---|---|---|
 | 1 | Steam-pressure | 2 |
 | 2 | Thermal | 4 |
-| 3 | Electric | 7 |
-| 4 | Magnetic | 10 |
-| 5 | Resonance | 14 |
+| 3 | Shock | 7 |
+| 4 | Force | 10 |
+| 5 | Arcane Resonance | 14 |
 
 - **Charges are made at a workshop furnace**, which is a *Tool*
   item with a furnace tier. The tier is the highest charge level it can make. The Tinkerer's
@@ -252,6 +252,15 @@ The counts are the same as a half caster's slots, but each level is a type of ch
   the spell's level adds one damage die. **Tuned devices** run only on their own capsule type.
   For example, the Thermal Smoke Grenade works only with a Thermal charge.
 - **Crafting** counts as a mechanical action, so any charge of the required level or stronger works.
+- **Crafting check.** Each blueprint has a DC. Building rolls d20 + Intelligence modifier +
+  proficiency bonus.
+  - On a success, the item is built.
+  - Failing by less than 5 uses up nothing.
+  - Failing by 5 or more ruins the materials. Tools and charges are kept.
+  - A natural 20 always succeeds and a natural 1 always fails.
+- **Capsule blueprints** fill one charge from parts instead of making an item. They follow
+  Toren's recipe book: Steam (level 1), Thermal (5), Shock (9), Force (13) and Arcane
+  Resonance (17).
 - **Blueprints are an item type.** A blueprint lists:
   - its product;
   - its materials, which are used up;
@@ -264,11 +273,14 @@ The counts are the same as a half caster's slots, but each level is a type of ch
 - **Devices are an item type.** A device can link a spell. Carrying it adds the spell to the
   token, and the spell's level decides which charge it uses (level 0 needs no charge).
   Ammunition and grenades are devices whose spell uses up one of them.
-- **There are 13 bundled blueprints:**
+- **There are 18 bundled blueprints.** Every recipe lists its materials (common, specialised or
+  rare parts, which are used up) and its tools (kept). The 13 device blueprints are:
   - Utility and control: Smoke Canister, Tripwire Alarm, Steam Grapnel Launcher, Sticky Foam,
     Messenger Beetle, Thermal Smoke Grenade (Thermal only).
   - Light combat: Scalding Bolts, Flash Bomb, Shock Darts, Steam-Jet Gauntlet.
   - Medium combat: Thermal Grenade, Pressure Ram, Concussion Bolts.
+
+  The other 5 are the capsule blueprints.
 - **The Workshop section in Manage Players** shows charges and furnace fuel, and has buttons to:
   - burn a fuel;
   - make a charge;
@@ -279,6 +291,25 @@ The counts are the same as a half caster's slots, but each level is a type of ch
   fields.
 - **Toren Valebrick** (Human Artificer 5, Artillerist) is in the zurabaach party. He has the
   field workshop, the Bolt Repeater, materials and fuel.
+
+### Spell components
+
+Every bundled spell lists its components:
+- **V** (verbal);
+- **S** (somatic);
+- **M** (material). Material components name the material, its cost, and whether casting
+  consumes it.
+
+The spell form has fields for all of these, and hover cards show them.
+
+### Hover cards
+
+Hover over a spell or item to see its full description in a card that sizes to fit:
+- the battle map's character panel (spells, abilities and inventory);
+- Manage Players (items, spells, effects, blueprints and pickers);
+- the character profile;
+- the creation wizard's lists;
+- in the storyline text editor, any spell or item name written in the text.
 
 ### Creation help and class defaults
 
@@ -293,6 +324,18 @@ Players section and the *New* button in the player list both open it.
 
 Each class has default spells and items. When you pick a class in the wizard, its defaults are
 pre-selected, and you can still change them.
+
+## DM menu layout and printing
+
+- The header is one line: *Dungeon Master of campaign: &lt;name&gt;*.
+- **Create Character** sits next to the *Players* heading.
+- The Worldbuilding categories are laid out in a wide grid, which leaves more room for player
+  cards. Each card shows the character's HP.
+- **🖨 Print Character Sheets** (in *Run the session*) opens a checklist of characters with
+  *Select all* and *Print*. Each selected character becomes a standard D&D character sheet PDF,
+  saved to your Downloads folder. It includes stats, saves, skills, attacks, spells and
+  inventory. Values that change in play, such as current HP, temporary HP, spell slots and
+  hit dice, are left as blank boxes to fill in on paper.
 
 ## Background music
 

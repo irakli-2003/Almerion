@@ -24,10 +24,20 @@ public class Blueprint extends Item {
     private List<String> toolIds = new ArrayList<>();
     private List<ChargeCost> charges = new ArrayList<>();
     private List<String> effects = new ArrayList<>();
+    /** Crafting check: d20 + INT modifier + proficiency must reach this (0 = no roll needed). */
+    private int checkDc;
+    /** When above 0 the blueprint makes an energy capsule of this level instead of an item. */
+    private int producesChargeLevel;
 
     public Blueprint() {
         setType("blueprint");
     }
+
+    public int getCheckDc() { return checkDc; }
+    public void setCheckDc(int checkDc) { this.checkDc = Math.max(0, checkDc); }
+
+    public int getProducesChargeLevel() { return producesChargeLevel; }
+    public void setProducesChargeLevel(int producesChargeLevel) { this.producesChargeLevel = Math.max(0, producesChargeLevel); }
 
     public String getProductId() { return productId; }
     public void setProductId(String productId) { this.productId = productId; }

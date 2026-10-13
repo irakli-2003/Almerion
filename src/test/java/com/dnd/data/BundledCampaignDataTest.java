@@ -86,9 +86,12 @@ public class BundledCampaignDataTest {
             List<com.dnd.model.item.crafting.Blueprint> blueprints = repos.items().list().stream()
                 .filter(i -> i instanceof com.dnd.model.item.crafting.Blueprint)
                 .map(i -> (com.dnd.model.item.crafting.Blueprint) i).toList();
-            assertEquals(13, blueprints.size());
+            assertEquals(18, blueprints.size());
             for (var bp : blueprints) {
-                assertNotNull(bp.getId(), repos.items().getById(bp.getProductId()));
+                if (bp.getProducesChargeLevel() > 0) assertNull(bp.getId(), bp.getProductId());
+                else assertNotNull(bp.getId(), repos.items().getById(bp.getProductId()));
+                assertFalse(bp.getId() + " needs materials", bp.getMaterials().isEmpty());
+                assertFalse(bp.getId() + " needs tools", bp.getToolIds().isEmpty());
                 bp.getMaterials().forEach(m -> assertNotNull(bp.getId() + " " + m.getItemId(), repos.items().getById(m.getItemId())));
                 bp.getToolIds().forEach(t -> assertNotNull(bp.getId() + " " + t, repos.items().getById(t)));
             }
@@ -96,6 +99,9 @@ public class BundledCampaignDataTest {
                 if (item instanceof com.dnd.model.item.crafting.Device d && d.getSpellId() != null) {
                     assertNotNull(d.getId() + " -> " + d.getSpellId(), repos.spells().getById(d.getSpellId()));
                 }
+            }
+            for (var spell : repos.spells().list()) {
+                assertFalse(spell.getId() + " needs components", spell.getComponents() == null || spell.getComponents().isEmpty());
             }
             for (var cls : repos.classes().list()) {
                 cls.getDefaultSpells().forEach(s -> assertNotNull(cls.getId() + " " + s, repos.spells().getById(s)));

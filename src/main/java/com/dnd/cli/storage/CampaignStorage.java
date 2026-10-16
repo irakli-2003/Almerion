@@ -26,7 +26,6 @@ import java.util.stream.Stream;
  */
 public class CampaignStorage {
     private static final Logger LOGGER = Logger.getLogger(CampaignStorage.class.getName());
-    private static final Path RESOURCE_DATA_ROOT = Paths.get("src", "main", "resources", "data");
 
     private final Path dataRoot;
     private final Path defaultCampaignRoot;
@@ -43,10 +42,11 @@ public class CampaignStorage {
     }
 
     private static Path resolveDefaultRoot() {
-        if (Files.exists(RESOURCE_DATA_ROOT)) {
-            return RESOURCE_DATA_ROOT;
+        Path resources = com.dnd.data.AppHome.resolve("src", "main", "resources", "data");
+        if (Files.exists(resources)) {
+            return resources;
         }
-        return Paths.get("data");
+        return com.dnd.data.AppHome.resolve("data");
     }
 
     public Path getDefaultCampaignRoot() {

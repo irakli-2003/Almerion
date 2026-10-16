@@ -21,7 +21,7 @@ import java.util.Map;
  */
 public class PlayerProfileStore {
 
-    private static final Path ROOT = Path.of("data", "player-profiles");
+    private static final Path ROOT = AppHome.resolve("data", "player-profiles");
 
     /** The cosmetic fields a player owns. A null field means "leave the DM's value alone". */
     public static class Profile {

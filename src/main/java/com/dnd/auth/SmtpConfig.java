@@ -29,7 +29,7 @@ public class SmtpConfig {
     /** Must be flipped to true (after filling in real credentials) for emails to actually send. */
     public boolean enabled = false;
 
-    private static final Path FILE = Paths.get("data", "auth", "smtp-config.json");
+    private static final Path FILE = com.dnd.data.AppHome.resolve("data", "auth", "smtp-config.json");
 
     public static SmtpConfig loadOrCreateTemplate() {
         try {

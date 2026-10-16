@@ -108,6 +108,47 @@
     -fx-underline: true;
 }
 
+/* Structure: each heading kind has its own colour so a long session file can be skimmed. */
+.code-area.storyline-editor .hd-chapter {
+    -fx-fill: #ffffff;
+    -fx-font-weight: bold;
+    -fx-font-size: 17px;
+    -rtfx-background-color: rgba(201, 168, 76, 0.22);
+}
+
+.code-area.storyline-editor .hd-scene {
+    -fx-fill: #7fb0ff;
+    -fx-font-weight: bold;
+    -fx-font-size: 15px;
+    -rtfx-background-color: rgba(127, 176, 255, 0.14);
+}
+
+.code-area.storyline-editor .hd-encounter {
+    -fx-fill: #ff5fd2;
+    -fx-font-weight: bold;
+    -fx-font-size: 15px;
+    -rtfx-background-color: rgba(255, 95, 210, 0.14);
+}
+
+.code-area.storyline-editor .hd-npc {
+    -fx-fill: #f4a0b8;
+    -fx-font-weight: bold;
+}
+
+.code-area.storyline-editor .hd-sub {
+    -fx-fill: #a9c4e0;
+    -fx-font-weight: bold;
+}
+
+.code-area.storyline-editor .mk-tag {
+    -fx-fill: #b8c4ff;
+    -fx-font-weight: bold;
+}
+
+.code-area.storyline-editor .mk-divider {
+    -fx-fill: #5d5d72;
+}
+
 .player-view {
     -fx-font-family: "DejaVu Serif", "Sylfaen", "Georgia", serif;
     -fx-font-size: 20px;

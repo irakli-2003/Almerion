@@ -2,6 +2,7 @@ package com.dnd.ui.scenes;
 
 import com.dnd.model.world.map.GameMap;
 import com.dnd.model.world.map.MapObject;
+import com.dnd.model.world.map.PlayerToken;
 import com.dnd.ui.MapRenderer;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
@@ -18,7 +19,8 @@ import java.util.List;
 
 /**
  * Player-facing copy of the battle map for a projector or second monitor: only the map and
- * tokens, scaled to fill the screen, with no DM panels, health bars, selection or range previews.
+ * tokens, scaled to fill the screen, with no DM panels, health bars or selection. Range previews
+ * are mirrored only for player characters' abilities.
  */
 public class ProjectorWindow {
 
@@ -77,6 +79,22 @@ public class ProjectorWindow {
         this.map = map;
         decorations.currentTurn = currentTurn;
         if (isShowing()) redraw();
+    }
+
+    /**
+     * Shows the range of an ability the DM selected, but only for player characters: players
+     * should see how far their own spells reach, never what a monster could hit.
+     */
+    public void showRange(MapObject origin, double rangeCells, double radiusCells) {
+        boolean visible = isPlayerRange(origin, rangeCells);
+        decorations.rangeOrigin = visible ? origin : null;
+        decorations.rangeCells = visible ? rangeCells : 0;
+        decorations.rangeRadiusCells = visible ? radiusCells : 0;
+        if (isShowing()) redraw();
+    }
+
+    static boolean isPlayerRange(MapObject origin, double rangeCells) {
+        return origin instanceof PlayerToken && rangeCells > 0;
     }
 
     private void redraw() {

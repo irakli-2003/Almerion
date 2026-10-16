@@ -37,6 +37,13 @@ public class ForgotPasswordScene extends BaseScene {
                     return;
                 }
                 uiSession.setPendingAuthEmail(email);
+                if (result.sentAsLink()) {
+                    showInfo("Check your email",
+                        "A password-reset link was sent to " + email + ". Choose a new password there, then log in"
+                            + " here with it. (Check the spam folder if it doesn't arrive.)");
+                    uiSession.getRouter().goTo(SceneType.LOGIN);
+                    return;
+                }
                 if (!result.emailSent()) {
                     showCodeFallbackDialog("reset code", result.code(), result.emailError());
                 }

@@ -34,6 +34,7 @@ public class GuiApp extends Application {
         });
         uiSession.getRouter().goTo(SceneType.LOGIN);
         primaryStage.show();
+        UpdatePrompt.checkInBackground(primaryStage);
     }
 
     @Override

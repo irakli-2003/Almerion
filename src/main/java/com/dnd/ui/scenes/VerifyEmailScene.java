@@ -55,6 +55,11 @@ public class VerifyEmailScene extends BaseScene {
                     error.setText(result.message());
                     return;
                 }
+                if (result.sentAsLink()) {
+                    showInfo("Link sent", "A new verification link was emailed to you. Click it, then log in.");
+                    uiSession.getRouter().goTo(SceneType.LOGIN);
+                    return;
+                }
                 if (!result.emailSent()) {
                     showCodeFallbackDialog("new verification code", result.code(), result.emailError());
                     return;

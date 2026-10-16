@@ -143,7 +143,14 @@ public final class MusicPlayer {
             server.start();
 
             CefAppBuilder builder = new CefAppBuilder();
-            builder.setInstallDir(new File(System.getProperty("user.home"), ".dnd-campaign-manager/jcef"));
+            File bundled = bundledEngineDir();
+            if (bundled != null) {
+                // Shipped with the installer: nothing to download in the middle of a session.
+                builder.setInstallDir(bundled);
+                builder.setSkipInstallation(true);
+            } else {
+                builder.setInstallDir(userEngineDir());
+            }
             builder.addJcefArgs("--autoplay-policy=no-user-gesture-required");
             builder.getCefSettings().windowless_rendering_enabled = false;
             // A profile folder per process: Chromium refuses to start a second instance on a shared
@@ -190,6 +197,38 @@ public final class MusicPlayer {
             }
             update(Phase.FAILED, "The music engine couldn't start: " + e.getMessage());
         }
+    }
+
+    /** Downloaded on first use when the app wasn't installed with the engine bundled. */
+    static File userEngineDir() {
+        return new File(System.getProperty("user.home"), ".dnd-campaign-manager/jcef");
+    }
+
+    /**
+     * The engine the installer ships in {@code <install>\app\jcef}, or {@code -Ddnd.jcef.dir};
+     * null if there is no complete copy there.
+     */
+    static File bundledEngineDir() {
+        String override = System.getProperty("dnd.jcef.dir");
+        File dir = null;
+        if (override != null && !override.isBlank()) {
+            dir = new File(override);
+        } else {
+            String exe = System.getProperty("jpackage.app-path");
+            if (exe != null) dir = new File(new File(exe).getParentFile(), "app" + File.separator + "jcef");
+        }
+        return dir != null && new File(dir, "install.lock").isFile() ? dir : null;
+    }
+
+    /** Build step of the Windows installer: downloads the engine into the given folder. */
+    public static void main(String[] args) throws Exception {
+        if (args.length != 1) throw new IllegalArgumentException("Usage: MusicPlayer <install folder>");
+        CefAppBuilder builder = new CefAppBuilder();
+        builder.setInstallDir(new File(args[0]));
+        builder.setProgressHandler((state, percent) -> System.out.println("music engine: " + state
+            + (percent >= 0 ? " " + Math.round(percent) + "%" : "")));
+        builder.install();
+        System.out.println("music engine installed in " + args[0]);
     }
 
     private void startWatchdog() {

@@ -1,0 +1,86 @@
+package com.dnd.update;
+
+import com.dnd.boot.Launcher;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Test;
+
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.jar.Attributes;
+import java.util.jar.JarOutputStream;
+import java.util.jar.Manifest;
+
+import static org.junit.Assert.*;
+
+public class UpdateCheckerTest {
+
+    private static Path jar(Path dir, String name, String version, String classPath) throws Exception {
+        Manifest m = new Manifest();
+        m.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
+        if (version != null) m.getMainAttributes().put(Attributes.Name.IMPLEMENTATION_VERSION, version);
+        if (classPath != null) m.getMainAttributes().put(Attributes.Name.CLASS_PATH, classPath);
+        Path jar = dir.resolve(name);
+        try (OutputStream out = Files.newOutputStream(jar); JarOutputStream ignored = new JarOutputStream(out, m)) {
+            // manifest only
+        }
+        return jar;
+    }
+
+    @Test
+    public void comparesVersionsNumerically() {
+        assertTrue(Launcher.compareVersions("1.10.0", "1.9.3") > 0);
+        assertTrue(Launcher.compareVersions("v1.1", "1.0.9") > 0);
+        assertEquals(0, Launcher.compareVersions("1.1", "1.1.0"));
+        assertTrue(Launcher.compareVersions("1.0.0", "1.0.1-SNAPSHOT") < 0);
+        assertTrue(Launcher.compareVersions(null, "1.0") < 0);
+    }
+
+    @Test
+    public void parsesTheLatestReleaseAssets() throws Exception {
+        String json = "{\"tag_name\":\"v1.2.0\",\"html_url\":\"https://x/release\",\"assets\":["
+            + "{\"name\":\"dnd-campaign-manager.jar\",\"browser_download_url\":\"https://x/jar\"},"
+            + "{\"name\":\"DnD Campaign Manager-1.2.0.exe\",\"browser_download_url\":\"https://x/exe\"}]}";
+        UpdateChecker.Release r = UpdateChecker.parse(new ObjectMapper().readTree(json));
+        assertEquals("1.2.0", r.version());
+        assertEquals("https://x/jar", r.jarUrl());
+        assertEquals("https://x/exe", r.installerUrl());
+        assertNull(UpdateChecker.parse(new ObjectMapper().readTree("{\"tag_name\":\"v2\",\"draft\":true}")));
+    }
+
+    @Test
+    public void launcherOnlyPicksANewerUpdateWhoseLibrariesAreInstalled() throws Exception {
+        Path install = Files.createTempDirectory("install");
+        Path updates = Files.createTempDirectory("updates");
+        Files.writeString(install.resolve("lib-a-1.jar"), "x");
+        Path installed = jar(install, "dnd-campaign-manager-1.1.0.jar", "1.1.0", "lib-a-1.jar");
+
+        Path older = jar(updates, "older.jar", "1.0.0", "lib-a-1.jar");
+        Path newer = jar(updates, "newer.jar", "1.2.0", "lib-a-1.jar");
+        Path newLibs = jar(updates, "newlibs.jar", "1.3.0", "lib-a-1.jar lib-b-2.jar");
+
+        assertFalse(Launcher.shouldUse(older, installed));
+        assertTrue(Launcher.shouldUse(newer, installed));
+        assertFalse(Launcher.shouldUse(newLibs, installed));
+        assertEquals(List.of("lib-b-2.jar"), Launcher.missingLibraries(newLibs, install));
+        assertFalse(Launcher.shouldUse(updates.resolve("absent.jar"), installed));
+    }
+
+    @Test
+    public void installKeepsTheOldUpdateWhenLibrariesAreMissing() throws Exception {
+        Path install = Files.createTempDirectory("install2");
+        Path updates = Files.createTempDirectory("updates2");
+        Path target = updates.resolve(Launcher.UPDATE_JAR);
+
+        Path ok = jar(updates, "ok.part", "1.2.0", "");
+        assertEquals(UpdateChecker.Outcome.READY_AFTER_RESTART, UpdateChecker.install(ok, target, install));
+        assertTrue(Files.exists(target));
+        assertFalse(Files.exists(ok));
+
+        Path needsLibs = jar(updates, "libs.part", "1.3.0", "missing.jar");
+        assertEquals(UpdateChecker.Outcome.NEEDS_INSTALLER, UpdateChecker.install(needsLibs, target, install));
+        assertEquals("1.2.0", Launcher.versionOf(target));
+        assertFalse(Files.exists(needsLibs));
+    }
+}

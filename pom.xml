@@ -7,7 +7,7 @@
 
     <groupId>com.dnd</groupId>
     <artifactId>dnd-campaign-manager</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <packaging>jar</packaging>
 
     <name>DnD Campaign Manager</name>
@@ -86,6 +86,12 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.2</version>
+                <configuration>
+                    <!-- Tests must never touch the shared online campaign directory. -->
+                    <systemPropertyVariables>
+                        <dnd.cloud>off</dnd.cloud>
+                    </systemPropertyVariables>
+                </configuration>
             </plugin>
 
             <!-- JavaFX Maven Plugin -->
@@ -106,7 +112,10 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.dnd.cli.CliApp</mainClass>
+                            <mainClass>com.dnd.boot.Launcher</mainClass>
+                            <!-- Version and library list let the updater (com.dnd.boot.Launcher) check a downloaded jar. -->
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addClasspath>true</addClasspath>
                         </manifest>
                     </archive>
                 </configuration>

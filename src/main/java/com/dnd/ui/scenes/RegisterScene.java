@@ -43,6 +43,13 @@ public class RegisterScene extends BaseScene {
                     return;
                 }
                 uiSession.setPendingAuthEmail(emailField.getText());
+                if (result.sentAsLink()) {
+                    showInfo("Check your email",
+                        "A verification link was sent to " + emailField.getText().trim()
+                            + ". Click it, then log in here. (Check the spam folder if it doesn't arrive.)");
+                    uiSession.getRouter().goTo(SceneType.LOGIN);
+                    return;
+                }
                 if (!result.emailSent()) {
                     showCodeFallbackDialog("verification code", result.code(), result.emailError());
                 }

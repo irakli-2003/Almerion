@@ -4,6 +4,9 @@
   The installer has a setup wizard (pick the install folder), adds a desktop shortcut and a
   Start-menu entry, and bundles its own Java runtime, so the target PC needs nothing else.
 
+  It also writes target\installer\dnd-campaign-manager.jar: attach it to the GitHub release next to
+  the installer, and installed apps update themselves to that version on their next start.
+
   Usage (from the repo root, in PowerShell):
       .\packaging\build-windows-installer.ps1                  # runs the tests, then builds
       .\packaging\build-windows-installer.ps1 -SkipTests
@@ -13,7 +16,7 @@
   .exe, is downloaded to %LOCALAPPDATA%\wix314 on first run if it is not installed.
 #>
 param(
-    [string]$Version = "1.0.0",
+    [string]$Version = "",  # defaults to the version in pom.xml
     [ValidateSet("exe", "app-image")]
     [string]$Type = "exe",
     [switch]$SkipTests
@@ -51,12 +54,22 @@ if ($SkipTests) { $mvnArgs += "-DskipTests" }
 & mvn @mvnArgs
 if ($LASTEXITCODE -ne 0) { throw "Maven build failed." }
 
+if (-not $Version) { $Version = ([xml](Get-Content (Join-Path $repo "pom.xml"))).project.version }
 $jar = Get-ChildItem target -Filter "dnd-campaign-manager-*.jar" | Select-Object -First 1
 $stage = Join-Path $repo "target\installer-input"
+if (Test-Path $stage) { Remove-Item $stage -Recurse -Force }
 New-Item -ItemType Directory $stage -Force | Out-Null
 Copy-Item $jar.FullName $stage
 Copy-Item "target\libs\*.jar" $stage
 
+# The music engine (Chromium, ~300 MB unpacked) ships inside the installer so it is never
+# downloaded in the middle of a session. Cached between builds.
+$engine = Join-Path $env:LOCALAPPDATA "dnd-build\jcef"
+Write-Host "Preparing the music engine in $engine ..."
+$cp = (@($jar.FullName) + (Get-ChildItem "target\libs\*.jar" | ForEach-Object FullName)) -join ";"
+& java -cp $cp com.dnd.ui.music.MusicPlayer $engine
+if ($LASTEXITCODE -ne 0 -or -not (Test-Path (Join-Path $engine "install.lock"))) { throw "Could not prepare the music engine." }
+Copy-Item $engine (Join-Path $stage "jcef") -Recurse
 $dest = Join-Path $repo "target\installer"
 if (Test-Path $dest) { Remove-Item $dest -Recurse -Force }
 
@@ -68,7 +81,7 @@ $jpArgs = @(
     "--description", "Run Dungeons and Dragons campaigns: maps, combat, storyline and music.",
     "--input", $stage,
     "--main-jar", $jar.Name,
-    "--main-class", "com.dnd.cli.CliApp",
+    "--main-class", "com.dnd.boot.Launcher",
     "--icon", (Join-Path $PSScriptRoot "windows\app.ico"),
     "--java-options", "-Dfile.encoding=UTF-8",
     "--java-options", "-Xmx2g",
@@ -88,6 +101,9 @@ if ($Type -eq "exe") {
 Write-Host "Packaging with jpackage ($Type) ..."
 & jpackage @jpArgs
 if ($LASTEXITCODE -ne 0) { throw "jpackage failed." }
+
+# Attach this jar to the GitHub release as well: installed apps update themselves from it.
+Copy-Item $jar.FullName (Join-Path $dest "dnd-campaign-manager.jar")
 
 Write-Host ""
 Write-Host "Done:" -ForegroundColor Green

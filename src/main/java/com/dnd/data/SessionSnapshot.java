@@ -74,6 +74,7 @@ public final class SessionSnapshot {
         CampaignPaths paths = new CampaignPaths(campaignRoot);
         ObjectNode root = mapper.createObjectNode();
         root.put("campaign", campaignName);
+        com.dnd.cloud.CampaignMeta.idOf(campaignRoot).ifPresent(id -> root.put("campaignId", id));
 
         for (Map.Entry<String, Catalog> entry : CATALOGS.entrySet()) {
             Catalog catalog = entry.getValue();
@@ -141,6 +142,17 @@ public final class SessionSnapshot {
             // A snapshot without a readable name is still perfectly playable.
         }
         return "Live Session";
+    }
+
+    /** Registered campaign id carried in a snapshot (see {@code CampaignMeta}), or null. */
+    public static String campaignIdOf(String json) {
+        try {
+            JsonNode node = JsonMappers.create().readTree(json).get("campaignId");
+            if (node != null && !node.asText().isBlank()) return node.asText();
+        } catch (IOException ignored) {
+            // Treated as an unregistered campaign.
+        }
+        return null;
     }
 
     /**

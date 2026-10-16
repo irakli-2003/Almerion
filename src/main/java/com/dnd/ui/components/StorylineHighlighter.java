@@ -16,7 +16,8 @@ import java.util.regex.Pattern;
 /**
  * Colours the markers in a storyline file so they stand out from the story text: each kind of
  * music / sound cue (start and end), read-aloud and DM-note brackets, and battle-map links get
- * their own CSS class (see {@code dnd-theme.css}).
+ * their own CSS class (see {@code dnd-theme.css}), as do chapter, scene, encounter and NPC headings,
+ * [CHECK] / [LOOT] tags and divider lines.
  */
 public final class StorylineHighlighter {
 
@@ -27,9 +28,24 @@ public final class StorylineHighlighter {
     public static final String READ_ALOUD = "mk-read-aloud";
     public static final String DM_NOTE = "mk-dm-note";
     public static final String MAP = "mk-map";
+    public static final String CHAPTER = "hd-chapter";
+    public static final String SCENE = "hd-scene";
+    public static final String ENCOUNTER = "hd-encounter";
+    public static final String NPC = "hd-npc";
+    public static final String SUBHEADING = "hd-sub";
+    public static final String TAG = "mk-tag";
+    public static final String DIVIDER = "mk-divider";
 
     private static final Pattern READ_ALOUD_TAG = Pattern.compile("\\[/?READ ALOUD\\]");
     private static final Pattern DM_NOTE_TAG = Pattern.compile("\\[/?DM NOTE\\]");
+    private static final Pattern CHAPTER_LINE = Pattern.compile("(?m)^[ \\t]*(== |#{1,2} )\\S.*$");
+    private static final Pattern SCENE_LINE = Pattern.compile("(?m)^[ \\t]*=== SCENE\\b.*$");
+    private static final Pattern ENCOUNTER_LINE = Pattern.compile("(?m)^[ \\t]*=== ENCOUNTER\\b.*$");
+    private static final Pattern OTHER_BLOCK_LINE = Pattern.compile("(?m)^[ \\t]*=== (?!SCENE\\b|ENCOUNTER\\b)\\S.*$");
+    private static final Pattern NPC_LINE = Pattern.compile("(?m)^[ \\t]*--- \\S.* ---[ \\t]*$");
+    private static final Pattern SUBHEADING_LINE = Pattern.compile("(?m)^[ \\t]*#{3,} \\S.*$");
+    private static final Pattern BLOCK_TAG = Pattern.compile("\\[(CHECK|LOOT)\\]");
+    private static final Pattern DIVIDER_LINE = Pattern.compile("(?m)^[ \\t]*(={10,}|-{10,})[ \\t]*$");
 
     private record Range(int start, int end, String style) { }
 
@@ -42,7 +58,16 @@ public final class StorylineHighlighter {
         for (MapLink link : MapLink.findAll(t)) ranges.add(new Range(link.start(), link.end(), MAP));
         addAll(ranges, READ_ALOUD_TAG.matcher(t), READ_ALOUD);
         addAll(ranges, DM_NOTE_TAG.matcher(t), DM_NOTE);
-        ranges.sort(Comparator.comparingInt(Range::start));
+        addAll(ranges, CHAPTER_LINE.matcher(t), CHAPTER);
+        addAll(ranges, SCENE_LINE.matcher(t), SCENE);
+        addAll(ranges, ENCOUNTER_LINE.matcher(t), ENCOUNTER);
+        addAll(ranges, OTHER_BLOCK_LINE.matcher(t), SUBHEADING);
+        addAll(ranges, NPC_LINE.matcher(t), NPC);
+        addAll(ranges, SUBHEADING_LINE.matcher(t), SUBHEADING);
+        addAll(ranges, BLOCK_TAG.matcher(t), TAG);
+        addAll(ranges, DIVIDER_LINE.matcher(t), DIVIDER);
+        // Earliest first; at the same start the longer range (a whole heading line) wins.
+        ranges.sort(Comparator.comparingInt(Range::start).thenComparing(r -> -(r.end() - r.start())));
 
         StyleSpansBuilder<Collection<String>> builder = new StyleSpansBuilder<>();
         int pos = 0;

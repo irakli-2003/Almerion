@@ -54,6 +54,7 @@ public class DmMenuScene extends BaseScene {
         content.getChildren().add(header);
 
         content.getChildren().add(sessionSection());
+        content.getChildren().add(musicSection());
         content.getChildren().add(playersSection());
         content.getChildren().add(worldbuildingSection());
 
@@ -79,7 +80,8 @@ public class DmMenuScene extends BaseScene {
     private VBox sessionSection() {
         FlowPane row = new FlowPane(10, 10,
             btn("📜 Open Storyline", () -> uiSession.getRouter().goTo(SceneType.STORYLINE)),
-            btn("🎵 Music", () -> MusicPanel.open(this, uiSession.campaignRoot())),
+            btn("👥 Members", () -> MembersWindow.open(this, uiSession.campaignRoot(),
+                uiSession.getCurrentUser() == null ? "" : uiSession.getCurrentUser().getUsername())),
             btn("🖨 Print Character Sheets", () -> {
                 if (uiSession.campaignRoot() == null) return;
                 var ctx = uiSession.getSession().getCampaignContext();
@@ -89,6 +91,15 @@ public class DmMenuScene extends BaseScene {
             btn("🌐 Online Session" + (uiSession.getSession().isOnline() ? "  ●" : ""),
                 () -> uiSession.getRouter().goTo(SceneType.DM_ONLINE_SESSION)));
         return card("▶ Run the Session", row);
+    }
+
+    /** "Music": playback buttons usable without opening the music panel. */
+    private VBox musicSection() {
+        HBox row = new HBox(8);
+        row.setAlignment(Pos.CENTER_LEFT);
+        row.getChildren().addAll(com.dnd.ui.components.MusicQuickControls.create());
+        row.getChildren().add(btn("Music Panel", () -> MusicPanel.open(this, uiSession.campaignRoot())));
+        return card("🎵 Music", row);
     }
 
     /** Worldbuilding categories, grouped by what they describe. */

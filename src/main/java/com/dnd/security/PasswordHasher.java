@@ -48,7 +48,32 @@ public final class PasswordHasher {
         if (expectedHash == null) {
             return false;
         }
+        if (expectedHash.startsWith(PBKDF2_PREFIX)) {
+            return MessageDigest.isEqual(
+                strongHash(password, salt).getBytes(StandardCharsets.UTF_8),
+                expectedHash.getBytes(StandardCharsets.UTF_8));
+        }
         return hash(password, salt).equalsIgnoreCase(expectedHash);
+    }
+
+    private static final String PBKDF2_PREFIX = "pbkdf2$";
+    private static final int PBKDF2_ITERATIONS = 120_000;
+
+    /**
+     * Slow, salted PBKDF2-HMAC-SHA256 hash for account passwords, which are stored in the
+     * shared online directory. Prefixed so {@link #matches} can tell it from the legacy hash.
+     */
+    public static String strongHash(String password, String salt) {
+        try {
+            javax.crypto.SecretKeyFactory factory = javax.crypto.SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+            javax.crypto.spec.PBEKeySpec spec = new javax.crypto.spec.PBEKeySpec(
+                (password == null ? "" : password).toCharArray(),
+                (salt == null ? "" : salt).getBytes(StandardCharsets.UTF_8),
+                PBKDF2_ITERATIONS, 256);
+            return PBKDF2_PREFIX + toHex(factory.generateSecret(spec).getEncoded());
+        } catch (java.security.GeneralSecurityException e) {
+            throw new IllegalStateException("PBKDF2 not available", e);
+        }
     }
 
     private static String toHex(byte[] bytes) {

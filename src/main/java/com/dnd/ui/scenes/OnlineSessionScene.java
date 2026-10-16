@@ -61,6 +61,7 @@ public class OnlineSessionScene extends BaseScene {
             String token = FirebaseSessionSync.generateToken(FIREBASE_URL, sessionId, passphrase);
             uiSession.getSession().setFirebaseSync(sync);
             uiSession.setSessionToken(token);
+            publishLiveToken(token);
             uiSession.getRouter().goTo(SceneType.DM_ONLINE_SESSION);
         });
 
@@ -75,7 +76,8 @@ public class OnlineSessionScene extends BaseScene {
     }
 
     private void buildActiveView(VBox content) {
-        Label statusLabel = body("Session is live. Share the token below with your players.");
+        Label statusLabel = body("Session is live. Members of this campaign can join it from Player → My Campaigns,"
+            + " or with the token below.");
         statusLabel.setStyle("-fx-text-fill: #80ff80;");
 
         String token = uiSession.getSessionToken();
@@ -90,6 +92,7 @@ public class OnlineSessionScene extends BaseScene {
             try { uiSession.getSession().getFirebaseSync().delete(); } catch (Exception ignored) {}
             uiSession.getSession().setFirebaseSync(null);
             uiSession.setSessionToken(null);
+            publishLiveToken(null);
             uiSession.getRouter().goTo(SceneType.DM_ONLINE_SESSION);
         });
 
@@ -107,6 +110,21 @@ public class OnlineSessionScene extends BaseScene {
             tokenArea,
             new HBox(12, pushBtn, stopBtn)
         );
+    }
+
+    /**
+     * Lets the campaign's members join from their "My Campaigns" list without pasting the
+     * token. Best effort: the token shown on screen still works if this can't be published.
+     */
+    private void publishLiveToken(String token) {
+        var context = uiSession.getSession().getCampaignContext();
+        String id = context == null ? null : com.dnd.cloud.CampaignMeta.idOf(context.getPath()).orElse(null);
+        String user = uiSession.getCurrentUser() == null ? null : uiSession.getCurrentUser().getUsername();
+        if (id == null || user == null) return;
+        background(() -> {
+            com.dnd.cloud.CampaignDirectory.shared().setLiveToken(id, user, token);
+            return true;
+        }, ok -> { }, error -> { });
     }
 
     private String buildSnapshot() {

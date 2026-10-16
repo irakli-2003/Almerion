@@ -340,9 +340,8 @@ public class BattleMapWindow {
                 + " for a projector. Set Windows to Extend with Win+P first.", this::toggleProjector)),
             toolGroup("🛏 PARTY",
             tool("Rest...", "Give every player on the map a short or long rest", this::openPartyRestDialog)),
-            toolGroup("🎵 ATMOSPHERE",
-            buildMusicMenu(),
-            timer),
+            toolGroup("🎵 MUSIC", buildMusicControls()),
+            toolGroup("⏱ TIMER", timer),
             toolGroup("💾 BATTLE",
             tool("Save", "Write the battle state back to the campaign", () -> {
                 saveMap();
@@ -372,21 +371,21 @@ public class BattleMapWindow {
 
     // ── Music ───────────────────────────────────────────────────────────────
 
-    private CheckMenuItem combatMusicItem;
+    private ToggleButton combatMusicItem;
 
     private com.dnd.music.MusicLibrary musicLibrary() {
         return com.dnd.music.MusicLibrary.load(uiSession.campaignRoot());
     }
 
-    private MenuButton buildMusicMenu() {
-        MenuButton menu = new MenuButton("🎵 Music");
-        menu.getStyleClass().add("dnd-button");
-        menu.setTooltip(new Tooltip("Background music for this map and for combat"));
+    /** The music section: quick transport buttons, then the panel, combat toggle and map playlist picker. */
+    private Node[] buildMusicControls() {
+        List<Node> controls = new ArrayList<>(com.dnd.ui.components.MusicQuickControls.create());
+        controls.add(tool("Music Panel", "Open the music panel: playlists, sounds and volume",
+            () -> MusicPanel.open(owner, uiSession.campaignRoot())));
 
-        MenuItem open = new MenuItem("Open music panel...");
-        open.setOnAction(e -> MusicPanel.open(owner, uiSession.campaignRoot()));
-
-        combatMusicItem = new CheckMenuItem("⚔ Combat music");
+        combatMusicItem = new ToggleButton("⚔ Combat Music");
+        combatMusicItem.getStyleClass().add("dnd-button");
+        combatMusicItem.setTooltip(new Tooltip("Switch to the campaign's combat playlist, and back to this map's music"));
         combatMusicItem.setSelected(com.dnd.ui.music.MusicPlayer.get().inCombat());
         combatMusicItem.setOnAction(e -> {
             if (combatMusicItem.isSelected()) {
@@ -400,9 +399,10 @@ public class BattleMapWindow {
             }
         });
 
-        Menu mapMusic = new Menu("This map's music");
-        MenuItem loading = new MenuItem("Loading...");
-        mapMusic.getItems().add(loading);
+        MenuButton mapMusic = new MenuButton("Map Music");
+        mapMusic.getStyleClass().add("dnd-button");
+        mapMusic.setTooltip(new Tooltip("The playlist that plays whenever this map is opened"));
+        mapMusic.getItems().add(new MenuItem("Loading..."));
         mapMusic.setOnShowing(e -> {
             ToggleGroup group = new ToggleGroup();
             List<MenuItem> items = new ArrayList<>();
@@ -421,8 +421,9 @@ public class BattleMapWindow {
             mapMusic.getItems().setAll(items);
         });
 
-        menu.getItems().addAll(open, new SeparatorMenuItem(), combatMusicItem, mapMusic);
-        return menu;
+        controls.add(combatMusicItem);
+        controls.add(mapMusic);
+        return controls.toArray(new Node[0]);
     }
 
     private void setMapPlaylist(com.dnd.music.MusicLibrary.Playlist playlist) {
@@ -840,7 +841,10 @@ public class BattleMapWindow {
         decorations.currentTurn = initiative.current();
         if (roundLabel != null) roundLabel.setText("Round " + initiative.round());
         renderer.render(canvas, map, decorations);
-        if (projector != null) projector.update(map, decorations.currentTurn);
+        if (projector != null) {
+            projector.update(map, decorations.currentTurn);
+            projector.showRange(decorations.rangeOrigin, decorations.rangeCells, decorations.rangeRadiusCells);
+        }
     }
 
     private void toggleProjector() {
@@ -851,6 +855,7 @@ public class BattleMapWindow {
             return;
         }
         projector.update(map, decorations.currentTurn);
+        projector.showRange(decorations.rangeOrigin, decorations.rangeCells, decorations.rangeRadiusCells);
         projector.show(canvas.getScene().getWindow());
         status(javafx.stage.Screen.getScreens().size() > 1
             ? "Projector view is on the second screen. Players see only the map; press Esc there or this button again to close."

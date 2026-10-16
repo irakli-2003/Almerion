@@ -1,6 +1,8 @@
 package com.dnd.ui.scenes.player;
 
 import com.dnd.cli.core.CampaignContext;
+import com.dnd.cloud.CampaignDirectory;
+import com.dnd.cloud.CampaignRecord;
 import com.dnd.data.CampaignRepositories;
 import com.dnd.data.SessionSnapshot;
 import com.dnd.model.character.PlayerCharacter;
@@ -18,8 +20,9 @@ import java.nio.file.Path;
 import java.util.List;
 
 /**
- * The player's way in. There is no campaign list here on purpose: the DM decides what is
- * live, and a player's token is what grants them access to it.
+ * The player's way in: the campaigns this account has been accepted into (joinable while the
+ * DM runs a live session), applying to a new one with a join code, and a token fallback.
+ * Campaigns the account isn't a member of are never shown or joined.
  */
 public class PlayerOnlineSessionScene extends BaseScene {
 
@@ -44,25 +47,89 @@ public class PlayerOnlineSessionScene extends BaseScene {
         return wrapInScene(root);
     }
 
+    private String user() {
+        return uiSession.isLoggedIn() ? uiSession.getCurrentUser().getUsername() : "";
+    }
+
     private void buildJoinView(VBox content) {
-        TextField tokenField = textField("Paste session token from DM");
-        tokenField.setMaxWidth(600);
+        CampaignDirectory directory = CampaignDirectory.shared();
         Label error = body("");
         error.setStyle("-fx-text-fill: #e07070;");
 
-        Button joinBtn = btn("Join Session", () -> join(tokenField.getText().trim(), error));
+        VBox mine = new VBox(8, body("Loading your campaigns..."));
+        VBox pending = new VBox(6);
+
+        TextField codeField = textField("Join code, e.g. K7QM2X");
+        codeField.setMaxWidth(260);
+        Runnable apply = () -> {
+            String code = codeField.getText().trim();
+            if (code.isEmpty()) { error.setText("Enter the join code your DM gave you."); return; }
+            error.setText("");
+            background(() -> directory.apply(code, user()), record -> {
+                codeField.clear();
+                showInfo("Application sent",
+                    "You asked to join \"" + record.name + "\". Once a DM accepts you it appears under My Campaigns.");
+                uiSession.getRouter().goTo(SceneType.PLAYER_ONLINE_SESSION);
+            }, failure -> error.setText(friendlyError(failure)));
+        };
+        codeField.setOnAction(e -> apply.run());
+
+        TextField tokenField = textField("Paste session token from DM");
+        tokenField.setMaxWidth(600);
         tokenField.setOnAction(e -> join(tokenField.getText().trim(), error));
+        TitledPane tokenPane = new TitledPane("Join with a session token instead",
+            new VBox(8, tokenField, btn("Join Session", () -> join(tokenField.getText().trim(), error))));
+        tokenPane.setExpanded(false);
+        tokenPane.setMaxWidth(640);
 
         content.getChildren().addAll(
-            title("Join Your DM's Session"),
-            body("Enter the token your DM shared with you. You'll be taken straight into the "
-                + "campaign they're running, as your own character."),
-            tokenField, error, joinBtn
+            title("My Campaigns"),
+            body("Campaigns you've been accepted into. When the DM starts a live session, join it from here."),
+            mine, error,
+            sectionLabel("Join a Campaign"),
+            body("Ask your DM for the campaign's join code. They have to accept you before you can see it."),
+            new HBox(10, codeField, btn("Apply", apply)),
+            pending,
+            tokenPane
         );
+
+        background(() -> new Object[] {directory.campaignsOf(user()), directory.pendingApplicationsOf(user())}, lists -> {
+            @SuppressWarnings("unchecked") List<CampaignRecord> member = (List<CampaignRecord>) lists[0];
+            @SuppressWarnings("unchecked") List<CampaignRecord> waiting = (List<CampaignRecord>) lists[1];
+            mine.getChildren().clear();
+            if (member.isEmpty()) mine.getChildren().add(body("You aren't part of any campaign yet."));
+            for (CampaignRecord record : member) {
+                boolean live = record.liveToken != null && !record.liveToken.isBlank();
+                Label name = body(record.name + "   (" + (record.isDm(user()) ? "DM" : "Player")
+                    + (live ? ", ● live now" : ", not running") + ")");
+                if (live) name.setStyle("-fx-text-fill: #80ff80;");
+                Button joinBtn = btn("Join Live Session", () -> join(record.liveToken, error));
+                joinBtn.setDisable(!live);
+                Button leave = dangerBtn("Leave", () -> background(() -> {
+                    directory.leave(record.id, user());
+                    return true;
+                }, ok -> uiSession.getRouter().goTo(SceneType.PLAYER_ONLINE_SESSION),
+                    failure -> showError("Couldn't leave \"" + record.name + "\"", failure)));
+                leave.setVisible(!record.isAuthor(user()));
+                HBox row = new HBox(10, joinBtn, leave, name);
+                row.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+                mine.getChildren().add(row);
+            }
+            pending.getChildren().clear();
+            if (!waiting.isEmpty()) {
+                pending.getChildren().add(sectionLabel("Waiting for a DM to accept you"));
+                for (CampaignRecord record : waiting) pending.getChildren().add(body("• " + record.name));
+            }
+            if (com.dnd.cloud.Cloud.isOffline()) {
+                error.setText("Offline - showing the list saved from your last connection.");
+            }
+        }, failure -> {
+            mine.getChildren().setAll(body(friendlyError(failure)));
+        });
     }
 
     private void join(String token, Label error) {
-        if (token.isEmpty()) { error.setText("Token cannot be empty."); return; }
+        if (token == null || token.isEmpty()) { error.setText("Token cannot be empty."); return; }
 
         FirebaseSessionSync sync;
         try {
@@ -84,6 +151,11 @@ public class PlayerOnlineSessionScene extends BaseScene {
             return;
         }
 
+        String refusal = membershipProblem(SessionSnapshot.campaignIdOf(json));
+        if (refusal != null) {
+            error.setText(refusal);
+            return;
+        }
         Path campaignRoot;
         try {
             campaignRoot = SessionSnapshot.hydrate(json, sync.getSessionId());
@@ -108,6 +180,26 @@ public class PlayerOnlineSessionScene extends BaseScene {
         }));
 
         uiSession.getRouter().goTo(destinationFor(campaignRoot));
+    }
+
+    /**
+     * Why this account may not join the campaign in a snapshot, or null when it may. Only
+     * accepted members get in; a campaign the DM never registered can't be joined at all.
+     */
+    private String membershipProblem(String campaignId) {
+        if (campaignId == null) {
+            return "This campaign isn't registered yet. Ask your DM to claim it in Campaign Selection and give you its join code.";
+        }
+        try {
+            CampaignRecord record = CampaignDirectory.shared().find(campaignId).orElse(null);
+            if (record == null) return "This campaign isn't registered any more. Ask your DM.";
+            if (!record.isMember(user())) {
+                return "You aren't part of \"" + record.name + "\". Apply with its join code and wait for a DM to accept you.";
+            }
+            return null;
+        } catch (RuntimeException e) {
+            return friendlyError(e);
+        }
     }
 
     /**

@@ -32,8 +32,18 @@ public class CreateCampaignScene extends BaseScene {
             try {
                 com.dnd.cli.core.CampaignContext ctx =
                     uiSession.getStorage().createCampaignFromDefault(name, blankCheck.isSelected());
-                uiSession.getSession().setCampaignContext(ctx);
-                uiSession.getRouter().goTo(SceneType.DM_MENU);
+                String id = com.dnd.cloud.CampaignMeta.assignNewId(ctx.getPath());
+                String author = uiSession.getCurrentUser() == null ? "" : uiSession.getCurrentUser().getUsername();
+                error.setText("Registering campaign...");
+                background(() -> com.dnd.cloud.CampaignDirectory.shared().register(id, ctx.getName(), author), record -> {
+                    uiSession.getSession().setCampaignContext(ctx);
+                    uiSession.getRouter().goTo(SceneType.DM_MENU);
+                }, failure -> {
+                    showError("Campaign created, but not registered online",
+                        new RuntimeException(friendlyError(failure)
+                            + "\n\nIt is listed under \"not registered to anyone\" - claim it once you're online."));
+                    uiSession.getRouter().goTo(SceneType.CAMPAIGN_SELECTION);
+                });
             } catch (Exception e) {
                 error.setText("Failed: " + e.getMessage());
             }

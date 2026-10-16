@@ -19,7 +19,7 @@ import java.util.Optional;
  * campaign. Stored at {@code data/auth/users.json}, next to the
  * {@code data/} campaigns root used by {@code CampaignStorage}.</p>
  */
-public class UserStore {
+public class UserStore implements UserDirectory {
     private final Path file;
 
     public UserStore() {

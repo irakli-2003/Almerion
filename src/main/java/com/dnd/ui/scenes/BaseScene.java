@@ -169,4 +169,44 @@ public abstract class BaseScene {
         styleDialog(alert);
         alert.showAndWait();
     }
+
+    /** Runs slow (network) work off the UI thread and hands the result back on it. */
+    protected <T> void background(java.util.function.Supplier<T> work, java.util.function.Consumer<T> done,
+                                  java.util.function.Consumer<Throwable> failed) {
+        Thread thread = new Thread(() -> {
+            try {
+                T result = work.get();
+                javafx.application.Platform.runLater(() -> done.accept(result));
+            } catch (Throwable t) {
+                javafx.application.Platform.runLater(() -> failed.accept(t));
+            }
+        }, "dnd-background");
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    protected void showError(String header, Throwable error) {
+        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
+        alert.setHeaderText(header);
+        alert.setContentText(friendlyError(error));
+        styleDialog(alert);
+        alert.showAndWait();
+    }
+
+    protected void showInfo(String header, String text) {
+        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
+        alert.setHeaderText(header);
+        alert.setContentText(text);
+        alert.getDialogPane().setPrefWidth(520);
+        styleDialog(alert);
+        alert.showAndWait();
+    }
+
+    protected static String friendlyError(Throwable error) {
+        if (error instanceof com.dnd.cloud.CloudStore.CloudException ce && ce.isOffline()) {
+            return "Can't reach the online campaign directory. Check your internet connection and try again.";
+        }
+        String message = error.getMessage();
+        return message == null || message.isBlank() ? error.getClass().getSimpleName() : message;
+    }
 }

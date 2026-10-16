@@ -234,8 +234,8 @@ final class StorylineEditorWindow {
             toolGroup("🎲 AT THE TABLE",
                 toolButton("Player View", "Show only the read-aloud passages, for reading at the table",
                     this::openPlayerView),
-                toolButton("Open Map Link", "Open the battle map linked at the cursor", this::openMapLinkAtCaret),
-                buildMusicMenu()),
+                toolButton("Open Map Link", "Open the battle map linked at the cursor", this::openMapLinkAtCaret)),
+            toolGroup("🎵 MUSIC", buildMusicControls()),
             toolGroup("☻ PLAYERS",
                 toolButton("Award XP", "Give a player character experience without leaving this file",
                     this::openAwardXp),
@@ -293,21 +293,19 @@ final class StorylineEditorWindow {
     }
 
     /**
-     * "🎵 Music": opens the music panel, or inserts a [music: ...] / [sfx: ...] cue at the
-     * caret. Double-clicking a cue in the text plays it during the session.
+     * The music section: quick transport buttons, the music panel, and pickers that insert a
+     * start/end pair of [music: ...] / [sfx: ...] cues. Double-clicking a cue in the text plays it.
      */
-    private MenuButton buildMusicMenu() {
-        MenuButton music = new MenuButton("🎵 Music");
-        music.getStyleClass().add("dnd-button");
-        music.setTooltip(new Tooltip("Music panel, or insert a start/end pair of music or sound cues around the selection (double-click a start cue to play, an end cue to stop)"));
+    private Node[] buildMusicControls() {
+        List<Node> controls = new ArrayList<>(com.dnd.ui.components.MusicQuickControls.create());
+        controls.add(toolButton("Music Panel", "Open the music panel: playlists, sounds and volume",
+            () -> MusicPanel.open(owner, owner.uiSession.campaignRoot())));
 
-        MenuItem open = new MenuItem("Open music panel...");
-        open.setOnAction(e -> MusicPanel.open(owner, owner.uiSession.campaignRoot()));
-        Menu musicCues = new Menu("Insert music cue");
-        Menu soundCues = new Menu("Insert sound cue");
+        MenuButton musicCues = new MenuButton("Music Cue");
+        musicCues.getStyleClass().add("dnd-button");
+        musicCues.setTooltip(new Tooltip("Insert a start/end pair of music cues around the selection (double-click a start cue to play, an end cue to stop)"));
         musicCues.getItems().add(new MenuItem("Loading..."));
-        soundCues.getItems().add(new MenuItem("Loading..."));
-        music.setOnShowing(e -> {
+        musicCues.setOnShowing(e -> {
             com.dnd.music.MusicLibrary library = com.dnd.music.MusicLibrary.load(owner.uiSession.campaignRoot());
             List<MenuItem> playlists = new ArrayList<>();
             for (var playlist : library.sortedPlaylists()) {
@@ -320,28 +318,36 @@ final class StorylineEditorWindow {
             playlists.add(new SeparatorMenuItem());
             playlists.add(stop);
             musicCues.getItems().setAll(playlists);
+        });
 
+        MenuButton soundCues = new MenuButton("Sound Cue");
+        soundCues.getStyleClass().add("dnd-button");
+        soundCues.setTooltip(new Tooltip("Insert a start/end pair of sound or ambience cues around the selection"));
+        soundCues.getItems().add(new MenuItem("Loading..."));
+        soundCues.setOnShowing(e -> {
+            com.dnd.music.MusicLibrary library = com.dnd.music.MusicLibrary.load(owner.uiSession.campaignRoot());
             List<MenuItem> sounds = new ArrayList<>();
             for (var sound : library.sortedSounds()) {
                 MenuItem item = new MenuItem((sound.isAmbience() ? "∞ " : "") + sound.getName());
                 item.setOnAction(ev -> insertCuePair(com.dnd.music.MusicCue.Kind.SFX, sound.getName()));
                 addToFolder(sounds, sound.getFolder(), item);
             }
-            if (!sounds.isEmpty()) {
+            if (sounds.isEmpty()) {
+                MenuItem none = new MenuItem("No sounds yet - add them in the music panel.");
+                none.setDisable(true);
+                sounds.add(none);
+            } else {
                 MenuItem stopSounds = new MenuItem("■ stop sounds & ambience");
                 stopSounds.setOnAction(ev -> insertAtCaret(com.dnd.music.MusicCue.marker(com.dnd.music.MusicCue.Kind.SFX, "stop")));
                 sounds.add(new SeparatorMenuItem());
                 sounds.add(stopSounds);
             }
-            if (sounds.isEmpty()) {
-                MenuItem none = new MenuItem("No sounds yet - add them in the music panel.");
-                none.setDisable(true);
-                sounds.add(none);
-            }
             soundCues.getItems().setAll(sounds);
         });
-        music.getItems().addAll(open, new SeparatorMenuItem(), musicCues, soundCues);
-        return music;
+
+        controls.add(musicCues);
+        controls.add(soundCues);
+        return controls.toArray(new Node[0]);
     }
 
     /**

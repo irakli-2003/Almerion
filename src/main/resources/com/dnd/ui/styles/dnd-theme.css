@@ -49,6 +49,65 @@
     -fx-background-color: #14141f;
 }
 
+/* Rich storyline editor (RichTextFX CodeArea) */
+.code-area.storyline-editor {
+    -fx-padding: 6 8 6 8;
+}
+
+.code-area.storyline-editor .text {
+    -fx-fill: #e0d5c0;
+    -fx-font-family: "DejaVu Sans Mono", "Consolas", "Sylfaen", monospace;
+    -fx-font-size: 14px;
+}
+
+.code-area.storyline-editor .caret {
+    -fx-stroke: #f0e6cc;
+}
+
+.code-area.storyline-editor .selection {
+    -fx-fill: rgba(201, 168, 76, 0.45);
+}
+
+/* Each cue has its own colour: music is green (start) / red (end), sound is cyan (start) / orange (end). */
+.code-area.storyline-editor .cue-music-start {
+    -fx-fill: #5ee08a;
+    -fx-font-weight: bold;
+    -rtfx-background-color: rgba(94, 224, 138, 0.16);
+}
+
+.code-area.storyline-editor .cue-music-end {
+    -fx-fill: #ff6b6b;
+    -fx-font-weight: bold;
+    -rtfx-background-color: rgba(255, 107, 107, 0.16);
+}
+
+.code-area.storyline-editor .cue-sfx-start {
+    -fx-fill: #4fd6ff;
+    -fx-font-weight: bold;
+    -rtfx-background-color: rgba(79, 214, 255, 0.16);
+}
+
+.code-area.storyline-editor .cue-sfx-end {
+    -fx-fill: #ffa94d;
+    -fx-font-weight: bold;
+    -rtfx-background-color: rgba(255, 169, 77, 0.16);
+}
+
+.code-area.storyline-editor .mk-read-aloud {
+    -fx-fill: #f2d16b;
+    -fx-font-weight: bold;
+}
+
+.code-area.storyline-editor .mk-dm-note {
+    -fx-fill: #c39bff;
+    -fx-font-weight: bold;
+}
+
+.code-area.storyline-editor .mk-map {
+    -fx-fill: #9fd36a;
+    -fx-underline: true;
+}
+
 .player-view {
     -fx-font-family: "DejaVu Serif", "Sylfaen", "Georgia", serif;
     -fx-font-size: 20px;

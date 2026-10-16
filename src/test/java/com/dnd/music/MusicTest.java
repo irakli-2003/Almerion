@@ -135,4 +135,55 @@ public class MusicTest {
         assertEquals(MusicCue.Kind.SFX, cue.kind());
         assertTrue(cue.isStop());
     }
+
+    @Test
+    public void closingCuesPairWithTheirOpeners() {
+        String text = "[music: Tavern] talk [sfx: Rain] wet [/sfx: Rain] dry [/music] [music] [/sfx]";
+        List<MusicCue> cues = MusicCue.findAll(text);
+        assertEquals(5, cues.size());
+        assertFalse(cues.get(0).closing());
+        assertFalse(cues.get(0).isStop());
+        assertTrue(cues.get(2).closing());
+        assertTrue(cues.get(2).isStop());
+        assertEquals("Rain", cues.get(2).name());
+        assertEquals(MusicCue.Kind.MUSIC, cues.get(3).kind());
+        assertEquals("", cues.get(3).name());
+        assertEquals(MusicCue.Kind.SFX, cues.get(4).kind());
+        assertEquals("[/music: Tavern]", MusicCue.closingMarker(MusicCue.Kind.MUSIC, "Tavern"));
+        assertEquals("[/sfx]", MusicCue.closingMarker(MusicCue.Kind.SFX, null));
+        assertEquals("a  b", MusicCue.stripMarkers("a [music: X] b[/music: X]"));
+    }
+
+    @Test
+    public void highlighterGivesEachCueKindItsOwnStyle() {
+        String text = "x [music: T] y [/music: T] [sfx: R] [/sfx] [READ ALOUD] [map:m|M]";
+        var spans = com.dnd.ui.components.StorylineHighlighter.spans(text);
+        assertEquals(text.length(), spans.length());
+        java.util.List<String> styles = new java.util.ArrayList<>();
+        spans.forEach(s -> { if (!s.getStyle().isEmpty()) styles.add(s.getStyle().iterator().next()); });
+        assertEquals(List.of("cue-music-start", "cue-music-end", "cue-sfx-start", "cue-sfx-end",
+            "mk-read-aloud", "mk-map"), styles);
+    }
+
+    @Test
+    public void zurabaachStorylineCuesAreKnownAndPaired() throws Exception {
+        java.nio.file.Path root = java.nio.file.Paths.get("src/main/resources/data/custom-campaigns/zurabaach");
+        MusicLibrary lib = MusicLibrary.load(root);
+        String story = java.nio.file.Files.readString(
+            root.resolve("storyline/multiverse arc/Dungeonland arc/dungeonland 2"));
+        java.util.Map<String, Integer> open = new java.util.HashMap<>();
+        List<MusicCue> cues = MusicCue.findAll(story);
+        assertTrue(cues.size() > 20);
+        for (MusicCue cue : cues) {
+            boolean known = cue.kind() == MusicCue.Kind.MUSIC
+                ? lib.findPlaylist(cue.name()) != null
+                : lib.findSound(cue.name()) != null;
+            assertTrue("Unknown cue: " + cue.name(), known);
+            String key = cue.kind() + ":" + cue.name().toLowerCase();
+            int depth = open.getOrDefault(key, 0) + (cue.closing() ? -1 : 1);
+            assertTrue("Close without open: " + cue.name(), depth >= 0);
+            open.put(key, depth);
+        }
+        open.forEach((k, v) -> assertEquals("Unclosed cue " + k, Integer.valueOf(0), v));
+    }
 }

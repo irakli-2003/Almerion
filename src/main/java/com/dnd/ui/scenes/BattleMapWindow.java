@@ -55,6 +55,7 @@ public class BattleMapWindow {
 
     private final MapRenderer renderer;
     private final MapRenderer.Decorations decorations = new MapRenderer.Decorations();
+    private ProjectorWindow projector;
     private final InitiativeTracker initiative = new InitiativeTracker();
 
     private Canvas canvas;
@@ -265,6 +266,7 @@ public class BattleMapWindow {
         // close-request handlers).
         stage.setOnHidden(e -> {
             if (timer != null) timer.dispose();
+            if (projector != null) projector.close();
             if (dirty) saveMap();
             com.dnd.ui.music.MusicPlayer.get().endCombat(musicLibrary(), null);
         });
@@ -333,7 +335,9 @@ public class BattleMapWindow {
                 render();
             }),
             tool("Zoom -", "Shrink the grid", () -> zoom(-8)),
-            tool("Zoom +", "Enlarge the grid", () -> zoom(8))),
+            tool("Zoom +", "Enlarge the grid", () -> zoom(8)),
+            tool("📽 Projector", "Show only the map (no DM panels or health bars) on the second screen,"
+                + " for a projector. Set Windows to Extend with Win+P first.", this::toggleProjector)),
             toolGroup("🛏 PARTY",
             tool("Rest...", "Give every player on the map a short or long rest", this::openPartyRestDialog)),
             toolGroup("🎵 ATMOSPHERE",
@@ -836,6 +840,21 @@ public class BattleMapWindow {
         decorations.currentTurn = initiative.current();
         if (roundLabel != null) roundLabel.setText("Round " + initiative.round());
         renderer.render(canvas, map, decorations);
+        if (projector != null) projector.update(map, decorations.currentTurn);
+    }
+
+    private void toggleProjector() {
+        if (projector == null) projector = new ProjectorWindow(uiSession.campaignRoot());
+        if (projector.isShowing()) {
+            projector.close();
+            status("Projector view closed.");
+            return;
+        }
+        projector.update(map, decorations.currentTurn);
+        projector.show(canvas.getScene().getWindow());
+        status(javafx.stage.Screen.getScreens().size() > 1
+            ? "Projector view is on the second screen. Players see only the map; press Esc there or this button again to close."
+            : "Only one screen found - the projector view opened as a window. Set Windows to Extend (Win+P) and reopen it.");
     }
 
     private void showRoster() {
@@ -1409,7 +1428,12 @@ public class BattleMapWindow {
 
         String blocked = CastResolver.blockedReason(token, action);
         String tip = description == null || description.isBlank() ? "" : description + "\n\n";
-        String hint = blocked != null ? blocked : "Click to aim, then click a target.";
+        String hint = blocked != null ? blocked
+            : switch (action.getTargeting()) {
+                case SELF -> "Click to use it on itself.";
+                case AURA -> "Click to use it - it hits everyone around the caster.";
+                default -> "Click to aim, then click a target.";
+            };
         if (spell != null) {
             var d = com.dnd.data.EntityDescriptions.of(repos);
             com.dnd.ui.components.EntityHoverCard.install(row, "\u2726 " + spell.getName(), d.spellSummary(spell),
@@ -1513,11 +1537,8 @@ public class BattleMapWindow {
             case AREA_DAMAGE -> {
                 CastResolver.Castable castable = CastResolver.of(action.toAbility(), id -> repos.effects().getById(id));
                 cancelFeatureAndAttackSilently();
-                armCast(token, castable);
-                if (armedCast == castable) {
-                    armedCastFeature = action;
-                    showDetail(token);
-                }
+                armCast(token, castable, action);
+                if (armedCast == castable) showDetail(token);
             }
             default -> afterFeatureUse(token, FeatureRules.useOnSelf(action, state, name, dice));
         }
@@ -1800,15 +1821,28 @@ public class BattleMapWindow {
      * can actually afford it right now.
      */
     private void armCast(MapObject caster, CastResolver.Castable action) {
+        armCast(caster, action, null);
+    }
+
+    /** As above; {@code feature} is the class/race feature spent once the cast lands. */
+    private void armCast(MapObject caster, CastResolver.Castable action, FeatureRules.Action feature) {
         String blocked = CastResolver.blockedReason(caster, action);
         if (blocked != null) {
             status(blocked);
             return;
         }
         cancelFeatureAndAttackSilently();
-        armedCastFeature = null;
+        armedCastFeature = feature;
         armedCaster = caster;
         armedCast = action;
+        if (!action.needsTarget()) {
+            // Self and aura actions start at the caster - there is nothing to aim.
+            Position at = caster.getPosition();
+            if (at != null) {
+                resolveCastAt(at.getX(), at.getY());
+                return;
+            }
+        }
         previewRange(caster, action.getRangeFeet() / FEET_PER_CELL, action.getRadiusFeet() / FEET_PER_CELL);
         status("Aiming " + action.getName() + " - click "
             + (action.isArea() ? "the centre of the blast" : "a target")
@@ -1833,14 +1867,22 @@ public class BattleMapWindow {
         MapObject caster = armedCaster;
         CastResolver.Castable action = armedCast;
         if (caster == null || action == null) return;
+        if (!action.needsTarget() && caster.getPosition() != null) {
+            cx = caster.getPosition().getX();
+            cy = caster.getPosition().getY();
+        }
         if (cx < 0 || cy < 0 || cx >= map.getWidth() || cy >= map.getHeight()) {
             status("That is off the map.");
             return;
         }
 
         List<MapObject> targets = new ArrayList<>();
-        if (action.isArea()) {
+        CastResolver.Targeting targeting = action.getTargeting();
+        if (targeting == CastResolver.Targeting.SELF) {
+            targets.add(caster);
+        } else if (action.isArea()) {
             targets.addAll(creaturesWithin(cx, cy, action.getRadiusFeet() / FEET_PER_CELL));
+            if (targeting == CastResolver.Targeting.AURA) targets.remove(caster);
             if (targets.isEmpty()) status("Nothing is caught in the blast.");
         } else {
             MapObject target = tokenAtCell(cx, cy);
@@ -1855,6 +1897,10 @@ public class BattleMapWindow {
         if (CastResolver.needsDamageRoll(action)) {
             Integer entered = promptRolledDamage(action);
             if (entered == null) {
+                if (!action.needsTarget()) {
+                    cancelCast();
+                    return;
+                }
                 status("Cast cancelled.");
                 return;
             }
@@ -1864,6 +1910,12 @@ public class BattleMapWindow {
         double distanceFeet = distanceCells(caster, cx, cy) * FEET_PER_CELL;
         CastResolver.Outcome outcome = CastResolver.cast(caster, action, targets, distanceFeet, rolledDamage);
         if (!outcome.isSuccess()) {
+            if (!action.needsTarget()) {
+                armedCast = null;
+                armedCaster = null;
+                armedCastFeature = null;
+                clearRange();
+            }
             status(outcome.getMessage());
             return;
         }

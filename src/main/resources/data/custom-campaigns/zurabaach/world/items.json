@@ -4533,6 +4533,146 @@
       "effects": [],
       "checkDc": 13,
       "producesChargeLevel": 5
+    },
+    {
+      "id": "arrows",
+      "name": "Arrows (20)",
+      "type": "gear",
+      "description": "A bundle of twenty arrows for a bow.",
+      "valueGold": 1,
+      "weight": 1.0,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "overview": "A bundle of twenty arrows for a bow."
+    },
+    {
+      "id": "quiver",
+      "name": "Quiver",
+      "type": "gear",
+      "description": "A leather quiver that holds twenty arrows.",
+      "valueGold": 1,
+      "weight": 1.0,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "overview": "A leather quiver that holds twenty arrows."
+    },
+    {
+      "id": "disguise-kit",
+      "name": "Disguise Kit",
+      "type": "tool",
+      "description": "Cosmetics, hair dye, small props and a few pieces of clothing for changing one's look.",
+      "valueGold": 25,
+      "weight": 3.0,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "overview": "Cosmetics, hair dye, small props and a few pieces of clothing for changing one's look."
+    },
+    {
+      "id": "forgery-kit",
+      "name": "Forgery Kit",
+      "type": "tool",
+      "description": "Papers, inks, quills, seals and wax for copying a document.",
+      "valueGold": 15,
+      "weight": 5.0,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "overview": "Papers, inks, quills, seals and wax for copying a document."
+    },
+    {
+      "id": "playing-cards",
+      "name": "Playing Card Set",
+      "type": "gear",
+      "description": "A worn deck of cards. Some of the corners are sharpened.",
+      "valueGold": 1,
+      "weight": 0.0,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "overview": "A worn deck of cards. Some of the corners are sharpened."
+    },
+    {
+      "id": "backpack",
+      "name": "Backpack",
+      "type": "gear",
+      "description": "A leather pack with straps.",
+      "valueGold": 2,
+      "weight": 5.0,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "overview": "A leather pack with straps."
+    },
+    {
+      "id": "pouch",
+      "name": "Pouch",
+      "type": "gear",
+      "description": "A small cloth or leather belt pouch.",
+      "valueGold": 1,
+      "weight": 1.0,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "overview": "A small cloth or leather belt pouch."
+    },
+    {
+      "id": "blue-bead",
+      "name": "Blue Glass Bead",
+      "type": "gear",
+      "description": "A small blue glass bead. Worthless, never sold.",
+      "valueGold": 0,
+      "weight": 0.0,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "overview": "A small blue glass bead. Worthless, never sold."
+    },
+    {
+      "id": "broken-key",
+      "name": "Broken Key",
+      "type": "gear",
+      "description": "Half of an iron key. Nobody knows which door it opened.",
+      "valueGold": 0,
+      "weight": 0.0,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "overview": "Half of an iron key. Nobody knows which door it opened."
+    },
+    {
+      "id": "lab-record",
+      "name": "Lab Record (R-17)",
+      "type": "gear",
+      "description": "A stolen page from a laboratory journal: \"Subject R-17. Rodent graft stable. Response to pain: humour.\" The seal in the corner is a closed eye inside a flask.",
+      "valueGold": 0,
+      "weight": 0.0,
+      "damage": null,
+      "durability": {
+        "max": 100,
+        "current": 100
+      },
+      "overview": "A stolen page from a laboratory journal: \"Subject R-17. Rodent graft stable. Response to pain: humour.\" The seal in the corner is a closed eye inside a flask."
     }
   ]
 }

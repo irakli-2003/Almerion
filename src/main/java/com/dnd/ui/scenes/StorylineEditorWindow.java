@@ -53,7 +53,8 @@ final class StorylineEditorWindow {
     private final CampaignRepositories repos;
     private final Path file;
 
-    private TextArea area;
+    private org.fxmisc.richtext.CodeArea area;
+    private final javafx.animation.PauseTransition rehighlight = new javafx.animation.PauseTransition(javafx.util.Duration.millis(150));
     private Label statusLabel;
     private Label statsLabel;
     private SessionTimer timer;
@@ -78,19 +79,22 @@ final class StorylineEditorWindow {
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setTitle(file.getFileName().toString());
 
-        area = new TextArea(service.readText(file));
+        area = new org.fxmisc.richtext.CodeArea(service.readText(file));
+        // The initial load is not an edit the DM should be able to undo away.
+        area.getUndoManager().forgetHistory();
         area.setWrapText(true);
         com.dnd.ui.components.EntityHoverCard.installMentions(area, repos);
         area.getStyleClass().add("storyline-editor");
-        // Without an explicit grow the TextArea keeps its preferred height and leaves a blank
-        // gap when the window is maximized, which is the whole point of this editor being
-        // a full window rather than a small dialog.
         area.setMaxHeight(Double.MAX_VALUE);
         area.setMaxWidth(Double.MAX_VALUE);
-        VBox.setVgrow(area, Priority.ALWAYS);
+        // Markers (music/sound cues, read-aloud, DM notes, map links) get their own colours.
+        // Re-colouring waits for a short typing pause so long files stay responsive.
+        rehighlight.setOnFinished(e -> highlight());
+        highlight();
         area.textProperty().addListener((obs, o, n) -> {
             markDirty(true);
             updateStats(n);
+            rehighlight.playFromStart();
         });
 
         statusLabel = new Label();
@@ -110,28 +114,41 @@ final class StorylineEditorWindow {
                 return;
             }
             com.dnd.music.MusicCue cue = com.dnd.music.MusicCue.at(area.getText(), area.getCaretPosition());
-            if (cue != null) playCue(cue);
-        });
-
-        // The skin (and with it the internal ScrollPane) isn't created until the TextArea is
-        // part of a showing scene, so setScrollTop before that point is silently ignored.
-        // Restoring on the next pulse after the skin appears is the reliable way to do it.
-        area.skinProperty().addListener((obs, oldSkin, newSkin) -> {
-            if (newSkin != null) {
-                double savedTop = SCROLL_PREFS.getDouble(scrollKey(), 0);
-                javafx.application.Platform.runLater(() -> area.setScrollTop(savedTop));
+            if (cue != null) {
+                // Double-click also selects the word under the pointer; drop that selection
+                // so the click reads as "press the cue", not "select text".
+                area.moveTo(area.getCaretPosition());
+                playCue(cue);
             }
         });
 
+        // Show a hand over cues and map links so they read as buttons.
+        area.addEventHandler(javafx.scene.input.MouseEvent.MOUSE_MOVED, e -> {
+            boolean onLink = false;
+            try {
+                java.util.OptionalInt idx = area.hit(e.getX(), e.getY()).getCharacterIndex();
+                onLink = idx.isPresent()
+                    && (com.dnd.music.MusicCue.at(area.getText(), idx.getAsInt()) != null
+                        || MapLink.at(area.getText(), idx.getAsInt()) != null);
+            } catch (RuntimeException ignored) {
+                // Pointer over empty space below the last paragraph.
+            }
+            area.setCursor(onLink ? javafx.scene.Cursor.HAND : javafx.scene.Cursor.TEXT);
+        });
+
+        org.fxmisc.flowless.VirtualizedScrollPane<org.fxmisc.richtext.CodeArea> areaScroll =
+            new org.fxmisc.flowless.VirtualizedScrollPane<>(area);
+        areaScroll.setMaxHeight(Double.MAX_VALUE);
+        areaScroll.setMaxWidth(Double.MAX_VALUE);
+
         playersHost.setVisible(false);
         playersHost.setManaged(false);
-        HBox.setHgrow(area, Priority.ALWAYS);
-        HBox center = new HBox(area, playersHost);
+        HBox.setHgrow(areaScroll, Priority.ALWAYS);
+        HBox center = new HBox(areaScroll, playersHost);
         VBox.setVgrow(center, Priority.ALWAYS);
 
         VBox layout = new VBox(0, buildToolbar(stage), center, buildStatusBar(stage));
         layout.getStyleClass().add("root");
-        VBox.setVgrow(area, Priority.ALWAYS);
 
         Scene scene = owner.themedScene(layout, 1000, 720);
         scene.getAccelerators().put(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN), this::save);
@@ -148,6 +165,16 @@ final class StorylineEditorWindow {
             }
             persistScrollAndDisposeTimer();
         });
+        // Restore where the DM left off, once the area has laid out its paragraphs.
+        stage.setOnShown(e -> {
+            int savedPar = SCROLL_PREFS.getInt(scrollKey(), 0);
+            javafx.application.Platform.runLater(() -> {
+                if (savedPar > 0 && savedPar < area.getParagraphs().size()) {
+                    area.moveTo(savedPar, 0);
+                    area.showParagraphAtTop(savedPar);
+                }
+            });
+        });
         stage.showAndWait();
     }
 
@@ -159,13 +186,22 @@ final class StorylineEditorWindow {
      * close button. Every path that closes this window now calls this shared method instead.
      */
     private void persistScrollAndDisposeTimer() {
-        SCROLL_PREFS.putDouble(scrollKey(), area.getScrollTop());
+        try {
+            SCROLL_PREFS.putInt(scrollKey(), area.getVisibleParagraphs().isEmpty() ? 0 : area.visibleParToAllParIndex(0));
+        } catch (RuntimeException ignored) {
+            // Nothing laid out yet; keep the previous position.
+        }
+        rehighlight.stop();
         timer.dispose();
+    }
+
+    private void highlight() {
+        area.setStyleSpans(0, com.dnd.ui.components.StorylineHighlighter.spans(area.getText()));
     }
 
     /** Stable per-file key for {@link #SCROLL_PREFS}, short enough to satisfy its 80-char cap. */
     private String scrollKey() {
-        return Integer.toHexString(file.toAbsolutePath().normalize().toString().hashCode());
+        return "p" + Integer.toHexString(file.toAbsolutePath().normalize().toString().hashCode());
     }
 
     // ---------------------------------------------------------------- toolbar
@@ -263,7 +299,7 @@ final class StorylineEditorWindow {
     private MenuButton buildMusicMenu() {
         MenuButton music = new MenuButton("🎵 Music");
         music.getStyleClass().add("dnd-button");
-        music.setTooltip(new Tooltip("Music panel, or insert a music / sound cue (double-click a cue to play it)"));
+        music.setTooltip(new Tooltip("Music panel, or insert a start/end pair of music or sound cues around the selection (double-click a start cue to play, an end cue to stop)"));
 
         MenuItem open = new MenuItem("Open music panel...");
         open.setOnAction(e -> MusicPanel.open(owner, owner.uiSession.campaignRoot()));
@@ -276,8 +312,8 @@ final class StorylineEditorWindow {
             List<MenuItem> playlists = new ArrayList<>();
             for (var playlist : library.sortedPlaylists()) {
                 MenuItem item = new MenuItem(playlist.getName());
-                item.setOnAction(ev -> insertAtCaret(com.dnd.music.MusicCue.marker(com.dnd.music.MusicCue.Kind.MUSIC, playlist.getName())));
-                playlists.add(item);
+                item.setOnAction(ev -> insertCuePair(com.dnd.music.MusicCue.Kind.MUSIC, playlist.getName()));
+                addToFolder(playlists, playlist.getFolder(), item);
             }
             MenuItem stop = new MenuItem("■ stop (fade out)");
             stop.setOnAction(ev -> insertAtCaret(com.dnd.music.MusicCue.marker(com.dnd.music.MusicCue.Kind.MUSIC, "stop")));
@@ -288,8 +324,8 @@ final class StorylineEditorWindow {
             List<MenuItem> sounds = new ArrayList<>();
             for (var sound : library.sortedSounds()) {
                 MenuItem item = new MenuItem((sound.isAmbience() ? "∞ " : "") + sound.getName());
-                item.setOnAction(ev -> insertAtCaret(com.dnd.music.MusicCue.marker(com.dnd.music.MusicCue.Kind.SFX, sound.getName())));
-                sounds.add(item);
+                item.setOnAction(ev -> insertCuePair(com.dnd.music.MusicCue.Kind.SFX, sound.getName()));
+                addToFolder(sounds, sound.getFolder(), item);
             }
             if (!sounds.isEmpty()) {
                 MenuItem stopSounds = new MenuItem("■ stop sounds & ambience");
@@ -308,10 +344,49 @@ final class StorylineEditorWindow {
         return music;
     }
 
+    /**
+     * Inserts an opening cue and its closing cue: around the selected scene text if there is
+     * a selection, otherwise on their own lines with the caret between them.
+     */
+    private void insertCuePair(com.dnd.music.MusicCue.Kind kind, String name) {
+        String open = com.dnd.music.MusicCue.marker(kind, name);
+        String close = com.dnd.music.MusicCue.closingMarker(kind, name);
+        int start = area.getSelection().getStart();
+        int end = area.getSelection().getEnd();
+        String body = area.getSelectedText();
+        area.replaceText(start, end, open + "\n" + body + "\n" + close);
+        area.moveTo(start + open.length() + 1 + body.length());
+        area.requestFocus();
+    }
+
+    /** Adds {@code item} to {@code items}, inside a "📁 folder" submenu when it has a folder (folders listed first). */
+    private static void addToFolder(List<MenuItem> items, String folder, MenuItem item) {
+        if (folder == null) {
+            items.add(item);
+            return;
+        }
+        String label = "📁 " + folder;
+        for (MenuItem existing : items) {
+            if (existing instanceof Menu m && label.equals(m.getText())) {
+                m.getItems().add(item);
+                return;
+            }
+        }
+        int at = 0;
+        while (at < items.size() && items.get(at) instanceof Menu) at++;
+        Menu menu = new Menu(label);
+        menu.getItems().add(item);
+        items.add(at, menu);
+    }
+
     private void playCue(com.dnd.music.MusicCue cue) {
         com.dnd.music.MusicLibrary library = com.dnd.music.MusicLibrary.load(owner.uiSession.campaignRoot());
         com.dnd.ui.music.MusicPlayer player = com.dnd.ui.music.MusicPlayer.get();
-        if (cue.isStop() && cue.kind() == com.dnd.music.MusicCue.Kind.SFX) {
+        if (cue.closing() && cue.kind() == com.dnd.music.MusicCue.Kind.SFX && !cue.name().isEmpty()) {
+            var sound = library.findSound(cue.name());
+            if (sound != null && sound.isAmbience()) player.stopAmbience(); else player.stopSound();
+            statusLabel.setText("■ " + cue.name() + " stopped.");
+        } else if (cue.isStop() && cue.kind() == com.dnd.music.MusicCue.Kind.SFX) {
             player.stopSound();
             player.stopAmbience();
             statusLabel.setText("Sounds and ambience stopped.");
@@ -522,7 +597,7 @@ final class StorylineEditorWindow {
     private void insertAtCaret(String text) {
         int caret = area.getCaretPosition();
         area.insertText(caret, text);
-        area.positionCaret(caret + text.length());
+        area.moveTo(caret + text.length());
         area.requestFocus();
     }
 
@@ -535,7 +610,7 @@ final class StorylineEditorWindow {
         String replacement = "\n" + open + "\n" + body + "\n" + close + "\n";
         area.replaceText(start, end, replacement);
         // Drop the caret onto the body line so the DM can just start typing.
-        area.positionCaret(start + open.length() + 2 + body.length());
+        area.moveTo(start + open.length() + 2 + body.length());
         area.requestFocus();
     }
 
@@ -707,13 +782,9 @@ final class StorylineEditorWindow {
      */
     private void scrollIntoView(int index) {
         javafx.application.Platform.runLater(() -> {
-            if (!(area.getSkin() instanceof javafx.scene.control.skin.TextAreaSkin skin)) return;
-            if (index >= area.getLength()) return;
-            javafx.geometry.Rectangle2D b = skin.getCharacterBounds(index);
-            double viewport = area.getHeight();
-            if (b.getMinY() < 0 || b.getMaxY() > viewport - 20) {
-                area.setScrollTop(Math.max(0, area.getScrollTop() + b.getMinY() - viewport / 3));
-            }
+            if (index > area.getLength()) return;
+            int par = area.offsetToPosition(index, org.fxmisc.richtext.model.TwoDimensional.Bias.Forward).getMajor();
+            area.showParagraphAtCenter(par);
         });
     }
 
@@ -770,7 +841,7 @@ final class StorylineEditorWindow {
     /** Opens a large-type window containing only the read-aloud passages of this file. */
     private void openPlayerView() {
         // Map markers are prep plumbing; the players should hear the map's name, not its id.
-        String readAloud = MapLink.stripMarkers(extractReadAloud(area.getText()));
+        String readAloud = com.dnd.music.MusicCue.stripMarkers(MapLink.stripMarkers(extractReadAloud(area.getText())));
         Stage stage = new Stage();
         com.dnd.ui.WindowOrder.adopt(stage);
         stage.initModality(Modality.APPLICATION_MODAL);

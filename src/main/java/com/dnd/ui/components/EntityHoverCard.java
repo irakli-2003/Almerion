@@ -100,12 +100,34 @@ public final class EntityHoverCard {
      * Names are looked up fresh on each hover, so newly created entries work immediately.
      */
     public static void installMentions(TextArea area, CampaignRepositories repos) {
-        if (area == null || repos == null) return;
+        if (area == null) return;
+        installMentions(area, (e, names) -> mentionUnder(area, e, names), repos);
+    }
+
+    /** Same as {@link #installMentions(TextArea, CampaignRepositories)} for a rich-text area. */
+    public static void installMentions(org.fxmisc.richtext.GenericStyledArea<?, ?, ?> area, CampaignRepositories repos) {
+        if (area == null) return;
+        installMentions(area, (e, names) -> {
+            javafx.geometry.Point2D p = area.screenToLocal(e.getScreenX(), e.getScreenY());
+            if (p == null) return null;
+            java.util.OptionalInt index;
+            try {
+                index = area.hit(p.getX(), p.getY()).getCharacterIndex();
+            } catch (RuntimeException ex) {
+                return null;
+            }
+            return index.isPresent() ? EntityDescriptions.mentionAt(area.getText(), index.getAsInt(), names) : null;
+        }, repos);
+    }
+
+    private static void installMentions(Node area, java.util.function.BiFunction<MouseEvent, Map<String, Object>, Object> lookup,
+                                        CampaignRepositories repos) {
+        if (repos == null) return;
         Tooltip[] showing = new Tooltip[1];
         String[] shownKey = new String[1];
         NameCache cache = new NameCache(repos);
         area.addEventHandler(MouseEvent.MOUSE_MOVED, e -> {
-            Object hit = mentionUnder(area, e, cache.names());
+            Object hit = lookup.apply(e, cache.names());
             String key = hit instanceof Spell s ? "s:" + s.getId() : hit instanceof Item i ? "i:" + i.getId() : null;
             if (key != null && key.equals(shownKey[0]) && showing[0] != null && showing[0].isShowing()) return;
             hide(showing);

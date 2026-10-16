@@ -1957,6 +1957,10 @@
       "file": "world/effects.json"
     },
     {
+      "id": "no_healing",
+      "file": "world/effects.json"
+    },
+    {
       "id": "raaz-horn-strike",
       "file": "world/spells.json"
     },
@@ -2141,11 +2145,11 @@
       "file": "world/monsters.json"
     },
     {
-      "id": "the-gardener",
+      "id": "the-caretaker",
       "file": "world/monsters.json"
     },
     {
-      "id": "topiary-hound",
+      "id": "rose-bed-dead",
       "file": "world/monsters.json"
     },
     {
@@ -2207,6 +2211,58 @@
     {
       "id": "grandfather-t",
       "file": "world/npcs.json"
+    },
+    {
+      "id": "disguise-self",
+      "file": "world/spells.json"
+    },
+    {
+      "id": "silent-image",
+      "file": "world/spells.json"
+    },
+    {
+      "id": "arrows",
+      "file": "world/items.json"
+    },
+    {
+      "id": "quiver",
+      "file": "world/items.json"
+    },
+    {
+      "id": "disguise-kit",
+      "file": "world/items.json"
+    },
+    {
+      "id": "forgery-kit",
+      "file": "world/items.json"
+    },
+    {
+      "id": "playing-cards",
+      "file": "world/items.json"
+    },
+    {
+      "id": "backpack",
+      "file": "world/items.json"
+    },
+    {
+      "id": "pouch",
+      "file": "world/items.json"
+    },
+    {
+      "id": "blue-bead",
+      "file": "world/items.json"
+    },
+    {
+      "id": "broken-key",
+      "file": "world/items.json"
+    },
+    {
+      "id": "lab-record",
+      "file": "world/items.json"
+    },
+    {
+      "id": "player-ratboy",
+      "file": "players/players.json"
     }
   ]
 }

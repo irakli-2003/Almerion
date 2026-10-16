@@ -758,7 +758,7 @@
         "monster" : {
           "id" : "mad-hatter",
           "name" : "The Mad Hatter (Cursed)",
-          "description" : "Medium humanoid, CR 5 (1800 XP) - VETERAN chassis. AC 15, HP 90 (12d8+36), speed 9 m. Saves DEX +6, CHA +7; Deception +7, Sleight of Hand +6, Perception +3; passive Perception 13. Polite, apologetic, occasionally drops an octave mid-sentence. He knows he is cursed and fights it the whole battle, and loses. Tactics: never leaves the long table - if the party refuses to come, the table stretches toward them 3 m per round. THE HAT is a valid target: AC 12, 25 HP, moves; damaging it does nothing to him but makes something inside scream - anyone hearing it makes a DC 12 WIS save or spends its reaction staring (it is the Rabbit). At half HP he stops laughing mid-laugh (read the box). If the party drank the right cup he starts at half HP with the teapot already spent. When he dies he thanks them, by name if he remembered any; he becomes a Joker card again.",
+          "description" : "Medium humanoid, CR 5 (1800 XP) - VETERAN chassis. AC 15, HP 90 (12d8+36), speed 9 m. Saves DEX +6, CHA +7; Deception +7, Sleight of Hand +6, Perception +3; passive Perception 13. Polite, apologetic, occasionally drops an octave mid-sentence. He knows he is cursed and fights it the whole battle, and loses. Tactics: never leaves the long table - if the party refuses to come, the table stretches toward them 3 m per round. THE HAT is a valid target: AC 12, 25 HP, moves; damaging it does nothing to him but makes something inside scream - anyone hearing it makes a DC 12 WIS save or spends its reaction staring (it is the Rabbit). At half HP he stops laughing mid-laugh (read the box). If the party drank the right cup he starts at half HP with the teapot already spent. LAW OF THE TABLE: each hat (d4, the only mandatory roll per round) also sets a law until his next turn; everyone seated repeats it aloud; breakers are punished by the table. Death: he does not fall, the laughter stops, every hat of the fight drops onto every chair at once, he gives his last law in his own voice ('Everyone drink'), all seated toast empty cups, the hat rolls to rest mouth-up and ticks, he becomes a Joker card again - and beside each player's plate lies a place card with their name in his handwriting.",
           "type" : "humanoid",
           "challengeRating" : "5",
           "stats" : {
@@ -771,8 +771,8 @@
           },
           "abilities" : [ {
             "id" : "a_dozen_hats",
-            "name" : "A Dozen Hats",
-            "description" : "At the start of each of his turns roll d4: 1 top hat - gains 15 temporary HP and mocks; 2 bonnet - one creature DC 15 WIS save or charmed until the end of his next turn and must move toward him; 3 helmet - AC 18 until his next turn and he cannot move; 4 no hat - for a moment he is himself, does not attack, and says something bitter and useful about Alice.",
+            "name" : "A Dozen Hats / Law of the Table",
+            "description" : "At the start of each of his turns roll d4 (the only mandatory roll each round). The hat changes what he is AND sets the law of the table until his next turn; he announces it an octave lower and everyone seated repeats it in unison. 1 top hat - 15 temp HP, mocks; LAW 'Only questions!' (any non-question speech, incl. verbal spell components, breaks it). 2 bonnet - one creature DC 15 WIS or charmed until end of his next turn and moves toward him; LAW 'Clean cup, move down!' (ending a turn where you started breaks it). 3 helmet - AC 18, cannot move; LAW 'No one taller than the host!' (ending a turn standing breaks it). 4 no hat - he is himself, does not attack, says something bitter and useful about Alice; the hat speaks in the Rabbit's voice: LAW 'No one looks at him.' (attacking him breaks it).",
             "effects" : [ ],
             "range" : 0.0,
             "recharge" : 0,
@@ -828,7 +828,7 @@
           }, {
             "id" : "pull_from_the_hat",
             "name" : "Pull from the Hat",
-            "description" : "Every round at the start of his turn (after the hat d4) he reaches into the hat and rolls d12: 1-6 a beast jumps onto the table and attacks on its own initiative (1 dormouse pile, 2 bandersnatch pup, 3 jabberwock hatchling, 4 bread-and-butterfly swarm, 5 rocking-horse-fly, 6 March Hare); 7-12 a weapon he uses instead of his normal attack (7 vorpal butter knife, 8 boomerang tea tray, 9 old flamingo mallet, 10 clock stuck at six, 11 sugar tongs, 12 roll twice). If the hat is bloodied or damaged, roll with disadvantage (pick the less dangerous result).",
+            "description" : "Action (instead of Hat Brim; roughly every other turn, or right after someone breaks a law). He reaches into the hat and rolls d12: 1-6 a beast jumps onto the table and attacks on its own initiative (1 dormouse pile, 2 bandersnatch pup, 3 jabberwock hatchling, 4 bread-and-butterfly swarm, 5 rocking-horse-fly, 6 March Hare); 7-12 a weapon he uses instead of his normal attack (7 vorpal butter knife, 8 boomerang tea tray, 9 old flamingo mallet, 10 clock stuck at six, 11 sugar tongs, 12 roll twice). If the hat is bloodied or damaged, roll with disadvantage (pick the less dangerous result).",
             "effects" : [ ],
             "range" : 0.0,
             "recharge" : 0,
@@ -837,9 +837,26 @@
             "manaCost" : 0,
             "damage" : null
           }, {
+            "id" : "table_punishes",
+            "name" : "The Table Punishes",
+            "description" : "Free, not an action. Whoever breaks the current law of the table takes 2d8 psychic (no save) and the chair drags them back to the table: restrained, as Sit Down!",
+            "effects" : [ "restrained" ],
+            "range" : 30.0,
+            "recharge" : 0,
+            "radius" : 0.0,
+            "hpCost" : 0,
+            "manaCost" : 0,
+            "damage" : {
+              "dice" : [ {
+                "diceId" : "d8",
+                "count" : 2
+              } ],
+              "typeId" : "psychic"
+            }
+          }, {
             "id" : "madness",
             "name" : "Madness",
-            "description" : "Reaction. The first time he drops to 0 HP he doesn't. He stands back up with 25 HP and a single hat left, and he is crying.",
+            "description" : "Reaction. The first time he drops to 0 HP he doesn't. He stands back up with 25 HP and a single hat left. He no longer laughs - the hat laughs for him, in his voice. Stop rolling the d4: the last law stays in force for the rest of the fight and the hat whispers it every turn.",
             "effects" : [ ],
             "range" : 0.0,
             "recharge" : 0,
@@ -17689,24 +17706,24 @@
       "occupants" : [ {
         "kind" : "monster",
         "monster" : {
-          "id" : "topiary-hound",
-          "name" : "Topiary Hound 2",
-          "description" : "Medium plant, CR 1 (200 XP). AC 12, HP 22 (4d8+4), speed 12 m. Vulnerable to fire. Blindsight 9 m, passive Perception 11. A bush clipped into the shape of a dog, rosebuds between the thorns; its bark is a rustle of leaves. Acts on the Gardener's initiative.",
-          "type" : "plant",
+          "id" : "rose-bed-dead",
+          "name" : "Rose-Bed Dead 2",
+          "description" : "Medium undead, CR 1 (200 XP). AC 11, HP 22 (4d8+4), speed 6 m. Vulnerable to fire and radiant; immune to poison. Darkvision 18 m, passive Perception 9. Somebody who once stood last in the queue. Rose roots grow through the ribs and out of the mouth; most still hold a crumpled petition. They do not moan. They queue. Acts on the Caretaker's initiative. If anyone says the name 'Lily' aloud, every Rose-Bed Dead loses its next action, and one of them - small, in a girl's dress - turns its head toward the third bush.",
+          "type" : "undead",
           "challengeRating" : "1",
           "stats" : {
             "strength" : 15,
-            "dexterity" : 14,
-            "constitution" : 12,
-            "intelligence" : 2,
-            "wisdom" : 12,
-            "charisma" : 4
+            "dexterity" : 8,
+            "constitution" : 13,
+            "intelligence" : 3,
+            "wisdom" : 8,
+            "charisma" : 5
           },
           "abilities" : [ {
-            "id" : "topiary_bite",
-            "name" : "Bite",
-            "description" : "Melee weapon attack: +4 to hit, 1d8+2 piercing. Against a target marked by the Gardener's brush: advantage and +1d6 damage.",
-            "effects" : [ ],
+            "id" : "dead_clutch",
+            "name" : "Clutch",
+            "description" : "Melee weapon attack: +4 to hit, reach 1.5 m, 1d8+2 bludgeoning, and the target is grappled (escape DC 12). A creature held by the dead cannot stand up from prone, and the Caretaker's attacks against it have advantage.",
+            "effects" : [ "grappled" ],
             "range" : 5.0,
             "recharge" : 0,
             "radius" : 0.0,
@@ -17717,23 +17734,23 @@
                 "diceId" : "d8",
                 "count" : 1
               } ],
-              "typeId" : "piercing"
+              "typeId" : "bludgeoning"
             }
           }, {
-            "id" : "topiary_roots",
-            "name" : "Roots",
-            "description" : "If it moved no more than 3 m on its turn, its thorns turn the 1.5 m around it into difficult terrain.",
+            "id" : "dead_back_to_soil",
+            "name" : "Back to the Soil",
+            "description" : "When it drops to 0 HP on the rose-bed soil, roll d6: on a 6 it sinks back in and rises again at the start of the Caretaker's next turn with 5 HP. Fire or radiant damage stops this.",
             "effects" : [ ],
             "range" : 0.0,
             "recharge" : 0,
-            "radius" : 5.0,
+            "radius" : 0.0,
             "hpCost" : 0,
             "manaCost" : 0,
             "damage" : null
           } ],
           "languages" : [ ],
           "maxHitPoints" : 22,
-          "armorClass" : 12,
+          "armorClass" : 11,
           "maxMana" : 0,
           "spellSlots" : [ ],
           "imagePath" : null
@@ -17756,7 +17773,7 @@
           "conditions" : [ ],
           "notes" : null,
           "inInitiative" : true,
-          "walkSpeed" : 30,
+          "walkSpeed" : 20,
           "climbSpeed" : 0,
           "swimSpeed" : 0,
           "speedSeeded" : true,
@@ -17790,24 +17807,24 @@
       "occupants" : [ {
         "kind" : "monster",
         "monster" : {
-          "id" : "topiary-hound",
-          "name" : "Topiary Hound 1",
-          "description" : "Medium plant, CR 1 (200 XP). AC 12, HP 22 (4d8+4), speed 12 m. Vulnerable to fire. Blindsight 9 m, passive Perception 11. A bush clipped into the shape of a dog, rosebuds between the thorns; its bark is a rustle of leaves. Acts on the Gardener's initiative.",
-          "type" : "plant",
+          "id" : "rose-bed-dead",
+          "name" : "Rose-Bed Dead 1",
+          "description" : "Medium undead, CR 1 (200 XP). AC 11, HP 22 (4d8+4), speed 6 m. Vulnerable to fire and radiant; immune to poison. Darkvision 18 m, passive Perception 9. Somebody who once stood last in the queue. Rose roots grow through the ribs and out of the mouth; most still hold a crumpled petition. They do not moan. They queue. Acts on the Caretaker's initiative. If anyone says the name 'Lily' aloud, every Rose-Bed Dead loses its next action, and one of them - small, in a girl's dress - turns its head toward the third bush.",
+          "type" : "undead",
           "challengeRating" : "1",
           "stats" : {
             "strength" : 15,
-            "dexterity" : 14,
-            "constitution" : 12,
-            "intelligence" : 2,
-            "wisdom" : 12,
-            "charisma" : 4
+            "dexterity" : 8,
+            "constitution" : 13,
+            "intelligence" : 3,
+            "wisdom" : 8,
+            "charisma" : 5
           },
           "abilities" : [ {
-            "id" : "topiary_bite",
-            "name" : "Bite",
-            "description" : "Melee weapon attack: +4 to hit, 1d8+2 piercing. Against a target marked by the Gardener's brush: advantage and +1d6 damage.",
-            "effects" : [ ],
+            "id" : "dead_clutch",
+            "name" : "Clutch",
+            "description" : "Melee weapon attack: +4 to hit, reach 1.5 m, 1d8+2 bludgeoning, and the target is grappled (escape DC 12). A creature held by the dead cannot stand up from prone, and the Caretaker's attacks against it have advantage.",
+            "effects" : [ "grappled" ],
             "range" : 5.0,
             "recharge" : 0,
             "radius" : 0.0,
@@ -17818,23 +17835,23 @@
                 "diceId" : "d8",
                 "count" : 1
               } ],
-              "typeId" : "piercing"
+              "typeId" : "bludgeoning"
             }
           }, {
-            "id" : "topiary_roots",
-            "name" : "Roots",
-            "description" : "If it moved no more than 3 m on its turn, its thorns turn the 1.5 m around it into difficult terrain.",
+            "id" : "dead_back_to_soil",
+            "name" : "Back to the Soil",
+            "description" : "When it drops to 0 HP on the rose-bed soil, roll d6: on a 6 it sinks back in and rises again at the start of the Caretaker's next turn with 5 HP. Fire or radiant damage stops this.",
             "effects" : [ ],
             "range" : 0.0,
             "recharge" : 0,
-            "radius" : 5.0,
+            "radius" : 0.0,
             "hpCost" : 0,
             "manaCost" : 0,
             "damage" : null
           } ],
           "languages" : [ ],
           "maxHitPoints" : 22,
-          "armorClass" : 12,
+          "armorClass" : 11,
           "maxMana" : 0,
           "spellSlots" : [ ],
           "imagePath" : null
@@ -17857,7 +17874,7 @@
           "conditions" : [ ],
           "notes" : null,
           "inInitiative" : true,
-          "walkSpeed" : 30,
+          "walkSpeed" : 20,
           "climbSpeed" : 0,
           "swimSpeed" : 0,
           "speedSeeded" : true,
@@ -17981,23 +17998,23 @@
       "occupants" : [ {
         "kind" : "monster",
         "monster" : {
-          "id" : "the-gardener",
-          "name" : "The Gardener",
-          "description" : "Large fey (plant), CR 6 (2300 XP). AC 15 (bark), HP 120 (16d10+32), speed 9 m. Saves STR +8, WIS +6; Perception +6, Athletics +8. Resistant to piercing and bludgeoning, vulnerable to fire. Tremorsense through the trees 18 m, passive Perception 16. Three metres tall, straw hat, a face of bark with moss in the cracks, fingers of root, an old and very well honed scythe. He paints the white roses red, one rose a minute; when the current bush runs out of white roses he takes whoever stands last in the queue. Multiattack: Scythe + Garden Shears. He never hurries - always 'Kneel' first, then the scythe. If the party retreats more than 9 m he does not follow; he goes back to painting. Scaling: too hard - the hounds come only once; too easy - +30 HP. When he dies he kneels, for the first time; every white rose falls at once.",
-          "type" : "fey (plant)",
-          "challengeRating" : "6",
+          "id" : "the-caretaker",
+          "name" : "The Caretaker",
+          "description" : "Large undead, CR 8 (3900 XP). AC 16 (grave-dirt hide), HP 157 (15d10+75), speed 9 m. Saves STR +10, CON +9, WIS +7; Athletics +10, Perception +7. Resistant to necrotic and piercing; vulnerable to fire. Immune to poison, charmed and frightened. Blindsight 9 m, tremorsense 18 m through the rose-bed soil, passive Perception 17. A hunched gravedigger nearly three metres tall. He has no face - only grey skin stretched tight and stitched shut with black thread where a face should be. His arms are too long and sewn on from somebody else; the stitches weep. He carries a shovel taller than a man, the blade black and bitten. The Queen's old gardener, dug up and put back to work: he still paints the white roses red, and what he paints with comes from whoever stands last in the queue. He does not speak, except one word. Multiattack: two Shovel attacks; every shovel hit heals him for the damage it deals - but only while he stands on the rose-bed soil. Tactics: 'Kneel.' first, then the shovel; Shovel Slam when three or more are close; Rise. whenever it recharges. He never leaves the garden; past 9 m from the beds he goes back to painting. Scaling: too hard - the dead rise only once and Rise. does not recharge; too easy - +30 HP and the dead start at four. When he dies he kneels, for the first time; the stitches on his face open, and there is only soil inside.",
+          "type" : "undead",
+          "challengeRating" : "8",
           "stats" : {
-            "strength" : 20,
-            "dexterity" : 12,
-            "constitution" : 15,
-            "intelligence" : 8,
+            "strength" : 22,
+            "dexterity" : 10,
+            "constitution" : 20,
+            "intelligence" : 6,
             "wisdom" : 16,
-            "charisma" : 10
+            "charisma" : 8
           },
           "abilities" : [ {
-            "id" : "garden_soil",
-            "name" : "Garden Soil",
-            "description" : "Passive. Moves through the rose bushes (difficult terrain) at normal speed. Anyone else takes 1d4 piercing for every 1.5 m moved through them.",
+            "id" : "grave_soil",
+            "name" : "Grave Soil",
+            "description" : "Passive. He moves through the rose beds (difficult terrain) at normal speed; anyone else takes 1d4 piercing for every 1.5 m moved through them. His life drain only works while he stands on the rose-bed soil. Off the soil (on the paving, the gravel path, or a bed that has been burned) he cannot regain HP at all - put 'No Healing' on him until he steps back onto the soil.",
             "effects" : [ ],
             "range" : 0.0,
             "recharge" : 0,
@@ -18012,10 +18029,10 @@
               "typeId" : "piercing"
             }
           }, {
-            "id" : "gardener_scythe",
-            "name" : "Scythe",
-            "description" : "Melee weapon attack: +8 to hit, reach 3 m (10 ft), 2d8+5 slashing. Against a kneeling or prone target it scores a critical hit on 18-20.",
-            "effects" : [ ],
+            "id" : "caretaker_shovel",
+            "name" : "Shovel (Multiattack x2)",
+            "description" : "Two attacks. Melee weapon attack: +10 to hit, reach 3 m (10 ft), 2d8+6 bludgeoning plus 5 necrotic. He regains HP equal to all the damage dealt (life drain) - unless he is off the rose-bed soil. Against a kneeling or prone target it scores a critical hit on 18-20.",
+            "effects" : [ "life_drain" ],
             "range" : 10.0,
             "recharge" : 0,
             "radius" : 0.0,
@@ -18026,46 +18043,40 @@
                 "diceId" : "d8",
                 "count" : 2
               } ],
-              "typeId" : "slashing"
+              "typeId" : "bludgeoning"
             }
           }, {
-            "id" : "garden_shears",
-            "name" : "Garden Shears",
-            "description" : "Melee weapon attack: +8 to hit, reach 1.5 m, 1d10+5 slashing, and the target loses its reaction until the start of its next turn ('pruning').",
-            "effects" : [ ],
-            "range" : 5.0,
-            "recharge" : 0,
-            "radius" : 0.0,
+            "id" : "shovel_slam",
+            "name" : "Shovel Slam",
+            "description" : "Recharge 5-6. He drives the shovel into the ground. Every other creature within 4.5 m: CON save DC 16, 4d10 bludgeoning and knocked prone on a failure, half damage and standing on a success. The ground there cracks into difficult terrain, and the soil it throws up is rose-bed soil.",
+            "effects" : [ "prone" ],
+            "range" : 0.0,
+            "recharge" : 3,
+            "radius" : 15.0,
             "hpCost" : 0,
             "manaCost" : 0,
             "damage" : {
               "dice" : [ {
                 "diceId" : "d10",
-                "count" : 1
+                "count" : 4
               } ],
-              "typeId" : "slashing"
+              "typeId" : "bludgeoning"
             }
           }, {
-            "id" : "thorny_vine",
-            "name" : "Thorny Vine",
-            "description" : "Recharge 5-6. Up to two creatures within 9 m: DEX save DC 15 or restrained and kneeling (treat as prone); escape DC 15 (STR or DEX). A restrained creature takes 2d6 piercing at the start of each of its turns. The vine has AC 12, 15 HP, vulnerable to fire.",
-            "effects" : [ "restrained", "prone" ],
-            "range" : 30.0,
+            "id" : "caretaker_rise",
+            "name" : "Rise.",
+            "description" : "Bonus action, Recharge 5-6. He taps the shovel twice on the soil. Two Rose-Bed Dead claw their way up anywhere on the beds within 9 m and act on his initiative. Never more than four at once. At the start of the fight two are already standing.",
+            "effects" : [ ],
+            "range" : 0.0,
             "recharge" : 3,
             "radius" : 0.0,
             "hpCost" : 0,
             "manaCost" : 0,
-            "damage" : {
-              "dice" : [ {
-                "diceId" : "d6",
-                "count" : 2
-              } ],
-              "typeId" : "piercing"
-            }
+            "damage" : null
           }, {
-            "id" : "gardener_kneel",
+            "id" : "caretaker_kneel",
             "name" : "Kneel.",
-            "description" : "Bonus action. One creature within 9 m that can hear him: WIS save DC 14 or prone, and it cannot stand up until the end of its next turn.",
+            "description" : "Bonus action. One creature within 9 m that can hear him - though he has no mouth: WIS save DC 15 or prone, and it cannot stand up until the end of its next turn.",
             "effects" : [ "prone" ],
             "range" : 30.0,
             "recharge" : 0,
@@ -18074,32 +18085,10 @@
             "manaCost" : 0,
             "damage" : null
           }, {
-            "id" : "rose_blood_brush",
-            "name" : "Rose-Blood Brush",
-            "description" : "Bonus action, choose one: MARK - a damaged creature within 3 m is marked red; the Gardener and topiary hounds attack it with advantage until it washes the mark off (action + water or wine). PAINT - if he dealt slashing damage this turn, he paints a white rose and regains 10 HP.",
-            "effects" : [ ],
-            "range" : 10.0,
-            "recharge" : 0,
-            "radius" : 0.0,
-            "hpCost" : 0,
-            "manaCost" : 0,
-            "damage" : null
-          }, {
-            "id" : "topiary_hounds",
-            "name" : "Topiary Hounds",
-            "description" : "At the start of the fight, and the first time he drops below half HP, two topiary hounds climb out of the bushes. They act on his initiative.",
-            "effects" : [ ],
-            "range" : 0.0,
-            "recharge" : 0,
-            "radius" : 0.0,
-            "hpCost" : 0,
-            "manaCost" : 0,
-            "damage" : null
-          }, {
             "id" : "rise_from_knees",
             "name" : "Rising from Your Knees",
-            "description" : "Reaction. When a prone or kneeling creature within 3 m stands up, he attacks it with the scythe.",
-            "effects" : [ ],
+            "description" : "Reaction. When a prone or kneeling creature within 3 m stands up, he hits it with the shovel (as one Shovel attack, life drain included).",
+            "effects" : [ "life_drain" ],
             "range" : 10.0,
             "recharge" : 0,
             "radius" : 0.0,
@@ -18110,12 +18099,12 @@
                 "diceId" : "d8",
                 "count" : 2
               } ],
-              "typeId" : "slashing"
+              "typeId" : "bludgeoning"
             }
           } ],
           "languages" : [ "common" ],
-          "maxHitPoints" : 120,
-          "armorClass" : 15,
+          "maxHitPoints" : 157,
+          "armorClass" : 16,
           "maxMana" : 0,
           "spellSlots" : [ ],
           "imagePath" : null
@@ -18126,8 +18115,8 @@
         },
         "inventory" : [ ],
         "combat" : {
-          "maxHitPoints" : 120,
-          "currentHitPoints" : 120,
+          "maxHitPoints" : 157,
+          "currentHitPoints" : 157,
           "maxMana" : 0,
           "currentMana" : 0,
           "gold" : 0,
@@ -29784,7 +29773,7 @@
         "monster" : {
           "id" : "clockwork-white-rabbit",
           "name" : "The White Rabbit (Clockwork)",
-          "description" : "Small beast (clockwork), CR 6 (2300 XP). AC 17, HP 105 (14d8+42), speed 15 m. Saves DEX +9, WIS +8; Perception +8, Acrobatics +9. Truesight 9 m, passive Perception 18. 1.2 m tall, a once-beautiful waistcoat, fur that was once white, holding the pocket watch in both hands like a bird. He does not want to kill them; he wants them to be late. Talk first - fight, persuade (DC 20) or steal (DC 20 Sleight of Hand) are all valid. He never attacks a downed character ('Enough.'). At 0 HP he does not die: he sits down heavily and his hands open.",
+          "description" : "Small beast (clockwork), CR 6 (2300 XP). AC 17, HP 105 (14d8+42), speed 24 m, doesn't provoke opportunity attacks. Saves DEX +9, WIS +8; Perception +8, Acrobatics +9. Truesight 9 m, passive Perception 18. 1.2 m tall, a once-beautiful waistcoat, fur that was once white - torn away in patches over wet, tiny gears turning in time with his breathing - holding the pocket watch in both hands like a bird. He does not want to kill them; he wants them to be late. Talk first - fight, persuade (DC 20) or steal (DC 20 Sleight of Hand) are all valid. He never attacks a downed character: he kneels, ear to its chest, and counts its remaining seconds aloud - always a little fewer than the player expected. At 0 HP he does not die: he sits down heavily and his hands open.",
           "type" : "beast (clockwork)",
           "challengeRating" : "6",
           "stats" : {
@@ -29799,6 +29788,17 @@
             "id" : "out_of_order",
             "name" : "Out of Order",
             "description" : "Passive. He acts first every round, on initiative 30, no matter what anyone rolled.",
+            "effects" : [ ],
+            "range" : 0.0,
+            "recharge" : 0,
+            "radius" : 0.0,
+            "hpCost" : 0,
+            "manaCost" : 0,
+            "damage" : null
+          }, {
+            "id" : "between_seconds",
+            "name" : "Between Seconds",
+            "description" : "Passive. At the end of every other creature's turn he moves up to 6 m for free. He is never seen moving - only somewhere else.",
             "effects" : [ ],
             "range" : 0.0,
             "recharge" : 0,
@@ -29846,9 +29846,20 @@
             "manaCost" : 0,
             "damage" : null
           }, {
+            "id" : "tick_back",
+            "name" : "Tick (Click)",
+            "description" : "Reaction, 3 times per fight. When another creature ends its turn, he undoes that turn: the creature returns to where it started, and all damage and effects from that turn are undone - but spent resources and actions stay spent and it does not act again. The players remember. Read aloud: click. Fire returns to the palm. The arrow lies back on the string. The Rabbit hasn't moved. He smiles. 'Once more. Until you get it right.'",
+            "effects" : [ ],
+            "range" : 0.0,
+            "recharge" : 0,
+            "radius" : 0.0,
+            "hpCost" : 0,
+            "manaCost" : 0,
+            "damage" : null
+          }, {
             "id" : "pocket_watch_rewind",
             "name" : "Pocket Watch Rewind",
-            "description" : "Recharge 5-6, at most TWICE per fight. He winds the watch backwards: the fight returns to the start of the Rabbit's previous turn - all damage and effects since then (spent spells, conditions, movement, rolled dice) are undone. Use the battle map's ⟲ Rewind button; the app restores everything automatically. What does not rewind: the players' memories - they remember what happened and may act differently. The recharge itself stays spent. Read aloud: the ticking stops. Then - click - and everything goes backwards. 'Sorry,' he says. 'Again. Again. Please.'",
+            "description" : "Recharge 5-6, at most TWICE per fight. He winds the watch backwards: the fight returns to the start of the Rabbit's previous turn - all damage and effects since then (spent spells, conditions, movement, rolled dice) are undone. Use the battle map's ⟲ Rewind button; the app restores everything automatically. What does not rewind: the players' memories - they remember what happened and may act differently. The recharge itself stays spent. Read aloud: the ticking stops. Then - click - and everything goes backwards. His wounds zip shut in his fur. 'Again,' he says. 'Again. We will do this as many times as it takes.'",
             "effects" : [ ],
             "range" : 0.0,
             "recharge" : 3,

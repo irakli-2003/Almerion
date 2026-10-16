@@ -141,6 +141,18 @@ public class MusicLibrary {
     public boolean isLoop() { return loop; }
     public void setLoop(boolean loop) { this.loop = loop; }
 
+    /** Every folder used by a playlist or sound, sorted by name. */
+    public List<String> folders() {
+        java.util.TreeSet<String> names = new java.util.TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        for (Playlist p : playlists) if (p.getFolder() != null) names.add(p.getFolder());
+        for (Sound s : sounds) if (s.getFolder() != null) names.add(s.getFolder());
+        return new ArrayList<>(names);
+    }
+
+    static String cleanFolder(String folder) {
+        return folder == null || folder.isBlank() ? null : folder.trim();
+    }
+
     private static int clamp(int v) {
         return Math.max(0, Math.min(100, v));
     }
@@ -149,6 +161,9 @@ public class MusicLibrary {
     public static class Playlist {
         private String id = newId();
         private String name;
+        /** Optional group, e.g. "Alice X Horror"; blank means the general library. */
+        @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY)
+        private String folder;
         private List<Track> tracks = new ArrayList<>();
 
         public Playlist() {}
@@ -161,6 +176,8 @@ public class MusicLibrary {
         public void setId(String id) { this.id = id; }
         public String getName() { return name; }
         public void setName(String name) { this.name = name; }
+        public String getFolder() { return folder; }
+        public void setFolder(String folder) { this.folder = cleanFolder(folder); }
         public List<Track> getTracks() { return tracks; }
         public void setTracks(List<Track> tracks) { this.tracks = tracks == null ? new ArrayList<>() : tracks; }
 
@@ -196,6 +213,9 @@ public class MusicLibrary {
         private String id = newId();
         private String name;
         private String url;
+        /** Optional group, e.g. "Alice X Horror"; blank means the general library. */
+        @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY)
+        private String folder;
         private int startSeconds;
         /** 0 means "play to the end of the video". */
         private int endSeconds;
@@ -217,6 +237,8 @@ public class MusicLibrary {
         public void setName(String name) { this.name = name; }
         public String getUrl() { return url; }
         public void setUrl(String url) { this.url = url; }
+        public String getFolder() { return folder; }
+        public void setFolder(String folder) { this.folder = cleanFolder(folder); }
         public int getStartSeconds() { return startSeconds; }
         public void setStartSeconds(int startSeconds) { this.startSeconds = Math.max(0, startSeconds); }
         public int getEndSeconds() { return endSeconds; }

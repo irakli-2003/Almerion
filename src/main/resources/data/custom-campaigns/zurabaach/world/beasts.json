@@ -263,7 +263,7 @@
       "name" : "Swarm",
       "description" : "Occupies another creature's space and bites from every side.",
       "effects" : [ "bleeding" ],
-      "range" : 0.0,
+      "range" : 5.0,
       "recharge" : 0,
       "radius" : 0.0
     } ],
@@ -695,7 +695,7 @@
       "name" : "ant bite",
       "description" : "strong claw bite",
       "effects" : [ "bleeding" ],
-      "range" : 0.0,
+      "range" : 5.0,
       "recharge" : 0,
       "radius" : 0.0
     } ],

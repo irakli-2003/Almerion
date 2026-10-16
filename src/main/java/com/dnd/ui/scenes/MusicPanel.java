@@ -49,6 +49,10 @@ public final class MusicPanel {
     private Consumer<MusicPlayer.Status> listener;
     private Stage stage;
     private String shownAmbience;
+    private ComboBox<String> folderBox;
+
+    private static final String ALL_FOLDERS = "All folders";
+    private static final String NO_FOLDER = "General (no folder)";
 
     private MusicPanel(BaseScene owner, Path campaignRoot) {
         this.owner = owner;
@@ -78,15 +82,16 @@ public final class MusicPanel {
         VBox root = new VBox(12);
         root.getStyleClass().add("root");
         root.setPadding(new Insets(14));
-        root.getChildren().addAll(buildNowPlaying(), buildControls(), new Separator());
+        root.getChildren().addAll(buildNowPlaying(), buildControls(), new Separator(), buildFolderRow());
 
         HBox columns = new HBox(14, buildPlaylistColumn(), buildTrackColumn(), buildSoundColumn());
         VBox.setVgrow(columns, Priority.ALWAYS);
         root.getChildren().add(columns);
 
         Label hint = owner.body("Paste any YouTube video or playlist link. Videos whose owners block playback"
-            + " outside YouTube are skipped automatically.\nIn a session file, write [music: Playlist name],"
-            + " [music: stop] or [sfx: Sound name] and double-click it to play.");
+            + " outside YouTube are skipped automatically.\nIn a session file, wrap a scene in [music: Playlist name]"
+            + " ... [/music: Playlist name] or [sfx: Sound name] ... [/sfx: Sound name]; double-click the start"
+            + " cue to play it and the end cue to stop it.");
         hint.setWrapText(true);
         hint.setMinHeight(Region.USE_PREF_SIZE);
         hint.setMaxWidth(Double.MAX_VALUE);
@@ -105,6 +110,53 @@ public final class MusicPanel {
         refreshPlaylists(null);
         refreshSounds();
         stage.show();
+    }
+
+    // ── Folders ─────────────────────────────────────────────────────────────
+
+    /** Folder filter, so themed sets (e.g. "Alice X Horror") don't drown in the general library. */
+    private HBox buildFolderRow() {
+        folderBox = new ComboBox<>();
+        folderBox.setTooltip(new Tooltip("Show only the playlists and sounds in one folder"));
+        refreshFolders(ALL_FOLDERS);
+        folderBox.setOnAction(e -> {
+            if (folderBox.getValue() == null) return;
+            refreshPlaylists(null);
+            refreshSounds();
+        });
+        HBox row = new HBox(8, owner.body("📁 Folder:"), folderBox);
+        row.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        return row;
+    }
+
+    private void refreshFolders(String select) {
+        java.util.List<String> names = new java.util.ArrayList<>(java.util.List.of(ALL_FOLDERS, NO_FOLDER));
+        names.addAll(library.folders());
+        folderBox.getItems().setAll(names);
+        folderBox.setValue(names.stream().filter(n -> n.equalsIgnoreCase(select)).findFirst().orElse(ALL_FOLDERS));
+    }
+
+    private boolean shown(String folder) {
+        String sel = folderBox == null ? null : folderBox.getValue();
+        if (sel == null || ALL_FOLDERS.equals(sel)) return true;
+        if (NO_FOLDER.equals(sel)) return folder == null;
+        return sel.equalsIgnoreCase(folder);
+    }
+
+    /** The folder a newly created playlist or sound should go into: the one being viewed. */
+    private String currentFolder() {
+        String sel = folderBox == null ? null : folderBox.getValue();
+        return sel == null || ALL_FOLDERS.equals(sel) || NO_FOLDER.equals(sel) ? null : sel;
+    }
+
+    /** Editable folder picker for dialogs: existing folders to choose from, or type a new one. */
+    private ComboBox<String> folderPicker(String initial) {
+        ComboBox<String> box = new ComboBox<>();
+        box.setEditable(true);
+        box.getItems().setAll(library.folders());
+        box.setValue(initial == null ? "" : initial);
+        box.setPromptText("none - e.g. Alice X Horror");
+        return box;
     }
 
     // ── Now playing / controls ──────────────────────────────────────────────
@@ -225,8 +277,19 @@ public final class MusicPanel {
             String name = ask("New playlist", "Playlist name:", "");
             if (name == null) return;
             MusicLibrary.Playlist p = new MusicLibrary.Playlist(name);
+            p.setFolder(currentFolder());
             library.getPlaylists().add(p);
             save();
+            refreshPlaylists(p);
+        });
+        Button folder = tool("📁", "Move the selected playlist to a folder", () -> {
+            MusicLibrary.Playlist p = playlistList.getSelectionModel().getSelectedItem();
+            if (p == null) return;
+            String name = askFolder("Move \"" + p.getName() + "\" to folder", p.getFolder());
+            if (name == null) return;
+            p.setFolder(name);
+            save();
+            refreshFolders(folderBox.getValue());
             refreshPlaylists(p);
         });
         Button rename = tool("Rename", "Rename the selected playlist", () -> {
@@ -279,14 +342,14 @@ public final class MusicPanel {
                 : "Added " + added + " playlists and sounds from the starter pack.");
         });
 
-        HBox row1 = new HBox(6, add, rename, delete);
+        HBox row1 = new HBox(6, add, rename, folder, delete);
         return new VBox(8, owner.sectionLabel("Playlists"), playlistList, row1, new HBox(6, playBtn, starter),
             owner.body("⚔ Combat playlist:"), combatBox);
     }
 
     private void refreshPlaylists(MusicLibrary.Playlist select) {
-        playlistList.getItems().setAll(library.sortedPlaylists());
-        if (select != null) playlistList.getSelectionModel().select(select);
+        playlistList.getItems().setAll(library.sortedPlaylists().stream().filter(p -> shown(p.getFolder())).toList());
+        if (select != null && playlistList.getItems().contains(select)) playlistList.getSelectionModel().select(select);
         else if (!playlistList.getItems().isEmpty()) playlistList.getSelectionModel().select(0);
 
         combatBox.getItems().setAll("(none)");
@@ -477,10 +540,13 @@ public final class MusicPanel {
         });
 
         Button add = tool("+ Add sound", "Add a sound effect or looping ambience from a YouTube clip", () -> {
-            MusicLibrary.Sound s = soundDialog(new MusicLibrary.Sound(), "Add sound");
+            MusicLibrary.Sound s = new MusicLibrary.Sound();
+            s.setFolder(currentFolder());
+            s = soundDialog(s, "Add sound");
             if (s == null) return;
             library.getSounds().add(s);
             save();
+            refreshFolders(folderBox.getValue());
             refreshSounds();
         });
         Button stopFx = tool("⏹ Stop sounds", "Stop the sound effect and the ambience", () -> {
@@ -497,6 +563,7 @@ public final class MusicPanel {
         soundPad.getChildren().clear();
         ambiencePad.getChildren().clear();
         for (MusicLibrary.Sound sound : library.sortedSounds()) {
+            if (!shown(sound.getFolder())) continue;
             boolean on = sound.isAmbience() && sound.getId().equals(shownAmbience);
             Button b = tool((on ? "◼ " : "") + sound.getName(),
                 (sound.isAmbience() ? "Click to start or stop this loop" : "Click to play")
@@ -513,6 +580,7 @@ public final class MusicPanel {
             edit.setOnAction(e -> {
                 if (soundDialog(sound, "Edit sound") != null) {
                     save();
+                    refreshFolders(folderBox.getValue());
                     refreshSounds();
                 }
             });
@@ -550,6 +618,7 @@ public final class MusicPanel {
         end.setEditable(true);
         CheckBox ambience = owner.checkBox("Ambience - loop under the music until stopped");
         ambience.setSelected(sound.isAmbience());
+        ComboBox<String> folder = folderPicker(sound.getFolder());
         Button preview = new Button("▶ Preview");
         preview.getStyleClass().add("dnd-button");
         compact(preview);
@@ -570,7 +639,8 @@ public final class MusicPanel {
         grid.addRow(2, new Label("Start (s):"), start);
         grid.addRow(3, new Label("End (s, 0 = to the end):"), end);
         grid.add(ambience, 1, 4);
-        grid.add(preview, 1, 5);
+        grid.addRow(5, new Label("Folder:"), folder);
+        grid.add(preview, 1, 6);
         dialog.getDialogPane().setContent(grid);
         check.run();
 
@@ -580,6 +650,7 @@ public final class MusicPanel {
         sound.setStartSeconds(start.getValue());
         sound.setEndSeconds(end.getValue());
         sound.setAmbience(ambience.isSelected());
+        sound.setFolder(folder.getEditor().getText());
         return sound;
     }
 
@@ -603,6 +674,20 @@ public final class MusicPanel {
         b.setStyle("-fx-min-width: 0; -fx-padding: 6 12 6 12;");
         b.setMinWidth(Region.USE_PREF_SIZE);
         return b;
+    }
+
+    /** Asks for a folder (existing or new). Returns "" to clear the folder, null when cancelled. */
+    private String askFolder(String title, String initial) {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle(title);
+        dialog.setHeaderText("Pick a folder, type a new one, or leave it empty for the general library.");
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        dialog.initOwner(stage);
+        owner.styleDialog(dialog);
+        ComboBox<String> box = folderPicker(initial);
+        dialog.getDialogPane().setContent(new HBox(8, new Label("Folder:"), box));
+        if (dialog.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) return null;
+        return box.getEditor().getText() == null ? "" : box.getEditor().getText().trim();
     }
 
     private String ask(String title, String prompt, String initial) {

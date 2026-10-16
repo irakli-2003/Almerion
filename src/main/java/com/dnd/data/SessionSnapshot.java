@@ -26,7 +26,7 @@ import java.util.function.Function;
 public final class SessionSnapshot {
 
     /** Where a joined session is cached; wiped and rewritten on each join. */
-    private static final Path JOINED_ROOT = Path.of("data", "joined-sessions");
+    private static final Path JOINED_ROOT = AppHome.resolve("data", "joined-sessions");
 
     /**
      * Every catalog carried in a snapshot: the snapshot key, the file it lives in, and the

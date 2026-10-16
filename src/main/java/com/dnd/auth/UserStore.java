@@ -23,7 +23,7 @@ public class UserStore {
     private final Path file;
 
     public UserStore() {
-        this(Paths.get("data", "auth", "users.json"));
+        this(com.dnd.data.AppHome.resolve("data", "auth", "users.json"));
     }
 
     public UserStore(Path file) {

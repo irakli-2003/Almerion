@@ -21,7 +21,7 @@ public final class ImageFolders {
 
     /** The shared images folder, created on demand. */
     public static Path imagesRoot() {
-        Path root = Paths.get(System.getProperty("user.dir"), "images");
+        Path root = com.dnd.data.AppHome.root().toAbsolutePath().resolve("images");
         try {
             Files.createDirectories(root);
         } catch (IOException ignored) {

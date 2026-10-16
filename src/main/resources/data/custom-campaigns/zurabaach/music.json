@@ -213,6 +213,90 @@
       "title" : "Sirens song",
       "url" : "https://youtu.be/dtPDLZyRL3o?si=j0fR_4cM-kUSJUEk"
     } ]
+  }, {
+    "id" : "ah-wonderland-arrival",
+    "name" : "Wonderland arrival",
+    "folder" : "Alice X Horror",
+    "tracks" : [ {
+      "title" : "2 Hours Dark Ambient for Reading & Focus | Alice in the Twisted Wonderland",
+      "url" : "https://www.youtube.com/watch?v=oMKWxAqGWuA"
+    }, {
+      "title" : "Alice in the Dark - Dark Fantasy Ambience - 4 Hours",
+      "url" : "https://www.youtube.com/watch?v=kHlb--B00jc"
+    }, {
+      "title" : "Alice: Madness Returns - Vale of Tears music & ambience",
+      "url" : "https://www.youtube.com/watch?v=MVc9_DeLzXY"
+    } ]
+  }, {
+    "id" : "ah-mad-tea-party",
+    "name" : "Mad tea party",
+    "folder" : "Alice X Horror",
+    "tracks" : [ {
+      "title" : "Alice: Madness Returns | Hatter's Domain (Always Elevenses) | Thematic Ambience",
+      "url" : "https://www.youtube.com/watch?v=-AoTJNWjqJU"
+    }, {
+      "title" : "Alice: Madness Returns - Ambience - Hatter's Domain",
+      "url" : "https://www.youtube.com/watch?v=2JvlVG-rScM"
+    }, {
+      "title" : "Alice Madness Returns Hatter (Extended)",
+      "url" : "https://www.youtube.com/watch?v=90UCsoXGhnI"
+    } ]
+  }, {
+    "id" : "ah-caretaker",
+    "name" : "Caretaker",
+    "folder" : "Alice X Horror",
+    "tracks" : [ {
+      "title" : "The Witcher 3 OST - You're... Immortal? (Long Version)",
+      "url" : "https://www.youtube.com/watch?v=mVKPvspyyyQ"
+    }, {
+      "title" : "Combat, Battle & Fight Soundtrack Mix - The Witcher 3: Hearts of Stone",
+      "url" : "https://www.youtube.com/watch?v=1gRUIHcBh0A"
+    }, {
+      "title" : "The Witcher 3: Hearts of Stone - Ofier's King Guard (Extended)",
+      "url" : "https://www.youtube.com/watch?v=WnItcbHbeUU"
+    } ]
+  }, {
+    "id" : "ah-clockwork-tower",
+    "name" : "Clockwork tower",
+    "folder" : "Alice X Horror",
+    "tracks" : [ {
+      "title" : "RPG | D&D Ambience - Clockwork Tower (gears, clock, metal creaking)",
+      "url" : "https://www.youtube.com/watch?v=RukWUhWekcU"
+    }, {
+      "title" : "Clocktower Ambience | Turning Gears and Resonating Chimes",
+      "url" : "https://www.youtube.com/watch?v=7yB8QTJIowQ"
+    }, {
+      "title" : "Gothic Storm - Haunted Clock",
+      "url" : "https://www.youtube.com/watch?v=-R-vrmY03Ak"
+    } ]
+  }, {
+    "id" : "ah-wonderland-chase",
+    "name" : "Wonderland chase",
+    "folder" : "Alice X Horror",
+    "tracks" : [ {
+      "title" : "Alice Madness Returns Vorpal Blade (Combat Theme Extended)",
+      "url" : "https://www.youtube.com/watch?v=iSnn-uo_Urw"
+    }, {
+      "title" : "Alice Madness Returns Combat (Extended)",
+      "url" : "https://www.youtube.com/watch?v=ZPh-Qq1h6sI"
+    }, {
+      "title" : "American McGee's Alice - Red Queen battle",
+      "url" : "https://www.youtube.com/watch?v=RfQXiwME_60"
+    } ]
+  }, {
+    "id" : "ah-alice-s-nightmare",
+    "name" : "Alice's nightmare",
+    "folder" : "Alice X Horror",
+    "tracks" : [ {
+      "title" : "Final Boss: Dollmaker (Part 1) [1HR Looped] - Alice: Madness Returns",
+      "url" : "https://www.youtube.com/watch?v=SeU9Db1KAb4"
+    }, {
+      "title" : "Final Boss: Dollmaker (Part 2) [1HR Looped] - Alice: Madness Returns",
+      "url" : "https://www.youtube.com/watch?v=Tw2Mb1K-Ck0"
+    }, {
+      "title" : "Alice Madness Returns Infernal Train (Extended)",
+      "url" : "https://www.youtube.com/watch?v=13ayOWTsVpw"
+    } ]
   } ],
   "sounds" : [ {
     "id" : "amb-river",
@@ -480,6 +564,70 @@
     "startSeconds" : 0,
     "endSeconds" : 0,
     "ambience" : false
+  }, {
+    "id" : "ah-ticking-clock",
+    "name" : "Ticking clock",
+    "url" : "https://www.youtube.com/watch?v=xyCQFLOSWGc",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : true,
+    "folder" : "Alice X Horror"
+  }, {
+    "id" : "ah-creepy-music-box",
+    "name" : "Creepy music box",
+    "url" : "https://www.youtube.com/watch?v=CyjvUVPX8mE",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : true,
+    "folder" : "Alice X Horror"
+  }, {
+    "id" : "ah-whispers",
+    "name" : "Whispers",
+    "url" : "https://www.youtube.com/watch?v=woyKelEsB9I",
+    "startSeconds" : 0,
+    "endSeconds" : 0,
+    "ambience" : true,
+    "folder" : "Alice X Horror"
+  }, {
+    "id" : "ah-teacups-rattling",
+    "name" : "Teacups rattling",
+    "url" : "https://www.youtube.com/watch?v=orAsnalVi-o",
+    "startSeconds" : 0,
+    "endSeconds" : 5,
+    "ambience" : false,
+    "folder" : "Alice X Horror"
+  }, {
+    "id" : "ah-shovel-strike",
+    "name" : "Shovel strike",
+    "url" : "https://www.youtube.com/watch?v=zDvpxkepU1c",
+    "startSeconds" : 0,
+    "endSeconds" : 5,
+    "ambience" : false,
+    "folder" : "Alice X Horror"
+  }, {
+    "id" : "ah-clock-chime",
+    "name" : "Clock chime",
+    "url" : "https://www.youtube.com/watch?v=Qmnk-HwYiXE",
+    "startSeconds" : 0,
+    "endSeconds" : 25,
+    "ambience" : false,
+    "folder" : "Alice X Horror"
+  }, {
+    "id" : "ah-child-laughter",
+    "name" : "Child laughter",
+    "url" : "https://www.youtube.com/watch?v=VfqyScJU6Jo",
+    "startSeconds" : 0,
+    "endSeconds" : 10,
+    "ambience" : false,
+    "folder" : "Alice X Horror"
+  }, {
+    "id" : "ah-time-rewind",
+    "name" : "Time rewind",
+    "url" : "https://www.youtube.com/watch?v=QqvLHzWaF_s",
+    "startSeconds" : 0,
+    "endSeconds" : 5,
+    "ambience" : false,
+    "folder" : "Alice X Horror"
   } ],
   "combatPlaylistId" : null,
   "volume" : 56,

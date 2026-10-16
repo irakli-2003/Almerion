@@ -489,5 +489,15 @@
     "healingAmount" : 0,
     "durationRounds" : 10,
     "lasting" : true
+  }, {
+    "id" : "no_healing",
+    "name" : "No Healing",
+    "description" : "Cannot regain HP from life drain. The Caretaker carries this while he is off the rose-bed soil.",
+    "damaging" : false,
+    "healing" : false,
+    "damageAmount" : 0,
+    "healingAmount" : 0,
+    "durationRounds" : 10,
+    "lasting" : true
   } ]
 }

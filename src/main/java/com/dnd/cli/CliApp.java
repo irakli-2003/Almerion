@@ -15,6 +15,7 @@ import java.util.List;
 
 public class CliApp {
     public static void main(String[] args) {
+        com.dnd.data.AppHome.seedBundledData();
         // Try to launch JavaFX GUI; fall back to CLI if no display is available
         if (!isHeadless()) {
             com.dnd.ui.GuiApp.launch(args);

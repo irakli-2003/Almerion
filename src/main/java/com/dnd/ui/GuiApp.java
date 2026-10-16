@@ -13,6 +13,9 @@ public class GuiApp extends Application {
     public void start(Stage primaryStage) {
         UiFonts.load();
         WindowOrder.install();
+        TooltipPersistence.install();
+        primaryStage.getIcons().setAll(AppIcons.icons());
+        AppIcons.install();
         CampaignStorage storage = new CampaignStorage();
         storage.ensureInitialized();
         CliSession session = new CliSession(storage, new SystemConsoleIO(new Scanner(System.in)));

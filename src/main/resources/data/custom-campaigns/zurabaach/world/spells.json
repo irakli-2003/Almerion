@@ -3928,5 +3928,51 @@
     "materialComponent" : "a Thermal Smoke Grenade primed with a Thermal capsule (thrown)",
     "materialCost" : 0,
     "materialConsumed" : false
+  }, {
+    "id" : "disguise-self",
+    "name" : "Disguise Self",
+    "description" : "The caster looks like someone else - clothes, armour and gear included - for 1 hour. Physical inspection gives it away; an Investigation check against the spell save DC sees through it.",
+    "level" : 1,
+    "school" : "illusion",
+    "manaCost" : 5,
+    "range" : 0,
+    "radius" : 0,
+    "castingMethod" : "speech",
+    "requiredConsumables" : [ ],
+    "requiredTools" : [ ],
+    "concentration" : null,
+    "effects" : [ ],
+    "damage" : null,
+    "cooldownRounds" : 0,
+    "areaSpell" : false,
+    "components" : [ "V", "S" ],
+    "materialComponent" : "",
+    "materialCost" : 0,
+    "materialConsumed" : false
+  }, {
+    "id" : "silent-image",
+    "name" : "Silent Image",
+    "description" : "A soundless image of an object, creature or other visible thing, no larger than a 4.5 m cube, appears within 18 m for up to 10 minutes (concentration). The caster can move it with an action. An Investigation check against the spell save DC reveals it as an illusion.",
+    "level" : 1,
+    "school" : "illusion",
+    "manaCost" : 5,
+    "range" : 60,
+    "radius" : 15,
+    "castingMethod" : "hand-movement",
+    "requiredConsumables" : [ ],
+    "requiredTools" : [ ],
+    "concentration" : {
+      "difficultyLevel" : "EASY",
+      "preventsMovement" : false,
+      "requiredRoll" : 5
+    },
+    "effects" : [ ],
+    "damage" : null,
+    "cooldownRounds" : 0,
+    "areaSpell" : true,
+    "components" : [ "V", "S", "M" ],
+    "materialComponent" : "a bit of fleece",
+    "materialCost" : 0,
+    "materialConsumed" : false
   } ]
 }

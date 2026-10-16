@@ -6,24 +6,50 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * A music or sound cue written into a storyline file: {@code [music: Tavern]},
- * {@code [music: stop]} or {@code [sfx: Thunder]}. Double-clicking it in the editor plays it.
- * Names (not ids) are used so the files stay readable when printed or read aloud.
+ * A music or sound cue written into a storyline file. Cues come in pairs so the DM clicks the
+ * opening one when a scene begins and the closing one when it is over:
+ * <pre>
+ *   [music: Tavern]   ...scene...   [/music: Tavern]
+ *   [sfx: Rain]       ...scene...   [/sfx: Rain]
+ * </pre>
+ * The name on a closing cue is optional ({@code [/music]}), and the older one-shot stop cues
+ * {@code [music: stop]} / {@code [sfx: stop]} still work. Names (not ids) are used so the
+ * files stay readable when printed or read aloud.
  */
-public record MusicCue(Kind kind, String name, int start, int end) {
+public record MusicCue(Kind kind, String name, boolean closing, int start, int end) {
 
     public enum Kind { MUSIC, SFX }
 
-    private static final Pattern PATTERN = Pattern.compile("\\[(music|sfx)\\s*:\\s*([^\\]]+)\\]", Pattern.CASE_INSENSITIVE);
+    private static final Pattern PATTERN = Pattern.compile(
+        "\\[(/)?(music|sfx)[ \\t]*(?::[ \\t]*([^\\]\\n]*))?\\]", Pattern.CASE_INSENSITIVE);
 
-    /** {@code [music: stop]} fades the music out; {@code [sfx: stop]} stops effects and ambience. */
-    public boolean isStop() {
-        return "stop".equalsIgnoreCase(name);
+    /** An opening cue. */
+    public MusicCue(Kind kind, String name, int start, int end) {
+        this(kind, name, false, start, end);
     }
 
+    /** True for a closing cue or the legacy {@code [music: stop]} / {@code [sfx: stop]}. */
+    public boolean isStop() {
+        return closing || "stop".equalsIgnoreCase(name);
+    }
+
+    /** Opening cue, e.g. {@code [music: Tavern]}. */
     public static String marker(Kind kind, String name) {
-        String safe = name == null ? "" : name.replace("]", "").trim();
-        return "[" + (kind == Kind.SFX ? "sfx" : "music") + ": " + safe + "]";
+        return "[" + tag(kind) + ": " + clean(name) + "]";
+    }
+
+    /** Closing cue, e.g. {@code [/music: Tavern]}. */
+    public static String closingMarker(Kind kind, String name) {
+        String safe = clean(name);
+        return "[/" + tag(kind) + (safe.isEmpty() ? "" : ": " + safe) + "]";
+    }
+
+    private static String clean(String name) {
+        return name == null ? "" : name.replace("]", "").replace("\n", " ").trim();
+    }
+
+    private static String tag(Kind kind) {
+        return kind == Kind.SFX ? "sfx" : "music";
     }
 
     public static List<MusicCue> findAll(String text) {
@@ -31,8 +57,12 @@ public record MusicCue(Kind kind, String name, int start, int end) {
         if (text == null || text.isEmpty()) return cues;
         Matcher m = PATTERN.matcher(text);
         while (m.find()) {
-            Kind kind = m.group(1).equalsIgnoreCase("sfx") ? Kind.SFX : Kind.MUSIC;
-            cues.add(new MusicCue(kind, m.group(2).trim(), m.start(), m.end()));
+            boolean closing = m.group(1) != null;
+            String name = m.group(3) == null ? "" : m.group(3).trim();
+            // An opening cue needs something to play; "[music]" alone is just text.
+            if (!closing && name.isEmpty()) continue;
+            Kind kind = m.group(2).equalsIgnoreCase("sfx") ? Kind.SFX : Kind.MUSIC;
+            cues.add(new MusicCue(kind, name, closing, m.start(), m.end()));
         }
         return cues;
     }
@@ -42,5 +72,14 @@ public record MusicCue(Kind kind, String name, int start, int end) {
             if (caret >= cue.start() && caret <= cue.end()) return cue;
         }
         return null;
+    }
+
+    /** Removes every cue, for text shown to the players. */
+    public static String stripMarkers(String text) {
+        if (text == null || text.isEmpty()) return text;
+        StringBuilder sb = new StringBuilder(text);
+        List<MusicCue> cues = findAll(text);
+        for (int i = cues.size() - 1; i >= 0; i--) sb.delete(cues.get(i).start(), cues.get(i).end());
+        return sb.toString();
     }
 }

@@ -163,6 +163,36 @@ public final class CastResolver {
         public boolean isArea() {
             return radiusFeet > 0;
         }
+
+        /** How this picks who it affects - see {@link Targeting}. */
+        public Targeting getTargeting() {
+            boolean hasDamage = damage != null && damage.hasDice();
+            if (radiusFeet > 0) return rangeFeet > 0 ? Targeting.AREA : Targeting.AURA;
+            if (rangeFeet <= 0 && !hasDamage) return Targeting.SELF;
+            return Targeting.SINGLE;
+        }
+
+        /** False when it goes off around (or on) the caster the moment it is used. */
+        public boolean needsTarget() {
+            Targeting t = getTargeting();
+            return t == Targeting.SINGLE || t == Targeting.AREA;
+        }
+    }
+
+    /**
+     * Who a spell or ability lands on. A range of zero means it starts at the caster: with a
+     * radius it is an aura around them, without one (and without damage dice) it is used on
+     * themselves. Range-zero damage with no radius is a touch and still needs a target.
+     */
+    public enum Targeting {
+        /** Only the caster. */
+        SELF,
+        /** Every other creature within the radius of the caster. */
+        AURA,
+        /** Everyone within the radius of an aim point inside the range. */
+        AREA,
+        /** One chosen creature. */
+        SINGLE
     }
 
     /** Flattens a spell into a castable. */
@@ -261,7 +291,7 @@ public final class CastResolver {
         double range = action.getRangeFeet();
         // A range of zero means touch or self, which still has to be adjacent, not anywhere.
         double allowed = range > 0 ? range : 5;
-        if (distanceFeet > allowed + 0.001) {
+        if (action.needsTarget() && distanceFeet > allowed + 0.001) {
             return Outcome.refused(action.getName() + " reaches " + (int) allowed
                 + " ft but the target is " + (int) Math.round(distanceFeet) + " ft away.");
         }
@@ -275,19 +305,56 @@ public final class CastResolver {
             log.add(TokenSupport.nameOf(caster) + " uses up " + consumed + ".");
         }
 
-        List<MapObject> hit = targets == null ? List.of() : targets;
+        List<MapObject> hit = new ArrayList<>();
+        if (targets != null) {
+            for (MapObject target : targets) {
+                if (target != null && !hit.contains(target)) hit.add(target);
+            }
+        }
+        Targeting targeting = action.getTargeting();
+        if (targeting == Targeting.SELF) {
+            hit.clear();
+            hit.add(caster);
+        } else if (targeting == Targeting.AURA) {
+            hit.remove(caster);
+        }
         for (MapObject target : hit) {
-            if (target == null) continue;
             log.addAll(applyTo(caster, target, action, rolledDamage));
+        }
+        if (!hasMechanicalEffect(action)) {
+            // Nothing the board can apply by itself: leave the rules where the DM is looking
+            // and mark the caster so it is clear on the map that this is in play.
+            if (action.getDescription() != null && !action.getDescription().isBlank()) {
+                log.add(action.getName() + ": " + action.getDescription());
+            }
+            if (targeting == Targeting.SELF) {
+                ActiveEffect marker = new ActiveEffect(action.getId(), action.getName(), 1, 0, 0,
+                    TokenSupport.nameOf(caster));
+                marker.setDescription(action.getDescription());
+                casterState.addEffect(marker);
+            }
         }
 
         if (action.getCooldownRounds() > 0) {
             casterState.startCooldown(action.getId(), action.getCooldownRounds());
         }
 
-        String summary = TokenSupport.nameOf(caster) + " casts " + action.getName()
-            + (hit.isEmpty() ? " at empty ground." : " on " + describeTargets(hit) + ".");
+        String summary = TokenSupport.nameOf(caster) + " " + (action.isSpell() ? "casts " : "uses ") + action.getName()
+            + switch (targeting) {
+                case SELF -> ".";
+                case AURA -> hit.isEmpty() ? " - nobody is close enough." : " around itself, catching " + describeTargets(hit) + ".";
+                default -> hit.isEmpty() ? " at empty ground." : " on " + describeTargets(hit) + ".";
+            };
         return new Outcome(true, summary, log);
+    }
+
+    /** True when it deals damage or carries at least one effect the board can track. */
+    private static boolean hasMechanicalEffect(Castable action) {
+        if (action.getDamage() != null && action.getDamage().hasDice()) return true;
+        for (Effect effect : action.getEffects()) {
+            if (effect != null) return true;
+        }
+        return false;
     }
 
     // ── Costs ───────────────────────────────────────────────────────────────
@@ -364,10 +431,12 @@ public final class CastResolver {
         String targetName = TokenSupport.nameOf(target);
         String sourceName = TokenSupport.nameOf(caster) + "'s " + action.getName();
 
+        int dealtTotal = 0;
         int directDamage = action.getDamage() != null && action.getDamage().hasDice() ? Math.max(0, rolledDamage) : 0;
         if (directDamage > 0) {
             com.dnd.model.rules.CombatRules.Hit landed =
                 com.dnd.model.rules.CombatRules.damage(state, directDamage, action.getDamage().getTypeId());
+            dealtTotal += landed.dealt();
             String type = action.getDamage().getTypeId();
             log.add(targetName + " takes " + landed.dealt()
                 + (type == null || type.isBlank() ? "" : " " + type) + " damage" + landed.note() + ".");
@@ -391,15 +460,44 @@ public final class CastResolver {
                 continue;
             }
             // Instant effects land once, right now, and leave nothing behind.
+            boolean instant = false;
             if (effect.isDamaging() && effect.getDamageAmount() > 0) {
                 com.dnd.model.rules.CombatRules.Hit landed =
                     com.dnd.model.rules.CombatRules.damage(state, effect.getDamageAmount(), null);
+                dealtTotal += landed.dealt();
                 log.add(targetName + " takes " + landed.dealt() + " from " + displayName(effect, action)
                     + landed.note() + ".");
+                instant = true;
             }
             if (effect.isHealing() && effect.getHealingAmount() > 0) {
                 state.heal(effect.getHealingAmount());
                 log.add(targetName + " recovers " + effect.getHealingAmount() + " from " + displayName(effect, action) + ".");
+                instant = true;
+            }
+            if (!instant) {
+                // A plain condition (prone, restrained, charmed...) with no timer of its own:
+                // it stays on the token through the bearer's next turn, or until the DM clears it.
+                int rounds = effect.getDurationRounds() > 0 ? effect.getDurationRounds()
+                    : target == caster ? 1 : 2;
+                ActiveEffect condition = new ActiveEffect(effect.getId(), displayName(effect, action), rounds, 0, 0,
+                    sourceName);
+                condition.setDescription(effect.getDescription());
+                state.addEffect(condition);
+                log.add(targetName + " is affected by " + condition.getName()
+                    + " for " + rounds + (rounds == 1 ? " round." : " rounds."));
+            }
+        }
+
+        if (dealtTotal > 0 && target != caster && drainsLife(action)) {
+            CombatState casterState = TokenSupport.combatOf(caster);
+            String casterName = TokenSupport.nameOf(caster);
+            if (hasEffect(casterState, NO_HEALING_EFFECT)) {
+                log.add(casterName + " cannot drink the life it tears out - healing is blocked.");
+            } else {
+                int before = casterState.getCurrentHitPoints();
+                casterState.heal(dealtTotal);
+                int gained = casterState.getCurrentHitPoints() - before;
+                log.add(casterName + " drains " + gained + " HP from " + targetName + ".");
             }
         }
 
@@ -407,6 +505,26 @@ public final class CastResolver {
             log.add(targetName + " falls.");
         }
         return log;
+    }
+
+    /** Effect id that makes an attack heal its user for the damage it deals. */
+    public static final String LIFE_DRAIN_EFFECT = "life_drain";
+    /** Effect id that, while on a creature, stops it regaining HP from life drain. */
+    public static final String NO_HEALING_EFFECT = "no_healing";
+
+    private static boolean drainsLife(Castable action) {
+        for (Effect effect : action.getEffects()) {
+            if (effect != null && LIFE_DRAIN_EFFECT.equals(effect.getId())) return true;
+        }
+        return false;
+    }
+
+    private static boolean hasEffect(CombatState state, String effectId) {
+        if (state.getActiveEffects() == null) return false;
+        for (ActiveEffect active : state.getActiveEffects()) {
+            if (active != null && effectId.equals(active.getEffectId())) return true;
+        }
+        return false;
     }
 
     private static String displayName(Effect effect, Castable action) {

@@ -1,234 +1,498 @@
-# DnD
-Structured environment for running Dungeons and dragons campaign
+# DnD Campaign Manager
 
-## CLI quick start
-Build and run the CLI entry point:
+**A desktop companion for running Dungeons & Dragons–style campaigns.** The Dungeon Master
+prepares the world, writes session notes, runs battles on a grid map with music, and prints
+character sheets. Players follow along from their own computers.
 
-```powershell
-mvn test
-mvn package
-java -jar target\dnd-campaign-manager-1.0.0.jar
-```
+> This guide is for **people who use the app**. If you want to build it from source, change the
+> code or use the command-line version, see the [Developer Guide](DEVELOPER.md).
 
-To launch the JavaFX UI directly from Maven:
+---
 
-```powershell
-mvn javafx:run
-```
+## Contents
 
-### Campaign storage
-- `src/main/resources/data/default-campaign/` holds the template campaign (read-only in CLI).
-- `src/main/resources/data/custom-campaigns/` stores one folder per custom campaign.
-- `src/main/resources/data/srd/` holds the standard-rules dataset that new campaigns are
-  seeded from (see below).
+1. [What you can do with it](#1-what-you-can-do-with-it)
+2. [System requirements](#2-system-requirements)
+3. [Install, update and uninstall](#3-install-update-and-uninstall)
+4. [Quick start for Dungeon Masters](#4-quick-start-for-dungeon-masters)
+5. [Quick start for players](#5-quick-start-for-players)
+6. [Key concepts](#6-key-concepts)
+7. [Accounts and sign-in](#7-accounts-and-sign-in)
+8. [Campaigns and members](#8-campaigns-and-members)
+9. [The DM menu](#9-the-dm-menu)
+10. [Characters](#10-characters)
+11. [Worldbuilding](#11-worldbuilding)
+12. [Storyline and session notes](#12-storyline-and-session-notes)
+13. [Maps and battles](#13-maps-and-battles)
+14. [Music and sound](#14-music-and-sound)
+15. [Online sessions](#15-online-sessions)
+16. [Printing character sheets](#16-printing-character-sheets)
+17. [Rules reference: class features and the Artificer](#17-rules-reference-class-features-and-the-artificer)
+18. [Keyboard shortcuts](#18-keyboard-shortcuts)
+19. [Your data and backups](#19-your-data-and-backups)
+20. [Troubleshooting](#20-troubleshooting)
+21. [FAQ](#21-faq)
+22. [More documentation](#22-more-documentation)
 
-### Standard rules dataset
-Creating a campaign without ticking **Start blank** seeds it from the bundled standard-rules
-catalogues in `src/main/resources/data/srd/`, so you can start playing with conventional
-D&D-style content instead of an empty world:
+---
+
+## 1. What you can do with it
+
+| As a Dungeon Master | As a player |
+|---|---|
+| Keep several campaigns, each with its own world, party and notes | Join a campaign with a short join code |
+| Start from a ready-made rules set (races, classes, spells, items, monsters, maps) or from a blank world | Pick your character and see its stats, inventory and abilities |
+| Create characters with a step-by-step wizard that explains every choice | Add your own portrait and appearance text |
+| Write session notes with read-aloud passages, map links and music cues | Follow the DM's live session from your own computer |
+| Run battles on a grid map: initiative, damage, healing, spells, ranges, rests | |
+| Play YouTube music, ambience and sound effects that follow the action | |
+| Show the battle map to the table on a second screen | |
+| Print standard character sheets as PDFs | |
+| Invite other DMs and players, and host a live online session | |
+
+---
+
+## 2. System requirements
+
+- **Windows 10 or 11** (64-bit).
+- About **1 GB of disk space** for the app, plus about 150 MB the first time you play music.
+- **4 GB of RAM** or more is recommended.
+- **An internet connection** for accounts, shared campaigns, online sessions, music and updates.
+  Without one you can still open campaigns stored on your computer.
+- A **second monitor or projector** is optional, for showing the battle map to players.
+
+You don't need to install Java or anything else. The installer includes everything.
+
+---
+
+## 3. Install, update and uninstall
+
+### Install
+
+1. Open the [latest release](https://github.com/irakli-2003/DnD/releases/latest).
+2. Download **`DnD.Campaign.Manager-<version>.exe`**.
+3. Run it and follow the setup wizard. You can choose the install folder and whether to add a
+   desktop shortcut.
+4. Start **DnD Campaign Manager** from the Start menu or the desktop shortcut.
+
+> Windows SmartScreen may warn that the installer is from an unknown publisher. Click
+> **More info → Run anyway**.
+
+### Update
+
+The app checks for a new version each time it starts.
+
+- When one is available you see **Update available**. Click **Download update** to download it in
+  the background while you keep working, or **Later** to skip it this time.
+- When it's ready, choose **Restart now**, or **Next time** to switch to it automatically the next
+  time you open the app.
+- Occasionally an update needs the full installer. The app then shows **Version X needs the
+  installer**, and **Open download page** takes you to it. Installing over the old version keeps
+  all your campaigns.
+
+### Uninstall
+
+Use **Windows Settings → Apps → Installed apps → DnD Campaign Manager → Uninstall**.
+Your campaigns and settings are **not** deleted. They stay in your data folder (see
+[Your data and backups](#19-your-data-and-backups)), so a later reinstall picks them up again.
+
+---
+
+## 4. Quick start for Dungeon Masters
+
+This walkthrough takes about ten minutes and gets you from installing the app to running a first
+fight.
+
+1. **Create an account.** On the login screen, click **Create an account**. Enter a username,
+   email and password (at least 6 characters), then verify your email (see
+   [Accounts and sign-in](#7-accounts-and-sign-in)).
+2. **Choose your role.** After logging in, click **Dungeon Master**.
+3. **Create a campaign.** Click **Create New Campaign** and type a name. Leave
+   **Start blank** *unticked* to get a complete starter world (races, classes, spells, items,
+   monsters, maps and a pregenerated party). Click **Create Campaign**.
+4. **Open it.** Double-click the campaign, or select it and click **Open Campaign**. The
+   [DM menu](#9-the-dm-menu) opens.
+5. **Add a character.** In **Players**, click **Create Character** and follow the eight steps.
+   Every option explains itself as you pick it.
+6. **Write a session.** Click **📜 Open Storyline**, then **New File**. Write what happens. Use
+   **Read-Aloud** for text you will read to players and **Insert Map** to link a battle map.
+7. **Run a battle.** Double-click the map link in your notes (or open **Maps** in
+   Worldbuilding, then **View Map → Run Battle**). Add tokens, click **Roll Initiative**, and use
+   **Next Turn** to step through the fight.
+8. **Invite your players.** Click **👥 Members** and share the **join code**. Accept each player
+   when their application arrives.
+
+---
+
+## 5. Quick start for players
+
+1. **Create an account** and log in (see [Accounts and sign-in](#7-accounts-and-sign-in)).
+2. Click **Player**. The **My Campaigns** screen opens.
+3. Under **Join a Campaign**, type the join code your DM gave you (for example `K7QM2X`) and
+   click **Apply**. The campaign appears under *Waiting for a DM to accept you*.
+4. Once the DM accepts you, the campaign is listed with your role. When the DM is running a live
+   session, click **Join Live Session**.
+5. Choose your character and click **Play This Character**. If the DM protected it with a
+   password, enter that first.
+6. From your character's home screen you can **View Inventory**, **View Abilities**, open
+   **My Profile** to upload a portrait and write your appearance, and return to the
+   **Online Session**.
+
+Your DM controls stats, level, items and spells. Your portrait, name and appearance text are
+kept on your own computer.
+
+---
+
+## 6. Key concepts
+
+| Term | Meaning |
+|---|---|
+| **Campaign** | One world: its characters, catalogues (monsters, items, spells...), maps, session notes and music. |
+| **Author DM** | The person who created the campaign. Only they can delete it, and add or remove other DMs. |
+| **DM** | A co-Dungeon Master. Can open and edit the campaign. |
+| **Player** | A member who plays a character in the campaign. |
+| **Join code** | A short code (like `K7QM2X`) that lets someone *apply* to join a campaign. A DM still has to accept them. |
+| **Catalogue** | A list of things in the campaign, such as Monsters, Items or Spells. Edited from **Worldbuilding**. |
+| **Storyline** | Your session notes: text files organised in folders, shown as a story-arc timeline. |
+| **Battle map** | A grid map where encounters are fought with tokens. |
+| **Token** | A character, NPC, monster or beast placed on a battle map. |
+| **Online session** | A live, encrypted connection that shares the campaign state with players' computers. |
+
+---
+
+## 7. Accounts and sign-in
+
+Everyone needs an account. One account works for both DM and player roles.
+
+- **Log in** with your username or email and your password.
+- **Create an account** needs a username, an email address and a password of at least 6
+  characters.
+- **Verify your email.** The app sends a verification link, or a code you enter on the
+  **Verify your email** screen. Didn't get it? Check spam, then click **Resend code**.
+  If the app can't send email at all, it shows the code on screen, so you can always finish.
+- **Forgot password?** Enter your email. You receive a link, or a code to enter on the
+  **Choose a new password** screen.
+- **Log Out** is on the role-choice screen.
+
+Accounts are stored online, so you can sign in from any computer with the app installed.
+
+---
+
+## 8. Campaigns and members
+
+### Your campaign list
+
+After choosing **Dungeon Master** you see every campaign you are a DM of, with your role in it.
+
+- **Open Campaign**, or double-click a campaign, to open it.
+- **Create New Campaign** makes a new one. Tick **Start blank (no template data)** for empty
+  catalogues; otherwise it starts with the [starter world](#the-starter-world).
+- **Delete Selected** deletes a campaign. Only the author DM can do this, and the app asks for
+  confirmation first.
+- **On this device, not registered to anyone** lists campaign folders on your computer that
+  have no owner yet, for example ones made before accounts existed. Click **Claim** to become
+  their author DM.
+- **Yours, but not on this device** lists campaigns you belong to whose files are on another
+  computer.
+
+When you are offline, the list you saw last time is shown with a note at the top.
+
+### Inviting people: the Members window
+
+Open it with **👥 Members** in the DM menu.
+
+- **Join code:** **Copy** it to share it. **New Code** replaces it, and the old code stops
+  working.
+- **Waiting to join:** each applicant has **Accept as Player**, **Accept as DM** and
+  **Reject**.
+- **Members:** everyone is labelled *Author DM*, *DM* or *Player*. You can **Make DM**,
+  **Make Player** or **Remove** them. Only the author DM can promote or remove DMs.
+- **Refresh** reloads the lists.
+
+People who aren't members can't see a campaign or join its sessions.
+
+### The starter world
+
+A campaign created without **Start blank** comes with original, ready-to-play content based on the
+standard fantasy rules:
 
 | Catalogue | Entries | Contents |
-| --- | --- | --- |
-| `races.json` | 21 | The core ancestries plus their common subraces |
-| `classes.json` | 12 | Hit die, primary abilities and saving-throw bonuses per class |
-| `items.json` | 94 | 41 weapons (incl. 5 magic weapons), 21 armours and shields, 12 potions and oils, 20 pieces of adventuring gear |
-| `spells.json` | 67 | Cantrips through 9th level, with school, casting method, range and mana cost |
-| `monsters.json` | 59 | CR 0 to CR 24, from goblins to an ancient red dragon |
-| `beasts.json` | 26 | Animals and mounts by habitat |
-| `npcs.json` | 22 | Ready-to-use townsfolk, patrons and villains |
-| `places.json` | 18 | Settlements, dungeons and landmarks, most linked to a battle map |
-| `maps.json` | 12 | Grid battle maps (see below) |
-| `effects.json` | 34 | Conditions and ongoing effects, including the six the damage engine looks up by id |
-| `damage-types.json` | 15 | Physical and elemental damage types |
-| `languages.json` | 18 | Each with its primer book and study time |
-| `books.json` | 26 | 18 language primers plus 8 pieces of in-world lore |
-| `alchemy-ingredients.json` | 24 | Reagents for brewing |
-| `dice.json` | 7 | d4 through d100 |
-| `players.json` | 6 | A pregenerated level 3 party, already equipped |
+|---|---|---|
+| Races | 21 | The core ancestries and their common subraces |
+| Classes | 12 | All core classes with features and subclasses, plus the homebrew Artificer |
+| Items | 94+ | Weapons (including magic ones), armour and shields, potions, adventuring gear |
+| Spells | 67+ | Cantrips to 9th level, with components, range and cost |
+| Monsters | 59 | From goblins (CR 0) to an ancient red dragon (CR 24) |
+| Beasts | 26 | Animals and mounts |
+| NPCs | 22 | Townsfolk, patrons and villains |
+| Places | 18 | Settlements, dungeons and landmarks, most linked to a map |
+| Maps | 12 | Tavern, village square, smithy, temple, keep, forest clearing, crypt, cave, bandit camp, wizard's tower, open ground... |
+| Effects | 34 | Conditions and ongoing effects |
+| Languages and books | 18 / 26 | Languages with primer books, plus in-world lore |
+| Other | — | Damage types, alchemy ingredients, dice |
+| Players | 6 | A pregenerated, equipped level 3 party |
+| Storyline | 3 sessions | A starter chapter that shows read-aloud text and map links |
 
-Bundled battle maps: the Gilded Stag tavern (common room and guest rooms), Greenhollow's
-village square, the Ironhand smithy, the temple of the Dawnfather, Stonekeep's ground floor,
-a standing-stone forest clearing, the Barrow Crypt, Blackfen Cave, a roadside bandit camp,
-Magister Orin's tower, and a blank open-ground map for improvised fights. Impassable cells
-(walls, furniture, deep water) render as black in the map editor.
+---
 
-A default campaign also gets a starter `storyline/` chapter with three session files that
-demonstrate the `[READ ALOUD]` / `[DM NOTE]` markers and map links.
+## 9. The DM menu
 
-Ticking **Start blank** still produces empty catalogues for every one of these files.
+The DM menu is the home screen of an open campaign. Its header reads
+*Dungeon Master of campaign: &lt;name&gt;*.
 
-The dataset is original text written for this project, describing rules concepts from the
-System Reference Document (CC-BY-4.0); no SRD wording is reproduced verbatim.
+| Section | What's in it |
+|---|---|
+| **▶ Run the Session** | **📜 Open Storyline** (session notes), **👥 Members**, **🖨 Print Character Sheets**, **🌐 Online Session** (shows ● while live) |
+| **🎵 Music** | Play, pause, skip and stop controls, plus **Music Panel** |
+| **☻ Players** | A card per character with name, level, player and HP. Scroll with ◀ / ▶. Click a card to open the character. **Create Character** starts the wizard. |
+| **🏰 Worldbuilding** | Every catalogue, grouped: *Creatures* (NPCs, Monsters, Beasts), *Places* (Places, Maps), *Items & Lore* (Items, Books, Alchemy Ingredients), *Magic & Rules* (Spells, Effects, Damage Types, Dice), *Peoples* (Classes, Races, Languages) |
 
-### Editing stat blocks
+---
 
-The world-building screens edit the whole entity, not just its name and description. Alongside
-plain text and number fields the editor renders:
+## 10. Characters
 
-- **ability scores** as a six-cell grid with the derived modifier shown next to each score;
-- **enums** (challenge rating, spell school, habitat, armour material) as drop-downs;
-- **id references** (class, race, damage type, item, spell) as name drop-downs, and id *lists*
-  (languages, triggered effects) as tick lists, so no raw id ever has to be typed;
-- **key/value blocks** (racial ability bonuses, class saving throws, place attributes,
-  language dictionaries) as editable rows;
-- **nested objects** (hit die, damage, durability, concentration) inline;
-- **lists of objects** (monster abilities, carried items, known spells) with add/remove.
+### Creating a character
 
-An id that no longer exists in its catalogue is shown as `(missing)` and preserved rather than
-silently dropped. The catalogue list also shows a one-line digest per entry - challenge rating
-and ability scores for monsters and beasts, role and level for NPCs, level/race/class for
-player characters, level and school for spells, type/weight/value for items.
+Click **Create Character** in the DM menu. The wizard has eight steps:
 
-### Commands
-- `dm` or `player` at the landing page.
-- `create` in campaign selection to create a new campaign.
-- `back` or `b` to go back.
-- `exit` to quit.
+1. **Race**
+2. **Class**
+3. **Subclass**: each subclass has an overview of its theme and play style, and every feature
+   with the level you get it
+4. **Level & Ability Scores**
+5. **Spells**: the class's default spells are pre-selected, and you can change them
+6. **Starting Items**: the class's default equipment is pre-selected, and you can change it
+7. **Identity**: name, player, portrait, appearance and backstory
+8. **Summary**
 
-## Accounts & email setup (GUI)
-Launching the GUI (`com.dnd.ui.GuiApp`) now requires logging in before the Player/DM
-choice is shown. Accounts, registration codes, and password-reset codes are stored
-locally at `data/auth/users.json` (never committed - see `.gitignore`).
+Every option shows a short explanation when you select it, so new players learn as they go.
+Hover any spell or item to see its full description.
 
-Verification and password-recovery emails are sent over SMTP once you fill in
-`data/auth/smtp-config.json` (auto-created with placeholders on first run):
+### Editing a character
 
-```json
-{
-  "host": "smtp.gmail.com",
-  "port": 587,
-  "username": "you@gmail.com",
-  "password": "an-app-password",
-  "fromAddress": "you@gmail.com",
-  "useTls": true,
-  "enabled": true
-}
-```
+Click a character card, or open the player list, then **View / Edit**.
 
-Until `enabled` is set to `true` with real credentials, the app falls back to showing
-the one-time verification/reset code directly in a dialog, so registration and
-password recovery remain fully usable without any email provider configured.
+- Long text fields (description, backstory) are large, and the **Save** button stays at the
+  bottom of the window while you scroll.
+- Lists such as items, spells and spell slots are compact, one line per entry.
+- **Item, spell, tool and blueprint fields are searchable.** Click the field, type part of the
+  name, then click a result or press **Enter** to take the first match. Adding a new row
+  opens the search immediately.
+- Hover a field's label for an explanation of what it does.
 
-### Troubleshooting email
+---
 
-Use the **Test email settings** button on the login screen. It sends a real message to
-`fromAddress` and reports the exact failure instead of a generic "not configured" notice.
-The same real reason is now shown in the code-fallback dialog whenever a send fails.
+## 11. Worldbuilding
 
-Common causes:
+Each Worldbuilding button opens a catalogue list. Each entry shows a one-line summary, for example
+the challenge rating and ability scores of a monster.
 
-- **`host` must be a mail server, not an address** - `smtp.gmail.com`, not `you@gmail.com`.
-- **Gmail requires an App Password**, not your account password. Enable 2-Step Verification,
-  then create one at <https://myaccount.google.com/apppasswords>. Google shows it as
-  `abcd efgh ijkl mnop`; the spaces are display-only and are stripped automatically.
-- **Connection timed out / no route to host** - your network is blocking outbound SMTP.
-  Office, university, and VPN networks very commonly block ports 587, 465 and 25. This is
-  *not* a configuration error: the credentials can be perfectly correct and the connection
-  still never opens. Try port `465` (implicit SSL, selected automatically when you set
-  `"port": 465`), or run the app from a home network or phone hotspot. Nothing in the app
-  can work around a blocked port.
-- With email unavailable for any reason, the in-app code dialog still lets you finish
-  registering or resetting a password.
+- **View / Edit** opens an entry. For a map, it opens the map editor.
+- **New** creates an entry. For players, it starts the character wizard.
+- **Delete** removes the selected entry.
 
-## Storyline (DM menu)
+The editor shows the whole entity, not just its name:
 
-The Storyline section pairs a file tree of session notes (`<campaign>/storyline/`) with a
-horizontally scrollable story-arc timeline. Sessions are the text files; folders become
-half-circle arcs spanning their sessions, so the root folder arcs across the whole campaign.
+- **ability scores** as a grid, with each modifier shown;
+- **choices** (challenge rating, spell school, habitat...) as drop-downs;
+- **links to other entries** (class, race, item, spell, damage type...) as searchable
+  pickers, so you never type an internal id;
+- **lists** (monster abilities, carried items, known spells, languages) with add and remove;
+- **images**: click **Upload Image**. The picker opens in your images folder, and the chosen file
+  is copied into the campaign.
 
-- **Ordering** is explicit and persisted per folder in a hidden `.storyline-order` file.
-  Drag items in the tree, or use the arrow buttons, to reorder. The arc timeline reads the
-  same order, so the two views never disagree.
-- **Editor** opens maximized and fills the window. Its toolbar has:
-  - `Insert Info` - a cascading menu of every campaign catalog (NPCs, monsters, items,
-    spells, races, ...); hover a category to get a filterable, scrollable list of its
-    entries, and click one to insert a formatted block about it at the caret.
-  - `Insert Block` - templates for a scene, encounter, NPC beat, skill check, loot, or
-    session recap.
-  - `Read-Aloud` / `DM Note` - wrap the selection in `[READ ALOUD]` or `[DM NOTE]` markers,
-    keeping player-facing prose separate from private prep.
-  - `Player View` - a large-type, read-only window showing only the read-aloud passages,
-    for reading straight to the table.
-  - `Insert Map` - drops a `[map:<id>|<label>]` link for any map in the campaign. Double-click
-    a link (or put the caret in it and press `Open Map Link`) to launch the battle map.
-  - A session timer that counts up from zero or down from a set number of minutes.
-  - Heading, bullets, checklist, divider, and `Ctrl+S` to save.
-  - `Find` (`Ctrl+F`) - a floating find bar with Previous/Next, match case and an
-    "n of m" counter; Enter / Shift+Enter step through matches, Esc closes.
-  - `Notes` - a small floating scratchpad shared by every session file of the campaign
-    (`<campaign>/notes.txt`), autosaved as you type. Handy for running trackers.
-  - `Manage Players` - toggles a full-height panel on the right with a card for every player
-    character plus any monsters, NPCs or beasts added to this session (`+ Add`). Cards show
-    HP, mana and active effects, with quick `−` / `+` buttons that damage or heal by the
-    chosen amount. Click a card for details (vitals, items, effects, rests and level-ups),
-    and `← Back` to return to the list. Added creatures are separate copies with their own
-    HP, saved per session file in a hidden `.<file>.roster.json` next to it.
-    No popups: `+ Add`, `+ Add Item` and `+ Add Effect` open a searchable list right inside
-    the panel (type, then click or press Enter; it stays open to add several). `✚ New item...`
-    / `✚ New effect...` create a catalog entry on the spot and apply it in one step. Effects
-    have `−` / `+` round buttons. `★ XP` (or the toolbar's `Award XP`) awards XP to the whole
-    party or the ticked players at once.
+If a linked entry has been deleted, the link shows as `(missing)` and is kept, not silently
+removed.
 
-Read-aloud markers and map links are stripped from the Player View, so the table only ever
-sees the prose.
+### Item kinds
 
-## Images folder
+Besides weapons, armour and potions, items can be a **Blueprint**, **Device**, **Tool**,
+**Material** or **Fuel** (used by the [Artificer](#the-artificer)). Each kind shows its own fields.
 
-Keep portraits, map backgrounds, textures, etc. in the `images/` folder at the project root
-(subfolders `characters`, `maps`, `textures`, `monsters`, `items`). Every image picker in the
-app opens there; the chosen file is still copied into the campaign as before.
+### Hover cards
 
-## Battle map
+Hover a spell or item almost anywhere to see a card with its full description, sized to
+fit. This works in character sheets, Manage Players, the wizard, pickers and battle maps, and on
+spell or item names written in your session notes.
 
-The battle map is the playground where encounters are run. Open it from a `[map:...]` link in
-a session file, or from `Run Battle` in the map viewer.
+---
 
-- **Turn order.** `Roll Initiative` rolls d20 + DEX for every creature on the map and sorts
-  them; `Next Turn` cycles forever, skipping the dead and bumping the round counter on each
-  wrap. The roster shows the current combatant highlighted with the next few queued behind it.
-- **Token detail.** Click any token to swap the left panel into its sheet - portrait, stats,
-  health and mana bars, coins, items, spells, and abilities - with `← Back` to return to the
-  roster. Click empty space or press `Esc` to deselect.
-- **Vitals.** Damage, healing, max HP/mana, coins, and initiative are all editable in place.
-  Dropping to zero hit points knocks a creature down rather than killing it; from there
-  `Failed Save` counts 3 -> 2 -> 1 on the token in red, and the third failure marks it dead
-  with a red cross. `Made Save` and healing above zero bring it back.
-- **Ranges.** Hovering a spell or ability draws its range as a disc around the token (5 ft per
-  cell) and rings every creature inside it, so you can see legal targets before committing.
-- **Map control.** Add and remove tokens, drag them between cells, toggle a cell impassable,
-  show or hide health bars, zoom, and save the map back to the campaign. A timer is available
-  here too.
+## 12. Storyline and session notes
 
-### Class & race features
+Open it with **📜 Open Storyline**.
 
-Characters get the basic features of their class (up to their level, plus their subclass's)
-and their race, and those features do things in battle rather than just sitting on the sheet.
-They appear in the battle-map token detail and in Manage Players under **Class & Race
-Features**, with uses left and what brings them back.
+### The storyline screen
 
-- **Armor Class** is worked out from equipped armor (or Unarmored Defense: barbarian
-  10 + DEX + CON, monk 10 + DEX + WIS), shields, worn pieces, and active effects. Hover it for
-  the breakdown.
-- **Usable features** have buttons. Self features apply at once, e.g. Rage gives +2/+3/+4
-  melee damage and halves bludgeoning, piercing, and slashing damage for 10 rounds, and Second
-  Wind rolls 1d10 + level healing. Targeted features (Lay on Hands, Bardic Inspiration,
-  Breath Weapon) arm the cursor so you can click a token.
-- **Resistances** (Rage, tiefling fire, dwarf poison, ...) halve typed damage automatically.
-  Pick the damage type next to the Damage button. Relentless Endurance (half-orc) and Undying
-  (revenant) drop the character to 1 HP instead of 0 once per long rest.
-- **Attacks.** Each weapon and an unarmed strike is listed with to-hit and damage. Click one,
-  then the target. The form shows d20 + bonus vs. the target's AC. You enter the rolled damage
-  dice and the app adds STR/DEX, Rage, Sneak Attack, and Fury of the Small. Firearms keep using
-  their ammo spells.
-- **Rests.** A short rest restores Second Wind, Action Surge, Ki, Channel Divinity, Wild Shape,
-  Breath Weapon, and similar features. A long rest restores everything.
-- New characters get their race's ability bonuses added to their scores. Existing sheets are
-  treated as final.
+- A **file tree** of session files and folders: **New Folder**, **New File**,
+  **Move to Folder**, **↑ / ↓** to reorder (dragging also works), and **Delete**.
+- A **story-arc timeline**: each session is a point, and each folder is an arc spanning its
+  sessions. The order always matches the tree.
 
-### Artificer: energy charges, blueprints and the workshop furnace
+### The session editor
 
-The **Artificer** is a homebrew half caster. It uses **energy charges** instead of spell slots.
-The counts are the same as a half caster's slots, but each level is a type of charge:
+Double-click a file to open it. The editor fills the window.
+
+| Tool | What it does |
+|---|---|
+| **Insert Info** | Pick any catalogue entry (NPC, monster, item, spell...) from a searchable menu and insert a formatted summary |
+| **Insert Block** | Templates for a scene, encounter, NPC beat, skill check, loot or session recap |
+| **Read-Aloud** / **DM Note** | Mark text as player-facing prose or private notes |
+| **Player View** | A large, read-only window showing only the read-aloud passages |
+| **Insert Map** / **Open Map Link** | Insert a link to a battle map. Double-click the link to open the battle |
+| **Sound Cue** / **Music Panel** | Insert music or sound cues, or open the music panel (see [Music](#14-music-and-sound)) |
+| **Heading, Bullets, Checklist, Divider** | Basic formatting. Headings are coloured |
+| **Find** | Search the text, with match case and *n of m* |
+| **Notes** | A small scratchpad shared by every session file in the campaign, saved as you type |
+| **Manage Players** | A side panel for running the session (see below) |
+| **Timer** | Counts up, or down from a set number of minutes |
+| **Save** / **Save & Close** | Saves the file (also **Ctrl+S**) |
+
+### Manage Players
+
+This panel runs the session from inside your notes:
+
+- A card for every player character, plus any monster, NPC or beast you **+ Add** to this
+  session. Added creatures are separate copies with their own HP.
+- Quick **−** / **+** buttons damage or heal by the amount you choose.
+- Click a card for details: vitals, items, effects, class features, rests and level-ups.
+  **+ Add Item** and **+ Add Effect** open a searchable list. **✚ New item...** creates a new
+  item and gives it at once.
+- **★ XP** (or **Award XP** in the toolbar) gives experience to the whole party or the ticked
+  players.
+
+---
+
+## 13. Maps and battles
+
+### Map editor
+
+Open **Maps** in Worldbuilding and click **View / Edit**.
+
+- **Map Objects (layers & drawings):** add image layers (**+ Add Layer**), reorder them
+  (**↑ Forward** / **↓ Back**), and **Group Selected** / **Ungroup** them.
+- **Draw & Paint:** shapes and painted areas.
+- **Tokens:** place creatures, or **Remove Selected Token**.
+- Mark cells as impassable (walls, furniture, deep water). They show as black.
+- **Save Map** saves your changes. **View Map** shows the read-only view, where **Run Battle**
+  starts a fight.
+
+### Battle map
+
+Open it from a map link in your notes, or with **Run Battle**.
+
+- **Turn order:** **Roll Initiative** rolls d20 + DEX for everyone (or enter rolls yourself).
+  **Next Turn** moves through the order, skips the dead and counts rounds.
+- **Tokens:** add, move and remove them. Click a token to see its sheet: portrait, stats, HP and
+  mana, coins, items, spells and abilities. Click empty space or press **Esc** to deselect.
+- **Damage and healing:** edit HP in place, and choose a damage type for resistances. At 0 HP a
+  creature falls unconscious. **Failed Save** counts down 3 → 2 → 1, then it dies.
+  **Made Save** or healing brings it back.
+- **Ranges:** hover a spell or ability to see its range around the token, with every creature in
+  reach highlighted.
+- **Attacks:** pick a weapon or unarmed strike and click the target. The app shows d20 + bonus
+  against the target's AC and adds the bonus damage.
+- **Rests:** **Short Rest** and **Long Rest** restore the party's features and resources.
+- **Terrain:** paint difficult ground, water or climbable areas. **Walls** toggles showing them.
+- **📽 Projector:** opens a clean copy of the map, without DM panels or health bars, for a
+  second screen. **Esc** closes it.
+- **⚔ Combat Music** and **Map Music:** see [Music](#14-music-and-sound).
+
+---
+
+## 14. Music and sound
+
+Music comes from **YouTube links** and plays on the **DM's computer only**. Open it with
+**Music Panel** in the DM menu, or with **🎵** on the battle map or in the session editor.
+
+- **Playlists:** create one (*Tavern*, *Dungeon*, *Boss fight*...), then add any YouTube video
+  or playlist link. Add `&t=1m30s` to a link to start partway in. Double-click a track to play it.
+  Switching playlists crossfades. **Shuffle** and **Loop** are available.
+- **★ Starter pack:** adds ready-made playlists (Tavern, City market, Harbor, Castle, Village,
+  Travel, Forest, Dungeon, Mystery, Horror, Combat, Boss fight, Sad, Camp, At sea), ambience
+  and sound effects. It only adds what's missing.
+- **Combat playlist:** plays automatically when initiative is rolled on a battle map, and
+  switches back when the map closes.
+- **Map music:** give a map its own playlist that starts whenever the map opens.
+- **Ambience:** looping sounds such as rain, wind, a fireplace or a cave play under the music.
+  Click to start and click again to stop.
+- **Sound effects:** short clips you trigger with a button. The music dips while they play.
+- **Session cues:** write `[music: Playlist name]`, `[music: stop]`, `[sfx: Sound name]` or
+  `[sfx: stop]` in your notes, or use **Sound Cue**. Double-click a cue to play it.
+- **Quick controls** (⏮ ⏸ ⏭ ⏹) are in the DM menu.
+
+The first time you play, the app downloads a built-in web player (about 150 MB). Videos whose
+owners block playback outside YouTube are skipped automatically.
+
+---
+
+## 15. Online sessions
+
+An online session shares the campaign with players' computers while you play. The data is
+AES-256 encrypted.
+
+**DM:**
+
+1. Click **🌐 Online Session** in the DM menu.
+2. Enter a **session passphrase** and click **Start Online Session**.
+3. Members can now click **Join Live Session**. You can also give the **Player Token** to
+   someone who needs to join by token.
+4. The campaign is pushed automatically each time you return to the DM menu. **Push State Now**
+   sends it immediately.
+5. Click **Stop Session** when you're done.
+
+**Player:** in **My Campaigns**, click **Join Live Session**. Or open
+*Join with a session token instead*, paste the token and click **Join Session**.
+**Go to My Character** opens your sheet, and **Leave Session** disconnects.
+
+---
+
+## 16. Printing character sheets
+
+1. In the DM menu, click **🖨 Print Character Sheets**.
+2. Tick the characters (or **Select all**) and click **Print**.
+3. One PDF per character is saved to your **Downloads** folder. **Open folder** shows them.
+
+Each sheet follows the standard D&D layout:
+
+- **Page 1:** abilities, saves, skills, combat stats, attacks and resources.
+- **Following pages:** the character's portrait (or an empty frame to draw in) next to their
+  appearance, then features, spells, equipment, backstory and lined notes.
+
+Values that change during play, such as current and temporary HP, used spell slots, feature uses,
+death saves and coins, are left as empty boxes to fill in with a pencil.
+
+---
+
+## 17. Rules reference: class features and the Artificer
+
+### Class and race features
+
+Characters automatically get their class features up to their level, their subclass features and
+their race's traits. These work in battle, not just on paper, and you'll find them under
+**Class & Race Features** on the battle map and in Manage Players.
+
+- **Armor Class** is calculated from armour, shields, worn items and effects, including Unarmored
+  Defense. Hover it for the breakdown.
+- **Usable features** have buttons. Rage, Second Wind and similar features apply at once.
+  Targeted ones, such as Lay on Hands, Bardic Inspiration and Breath Weapon, let you click a
+  token.
+- **Resistances** (Rage, tiefling fire, dwarf poison...) halve damage of that type
+  automatically. Relentless Endurance and similar traits leave the character at 1 HP instead of
+  0, once per long rest.
+- **Short rests** restore features such as Second Wind, Action Surge, Ki and Channel Divinity.
+  **Long rests** restore everything.
+- New characters get their race's ability bonuses added automatically.
+
+### Spell components
+
+Every spell lists its components: **V** (verbal), **S** (somatic) and **M** (material). Material
+components name the material, its cost, and whether the spell uses it up.
+
+### The Artificer
+
+The Artificer is a homebrew half caster. It uses **energy charges** instead of spell slots.
+It has the same number per level as a half caster has slots, and each level is a different
+charge type:
 
 | Level | Charge | Fuel units per charge |
 |---|---|---|
@@ -238,115 +502,127 @@ The counts are the same as a half caster's slots, but each level is a type of ch
 | 4 | Force | 10 |
 | 5 | Arcane Resonance | 14 |
 
-- **Charges are made at a workshop furnace**, which is a *Tool*
-  item with a furnace tier. The tier is the highest charge level it can make. The Tinkerer's
-  Portable Forge is tier 1 and the Valebrick Portable Field Workshop is tier 2.
-- **The furnace burns fuel.** Each *Fuel* item has a value: firewood 2, charcoal 3, coal 4,
-  lamp oil 5. That many units go into the furnace per piece; a charge costs the units in the
-  table. For example, one coal (4) makes two Steam-pressure charges or one Thermal charge.
-- **A long rest refuels automatically** if the artificer carries a furnace and fuel. Missing
-  charges are refilled from the lowest level up to the furnace tier. The weakest fuel burns
-  first, and fuel is only burned when it can finish a charge. A **short rest** refuels too, but
-  only fills each charge type up to half of its maximum (rounded up), weakest first.
-- **Mechanical devices** take a charge of their level or any stronger one. Each level above
-  the spell's level adds one damage die. **Tuned devices** run only on their own capsule type.
-  For example, the Thermal Smoke Grenade works only with a Thermal charge.
-- **Crafting** counts as a mechanical action, so any charge of the required level or stronger works.
-- **Crafting check.** Each blueprint has a DC. Building rolls d20 + Intelligence modifier +
-  proficiency bonus.
-  - On a success, the item is built.
-  - Failing by less than 5 uses up nothing.
-  - Failing by 5 or more ruins the materials. Tools and charges are kept.
-  - A natural 20 always succeeds and a natural 1 always fails.
-- **Capsule blueprints** fill one charge from parts instead of making an item. They follow
-  Toren's recipe book: Steam (level 1), Thermal (5), Shock (9), Force (13) and Arcane
-  Resonance (17).
-- **Blueprints are an item type.** A blueprint lists:
-  - its product;
-  - its materials, which are used up;
-  - its tools, which are kept;
-  - the charges it needs, if any;
-  - a minimum level.
-
-  Copy a carried blueprint into the **blueprint book**, then build from it whenever you have the
+- **Workshop furnace:** a Tool item with a *tier*, the highest charge level it can make.
+- **Fuel:** each piece gives units: firewood 2, charcoal 3, coal 4, lamp oil 5. One coal makes
+  two Steam-pressure charges or one Thermal charge.
+- **Rests:** a **long rest** burns carried fuel to refill all missing charges up to the furnace
+  tier. A **short rest** refills each charge type up to half of its maximum. The weakest fuel burns
+  first.
+- **Mechanical devices** accept a charge of their level or stronger. Each level above adds one
+  damage die. **Tuned devices** only take their own type; for example, the Thermal Smoke Grenade
+  needs a Thermal charge.
+- **Blueprints** list a product, materials (used up), tools (kept), any charges needed and a
+  minimum level. Copy a blueprint into the **blueprint book** to build it any time you have the
   parts.
-- **Devices are an item type.** A device can link a spell. Carrying it adds the spell to the
-  token, and the spell's level decides which charge it uses (level 0 needs no charge).
-  Ammunition and grenades are devices whose spell uses up one of them.
-- **There are 18 bundled blueprints.** Every recipe lists its materials (common, specialised or
-  rare parts, which are used up) and its tools (kept). The 13 device blueprints are:
-  - Utility and control: Smoke Canister, Tripwire Alarm, Steam Grapnel Launcher, Sticky Foam,
-    Messenger Beetle, Thermal Smoke Grenade (Thermal only).
-  - Light combat: Scalding Bolts, Flash Bomb, Shock Darts, Steam-Jet Gauntlet.
-  - Medium combat: Thermal Grenade, Pressure Ram, Concussion Bolts.
+- **Crafting check:** d20 + Intelligence modifier + proficiency against the blueprint's DC.
+  - On a success, the item is built.
+  - Failing by less than 5 costs nothing.
+  - Failing by 5 or more ruins the materials.
+  - A natural 20 always succeeds and a natural 1 always fails.
+- **18 blueprints** are included:
+  - *Utility and control:* Smoke Canister, Tripwire Alarm, Steam Grapnel Launcher, Sticky Foam,
+    Messenger Beetle, Thermal Smoke Grenade.
+  - *Light combat:* Scalding Bolts, Flash Bomb, Shock Darts, Steam-Jet Gauntlet.
+  - *Medium combat:* Thermal Grenade, Pressure Ram, Concussion Bolts.
+  - *Capsules:* 5 blueprints that refill a charge from parts.
+- **Workshop** (in Manage Players) shows charges and fuel. It has buttons to burn fuel, make a
+  charge, copy a blueprint and build one. When something is missing, the button explains what.
 
-  The other 5 are the capsule blueprints.
-- **The Workshop section in Manage Players** shows charges and furnace fuel, and has buttons to:
-  - burn a fuel;
-  - make a charge;
-  - copy a blueprint into the book;
-  - build a known blueprint. When something is missing, the button explains what.
-- **New item kinds:** Blueprint, Device, Tool, Material and Fuel. You can create any of them
-  from the DM panel or from the Manage Players **+ New item** form. Both show the kind's own
-  fields.
-- **Toren Valebrick** (Human Artificer 5, Artillerist) is in the zurabaach party. He has the
-  field workshop, the Bolt Repeater, materials and fuel.
+---
 
-### Spell components
+## 18. Keyboard shortcuts
 
-Every bundled spell lists its components:
-- **V** (verbal);
-- **S** (somatic);
-- **M** (material). Material components name the material, its cost, and whether casting
-  consumes it.
+| Where | Keys | Action |
+|---|---|---|
+| Session editor | **Ctrl+S** | Save |
+| Session editor | **Ctrl+F** | Find; **Enter** / **Shift+Enter** go to the next / previous match, **Esc** closes |
+| Search pickers | Type, then **Enter** | Pick the first match; **↓** moves into the list |
+| Battle map | **Esc** | Deselect the token or cancel the action |
+| Map editor | **Delete** / **Backspace** | Delete the selected object |
+| Map editor | **Esc** | Cancel |
+| Projector window | **Esc** | Close |
+| Campaign list | Double-click | Open the campaign |
 
-The spell form has fields for all of these, and hover cards show them.
+---
 
-### Hover cards
+## 19. Your data and backups
 
-Hover over a spell or item to see its full description in a card that sizes to fit:
-- the battle map's character panel (spells, abilities and inventory);
-- Manage Players (items, spells, effects, blueprints and pickers);
-- the character profile;
-- the creation wizard's lists;
-- in the storyline text editor, any spell or item name written in the text.
+Everything you create is stored in your Windows user profile, not in the install folder:
 
-### Creation help and class defaults
+```
+%APPDATA%\DnD Campaign Manager\
+├── data\
+│   ├── custom-campaigns\<campaign>\   one folder per campaign: catalogues, players,
+│   │                                  maps, storyline, images, music.json
+│   ├── auth\                          sign-in and connection settings
+│   ├── player-profiles\               players' own portraits and appearance text
+│   └── joined-sessions\               the last state of sessions you joined as a player
+├── images\                            your picture library (image pickers open here)
+└── app\                               downloaded updates
+```
 
-Every option in the character wizard and the DM creation forms (class, race, character, spell,
-item) has a short note explaining what it does. Choices from a list show a live explanation
-of the selected value. On the wizard's Subclass step, each subclass has an overview of its theme,
-play style and who it suits. Below that is every subclass feature by level, with what it does.
-The DM can edit these overviews in the class form (*Subclass Descriptions*).
+To open it, press **Win+R**, type `%APPDATA%\DnD Campaign Manager` and press Enter.
 
-New player characters are created only through the **Create Character** wizard. The DM menu's
-Players section and the *New* button in the player list both open it.
+- **Back up** a campaign by copying its folder from `data\custom-campaigns`. To restore it, copy the
+  folder back while the app is closed.
+- **Move to a new computer** by copying the whole `DnD Campaign Manager` folder.
+- **Printed sheets** go to your **Downloads** folder.
+- **Music player files** are kept in `%USERPROFILE%\.dnd-campaign-manager` and can be deleted;
+  they download again when needed.
 
-Each class has default spells and items. When you pick a class in the wizard, its defaults are
-pre-selected, and you can still change them.
+Membership, join codes and accounts are stored online. Campaign content stays on the DM's
+computer, so back it up.
 
-## DM menu layout and printing
+---
 
-- The header is one line: *Dungeon Master of campaign: &lt;name&gt;*.
-- **Create Character** sits next to the *Players* heading.
-- The Worldbuilding categories are laid out in a wide grid, which leaves more room for player
-  cards. Each card shows the character's HP.
-- **🖨 Print Character Sheets** (in *Run the session*) opens a checklist of characters with
-  *Select all* and *Print*. Each selected character becomes a standard D&D character sheet PDF,
-  saved to your Downloads folder. It includes stats, saves, skills, attacks, spells and
-  inventory. Values that change in play, such as current HP, temporary HP, spell slots and
-  hit dice, are left as blank boxes to fill in on paper.
+## 20. Troubleshooting
 
-## Background music
+| Problem | What to do |
+|---|---|
+| **No verification or reset email** | Check spam and click **Resend code**. If email can't be sent, the app shows the code on screen. On the login screen, **Test email settings** reports the exact reason. Office, university and VPN networks often block outgoing email. |
+| **"You aren't part of ..."** | You aren't a member yet. Apply with the join code and wait for a DM to accept you. |
+| **A campaign I created is missing from my list** | Look under *On this device, not registered to anyone* and click **Claim**. If it's under *Yours, but not on this device*, its files are on another computer. |
+| **"Offline - showing the campaign list saved from your last connection."** | You aren't connected. Local campaigns still open; joining and members need the internet. |
+| **Music doesn't play** | The first play downloads a 150 MB player, so wait for it to finish. Some videos block playback outside YouTube and are skipped. Check that the Windows volume isn't muted. |
+| **The update failed** | The app tries again next start. You can also install the latest `.exe` from the [releases page](https://github.com/irakli-2003/DnD/releases/latest). |
+| **SmartScreen blocks the installer** | Click **More info → Run anyway**. |
+| **The projector shows on the wrong screen** | Drag the *Battle Map - Players* window to the second screen and maximise it. |
+| **A field shows `(missing)`** | The entry it pointed to was deleted. Pick a new one or leave it. |
 
-Music comes from **YouTube links** and plays only on the DM's computer. Open it with **🎵 Music** in the DM menu, the battle map toolbar, or the session text editor.
+---
 
-- **Playlists:** create one (e.g. *Tavern*, *Dungeon*, *Boss fight*), then **+ Add link** and paste any YouTube video or playlist URL. Add `&t=1m30s` to start partway in. Double-click a track to play it. Switching playlists crossfades.
-- **Combat music:** choose a *⚔ Combat playlist*. When initiative is rolled or entered on the battle map, the music crossfades to it, and it switches back when the map closes. You can turn this off in the map's 🎵 menu.
-- **Map music:** on the battle map, choose 🎵 → *This map's music* to play a playlist whenever that map opens.
-- **Starter pack:** a campaign without its own music starts with ready-made playlists of popular YouTube videos: Tavern, City market, Harbor, Castle, Village, Travel, Forest, Dungeon, Mystery, Horror, Combat, Boss fight, Sad, Camp, At sea. It also has ambience and sound effects. Campaigns that already have music get it with **★ Starter pack**, which only adds what's missing.
-- **Ambience:** looping background sounds (river, wind, rain, thunderstorm, fireplace, cave, swamp...) play under the music. Click one to start it and click it again to stop it. Tick *Ambience* when adding a sound to make it loop.
-- **Sound effects:** add a YouTube clip with optional start/end seconds, then click its pad button to play it once. Music is turned down while the effect plays.
-- **Session cues:** in a session text file, write `[music: Playlist name]`, `[music: stop]`, `[sfx: Sound name]` or `[sfx: stop]`, or insert them from the editor's 🎵 menu. Double-click a cue to play it.
+## 21. FAQ
 
-Everything is saved to `music.json` in the campaign folder. The first time you play, the app downloads an embedded Chromium player (~150 MB) to `~/.dnd-campaign-manager/jcef`. A small player window appears briefly and then hides. Videos whose owners block playback outside YouTube are skipped automatically.
+**Do players need to install the app?**
+Only to join online sessions or view their own character. A DM can run an in-person game alone,
+using the projector and printed sheets.
+
+**Can two DMs work on one campaign?**
+Yes. Accept someone as **DM** in the Members window. They need a copy of the campaign folder to
+edit it on their own computer.
+
+**Can I use my own rules and content?**
+Yes. Create a campaign with **Start blank** and build everything in Worldbuilding, or edit and
+extend the starter world.
+
+**Does the app play music for players too?**
+No. Music plays on the DM's computer only, so use speakers at the table.
+
+**Is it official D&D content?**
+No. The bundled content is original text that describes the rules concepts of the System
+Reference Document (CC-BY-4.0). No SRD wording is copied. The Artificer is a homebrew variant.
+
+**Is the interface available in other languages?**
+The app is in English. Guides in other languages are in the `Documentation` folder (see below).
+
+---
+
+## 22. More documentation
+
+- [`Documentation/guides`](Documentation/guides): character creation guide (English and Georgian).
+- [`Documentation/rules`](Documentation/rules): the rules the app follows, such as core rules,
+  combat, magic, rests, conditions, homebrew changes and a DM guide.
+- [`Documentation/catalog`](Documentation/catalog): reference lists of classes, races, items,
+  spells and creatures.
+- [Developer Guide](DEVELOPER.md): building from source, the command-line version, configuration
+  and releasing.

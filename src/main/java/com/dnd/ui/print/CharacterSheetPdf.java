@@ -671,7 +671,7 @@ public final class CharacterSheetPdf {
             for (int i = 0; i < SKILLS.length; i++) {
                 float rt = t + 11 + i * rowH;
                 circle(x + 9, rt - 3, 3f, false);
-                textRight(signed(mod(SKILLS[i][1])), x + 34, rt, bold, 7.5f, INK);
+                textRight(signed(skillValue(i)), x + 34, rt, bold, 7.5f, INK);
                 line(x + 16, rt + 1.5f, x + 35, rt + 1.5f, 0.3f, RULE);
                 text(SKILLS[i][0], x + 40, rt, serif, 7.5f, INK);
                 textRight("(" + cap(SKILLS[i][1]) + ")", x + w - 4, rt, serif, 6, GREY);
@@ -684,12 +684,17 @@ public final class CharacterSheetPdf {
             label("Passive perception (WIS)", x + 30, t + 15, 5.8f);
         }
 
+        /** The character's stored bonus for {@code SKILLS[i]} (same order as {@link com.dnd.model.character.stats.Skills#ALL}). */
+        private int skillValue(int i) {
+            return pc.getSkills().get(com.dnd.model.character.stats.Skills.ALL.get(i).key());
+        }
+
         private void proficienciesBox(float top, float x, float w, float h) throws IOException {
             panel(x, top, w, h, "Other proficiencies & languages");
             float lt = top + 12;
             List<String> printed = new ArrayList<>();
             if (!kit.getResistances().isEmpty()) printed.add("Resistant: " + String.join(", ", kit.getResistances()));
-            printed.add("Skill values above are ability modifiers only: tick proficient skills and add " + signed(prof) + ".");
+            printed.add("Skill values above are the character's skill bonuses (proficiency bonus " + signed(prof) + ").");
             for (String p : printed) {
                 for (String l : wrap(p, serif, 7, w - 10)) {
                     if (lt > top + h - 14) break;

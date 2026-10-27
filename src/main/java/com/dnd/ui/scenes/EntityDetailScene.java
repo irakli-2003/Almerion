@@ -159,6 +159,26 @@ public class EntityDetailScene extends BaseScene {
         if (saveBtn != null) {
             // Kept outside the scroll pane so Save stays at the bottom of the window on long forms.
             HBox saveBar = new HBox(16, saveBtn, errorLabel);
+            if (cat == EntityCategory.PLAYER && !isNew && entity != null) {
+                Button deleteBtn = btn("Delete Character", () -> {
+                    String name = invokeString(entity, "getName");
+                    Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+                        "Delete character '" + (name != null && !name.isBlank() ? name : entityId)
+                            + "'? This cannot be undone.", ButtonType.OK, ButtonType.CANCEL);
+                    styleDialog(confirm);
+                    confirm.showAndWait().ifPresent(bt -> {
+                        if (bt != ButtonType.OK) return;
+                        try {
+                            repos.players().delete(entityId);
+                            uiSession.getRouter().goTo(backTarget);
+                        } catch (Exception ex) {
+                            errorLabel.setText("Delete failed: " + ex.getMessage());
+                        }
+                    });
+                });
+                deleteBtn.setStyle("-fx-text-fill: #e07070;");
+                saveBar.getChildren().add(deleteBtn);
+            }
             saveBar.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
             saveBar.setPadding(new Insets(10, 60, 10, 60));
             saveBar.setStyle("-fx-background-color: #14142a; -fx-border-color: #4a3c1c; -fx-border-width: 1 0 0 0;");

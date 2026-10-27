@@ -106,5 +106,43 @@ public class PlayerCharacterTest {
         assertEquals("clearing an effect must remove it once it's worn off",
             0, character.getActiveEffects().size());
     }
-}
 
+    @Test
+    public void characterWithoutStoredSkillsStartsFromAbilityModifiers() throws Exception {
+        String json = "{\"id\":\"a\",\"name\":\"A\",\"level\":1,\"stats\":{\"strength\":8,"
+            + "\"dexterity\":16,\"constitution\":10,\"intelligence\":10,\"wisdom\":13,\"charisma\":10}}";
+        PlayerCharacter pc = com.dnd.data.JsonMappers.create().readValue(json, PlayerCharacter.class);
+        assertEquals(3, pc.getSkills().getStealth());
+        assertEquals(1, pc.getSkills().getAnimalHandling());
+        assertEquals(-1, pc.getSkills().getAthletics());
+    }
+
+    @Test
+    public void skillsKeepNegativeZeroAndPositiveValuesThroughJson() throws Exception {
+        PlayerCharacter pc = new PlayerCharacter();
+        pc.setId("b");
+        pc.setName("B");
+        pc.setStats(new com.dnd.model.character.stats.CoreStats(10, 10, 10, 10, 10, 10));
+        com.dnd.model.character.stats.Skills skills = new com.dnd.model.character.stats.Skills();
+        skills.setStealth(7);
+        skills.setSleightOfHand(-2);
+        pc.setSkills(skills);
+        var mapper = com.dnd.data.JsonMappers.create();
+        PlayerCharacter back = mapper.readValue(mapper.writeValueAsString(pc), PlayerCharacter.class);
+        assertEquals(7, back.getSkills().getStealth());
+        assertEquals(-2, back.getSkills().getSleightOfHand());
+        assertEquals(0, back.getSkills().getArcana());
+    }
+
+    @Test
+    public void everySkillDefinitionIsReadableAndWritable() {
+        com.dnd.model.character.stats.Skills skills = new com.dnd.model.character.stats.Skills();
+        int v = -9;
+        for (com.dnd.model.character.stats.Skills.Def def : com.dnd.model.character.stats.Skills.ALL) {
+            skills.set(def.key(), v);
+            assertEquals(def.key(), v, skills.get(def.key()));
+            v++;
+        }
+        assertEquals(18, com.dnd.model.character.stats.Skills.ALL.size());
+    }
+}

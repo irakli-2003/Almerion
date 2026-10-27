@@ -54,6 +54,7 @@ public final class FieldHelp {
         f("PlayerCharacter.level", "Overall power, 1-20. Higher level = more HP, features and spells.");
         f("PlayerCharacter.xp", "Experience points. At 100 the character can level up (campaign rule).");
         f("PlayerCharacter.stats", "The six ability scores. 10 is average, 15 is very good, 8 is weak. Each 2 points above 10 = +1 to rolls.");
+        f("PlayerCharacter.skills", "Bonus added to each skill check (e.g. +5 Stealth, -1 Animal Handling). Any whole number: positive, negative or 0. New characters start from their ability modifiers.");
         f("PlayerCharacter.maxHitPoints", "How much damage they can take before falling unconscious.");
         f("PlayerCharacter.maxMana", "Only for mana-based homebrew casters. Leave 0 for slot casters.");
         f("PlayerCharacter.subclass", "Their specialisation within the class.");

@@ -330,6 +330,22 @@ public class PlayerCharacter implements Printable {
     }
 
     /** Class/race feature id → uses (or pool points) spent since its last recharge. */
+    /**
+     * Skill bonuses. Characters saved before skills existed have none stored; they start from
+     * their ability modifiers the first time they are read, and are saved from then on.
+     */
+    private com.dnd.model.character.stats.Skills skills;
+    public com.dnd.model.character.stats.Skills getSkills() {
+        if (skills == null) {
+            if (stats == null) return new com.dnd.model.character.stats.Skills();
+            skills = com.dnd.model.character.stats.Skills.fromAbilities(stats);
+        }
+        return skills;
+    }
+    public void setSkills(com.dnd.model.character.stats.Skills skills) {
+        this.skills = skills;
+    }
+
     private java.util.Map<String, Integer> featureUses = new java.util.LinkedHashMap<>();
     public java.util.Map<String, Integer> getFeatureUses() {
         if (featureUses == null) featureUses = new java.util.LinkedHashMap<>();

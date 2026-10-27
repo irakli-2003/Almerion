@@ -1,4 +1,5 @@
 [
+ "Bonus added to each skill check (e.g. +{0} Stealth, -{1} Animal Handling). Any whole number: positive, negative or {2}. New characters start from their ability modifiers.",
  "The six ability scores. {0} is average, {1} is very good, {2} is weak. Each {3} points above {4} = +{5} to rolls.",
  "🔥 Furnace makes charges up to {A} · fuel burning: {B} units"
 ]

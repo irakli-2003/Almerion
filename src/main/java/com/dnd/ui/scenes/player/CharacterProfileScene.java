@@ -198,6 +198,21 @@ public class CharacterProfileScene extends BaseScene {
                 statRow("Charisma",     s.getCharisma())
             );
         }
+        com.dnd.model.character.stats.Skills skills = pc.getSkills();
+        javafx.scene.layout.GridPane grid = new javafx.scene.layout.GridPane();
+        grid.setHgap(18);
+        grid.setVgap(2);
+        int half = (com.dnd.model.character.stats.Skills.ALL.size() + 1) / 2;
+        for (int i = 0; i < com.dnd.model.character.stats.Skills.ALL.size(); i++) {
+            com.dnd.model.character.stats.Skills.Def def = com.dnd.model.character.stats.Skills.ALL.get(i);
+            int v = skills.get(def.key());
+            Label n = body(def.label() + ":");
+            n.setMinWidth(110);
+            Label value = body((v > 0 ? "+" : "") + v);
+            value.setStyle("-fx-text-fill: #c9a84c; -fx-font-weight: bold;");
+            grid.add(new HBox(6, n, value), i / half, i % half);
+        }
+        box.getChildren().addAll(new Separator(), sectionLabel("Skills"), grid);
         return box;
     }
 

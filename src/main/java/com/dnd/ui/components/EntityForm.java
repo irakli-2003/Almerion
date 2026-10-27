@@ -339,6 +339,8 @@ public final class EntityForm {
             addEnumEditor(prop, current);
         } else if (com.dnd.model.character.stats.CoreStats.class.isAssignableFrom(type)) {
             addCoreStatsEditor(prop, current);
+        } else if (com.dnd.model.character.stats.Skills.class.isAssignableFrom(type)) {
+            addSkillsEditor(prop, current);
         } else if (Map.class.isAssignableFrom(type)) {
             addMapEditor(prop, current);
         } else if (List.class.isAssignableFrom(type)) {
@@ -540,6 +542,51 @@ public final class EntityForm {
                     }
                 }
                 prop.setter().invoke(target, statsTarget);
+            }
+        });
+    }
+
+    /** All skills as a compact grid of whole-number fields (positive, negative or zero). */
+    private void addSkillsEditor(Prop prop, Object current) {
+        com.dnd.model.character.stats.Skills skills = current instanceof com.dnd.model.character.stats.Skills sk
+            ? sk : new com.dnd.model.character.stats.Skills();
+        GridPane grid = statGrid();
+        Map<com.dnd.model.character.stats.Skills.Def, TextField> fields = new LinkedHashMap<>();
+        int columns = 3;
+        int rowsPerColumn = (com.dnd.model.character.stats.Skills.ALL.size() + columns - 1) / columns;
+        for (int i = 0; i < com.dnd.model.character.stats.Skills.ALL.size(); i++) {
+            com.dnd.model.character.stats.Skills.Def def = com.dnd.model.character.stats.Skills.ALL.get(i);
+            int value = skills.get(def.key());
+            TextField field = new TextField((value > 0 ? "+" : "") + value);
+            field.getStyleClass().add("dnd-text-field");
+            field.setPrefWidth(56);
+            Label caption = new Label(def.label());
+            caption.setStyle(LABEL_STYLE);
+            caption.setMinWidth(120);
+            Label ability = new Label(def.ability().substring(0, 3).toUpperCase(Locale.ROOT));
+            ability.setStyle(HINT_STYLE);
+            HBox cell = new HBox(6, caption, field, ability);
+            cell.setAlignment(Pos.CENTER_LEFT);
+            grid.add(cell, i / rowsPerColumn, i % rowsPerColumn);
+            fields.put(def, field);
+        }
+        node.getChildren().add(group(prop.name(), grid));
+        bindings.add(new Binding(humanize(prop.name())) {
+            @Override
+            void write(Object target) throws Exception {
+                com.dnd.model.character.stats.Skills result = new com.dnd.model.character.stats.Skills();
+                for (Map.Entry<com.dnd.model.character.stats.Skills.Def, TextField> entry : fields.entrySet()) {
+                    String text = entry.getValue().getText() == null ? "" : entry.getValue().getText().trim();
+                    if (text.startsWith("+")) text = text.substring(1);
+                    int value;
+                    try {
+                        value = text.isEmpty() ? 0 : Integer.parseInt(text);
+                    } catch (NumberFormatException e) {
+                        throw new IllegalArgumentException(entry.getKey().label() + ": enter a whole number like 3, 0 or -1");
+                    }
+                    result.set(entry.getKey().key(), value);
+                }
+                prop.setter().invoke(target, result);
             }
         });
     }

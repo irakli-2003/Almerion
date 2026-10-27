@@ -325,6 +325,11 @@ Click a character card, or open the player list, then **View / Edit**.
   name, then click a result or press **Enter** to take the first match. Adding a new row
   opens the search immediately.
 - Hover a field's label for an explanation of what it does.
+- **Skills** (Stealth, Animal Handling, Sleight of Hand and the other 15) appear as a grid. Each
+  is a whole number: positive, negative or 0. A character created before skills existed starts
+  from its ability modifiers, so you only need to adjust the skills it is proficient in. Players
+  see their skills on their character profile, and the printed sheet uses the same values.
+- **Delete Character**, next to **Save**, removes the character permanently after you confirm.
 
 ---
 

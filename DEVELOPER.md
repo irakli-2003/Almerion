@@ -342,7 +342,8 @@ translator and its models are not part of the app or the installer.
 - The installer script runs it automatically before Maven (skip with `-SkipTranslations`).
 - It is incremental: existing translations are kept, only new strings are translated, and
   strings that no longer exist in the code are dropped. `--force` re-translates everything.
-- Placeholders are protected. If the model still loses one, the string stays English.
+- Placeholders are protected. If the model still loses one, the string stays English. Such strings
+  are listed in `tools/i18n/kept-english/<code>.json` and not retried until `--force`.
 - **Fixes:** put corrected translations in `tools/i18n/overrides/<code>.json`
   (`{"Apply": "Anwenden"}`). Overrides always win and survive re-translation.
 - **Georgian (`ka`)** has no Argos model, so its file is maintained by hand/AI. The tool never

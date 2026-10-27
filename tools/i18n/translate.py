@@ -30,6 +30,8 @@ import extract_strings  # noqa: E402
 ROOT = extract_strings.ROOT
 DICTS = extract_strings.DICTS
 OVERRIDES = os.path.join(ROOT, 'tools', 'i18n', 'overrides')
+# Strings the model could not translate with placeholders intact; skipped until --force.
+KEPT_ENGLISH = os.path.join(ROOT, 'tools', 'i18n', 'kept-english')
 
 # App language code -> Argos model code.
 ARGOS = {
@@ -78,7 +80,12 @@ class Translator:
         self.engine = tr.get_translation_from_codes('en', to_code)
 
     def _raw(self, text):
-        return self.engine.translate(text)
+        for attempt in range(3):
+            try:
+                return self.engine.translate(text)
+            except RuntimeError:  # sporadic oneDNN/MKL allocation failures; a retry usually works
+                if attempt == 2:
+                    return None
 
     def _masked(self, text, token_for):
         mapping = {}
@@ -142,8 +149,10 @@ def translate_language(job):
     path = os.path.join(DICTS, code + '.json')
     existing = {} if force else load_json(path)
     overrides = load_json(os.path.join(OVERRIDES, code + '.json'))
+    kept_path = os.path.join(KEPT_ENGLISH, code + '.json')
+    kept = set() if force else set(load_json(kept_path) or [])
     result = {k: v for k, v in existing.items() if k in keys}
-    todo = [k for k in keys if k not in result and k not in overrides]
+    todo = [k for k in keys if k not in result and k not in overrides and k not in kept]
     engine = Translator(argos) if todo else None
     failed = []
     for i, key in enumerate(todo, 1):
@@ -157,6 +166,11 @@ def translate_language(job):
             write_dict(code, {**result, **{k: v for k, v in overrides.items() if k in keys}})
     result.update({k: v for k, v in overrides.items() if k in keys})
     write_dict(code, result)
+    still_english = sorted((kept | set(failed)) & set(keys) - set(result))
+    os.makedirs(KEPT_ENGLISH, exist_ok=True)
+    with open(kept_path, 'w', encoding='utf-8', newline='\n') as f:
+        json.dump(still_english, f, ensure_ascii=False, indent=1)
+        f.write('\n')
     return code, len(todo), failed, len(result)
 
 
@@ -196,7 +210,8 @@ def main():
     jobs = [(c, keys, args.force) for c in codes if c in ARGOS]
     for code, _keys, _force in jobs:
         ensure_model(ARGOS[code])
-    with ProcessPoolExecutor(max_workers=max(1, args.jobs)) as pool:
+    # A fresh process per language frees the model's memory before the next one loads.
+    with ProcessPoolExecutor(max_workers=max(1, args.jobs), max_tasks_per_child=1) as pool:
         for code, done, failed, total in pool.map(translate_language, jobs):
             print('%-6s translated %d new, %d kept in English (placeholders could not be kept), %d total'
                   % (code, done - len(failed), len(failed), total), flush=True)

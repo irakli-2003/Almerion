@@ -1,0 +1,15 @@
+[
+ "*.webp",
+ "+refs/heads/*:refs/remotes/{A}/*",
+ "--- NPC: <name> ---",
+ "AC:",
+ "Found \"{A}\" ({B} of {C}).",
+ "GitHub:",
+ "HP:",
+ "HTTP {A}",
+ "Lvl {A}",
+ "SHA-{0}",
+ "XP:",
+ "[CHECK] <skill> DC <n>",
+ "{A} (Rank {B}){C}"
+]

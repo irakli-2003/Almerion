@@ -1,0 +1,14 @@
+[
+ "+refs/heads/*:refs/remotes/{A}/*",
+ "GitHub:",
+ "HP:",
+ "SHA-{0}",
+ "STR {A} DEX {B} CON {C} INT {D} WIS {E} CHA {F}",
+ "Sense celestials, fiends and undead within {0} ft until the end of your next turn.",
+ "⏱ TIMER",
+ "⏸ Pause",
+ "⏹ Stop",
+ "⏹ Stop sounds",
+ "💾 FILE",
+ "🛏 PARTY"
+]

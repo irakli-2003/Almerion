@@ -1,0 +1,2 @@
+# Build-time only: machine translation of the UI (never shipped in the app). MIT licensed.
+argostranslate==1.11.0

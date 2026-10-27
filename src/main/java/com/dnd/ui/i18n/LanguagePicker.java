@@ -17,8 +17,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 
 /**
- * A compact "🌐 language" button. Clicking it opens a searchable list of every supported
- * language; picking one switches the whole UI and remembers the choice.
+ * A compact "🌐 language" button. Clicking it opens a searchable list of the languages that
+ * ship with the app; picking one switches the whole UI and remembers the choice.
  */
 public final class LanguagePicker extends Button {
     private static final String CSS_PATH = "/com/dnd/ui/styles/dnd-theme.css";
@@ -38,7 +38,6 @@ public final class LanguagePicker extends Button {
             setDisable(true);
         } else {
             translator.languageProperty().addListener(new javafx.beans.value.WeakChangeListener<>(refreshLabel));
-            translator.busyProperty().addListener(new javafx.beans.value.WeakChangeListener<>(refreshLabel));
             setOnAction(e -> togglePopup());
         }
         updateLabel();
@@ -61,8 +60,7 @@ public final class LanguagePicker extends Button {
 
     private void updateLabel() {
         Language lang = translator == null ? Language.english() : translator.getLanguage();
-        boolean loading = translator != null && translator.busyProperty().get();
-        setText("🌐 " + lang.nativeName() + (loading ? " …" : ""));
+        setText("🌐 " + lang.nativeName());
         String font = lang.fontOverride();
         setStyle("-fx-font-size: 12px; -fx-padding: 4 10 4 10;" + (font == null ? "" : " -fx-font-family: \"" + font + "\";"));
     }

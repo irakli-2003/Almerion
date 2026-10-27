@@ -5,20 +5,37 @@
       "name": "Tavern",
       "tracks": [
         {
-          "title": "Medieval Fantasy Tavern - music & ambience",
-          "url": "https://www.youtube.com/watch?v=vyg5jJrZ42s"
+          "title": "Master of the Feast",
+          "url": "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Best_of_2014/Kevin_MacLeod_-_Master_of_the_Feast.mp3",
+          "attribution": {
+            "title": "Master of the Feast",
+            "author": "Kevin MacLeod (incompetech.com)",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+            "sourceUrl": "https://freemusicarchive.org/music/Kevin_MacLeod/Best_of_2014_1461/Master_of_the_Feast/"
+          }
         },
         {
-          "title": "Tavern Music & Ambience",
-          "url": "https://www.youtube.com/watch?v=4r_5A6K7gu0"
+          "title": "Pippin the Hunchback",
+          "url": "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Thatched_Villagers/Kevin_MacLeod_-_Pippin_the_Hunchback.mp3",
+          "attribution": {
+            "title": "Pippin the Hunchback",
+            "author": "Kevin MacLeod (incompetech.com)",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+            "sourceUrl": "https://freemusicarchive.org/music/Kevin_MacLeod/Thatched_Villagers/Pippin_the_Hunchback/"
+          }
         },
         {
-          "title": "Fantasy Bard / Tavern Music Compilation",
-          "url": "https://www.youtube.com/watch?v=M0pOMVCUY50"
-        },
-        {
-          "title": "Medieval Tavern - Inn Ambience, fireplace",
-          "url": "https://www.youtube.com/watch?v=rv3Nl-Od9YU"
+          "title": "Angevin 70",
+          "url": "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Thatched_Villagers/Kevin_MacLeod_-_Angevin_70.mp3",
+          "attribution": {
+            "title": "Angevin 70",
+            "author": "Kevin MacLeod (incompetech.com)",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+            "sourceUrl": "https://freemusicarchive.org/music/Kevin_MacLeod/Thatched_Villagers/Angevin/"
+          }
         }
       ]
     },
@@ -27,44 +44,26 @@
       "name": "City market",
       "tracks": [
         {
-          "title": "Medieval Fantasy Music - Medieval Market",
-          "url": "https://www.youtube.com/watch?v=bF-ayUbGtu4"
+          "title": "Bushwick Tarentella",
+          "url": "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Thatched_Villagers/Kevin_MacLeod_-_Bushwick_Tarentella.mp3",
+          "attribution": {
+            "title": "Bushwick Tarentella",
+            "author": "Kevin MacLeod (incompetech.com)",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+            "sourceUrl": "https://freemusicarchive.org/music/Kevin_MacLeod/Thatched_Villagers/Bushwick_Tarentella/"
+          }
         },
         {
-          "title": "Medieval City - Realistic Ambience",
-          "url": "https://www.youtube.com/watch?v=_52K0E_gNY0"
-        },
-        {
-          "title": "Fantasy Medieval Town Ambience",
-          "url": "https://www.youtube.com/watch?v=ugLwYV1GSvo"
-        },
-        {
-          "title": "Fantasy Ambience - Small Marketplace",
-          "url": "https://www.youtube.com/watch?v=x2UulCWGess"
-        }
-      ]
-    },
-    {
-      "id": "harbor",
-      "name": "Harbor & port",
-      "tracks": [
-        {
-          "title": "Harbor Sounds - Seaside Market Ambience",
-          "url": "https://www.youtube.com/watch?v=frEJTGfLOhM"
-        },
-        {
-          "title": "Relaxing Medieval Music: Fantasy Harbor",
-          "url": "https://www.youtube.com/watch?v=OxMQjlBq6zQ"
-        }
-      ]
-    },
-    {
-      "id": "bazaar",
-      "name": "Desert bazaar",
-      "tracks": [
-        {
-          "title": "Bazaar - Oriental Market Ambience",
-          "url": "https://www.youtube.com/watch?v=8uRtW8lBe0I"
+          "title": "Baltic Levity",
+          "url": "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Global_Sampler/Kevin_MacLeod_-_Baltic_Levity.mp3",
+          "attribution": {
+            "title": "Baltic Levity",
+            "author": "Kevin MacLeod (incompetech.com)",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+            "sourceUrl": "https://freemusicarchive.org/music/Kevin_MacLeod/Global_Sampler/Baltic_Levity/"
+          }
         }
       ]
     },
@@ -73,20 +72,37 @@
       "name": "Castle & royal court",
       "tracks": [
         {
-          "title": "Palace Corridors - Castle Ambience",
-          "url": "https://www.youtube.com/watch?v=BwV1azM1Ifw"
+          "title": "Consort for Brass",
+          "url": "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Classical_Sampler/Kevin_MacLeod_-_Consort_for_Brass.mp3",
+          "attribution": {
+            "title": "Consort for Brass",
+            "author": "Kevin MacLeod (incompetech.com)",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+            "sourceUrl": "https://freemusicarchive.org/music/Kevin_MacLeod/Classical_Sampler/Consort_for_Brass/"
+          }
         },
         {
-          "title": "Medieval Castle Music - King Arthur's Court",
-          "url": "https://www.youtube.com/watch?v=UON27Kydqsw"
+          "title": "Virtutes Instrumenti",
+          "url": "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Classical_Sampler/Kevin_MacLeod_-_Virtutes_Instrumenti.mp3",
+          "attribution": {
+            "title": "Virtutes Instrumenti",
+            "author": "Kevin MacLeod (incompetech.com)",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+            "sourceUrl": "https://freemusicarchive.org/music/Kevin_MacLeod/Classical_Sampler/Virtutes_Instrumenti/"
+          }
         },
         {
-          "title": "Medieval Music - Royal Castle",
-          "url": "https://www.youtube.com/watch?v=z2V4Rn8mHIE"
-        },
-        {
-          "title": "Dark Royalty Core Classical Music",
-          "url": "https://www.youtube.com/watch?v=Ty81ibUn75E"
+          "title": "Medieval Theme",
+          "url": "https://files.freemusicarchive.org/storage-freemusicarchive-org/tracks/iuMMQc2RWtRrOV9HQHWKS4qB0RIVBuWz3y3lCgA0.mp3",
+          "attribution": {
+            "title": "Medieval Theme",
+            "author": "Maarten Schellekens",
+            "license": "CC0 1.0",
+            "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+            "sourceUrl": "https://freemusicarchive.org/music/maarten-schellekens/public-domain-1/medieval-theme/"
+          }
         }
       ]
     },
@@ -95,16 +111,26 @@
       "name": "Peaceful village",
       "tracks": [
         {
-          "title": "Fantasy Medieval Music - The Dwarf's Long Mountain Journey",
-          "url": "https://www.youtube.com/watch?v=4WIMyqBG9gs"
+          "title": "Thatched Villagers",
+          "url": "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Thatched_Villagers/Kevin_MacLeod_-_Thatched_Villagers.mp3",
+          "attribution": {
+            "title": "Thatched Villagers",
+            "author": "Kevin MacLeod (incompetech.com)",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+            "sourceUrl": "https://freemusicarchive.org/music/Kevin_MacLeod/Thatched_Villagers/Thatched_Villagers/"
+          }
         },
         {
-          "title": "The Quiet Night Medieval Village",
-          "url": "https://www.youtube.com/watch?v=dJ5VtIE3kwU"
-        },
-        {
-          "title": "The Knight Quiet Forest",
-          "url": "https://www.youtube.com/watch?v=xxYJONmXE8w"
+          "title": "Miri's Magic Dance",
+          "url": "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Thatched_Villagers/Kevin_MacLeod_-_Miris_Magic_Dance.mp3",
+          "attribution": {
+            "title": "Miri's Magic Dance",
+            "author": "Kevin MacLeod (incompetech.com)",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+            "sourceUrl": "https://freemusicarchive.org/music/Kevin_MacLeod/Thatched_Villagers/Miris_Magic_Dance/"
+          }
         }
       ]
     },
@@ -113,16 +139,37 @@
       "name": "Travel & exploration",
       "tracks": [
         {
-          "title": "Calm Fantasy Music for Adventure and Exploration",
-          "url": "https://www.youtube.com/watch?v=sHA_4wfQhE8"
+          "title": "Call to Adventure",
+          "url": "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/2013/Kevin_MacLeod_-_Call_to_Adventure.mp3",
+          "attribution": {
+            "title": "Call to Adventure",
+            "author": "Kevin MacLeod (incompetech.com)",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+            "sourceUrl": "https://freemusicarchive.org/music/Kevin_MacLeod/2013/Call_to_Adventure_1089/"
+          }
         },
         {
-          "title": "Fantasy Medieval Music - Song of the North",
-          "url": "https://www.youtube.com/watch?v=gRuggMzH3Gw"
+          "title": "Living Voyage",
+          "url": "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Thatched_Villagers/Kevin_MacLeod_-_Living_Voyage.mp3",
+          "attribution": {
+            "title": "Living Voyage",
+            "author": "Kevin MacLeod (incompetech.com)",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+            "sourceUrl": "https://freemusicarchive.org/music/Kevin_MacLeod/Thatched_Villagers/Living_Voyage/"
+          }
         },
         {
-          "title": "3 Hours of Fantasy Music",
-          "url": "https://www.youtube.com/watch?v=GkSHE6wOzX0"
+          "title": "Enchanted Journey",
+          "url": "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Calming/Kevin_MacLeod_-_Enchanted_Journey.mp3",
+          "attribution": {
+            "title": "Enchanted Journey",
+            "author": "Kevin MacLeod (incompetech.com)",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+            "sourceUrl": "https://freemusicarchive.org/music/Kevin_MacLeod/Calming/Enchanted_Journey_1045/"
+          }
         }
       ]
     },
@@ -131,16 +178,26 @@
       "name": "Forest",
       "tracks": [
         {
-          "title": "Enchanted Forest - Music & Ambience",
-          "url": "https://www.youtube.com/watch?v=XxEhuSJF780"
+          "title": "The Forest and the Trees",
+          "url": "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Contemporary_Sampler/Kevin_MacLeod_-_The_Forest_and_the_Trees.mp3",
+          "attribution": {
+            "title": "The Forest and the Trees",
+            "author": "Kevin MacLeod (incompetech.com)",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+            "sourceUrl": "https://freemusicarchive.org/music/Kevin_MacLeod/Contemporary_Sampler/The_Forest_and_the_Trees/"
+          }
         },
         {
-          "title": "Fairy Lands - Fantasy Music in a Magical Forest",
-          "url": "https://www.youtube.com/watch?v=syp6Lsd8HOo"
-        },
-        {
-          "title": "Forest Sounds - Woodland Ambience, Bird Song",
-          "url": "https://www.youtube.com/watch?v=xNN7iTA57jM"
+          "title": "Cattails",
+          "url": "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Thatched_Villagers/Kevin_MacLeod_-_Cattails.mp3",
+          "attribution": {
+            "title": "Cattails",
+            "author": "Kevin MacLeod (incompetech.com)",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+            "sourceUrl": "https://freemusicarchive.org/music/Kevin_MacLeod/Thatched_Villagers/Cattails_1621/"
+          }
         }
       ]
     },
@@ -149,20 +206,26 @@
       "name": "Dungeon & caves",
       "tracks": [
         {
-          "title": "Fantasy Dungeon Ambience",
-          "url": "https://www.youtube.com/watch?v=K1JvqHnSHfc"
+          "title": "Temple of the Manes",
+          "url": "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Thatched_Villagers/Kevin_MacLeod_-_Temple_of_the_Manes.mp3",
+          "attribution": {
+            "title": "Temple of the Manes",
+            "author": "Kevin MacLeod (incompetech.com)",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+            "sourceUrl": "https://freemusicarchive.org/music/Kevin_MacLeod/Thatched_Villagers/Temple_of_the_Manes/"
+          }
         },
         {
-          "title": "Fantasy Ambience - Generic Dungeon",
-          "url": "https://www.youtube.com/watch?v=wScEFaoqwPM"
-        },
-        {
-          "title": "Fantasy Ambience - Catacombs",
-          "url": "https://www.youtube.com/watch?v=WPpVMmTt74Q"
-        },
-        {
-          "title": "Dark Tomb - Cave Sounds",
-          "url": "https://www.youtube.com/watch?v=kxqJuc1HHbg"
+          "title": "Rites",
+          "url": "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Thatched_Villagers/Kevin_MacLeod_-_Rites.mp3",
+          "attribution": {
+            "title": "Rites",
+            "author": "Kevin MacLeod (incompetech.com)",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+            "sourceUrl": "https://freemusicarchive.org/music/Kevin_MacLeod/Thatched_Villagers/Rites/"
+          }
         }
       ]
     },
@@ -171,16 +234,26 @@
       "name": "Mystery & suspense",
       "tracks": [
         {
-          "title": "Suspense - TTRPG Music",
-          "url": "https://www.youtube.com/watch?v=EApZmmYg_oQ"
+          "title": "Unanswered Questions",
+          "url": "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Thatched_Villagers/Kevin_MacLeod_-_Unanswered_Questions.mp3",
+          "attribution": {
+            "title": "Unanswered Questions",
+            "author": "Kevin MacLeod (incompetech.com)",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+            "sourceUrl": "https://freemusicarchive.org/music/Kevin_MacLeod/Thatched_Villagers/Unanswered_Questions/"
+          }
         },
         {
-          "title": "Dark and Mysterious Ambient Music",
-          "url": "https://www.youtube.com/watch?v=CDWtH8eHeEU"
-        },
-        {
-          "title": "3 Hours of Dark Fantasy Music - The Dark Trilogy",
-          "url": "https://www.youtube.com/watch?v=WUhMLw6vq8g"
+          "title": "Isolated",
+          "url": "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Contemporary_Sampler/Kevin_MacLeod_-_Isolated.mp3",
+          "attribution": {
+            "title": "Isolated",
+            "author": "Kevin MacLeod (incompetech.com)",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+            "sourceUrl": "https://freemusicarchive.org/music/Kevin_MacLeod/Contemporary_Sampler/Isolated/"
+          }
         }
       ]
     },
@@ -189,16 +262,26 @@
       "name": "Horror",
       "tracks": [
         {
-          "title": "Hallucinations - Lovecraftian Dark Ambient",
-          "url": "https://www.youtube.com/watch?v=Jg_QwWE_5cY"
+          "title": "Gagool",
+          "url": "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Contemporary_Sampler/Kevin_MacLeod_-_Gagool.mp3",
+          "attribution": {
+            "title": "Gagool",
+            "author": "Kevin MacLeod (incompetech.com)",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+            "sourceUrl": "https://freemusicarchive.org/music/Kevin_MacLeod/Contemporary_Sampler/Gagool/"
+          }
         },
         {
-          "title": "Nightmares from the Mist - Dark Ambient",
-          "url": "https://www.youtube.com/watch?v=tvTsUs0n9zw"
-        },
-        {
-          "title": "Dark Witch of the Woods - Ambience and Music",
-          "url": "https://www.youtube.com/watch?v=7tURXEUhwhg"
+          "title": "Ghost Dance",
+          "url": "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Classical_Sampler/Kevin_MacLeod_-_Ghost_Dance.mp3",
+          "attribution": {
+            "title": "Ghost Dance",
+            "author": "Kevin MacLeod (incompetech.com)",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+            "sourceUrl": "https://freemusicarchive.org/music/Kevin_MacLeod/Classical_Sampler/Ghost_Dance/"
+          }
         }
       ]
     },
@@ -207,20 +290,26 @@
       "name": "Combat",
       "tracks": [
         {
-          "title": "RPG Combat Music Mix",
-          "url": "https://www.youtube.com/watch?v=t3B802PIuB0"
+          "title": "Crossing the Divide",
+          "url": "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Best_of_2014/Kevin_MacLeod_-_Crossing_the_Divide.mp3",
+          "attribution": {
+            "title": "Crossing the Divide",
+            "author": "Kevin MacLeod (incompetech.com)",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+            "sourceUrl": "https://freemusicarchive.org/music/Kevin_MacLeod/Best_of_2014_1461/Crossing_the_Divide/"
+          }
         },
         {
-          "title": "Epic Fight - Battle Music",
-          "url": "https://www.youtube.com/watch?v=BWoGeXrNs_g"
-        },
-        {
-          "title": "Surprise! - Battle Music",
-          "url": "https://www.youtube.com/watch?v=sd1Otp7s1Fk"
-        },
-        {
-          "title": "Combat Music Megamix",
-          "url": "https://www.youtube.com/watch?v=UDUuD4IiEyk"
+          "title": "Impact Prelude",
+          "url": "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Impact/Kevin_MacLeod_-_01_-_Impact_Prelude.mp3",
+          "attribution": {
+            "title": "Impact Prelude",
+            "author": "Kevin MacLeod (incompetech.com)",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+            "sourceUrl": "https://freemusicarchive.org/music/Kevin_MacLeod/Impact/Impact_Prelude_1765/"
+          }
         }
       ]
     },
@@ -229,16 +318,26 @@
       "name": "Boss fight",
       "tracks": [
         {
-          "title": "Boss Fight Music - TTRPG",
-          "url": "https://www.youtube.com/watch?v=m15ZYxlOdmk"
+          "title": "Devastation and Revenge",
+          "url": "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Contemporary_Sampler/Kevin_MacLeod_-_Devastation_and_Revenge.mp3",
+          "attribution": {
+            "title": "Devastation and Revenge",
+            "author": "Kevin MacLeod (incompetech.com)",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+            "sourceUrl": "https://freemusicarchive.org/music/Kevin_MacLeod/Contemporary_Sampler/Devastation_and_Revenge/"
+          }
         },
         {
-          "title": "End This - Epic Boss Fight Music",
-          "url": "https://www.youtube.com/watch?v=L9dhkINF5Vk"
-        },
-        {
-          "title": "Escape from Darkness - Dark Battle Orchestral",
-          "url": "https://www.youtube.com/watch?v=dh0Yqin18mM"
+          "title": "Toccata and Fugue in D Minor",
+          "url": "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Classical_Sampler/Kevin_MacLeod_-_J_S_Bach_Toccata_and_Fugue_in_D_Minor.mp3",
+          "attribution": {
+            "title": "Toccata and Fugue in D Minor",
+            "author": "Kevin MacLeod (incompetech.com)",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+            "sourceUrl": "https://freemusicarchive.org/music/Kevin_MacLeod/Classical_Sampler/Toccata_and_Fugue_in_D_Minor/"
+          }
         }
       ]
     },
@@ -247,16 +346,26 @@
       "name": "Sad & emotional",
       "tracks": [
         {
-          "title": "Forgotten Gods - Emotional Ethereal Fantasy Music",
-          "url": "https://www.youtube.com/watch?v=aoJ-NYeuxGk"
+          "title": "Mourning Song",
+          "url": "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Classical_Sampler/Kevin_MacLeod_-_Mourning_Song.mp3",
+          "attribution": {
+            "title": "Mourning Song",
+            "author": "Kevin MacLeod (incompetech.com)",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+            "sourceUrl": "https://freemusicarchive.org/music/Kevin_MacLeod/Classical_Sampler/Mourning_Song/"
+          }
         },
         {
-          "title": "Fantasy World - Beautiful Sad Piano",
-          "url": "https://www.youtube.com/watch?v=NdgLj3-tEgM"
-        },
-        {
-          "title": "One Life - Emotional Orchestral",
-          "url": "https://www.youtube.com/watch?v=v47KZwY5Ih0"
+          "title": "Resignation",
+          "url": "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Calming/Kevin_MacLeod_-_Resignation.mp3",
+          "attribution": {
+            "title": "Resignation",
+            "author": "Kevin MacLeod (incompetech.com)",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+            "sourceUrl": "https://freemusicarchive.org/music/Kevin_MacLeod/Calming/Resignation/"
+          }
         }
       ]
     },
@@ -265,12 +374,26 @@
       "name": "Camp at night",
       "tracks": [
         {
-          "title": "Campfire Ambience with Night Animals",
-          "url": "https://www.youtube.com/watch?v=E77jmtut1Zc"
+          "title": "Winter Reflections",
+          "url": "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Calming/Kevin_MacLeod_-_Winter_Reflections.mp3",
+          "attribution": {
+            "title": "Winter Reflections",
+            "author": "Kevin MacLeod (incompetech.com)",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+            "sourceUrl": "https://freemusicarchive.org/music/Kevin_MacLeod/Calming/Winter_Reflections/"
+          }
         },
         {
-          "title": "Fantasy Medieval Winter Night Ambience",
-          "url": "https://www.youtube.com/watch?v=81iRGxYAmMk"
+          "title": "Enchanted Journey",
+          "url": "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Calming/Kevin_MacLeod_-_Enchanted_Journey.mp3",
+          "attribution": {
+            "title": "Enchanted Journey",
+            "author": "Kevin MacLeod (incompetech.com)",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+            "sourceUrl": "https://freemusicarchive.org/music/Kevin_MacLeod/Calming/Enchanted_Journey_1045/"
+          }
         }
       ]
     },
@@ -279,324 +402,480 @@
       "name": "At sea",
       "tracks": [
         {
-          "title": "Pirate Ship Ambience - Captain's Cabin",
-          "url": "https://www.youtube.com/watch?v=Ft-lJyu_nuY"
+          "title": "Windswept",
+          "url": "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Calming/Kevin_MacLeod_-_Windswept.mp3",
+          "attribution": {
+            "title": "Windswept",
+            "author": "Kevin MacLeod (incompetech.com)",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+            "sourceUrl": "https://freemusicarchive.org/music/Kevin_MacLeod/Calming/Windswept/"
+          }
         },
         {
-          "title": "Sailing Ship - High Seas Ambience",
-          "url": "https://www.youtube.com/watch?v=beOw8MEojQ4"
-        },
-        {
-          "title": "Pirate Folk Music of the Lost Seas",
-          "url": "https://www.youtube.com/watch?v=bRzEFm00-Zo"
+          "title": "Living Voyage",
+          "url": "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Thatched_Villagers/Kevin_MacLeod_-_Living_Voyage.mp3",
+          "attribution": {
+            "title": "Living Voyage",
+            "author": "Kevin MacLeod (incompetech.com)",
+            "license": "CC BY 3.0",
+            "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+            "sourceUrl": "https://freemusicarchive.org/music/Kevin_MacLeod/Thatched_Villagers/Living_Voyage/"
+          }
         }
       ]
     }
   ],
   "sounds": [
     {
-      "id": "amb-river",
-      "name": "River",
-      "url": "https://www.youtube.com/watch?v=IvjMgVS6kng",
-      "startSeconds": 0,
-      "endSeconds": 0,
-      "ambience": true
-    },
-    {
-      "id": "amb-waterfall",
-      "name": "Waterfall",
-      "url": "https://www.youtube.com/watch?v=VXPXkAhB6ek",
-      "startSeconds": 0,
-      "endSeconds": 0,
-      "ambience": true
-    },
-    {
-      "id": "amb-wind-howling",
-      "name": "Wind (howling)",
-      "url": "https://www.youtube.com/watch?v=sT5f1jBJHng",
-      "startSeconds": 0,
-      "endSeconds": 0,
-      "ambience": true
-    },
-    {
-      "id": "amb-winter-storm",
-      "name": "Winter storm",
-      "url": "https://www.youtube.com/watch?v=sGkh1W5cbH4",
-      "startSeconds": 0,
-      "endSeconds": 0,
-      "ambience": true
-    },
-    {
-      "id": "amb-blizzard",
-      "name": "Blizzard",
-      "url": "https://www.youtube.com/watch?v=7BrIJrjxVxA",
-      "startSeconds": 0,
-      "endSeconds": 0,
-      "ambience": true
-    },
-    {
       "id": "amb-rain",
       "name": "Rain",
-      "url": "https://www.youtube.com/watch?v=q76bMs-NwRk",
+      "url": "https://bigsoundbank.com/UPLOAD/mp3/1289.mp3",
       "startSeconds": 0,
       "endSeconds": 0,
-      "ambience": true
+      "ambience": true,
+      "attribution": {
+        "title": "Rain on concrete",
+        "author": "Joseph SARDIN",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://bigsoundbank.com/rain-on-concrete-s1289.html"
+      }
     },
     {
       "id": "amb-thunderstorm",
       "name": "Thunderstorm",
-      "url": "https://www.youtube.com/watch?v=gVKEM4K8J8A",
+      "url": "https://bigsoundbank.com/UPLOAD/mp3/0124.mp3",
       "startSeconds": 0,
       "endSeconds": 0,
-      "ambience": true
+      "ambience": true,
+      "attribution": {
+        "title": "Rain and Thunder #1",
+        "author": "Joseph SARDIN",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://bigsoundbank.com/rain-and-storm-s0124.html"
+      }
     },
     {
-      "id": "amb-ocean-waves",
-      "name": "Ocean waves",
-      "url": "https://www.youtube.com/watch?v=vPhg6sc1Mk4",
+      "id": "amb-wind-howling",
+      "name": "Wind (howling)",
+      "url": "https://bigsoundbank.com/UPLOAD/mp3/0147.mp3",
       "startSeconds": 0,
       "endSeconds": 0,
-      "ambience": true
+      "ambience": true,
+      "attribution": {
+        "title": "Whistling of the Wind #1",
+        "author": "Joseph SARDIN",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://bigsoundbank.com/whistling-of-the-wind-1-s0147.html"
+      }
+    },
+    {
+      "id": "amb-strong-wind",
+      "name": "Strong wind",
+      "url": "https://bigsoundbank.com/UPLOAD/mp3/0146.mp3",
+      "startSeconds": 0,
+      "endSeconds": 0,
+      "ambience": true,
+      "attribution": {
+        "title": "Strong Wind #1",
+        "author": "Joseph SARDIN",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://bigsoundbank.com/strong-wind-1-s0146.html"
+      }
     },
     {
       "id": "amb-fireplace",
       "name": "Fireplace",
-      "url": "https://www.youtube.com/watch?v=L_LUpnjgPso",
+      "url": "https://bigsoundbank.com/UPLOAD/mp3/2855.mp3",
       "startSeconds": 0,
       "endSeconds": 0,
-      "ambience": true
+      "ambience": true,
+      "attribution": {
+        "title": "Fireplace #3",
+        "author": "Joseph SARDIN",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://bigsoundbank.com/fireplace-3-s2855.html"
+      }
     },
     {
       "id": "amb-cave-dripping",
       "name": "Cave (dripping)",
-      "url": "https://www.youtube.com/watch?v=3Hwr_BaekgM",
+      "url": "https://bigsoundbank.com/UPLOAD/mp3/2135.mp3",
       "startSeconds": 0,
       "endSeconds": 0,
-      "ambience": true
+      "ambience": true,
+      "attribution": {
+        "title": "Cave #1",
+        "author": "Joseph SARDIN",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://bigsoundbank.com/cave-1-s2135.html"
+      }
     },
     {
-      "id": "amb-swamp-at-night",
-      "name": "Swamp at night",
-      "url": "https://www.youtube.com/watch?v=ih4_1FyVjaY",
+      "id": "amb-river",
+      "name": "River",
+      "url": "https://bigsoundbank.com/UPLOAD/mp3/0823.mp3",
       "startSeconds": 0,
       "endSeconds": 0,
-      "ambience": true
+      "ambience": true,
+      "attribution": {
+        "title": "Small Stream",
+        "author": "Joseph SARDIN",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://bigsoundbank.com/small-stream-s0823.html"
+      }
     },
     {
-      "id": "amb-night-crickets",
-      "name": "Night crickets",
-      "url": "https://www.youtube.com/watch?v=g1w3IT5WnYw",
+      "id": "amb-waterfall",
+      "name": "Waterfall",
+      "url": "https://bigsoundbank.com/UPLOAD/mp3/0219.mp3",
       "startSeconds": 0,
       "endSeconds": 0,
-      "ambience": true
+      "ambience": true,
+      "attribution": {
+        "title": "Small waterfall #2",
+        "author": "gamin",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://bigsoundbank.com/small-waterfall-2-s0219.html"
+      }
+    },
+    {
+      "id": "amb-ocean-waves",
+      "name": "Ocean waves",
+      "url": "https://bigsoundbank.com/UPLOAD/mp3/0267.mp3",
+      "startSeconds": 0,
+      "endSeconds": 0,
+      "ambience": true,
+      "attribution": {
+        "title": "Sea Waves with Tern Calls",
+        "author": "DenisChardonnet",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://bigsoundbank.com/sea-waves-and-seagulls-s0267.html"
+      }
     },
     {
       "id": "amb-forest-birds",
       "name": "Forest birds",
-      "url": "https://www.youtube.com/watch?v=xNN7iTA57jM",
+      "url": "https://bigsoundbank.com/UPLOAD/mp3/0100.mp3",
       "startSeconds": 0,
       "endSeconds": 0,
-      "ambience": true
+      "ambience": true,
+      "attribution": {
+        "title": "Forest",
+        "author": "Joseph SARDIN",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://bigsoundbank.com/forest-s0100.html"
+      }
     },
     {
-      "id": "amb-wolves-in-the-night",
-      "name": "Wolves in the night",
-      "url": "https://www.youtube.com/watch?v=MJmW4gsvaVE",
+      "id": "amb-night-crickets",
+      "name": "Night crickets",
+      "url": "https://bigsoundbank.com/UPLOAD/mp3/0110.mp3",
       "startSeconds": 0,
       "endSeconds": 0,
-      "ambience": true
+      "ambience": true,
+      "attribution": {
+        "title": "Campaign at night #1",
+        "author": "Joseph SARDIN",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://bigsoundbank.com/campaign-at-night-1-s0110.html"
+      }
     },
     {
-      "id": "amb-angry-crowd",
-      "name": "Angry crowd",
-      "url": "https://www.youtube.com/watch?v=UNibrdgIVSw",
+      "id": "amb-market-crowd",
+      "name": "Market crowd",
+      "url": "https://bigsoundbank.com/UPLOAD/mp3/2728.mp3",
       "startSeconds": 0,
       "endSeconds": 0,
-      "ambience": true
+      "ambience": true,
+      "attribution": {
+        "title": "Outdoor Market #1",
+        "author": "Joseph SARDIN",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://bigsoundbank.com/outdoor-market-1-s2728.html"
+      }
+    },
+    {
+      "id": "amb-tavern-chatter",
+      "name": "Tavern chatter",
+      "url": "https://bigsoundbank.com/UPLOAD/mp3/3542.mp3",
+      "startSeconds": 0,
+      "endSeconds": 0,
+      "ambience": true,
+      "attribution": {
+        "title": "Small Restaurant Conversations",
+        "author": "Joseph SARDIN & Axeline T.",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://bigsoundbank.com/small-restaurant-conversations-s3542.html"
+      }
+    },
+    {
+      "id": "amb-owls-at-night",
+      "name": "Owls at night",
+      "url": "https://bigsoundbank.com/UPLOAD/mp3/1763.mp3",
+      "startSeconds": 0,
+      "endSeconds": 0,
+      "ambience": true,
+      "attribution": {
+        "title": "Tawny Owl #1",
+        "author": "Joseph SARDIN",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://bigsoundbank.com/tawny-owl-1-s1763.html"
+      }
     },
     {
       "id": "sfx-thunder-clap",
       "name": "Thunder clap",
-      "url": "https://www.youtube.com/watch?v=T-BOPr7NXME",
+      "url": "https://bigsoundbank.com/UPLOAD/mp3/2718.mp3",
       "startSeconds": 0,
       "endSeconds": 0,
-      "ambience": false
+      "ambience": false,
+      "attribution": {
+        "title": "Thunder #1",
+        "author": "Joseph SARDIN",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://bigsoundbank.com/thunder-s2718.html"
+      }
     },
     {
       "id": "sfx-door-creak",
       "name": "Door creak",
-      "url": "https://www.youtube.com/watch?v=W2jJpBouh9U",
+      "url": "https://bigsoundbank.com/UPLOAD/mp3/0306.mp3",
       "startSeconds": 0,
       "endSeconds": 0,
-      "ambience": false
+      "ambience": false,
+      "attribution": {
+        "title": "Long creaking door",
+        "author": "DenisChardonnet",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://bigsoundbank.com/long-creaking-door-s0306.html"
+      }
     },
     {
       "id": "sfx-sword-clash",
       "name": "Sword clash",
-      "url": "https://www.youtube.com/watch?v=SwD4SDnL1xE",
+      "url": "https://bigsoundbank.com/UPLOAD/mp3/0129.mp3",
       "startSeconds": 0,
       "endSeconds": 0,
-      "ambience": false
+      "ambience": false,
+      "attribution": {
+        "title": "Sword",
+        "author": "Joseph SARDIN",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://bigsoundbank.com/sword-s0129.html"
+      }
     },
     {
       "id": "sfx-sword-slash",
       "name": "Sword slash",
-      "url": "https://www.youtube.com/watch?v=E8Ced6hW45k",
+      "url": "https://bigsoundbank.com/UPLOAD/mp3/0127.mp3",
       "startSeconds": 0,
       "endSeconds": 0,
-      "ambience": false
-    },
-    {
-      "id": "sfx-dragon-roar",
-      "name": "Dragon roar",
-      "url": "https://www.youtube.com/watch?v=79NxCXrO1nU",
-      "startSeconds": 0,
-      "endSeconds": 0,
-      "ambience": false
-    },
-    {
-      "id": "sfx-wolf-howl",
-      "name": "Wolf howl",
-      "url": "https://www.youtube.com/watch?v=8_8Pk7pwNUI",
-      "startSeconds": 0,
-      "endSeconds": 0,
-      "ambience": false
-    },
-    {
-      "id": "sfx-explosion",
-      "name": "Explosion",
-      "url": "https://www.youtube.com/watch?v=dz6Lp_PyX_Q",
-      "startSeconds": 0,
-      "endSeconds": 0,
-      "ambience": false
-    },
-    {
-      "id": "sfx-evil-laugh",
-      "name": "Evil laugh",
-      "url": "https://www.youtube.com/watch?v=f3BPx2lt6E0",
-      "startSeconds": 0,
-      "endSeconds": 0,
-      "ambience": false
-    },
-    {
-      "id": "sfx-ghost-laugh",
-      "name": "Ghost laugh",
-      "url": "https://www.youtube.com/watch?v=ujSx5LyEYBU",
-      "startSeconds": 0,
-      "endSeconds": 0,
-      "ambience": false
-    },
-    {
-      "id": "sfx-coin-purse",
-      "name": "Coin purse",
-      "url": "https://www.youtube.com/watch?v=DdVuCBdEGro",
-      "startSeconds": 0,
-      "endSeconds": 0,
-      "ambience": false
-    },
-    {
-      "id": "sfx-magic-spell",
-      "name": "Magic spell",
-      "url": "https://www.youtube.com/watch?v=RZtMFFudEw8",
-      "startSeconds": 0,
-      "endSeconds": 0,
-      "ambience": false
-    },
-    {
-      "id": "sfx-fairy-magic",
-      "name": "Fairy magic",
-      "url": "https://www.youtube.com/watch?v=_nX273mOpkE",
-      "startSeconds": 0,
-      "endSeconds": 0,
-      "ambience": false
-    },
-    {
-      "id": "sfx-fireball",
-      "name": "Fireball",
-      "url": "https://www.youtube.com/watch?v=AHRf27GPhQc",
-      "startSeconds": 0,
-      "endSeconds": 0,
-      "ambience": false
+      "ambience": false,
+      "attribution": {
+        "title": "Sword That Cuts",
+        "author": "Joseph SARDIN",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://bigsoundbank.com/sword-that-cuts-s0127.html"
+      }
     },
     {
       "id": "sfx-church-bell",
       "name": "Church bell",
-      "url": "https://www.youtube.com/watch?v=F0avwfiK0f8",
+      "url": "https://bigsoundbank.com/UPLOAD/mp3/0135.mp3",
       "startSeconds": 0,
       "endSeconds": 0,
-      "ambience": false
+      "ambience": false,
+      "attribution": {
+        "title": "Church Bell",
+        "author": "Joseph SARDIN",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://bigsoundbank.com/church-bell-s0135.html"
+      }
     },
     {
-      "id": "sfx-bells-of-doom",
-      "name": "Bells of doom",
-      "url": "https://www.youtube.com/watch?v=9HZxWNoyTJY",
+      "id": "sfx-explosion",
+      "name": "Explosion",
+      "url": "https://bigsoundbank.com/UPLOAD/mp3/1023.mp3",
       "startSeconds": 0,
       "endSeconds": 0,
-      "ambience": false
+      "ambience": false,
+      "attribution": {
+        "title": "Explosion far Away #1",
+        "author": "Joseph SARDIN",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://bigsoundbank.com/explosion-far-away-s1023.html"
+      }
+    },
+    {
+      "id": "sfx-coin-purse",
+      "name": "Coin purse",
+      "url": "https://bigsoundbank.com/UPLOAD/mp3/0193.mp3",
+      "startSeconds": 0,
+      "endSeconds": 0,
+      "ambience": false,
+      "attribution": {
+        "title": "Coins #1",
+        "author": "Joseph SARDIN",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://bigsoundbank.com/coins-1-s0193.html"
+      }
     },
     {
       "id": "sfx-monster-growl",
       "name": "Monster growl",
-      "url": "https://www.youtube.com/watch?v=I6KMAxpqUw8",
+      "url": "https://bigsoundbank.com/UPLOAD/mp3/2106.mp3",
       "startSeconds": 0,
       "endSeconds": 0,
-      "ambience": false
+      "ambience": false,
+      "attribution": {
+        "title": "Zombie #1",
+        "author": "Joseph SARDIN",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://bigsoundbank.com/zombie-1-s2106.html"
+      }
     },
     {
-      "id": "sfx-horse-gallop",
-      "name": "Horse gallop",
-      "url": "https://www.youtube.com/watch?v=CqFOZhbvRV4",
+      "id": "sfx-beast-roar",
+      "name": "Beast roar",
+      "url": "https://bigsoundbank.com/UPLOAD/mp3/1881.mp3",
       "startSeconds": 0,
       "endSeconds": 0,
-      "ambience": false
-    },
-    {
-      "id": "sfx-arrow",
-      "name": "Arrow",
-      "url": "https://www.youtube.com/watch?v=fWGdG_NL0cU",
-      "startSeconds": 0,
-      "endSeconds": 0,
-      "ambience": false
-    },
-    {
-      "id": "sfx-crow",
-      "name": "Crow",
-      "url": "https://www.youtube.com/watch?v=kA8mEHxkUsw",
-      "startSeconds": 0,
-      "endSeconds": 0,
-      "ambience": false
-    },
-    {
-      "id": "sfx-scream",
-      "name": "Scream",
-      "url": "https://www.youtube.com/watch?v=DM1Ylv7-DA8",
-      "startSeconds": 0,
-      "endSeconds": 0,
-      "ambience": false
-    },
-    {
-      "id": "sfx-glass-shatter",
-      "name": "Glass shatter",
-      "url": "https://www.youtube.com/watch?v=TcnufvBffcY",
-      "startSeconds": 0,
-      "endSeconds": 0,
-      "ambience": false
-    },
-    {
-      "id": "sfx-war-horn",
-      "name": "War horn",
-      "url": "https://www.youtube.com/watch?v=uHHMV8hukBI",
-      "startSeconds": 0,
-      "endSeconds": 0,
-      "ambience": false
+      "ambience": false,
+      "attribution": {
+        "title": "Cat roar #1",
+        "author": "Joseph SARDIN",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://bigsoundbank.com/cat-roar-1-s1881.html"
+      }
     },
     {
       "id": "sfx-heartbeat",
       "name": "Heartbeat",
-      "url": "https://www.youtube.com/watch?v=TgZjYIPPe50",
+      "url": "https://bigsoundbank.com/UPLOAD/mp3/0243.mp3",
       "startSeconds": 0,
       "endSeconds": 0,
-      "ambience": false
+      "ambience": false,
+      "attribution": {
+        "title": "Heartbeat #1",
+        "author": "DenisChardonnet",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://bigsoundbank.com/heartbeat-1-s0243.html"
+      }
+    },
+    {
+      "id": "sfx-glass-shatter",
+      "name": "Glass shatter",
+      "url": "https://bigsoundbank.com/UPLOAD/mp3/0148.mp3",
+      "startSeconds": 0,
+      "endSeconds": 0,
+      "ambience": false,
+      "attribution": {
+        "title": "Glass Burst",
+        "author": "Joseph SARDIN",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://bigsoundbank.com/glass-burst-s0148.html"
+      }
+    },
+    {
+      "id": "sfx-horse-gallop",
+      "name": "Horse gallop",
+      "url": "https://bigsoundbank.com/UPLOAD/mp3/0611.mp3",
+      "startSeconds": 0,
+      "endSeconds": 0,
+      "ambience": false,
+      "attribution": {
+        "title": "Horse Gallop",
+        "author": "Joseph SARDIN",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://bigsoundbank.com/horse-gallop-s0611.html"
+      }
+    },
+    {
+      "id": "sfx-arrow",
+      "name": "Arrow",
+      "url": "https://bigsoundbank.com/UPLOAD/mp3/0548.mp3",
+      "startSeconds": 0,
+      "endSeconds": 0,
+      "ambience": false,
+      "attribution": {
+        "title": "An arrow on a target",
+        "author": "Joseph SARDIN",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://bigsoundbank.com/an-arrow-on-a-target-s0548.html"
+      }
+    },
+    {
+      "id": "sfx-crow",
+      "name": "Crow",
+      "url": "https://bigsoundbank.com/UPLOAD/mp3/2764.mp3",
+      "startSeconds": 0,
+      "endSeconds": 0,
+      "ambience": false,
+      "attribution": {
+        "title": "Crow #1",
+        "author": "Joseph SARDIN",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://bigsoundbank.com/crow-1-s2764.html"
+      }
+    },
+    {
+      "id": "sfx-ghost-wail",
+      "name": "Ghost wail",
+      "url": "https://bigsoundbank.com/UPLOAD/mp3/2046.mp3",
+      "startSeconds": 0,
+      "endSeconds": 0,
+      "ambience": false,
+      "attribution": {
+        "title": "Ghost #1",
+        "author": "Joseph SARDIN",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://bigsoundbank.com/ghost-1-s2046.html"
+      }
+    },
+    {
+      "id": "sfx-evil-laugh",
+      "name": "Evil laugh",
+      "url": "https://bigsoundbank.com/UPLOAD/mp3/2093.mp3",
+      "startSeconds": 0,
+      "endSeconds": 0,
+      "ambience": false,
+      "attribution": {
+        "title": "Delirious Laughter #3",
+        "author": "Joseph SARDIN",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "sourceUrl": "https://bigsoundbank.com/delirious-laughter-3-s2093.html"
+      }
     }
   ],
   "combatPlaylistId": "combat",

@@ -3,10 +3,13 @@ package com.dnd.ui.i18n;
 import com.dnd.data.AppHome;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.io.IOException;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -55,7 +58,14 @@ public final class AppSettings {
 
     private void save() {
         try {
-            TranslationService.writeAtomically(file, values);
+            Files.createDirectories(file.toAbsolutePath().getParent());
+            Path temp = file.resolveSibling(file.getFileName() + ".tmp");
+            new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT).writeValue(temp.toFile(), values);
+            try {
+                Files.move(temp, file, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+            } catch (AtomicMoveNotSupportedException e) {
+                Files.move(temp, file, StandardCopyOption.REPLACE_EXISTING);
+            }
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, "Could not save settings to " + file, e);
         }

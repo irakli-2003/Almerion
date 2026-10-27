@@ -1,6 +1,7 @@
 package com.dnd.music;
 
 import com.dnd.data.JsonMappers;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -10,12 +11,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
  * The campaign's soundtrack, stored in {@code music.json} at the campaign root: named
- * playlists of YouTube links, short sound effects, and which playlist plays in combat.
+ * playlists of audio tracks, sound effects and looping ambience, and which playlist plays in
+ * combat. Audio is either a file copied into {@code <campaign>/music/} or a direct link to an
+ * audio file that is downloaded once into {@code <campaign>/music/cache/}.
+ *
+ * <p>Libraries saved by older versions hold YouTube links; those entries still load but are
+ * {@linkplain Audio#unsupported() unsupported}: they are skipped in playback and can be
+ * removed with {@link #removeUnsupported()}.</p>
  */
 public class MusicLibrary {
 
@@ -29,22 +38,32 @@ public class MusicLibrary {
     private int effectsVolume = 80;
     private boolean shuffle;
     private boolean loop = true;
+    /** The campaign folder audio paths are relative to; not saved. */
+    private Path root;
 
     /** The campaign's library, or the bundled starter pack when the campaign has none yet. */
     public static MusicLibrary load(Path campaignRoot) {
         Path file = campaignRoot.resolve(FILE_NAME);
-        if (!Files.exists(file)) return starter();
-        try {
-            MusicLibrary library = mapper().readValue(file.toFile(), MusicLibrary.class);
-            return library == null ? new MusicLibrary() : library;
-        } catch (IOException e) {
-            throw new UncheckedIOException("Failed to read " + file, e);
+        MusicLibrary library;
+        if (!Files.exists(file)) {
+            library = starter();
+        } else {
+            try {
+                library = mapper().readValue(file.toFile(), MusicLibrary.class);
+            } catch (IOException e) {
+                throw new UncheckedIOException("Failed to read " + file, e);
+            }
+            if (library == null) library = new MusicLibrary();
         }
+        library.root = campaignRoot;
+        return library;
     }
 
     /**
-     * The bundled starter pack: popular YouTube tavern/market/dungeon/combat music, looping
-     * ambience (rain, river, wind...) and one-shot effects (thunder, door creak, dragon roar...).
+     * The bundled starter pack: openly licensed (CC0 / CC BY) tavern, market, dungeon and
+     * combat music, looping ambience (rain, river, wind...) and one-shot effects (thunder,
+     * door creak...). Entries hold download links and attribution; the audio itself is fetched
+     * into the campaign folder when the GM adds the pack or first plays a track.
      */
     public static MusicLibrary starter() {
         try (InputStream in = MusicLibrary.class.getResourceAsStream(STARTER_RESOURCE)) {
@@ -56,29 +75,126 @@ public class MusicLibrary {
     }
 
     /**
-     * Adds the starter pack's playlists and sounds that this library doesn't have yet
-     * (matched by name), and its combat playlist if none is chosen. Returns how many were added.
+     * Adds the starter pack's playlists, tracks and sounds that this library doesn't have yet
+     * (playlists and sounds matched by name, tracks by link), and its combat playlist if none is
+     * chosen. A same-named sound whose audio is unsupported (an old YouTube link) is switched to
+     * the starter pack's audio. Returns how many entries were added or replaced.
      */
     public int addStarterPack() {
         MusicLibrary starter = starter();
         int added = 0;
         for (Playlist p : starter.playlists) {
-            if (findPlaylist(p.getName()) != null) continue;
-            if (findPlaylist(p.getId()) != null) p.setId(newId());
-            playlists.add(p);
-            added++;
+            Playlist mine = findPlaylist(p.getName());
+            if (mine == null) {
+                if (findPlaylist(p.getId()) != null) p.setId(newId());
+                playlists.add(p);
+                added++;
+                continue;
+            }
+            for (Track t : p.getTracks()) {
+                boolean present = mine.getTracks().stream().anyMatch(m -> sameAudio(m, t));
+                if (!present) {
+                    mine.getTracks().add(t);
+                    added++;
+                }
+            }
         }
         for (Sound s : starter.sounds) {
-            if (findSound(s.getName()) != null) continue;
-            if (findSound(s.getId()) != null) s.setId(newId());
-            sounds.add(s);
-            added++;
+            Sound mine = findSound(s.getName());
+            if (mine == null) {
+                if (findSound(s.getId()) != null) s.setId(newId());
+                sounds.add(s);
+                added++;
+            } else if (mine.unsupported()) {
+                mine.setUrl(s.getUrl());
+                mine.setFile(s.getFile());
+                mine.setAttribution(s.getAttribution());
+                mine.setStartSeconds(s.getStartSeconds());
+                mine.setEndSeconds(s.getEndSeconds());
+                added++;
+            }
         }
         if (findPlaylist(combatPlaylistId) == null) {
             Playlist combat = starter.findPlaylist(starter.combatPlaylistId);
             if (combat != null) combatPlaylistId = findPlaylist(combat.getName()).getId();
         }
         return added;
+    }
+
+    private static boolean sameAudio(Audio a, Audio b) {
+        if (a.getUrl() != null && a.getUrl().equalsIgnoreCase(b.getUrl())) return true;
+        return a.getFile() != null && a.getFile().equalsIgnoreCase(b.getFile());
+    }
+
+    /** Removes every track and sound whose audio can't be played (old YouTube links). Returns how many. */
+    public int removeUnsupported() {
+        int removed = 0;
+        for (Playlist p : playlists) {
+            int before = p.getTracks().size();
+            p.getTracks().removeIf(Track::unsupported);
+            removed += before - p.getTracks().size();
+        }
+        int before = sounds.size();
+        sounds.removeIf(Sound::unsupported);
+        return removed + before - sounds.size();
+    }
+
+    /** How many tracks and sounds can't be played (old YouTube links). */
+    public int unsupportedCount() {
+        int count = 0;
+        for (Playlist p : playlists) for (Track t : p.getTracks()) if (t.unsupported()) count++;
+        for (Sound s : sounds) if (s.unsupported()) count++;
+        return count;
+    }
+
+    /** Every track and sound, in library order. */
+    public List<Audio> allAudio() {
+        List<Audio> all = new ArrayList<>();
+        for (Playlist p : playlists) all.addAll(p.getTracks());
+        all.addAll(sounds);
+        return all;
+    }
+
+    /** The distinct credits of every track and sound that has them, sorted by title. */
+    public List<Attribution> credits() {
+        Set<Attribution> seen = new LinkedHashSet<>();
+        for (Audio a : allAudio()) if (a.getAttribution() != null) seen.add(a.getAttribution());
+        List<Attribution> list = new ArrayList<>(seen);
+        list.sort(Comparator.comparing(a -> a.getTitle() == null ? "" : a.getTitle().toLowerCase()));
+        return list;
+    }
+
+    /** The campaign folder this library was loaded from, or null for the bundled starter pack. */
+    public Path campaignRoot() {
+        return root;
+    }
+
+    public void useCampaignRoot(Path campaignRoot) {
+        this.root = campaignRoot;
+    }
+
+    /** The audio file on disk for a track or sound, or null if it isn't there (yet). */
+    public Path localFile(Audio audio) {
+        return localFile(root, audio);
+    }
+
+    public static Path localFile(Path campaignRoot, Audio audio) {
+        if (audio == null || campaignRoot == null) return null;
+        if (audio.getFile() != null && !audio.getFile().isBlank()) {
+            Path f = AudioSource.resolve(campaignRoot, audio.getFile());
+            return f != null && Files.isRegularFile(f) ? f : null;
+        }
+        return audio.downloadable() ? AudioFiles.cached(campaignRoot, audio.getUrl()) : null;
+    }
+
+    /** Tracks and sounds with a download link that haven't been downloaded yet (one entry per link). */
+    public List<Audio> pendingDownloads() {
+        List<Audio> pending = new ArrayList<>();
+        Set<String> urls = new java.util.HashSet<>();
+        for (Audio a : allAudio()) {
+            if (a.downloadable() && localFile(a) == null && urls.add(a.getUrl().trim())) pending.add(a);
+        }
+        return pending;
     }
 
     public void save(Path campaignRoot) {
@@ -157,7 +273,36 @@ public class MusicLibrary {
         return Math.max(0, Math.min(100, v));
     }
 
-    /** A named list of YouTube links (each may itself be a whole YouTube playlist). */
+    /** A track or sound: an audio file in the campaign folder and/or a direct download link. */
+    public interface Audio {
+        /** Campaign-relative path of an imported file, e.g. {@code music/rain.mp3}. */
+        String getFile();
+        /** Direct link to an audio file (or, in old libraries, a YouTube link). */
+        String getUrl();
+        Attribution getAttribution();
+        String label();
+
+        /** True when the audio comes from a link that is downloaded into the campaign's cache. */
+        default boolean downloadable() {
+            return (getFile() == null || getFile().isBlank()) && getUrl() != null
+                && AudioSource.validateLink(getUrl()) == null;
+        }
+
+        /** True when there is nothing playable: an old YouTube link, a web page link or no audio at all. */
+        default boolean unsupported() {
+            return (getFile() == null || getFile().isBlank()) && !downloadable();
+        }
+
+        /** Why {@link #unsupported()} is true, as a complete sentence; null when it is playable. */
+        default String unsupportedReason() {
+            if (!unsupported()) return null;
+            if (AudioSource.isYouTube(getUrl())) return AudioSource.YOUTUBE_MESSAGE;
+            if (getUrl() == null || getUrl().isBlank()) return "No audio file has been chosen.";
+            return AudioSource.validateLink(getUrl());
+        }
+    }
+
+    /** A named list of tracks that play one after another. */
     public static class Playlist {
         private String id = newId();
         private String name;
@@ -184,9 +329,15 @@ public class MusicLibrary {
         @Override public String toString() { return name; }
     }
 
-    public static class Track {
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    public static class Track implements Audio {
         private String title;
+        private String file;
         private String url;
+        /** Where playback starts, in seconds (0 = the beginning). */
+        @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+        private int startSeconds;
+        private Attribution attribution;
 
         public Track() {}
 
@@ -195,32 +346,51 @@ public class MusicLibrary {
             this.url = url;
         }
 
+        public static Track ofFile(String title, String file) {
+            Track t = new Track(title, null);
+            t.file = file;
+            return t;
+        }
+
         public String getTitle() { return title; }
         public void setTitle(String title) { this.title = title; }
-        public String getUrl() { return url; }
-        public void setUrl(String url) { this.url = url; }
+        @Override public String getFile() { return file; }
+        public void setFile(String file) { this.file = file == null || file.isBlank() ? null : file; }
+        @Override public String getUrl() { return url; }
+        public void setUrl(String url) { this.url = url == null || url.isBlank() ? null : url; }
+        public int getStartSeconds() { return startSeconds; }
+        public void setStartSeconds(int startSeconds) { this.startSeconds = Math.max(0, startSeconds); }
+        @Override public Attribution getAttribution() { return attribution; }
+        public void setAttribution(Attribution attribution) { this.attribution = attribution; }
 
-        public YouTubeLink link() { return YouTubeLink.parse(url); }
-
-        /** The title, or the link itself when no title was given. */
-        public String label() { return title == null || title.isBlank() ? url : title; }
+        /** The title, or the file name / link when no title was given. */
+        @Override public String label() {
+            if (title != null && !title.isBlank()) return title;
+            if (file != null && !file.isBlank()) return file.substring(file.lastIndexOf('/') + 1);
+            return url == null ? "" : url;
+        }
 
         @Override public String toString() { return label(); }
     }
 
-    /** A sound effect (a YouTube clip, optionally cut to a start/end second) or a looping ambience. */
-    public static class Sound {
+    /** A sound effect (optionally cut to a start/end second) or a looping ambience. */
+    public static class Sound implements Audio {
         private String id = newId();
         private String name;
+        @JsonInclude(JsonInclude.Include.NON_EMPTY)
+        private String file;
+        @JsonInclude(JsonInclude.Include.NON_EMPTY)
         private String url;
         /** Optional group, e.g. "Alice X Horror"; blank means the general library. */
         @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY)
         private String folder;
         private int startSeconds;
-        /** 0 means "play to the end of the video". */
+        /** 0 means "play to the end of the file". */
         private int endSeconds;
         /** Background sound (rain, river, wind...) that loops under the music until stopped. */
         private boolean ambience;
+        @JsonInclude(JsonInclude.Include.NON_EMPTY)
+        private Attribution attribution;
 
         public Sound() {}
 
@@ -235,8 +405,12 @@ public class MusicLibrary {
         public void setId(String id) { this.id = id; }
         public String getName() { return name; }
         public void setName(String name) { this.name = name; }
-        public String getUrl() { return url; }
-        public void setUrl(String url) { this.url = url; }
+        @Override public String getFile() { return file; }
+        public void setFile(String file) { this.file = file == null || file.isBlank() ? null : file; }
+        @Override public String getUrl() { return url; }
+        public void setUrl(String url) { this.url = url == null || url.isBlank() ? null : url; }
+        @Override public Attribution getAttribution() { return attribution; }
+        public void setAttribution(Attribution attribution) { this.attribution = attribution; }
         public String getFolder() { return folder; }
         public void setFolder(String folder) { this.folder = cleanFolder(folder); }
         public int getStartSeconds() { return startSeconds; }
@@ -247,7 +421,7 @@ public class MusicLibrary {
         public boolean isAmbience() { return ambience; }
         public void setAmbience(boolean ambience) { this.ambience = ambience; }
 
-        public YouTubeLink link() { return YouTubeLink.parse(url); }
+        @Override public String label() { return name; }
 
         @Override public String toString() { return name; }
     }

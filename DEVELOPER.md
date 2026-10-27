@@ -18,6 +18,8 @@ configuration, the project layout and releasing. **Using** the desktop app is co
 8. [Building the Windows installer](#8-building-the-windows-installer)
 9. [Publishing a release and self-update](#9-publishing-a-release-and-self-update)
 10. [Conventions](#10-conventions)
+11. [Translations](#11-translations)
+12. [Music](#12-music)
 
 ---
 
@@ -89,12 +91,17 @@ src/main/java/com/dnd/
 ├── auth/       Accounts, verification and reset codes, SMTP
 ├── cloud/      Firebase directory: accounts, memberships, join codes; CloudConfig
 ├── security/   Encryption for online sessions
-├── music/      YouTube player (embedded browser), playlists, cues
+├── music/      MusicLibrary, cues, AudioSource/AudioFiles (import, download cache), Attribution
+├── ui/music/   MusicPlayer: JavaFX Media engine (crossfading music deck, ambience, effects)
+├── ui/i18n/    UiTranslator, TranslationService, LanguagePicker
 ├── data/       AppHome (data root), repositories, campaign seeding
 └── model/      Entities: characters, classes, races, items, spells, maps...
 src/main/resources/
 ├── data/       default-campaign, custom-campaigns, srd, campaign-modes
+├── i18n/       shipped UI dictionaries, one <code>.json per language
+├── music/      starter-library.json (starter-pack URLs and attribution)
 └── cloud.properties
+tools/i18n/     extract_strings.py (catalogue of UI strings), translate.py (build-time translator)
 packaging/      build-windows-installer.ps1, installer resources
 Documentation/  rules, guides, catalogues, implementation notes
 ```
@@ -135,11 +142,16 @@ anything. `data/auth/*` is git-ignored: never commit it.
 
 The app was renamed from *DnD Campaign Manager*. `Launcher.userDataFolder()` moves an existing
 `%APPDATA%\DnD Campaign Manager` to `%APPDATA%\Almerion` once (falling back to the old folder if
-the move fails), and `MusicPlayer` moves `~/.dnd-campaign-manager` to `~/.almerion` the same way.
-The Java package (`com.dnd`), `-Ddnd.*` flags and the Firebase project id were kept unchanged.
+the move fails). The Java package (`com.dnd`), `-Ddnd.*` flags and the Firebase project id were kept unchanged.
 
-Translations (`com.dnd.ui.i18n`) live in `data\translations\<code>.json` and the chosen language in
-`data\settings.json`.
+The chosen UI language is kept in `data\settings.json`. Campaign audio is in
+`<campaign>\music\` (imported files) and `<campaign>\music\cache\` (downloads, safe to delete).
+
+### Personal campaigns are not shipped
+
+`maven-jar-plugin` excludes `data/custom-campaigns/**` from the release jar: personal campaigns
+contain images of unknown origin. Only `default-campaign` (original/SRD content) is seeded into
+installs.
 
 ---
 
@@ -227,6 +239,29 @@ This is used when Firebase email isn't configured. It is created with placeholde
 - **Test email settings** on the login screen sends a real message and reports the exact
   error. When sending fails, the code is shown on screen instead.
 
+### GitHub campaign sync
+
+- Uses JGit (EDL-1.0) over HTTPS. Code: `com.dnd.github` (OAuth device flow, REST API, token
+  store) and `com.dnd.sync` (`CampaignRepo` engine, `CampaignSyncService` background scheduler).
+  UI: `ui/scenes/GitHubSyncUi`.
+- **Client ID (one-time setup by the app owner):** GitHub → Settings → Developer settings →
+  OAuth Apps → New OAuth App (homepage/callback URL can be `https://github.com`), then tick
+  **Enable Device Flow**. Put the Client ID (public, not a secret) in `github.clientId` in
+  `src/main/resources/cloud.properties`. Overrides: `data/auth/cloud.properties`, the
+  `ALMERION_GITHUB_CLIENT_ID` environment variable or `-Ddnd.github.clientId=…`. No client
+  secret is needed. If it is empty, the app falls back to a pasted fine-grained token. Scope: `repo`.
+- The token is stored per OS user in `data/github/account.json` (DPAPI-encrypted on Windows;
+  plain text with owner-only permissions elsewhere), is git-ignored and never written to
+  campaign folders.
+- Per-campaign settings live in the campaign's own `.git/config` (`remote.origin.url`,
+  `almerion.sync`). Commits are authored as `<login> <id+login@users.noreply.github.com>`.
+- Conflicts: merge; for conflicted files keep the local version, save the remote one as
+  `<file>.remote-yyyyMMdd-HHmmss`, commit the merge and push.
+- Running from source puts campaign repos (nested `.git`) under
+  `src/main/resources/data/custom-campaigns`. Maven skips `.git`, but don't commit those folders
+  to the app repo.
+- JGit logs a harmless "No SLF4J providers" warning.
+
 ---
 
 ## 8. Building the Windows installer
@@ -276,4 +311,75 @@ Installed apps check the latest release on start and ignore drafts and pre-relea
   must be SRD 5.1/5.2 (CC-BY-4.0) or original. Storyline notes use `[GM NOTE]`; `[DM NOTE]` is still
   read for older files.
 - UI text is English in code. Mark user-authored text nodes with `UiTranslator.skip(node)` so
-  they are never machine-translated.
+  they are never translated.
+- Third-party material must be listed in `THIRD-PARTY-NOTICES.md`. Libraries must allow
+  commercial use (Apache, MIT, BSD, EPL/EDL, GPL with Classpath Exception).
+
+---
+
+## 11. Translations
+
+The UI is translated at runtime by `UiTranslator`, which walks every window and swaps displayed
+text using the dictionaries in `src/main/resources/i18n/<code>.json`. There is no online
+translation service. `Language` lists only languages whose dictionary is present.
+
+Dictionary keys are the English text, in two forms:
+
+- **Exact:** digits become `{0}`, `{1}`… (`"Level {0}": "Stufe {0}"`).
+- **Patterns** for text built with `+` or `String.format`: each variable part is `{A}`, `{B}`…
+  (`"Needs {A} XP (has {B})"`). Captured values are translated too when they are known strings.
+
+Missing keys fall back to English, and a translation that drops a placeholder is ignored
+(`TranslationServiceTest` checks every shipped file).
+
+### How the dictionaries are made
+
+Translation happens **at build time, never in the app**. `tools/i18n/translate.py` uses
+[Argos Translate](https://github.com/argosopentech/argos-translate) (MIT licence, models
+MIT/CC0), which runs fully offline on your machine. Only the finished JSON files ship; the
+translator and its models are not part of the app or the installer.
+
+- The installer script runs it automatically before Maven (skip with `-SkipTranslations`).
+- It is incremental: existing translations are kept, only new strings are translated, and
+  strings that no longer exist in the code are dropped. `--force` re-translates everything.
+- Placeholders are protected. If the model still loses one, the string stays English.
+- **Fixes:** put corrected translations in `tools/i18n/overrides/<code>.json`
+  (`{"Apply": "Anwenden"}`). Overrides always win and survive re-translation.
+- **Georgian (`ka`)** has no Argos model, so its file is maintained by hand/AI. The tool never
+  writes it; `--check` reports what it is missing.
+
+```powershell
+python -m venv tools\i18n\.venv                                  # first time only
+tools\i18n\.venv\Scripts\pip install -r tools\i18n\requirements.txt
+$env:PYTHONIOENCODING = "utf-8"
+tools\i18n\.venv\Scripts\python tools\i18n\translate.py              # all languages (~3 min each first time)
+tools\i18n\.venv\Scripts\python tools\i18n\translate.py --lang de,fr # only some
+tools\i18n\.venv\Scripts\python tools\i18n\translate.py --check      # report missing strings
+python tools\i18n\extract_strings.py --missing ka                     # keys Georgian still lacks
+```
+
+The first run downloads each language model (~100 MB) to `%USERPROFILE%\.local\share\argos-translate`.
+
+**Adding a language:** add its row to `Language.build()` (code, English name, native name), add
+its Argos code to `ARGOS` in `tools/i18n/translate.py` (or `MAINTAINED_BY_HAND` if Argos lacks
+it), run the translator, and list it in `TranslationServiceTest.allPlannedLanguagesShip`.
+Right-to-left languages also go in `Language.RIGHT_TO_LEFT`.
+
+---
+
+## 12. Music
+
+`MusicPlayer` uses JavaFX Media (`javafx-media`), which plays MP3, WAV, AIFF and M4A/AAC (not
+OGG/FLAC). Tracks are either files copied into the campaign or direct audio URLs downloaded once
+to `music/cache/<sha256>.<ext>`. Web-page links (YouTube, Spotify, ...) are rejected by
+`AudioSource`, and legacy YouTube entries load as "unsupported".
+
+Starter-pack audio (`resources/music/starter-library.json`) must be **CC0 or CC BY** only, with
+every attribution field filled in; `MusicTest` enforces the license allow-list. Never add
+NC/ND-licensed audio, Pixabay, Tabletop Audio or YouTube Audio Library material. List new
+credits in `THIRD-PARTY-NOTICES.md`. Before a commercial release, consider mirroring the
+starter files on your own release assets so third-party links can't break.
+
+The installer has no browser engine any more; jpackage picks up `javafx-media-*-win.jar` from
+`target\libs`. The self-updater refuses jars needing new libraries, so this release must be
+installed with the new installer once.

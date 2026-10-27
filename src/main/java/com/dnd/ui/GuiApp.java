@@ -7,7 +7,6 @@ import com.dnd.ui.i18n.AppSettings;
 import com.dnd.ui.i18n.TranslationService;
 import com.dnd.ui.i18n.UiTranslator;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.stage.Stage;
 
 import java.util.Scanner;
@@ -18,7 +17,7 @@ public class GuiApp extends Application {
         UiFonts.load();
         WindowOrder.install();
         TooltipPersistence.install();
-        UiTranslator.install(TranslationService.createDefault(Platform::runLater), AppSettings.load());
+        UiTranslator.install(TranslationService.createDefault(), AppSettings.load());
         primaryStage.getIcons().setAll(AppIcons.icons());
         AppIcons.install();
         CampaignStorage storage = new CampaignStorage();
@@ -44,11 +43,9 @@ public class GuiApp extends Application {
 
     @Override
     public void stop() {
-        // The embedded music engine (Chromium) runs its own non-daemon threads, so the JVM
-        // would linger after the last window closes unless it is shut down explicitly.
-        if (com.dnd.ui.music.MusicPlayer.get().shutdown()) {
-            System.exit(0);
-        }
+        // Upload the open campaign's last changes to GitHub (bounded, so quitting never hangs).
+        com.dnd.sync.CampaignSyncService.shared().shutdown(20_000);
+        com.dnd.ui.music.MusicPlayer.get().shutdown();
     }
 
     public static void launch(String[] args) {

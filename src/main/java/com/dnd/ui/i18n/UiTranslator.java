@@ -1,7 +1,5 @@
 package com.dnd.ui.i18n;
 
-import javafx.beans.property.ReadOnlyBooleanProperty;
-import javafx.beans.property.ReadOnlyBooleanWrapper;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.StringProperty;
@@ -69,10 +67,8 @@ public final class UiTranslator {
     private final TranslationService service;
     private final AppSettings settings;
     private final Set<Slot> slots = Collections.newSetFromMap(new WeakHashMap<>());
-    private final Set<Slot> waiting = Collections.newSetFromMap(new WeakHashMap<>());
     private final Set<Scene> scenes = Collections.newSetFromMap(new WeakHashMap<>());
     private final ReadOnlyObjectWrapper<Language> language = new ReadOnlyObjectWrapper<>(Language.english());
-    private final ReadOnlyBooleanWrapper busy = new ReadOnlyBooleanWrapper(false);
     private final ListChangeListener<Node> childrenListener = change -> {
         while (change.next()) {
             for (Node added : new ArrayList<>(change.getAddedSubList())) walk(added);
@@ -83,17 +79,6 @@ public final class UiTranslator {
     UiTranslator(TranslationService service, AppSettings settings) {
         this.service = service;
         this.settings = settings;
-        service.addListener(new TranslationService.Listener() {
-            @Override
-            public void translationsArrived(String lang) {
-                if (lang.equals(language.get().code())) refreshWaiting();
-            }
-
-            @Override
-            public void busyChanged(boolean value) {
-                busy.set(value);
-            }
-        });
     }
 
     /** Creates the app-wide translator and applies the saved language. Call once on the FX thread. */
@@ -122,11 +107,6 @@ public final class UiTranslator {
         return language.get();
     }
 
-    /** True while translations are being fetched. */
-    public ReadOnlyBooleanProperty busyProperty() {
-        return busy.getReadOnlyProperty();
-    }
-
     /** Switches the UI language, persists the choice and retranslates every open window. */
     public void setLanguage(String code) {
         Language next = Language.byCode(code);
@@ -139,7 +119,6 @@ public final class UiTranslator {
         Language next = Language.byCode(code);
         service.setLanguage(next.code());
         language.set(next);
-        waiting.clear();
         if (!next.isEnglish()) hookAllWindows();
         for (Scene scene : new ArrayList<>(scenes)) applySceneStyle(scene);
         for (Slot slot : new ArrayList<>(slots)) slot.refresh();
@@ -334,12 +313,6 @@ public final class UiTranslator {
         if (!language.get().isEnglish()) slot.refresh();
     }
 
-    private void refreshWaiting() {
-        List<Slot> ready = new ArrayList<>(waiting);
-        waiting.clear();
-        for (Slot slot : ready) slot.refresh();
-    }
-
     private static boolean isSkipMarked(Node node) {
         return Boolean.TRUE.equals(node.getProperties().get(SKIP_KEY)) || node.getStyleClass().contains(SKIP_STYLE_CLASS);
     }
@@ -382,10 +355,6 @@ public final class UiTranslator {
         void refresh() {
             if (property.isBound()) return;
             String target = language.get().isEnglish() ? original : service.lookup(original);
-            if (target == null) {
-                waiting.add(this);
-                target = original;
-            }
             if (!Objects.equals(property.get(), target)) {
                 setting = true;
                 try {

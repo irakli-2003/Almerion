@@ -52,6 +52,9 @@ public class DmMenuScene extends BaseScene {
             badge.getStyleClass().add("success-badge");
             header.getChildren().add(badge);
         }
+        if (uiSession.campaignRoot() != null) {
+            header.getChildren().add(GitHubSyncUi.statusBadge(this, uiSession.campaignRoot()));
+        }
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);

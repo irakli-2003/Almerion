@@ -7,6 +7,8 @@ import com.dnd.cloud.CampaignAccess.Entry;
 import com.dnd.cloud.CampaignAccess.LocalCampaign;
 import com.dnd.cloud.CampaignDirectory;
 import com.dnd.cloud.CampaignRecord;
+import com.dnd.sync.CampaignRepo;
+import com.dnd.sync.CampaignSyncService;
 import com.dnd.ui.SceneType;
 import com.dnd.ui.UiSession;
 import javafx.geometry.Insets;
@@ -24,6 +26,8 @@ import java.util.List;
  */
 public class CampaignSelectionScene extends BaseScene {
     private final CampaignDirectory directory = CampaignDirectory.shared();
+    /** Folders of campaigns that sync with GitHub; filled in the background with the list. */
+    private final java.util.Set<String> syncedFolders = java.util.concurrent.ConcurrentHashMap.newKeySet();
 
     public CampaignSelectionScene(UiSession uiSession) { super(uiSession); }
 
@@ -58,16 +62,34 @@ public class CampaignSelectionScene extends BaseScene {
                     .filter(m -> m.role == CampaignRecord.Role.PLAYER).count();
                 int pending = item.record().applications.size();
                 setText(item.local().folder() + "   (" + role + ", " + players + " player" + (players == 1 ? "" : "s")
-                    + (pending > 0 ? ", " + pending + " waiting to join" : "") + ")");
+                    + (pending > 0 ? ", " + pending + " waiting to join" : "") + ")"
+                    + (syncedFolders.contains(item.local().folder()) ? "   · GitHub" : ""));
             }
         });
 
         Button openBtn = btn("Open Campaign", () -> {
             Entry selected = mine.getSelectionModel().getSelectedItem();
             if (selected == null) return;
-            uiSession.getSession().setCampaignContext(
-                new CampaignContext(selected.local().folder(), selected.local().path()));
-            uiSession.getRouter().goTo(SceneType.DM_MENU);
+            Runnable open = () -> {
+                uiSession.getSession().setCampaignContext(
+                    new CampaignContext(selected.local().folder(), selected.local().path()));
+                uiSession.getRouter().goTo(SceneType.DM_MENU);
+            };
+            if (!syncedFolders.contains(selected.local().folder())) {
+                open.run();
+                return;
+            }
+            // Fetch the other computer's changes before any campaign file is loaded.
+            status.setText("Getting the latest changes from GitHub...");
+            status.setManaged(true);
+            mine.setDisable(true);
+            CampaignSyncService.shared().syncNow(selected.local().path()).thenAccept(result ->
+                javafx.application.Platform.runLater(() -> {
+                    if (result.outcome() == CampaignRepo.Outcome.CONFLICT) {
+                        GitHubSyncUi.showResult(this, selected.local().folder(), result);
+                    }
+                    open.run();
+                }));
         });
         mine.setOnMouseClicked(e -> {
             if (e.getButton() == javafx.scene.input.MouseButton.PRIMARY && e.getClickCount() == 2
@@ -85,7 +107,22 @@ public class CampaignSelectionScene extends BaseScene {
         VBox unclaimedBox = new VBox(8);
         VBox elsewhereBox = new VBox(6);
 
-        content.getChildren().addAll(status, mine, new HBox(12, openBtn, createBtn, deleteBtn), unclaimedBox, elsewhereBox);
+        Runnable reload = () -> uiSession.getRouter().goTo(SceneType.CAMPAIGN_SELECTION);
+        Button syncBtn = btn("Sync with GitHub...", () -> {
+            Entry selected = mine.getSelectionModel().getSelectedItem();
+            if (selected == null) {
+                showInfo("Pick a campaign", "Select one of your campaigns in the list first.");
+                return;
+            }
+            GitHubSyncUi.configureCampaign(this, selected.local().folder(), selected.local().path(), reload);
+        });
+        Button getBtn = btn("Get Campaign from GitHub...",
+            () -> GitHubSyncUi.downloadCampaign(this, uiSession.getStorage(), reload));
+        FlowPane githubRow = new FlowPane(12, 8, syncBtn, getBtn, GitHubSyncUi.accountBar(this, reload));
+        githubRow.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+
+        content.getChildren().addAll(status, mine, new HBox(12, openBtn, createBtn, deleteBtn), githubRow,
+            unclaimedBox, elsewhereBox);
         ScrollPane scroll = new ScrollPane(content);
         scroll.setFitToWidth(true);
         scroll.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
@@ -96,7 +133,12 @@ public class CampaignSelectionScene extends BaseScene {
         for (String folder : uiSession.getStorage().listCustomCampaigns()) {
             local.add(LocalCampaign.of(folder, uiSession.getStorage().resolveCustomCampaignPath(folder)));
         }
-        background(() -> CampaignAccess.classify(local, user(), directory), listing -> {
+        background(() -> {
+            for (LocalCampaign campaign : local) {
+                if (CampaignRepo.isSynced(campaign.path())) syncedFolders.add(campaign.folder());
+            }
+            return CampaignAccess.classify(local, user(), directory);
+        }, listing -> {
             mine.getItems().setAll(listing.mine());
             status.setText(listing.mine().isEmpty()
                 ? "You aren't a Game Master of any campaign on this device yet."

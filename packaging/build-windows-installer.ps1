@@ -11,6 +11,11 @@
       .\packaging\build-windows-installer.ps1                  # runs the tests, then builds
       .\packaging\build-windows-installer.ps1 -SkipTests
       .\packaging\build-windows-installer.ps1 -Type app-image  # unpacked app folder, no installer
+      .\packaging\build-windows-installer.ps1 -SkipTranslations  # don't update the UI translations
+
+  Before building, new UI strings are machine-translated offline with Argos Translate
+  (tools\i18n\translate.py, needs Python 3). The translator is only a build tool: the installer
+  ships just the finished dictionaries in src\main\resources\i18n.
 
   Needs JDK 21 (jpackage) and Maven on PATH. WiX Toolset 3.14, which jpackage uses to make the
   .exe, is downloaded to %LOCALAPPDATA%\wix314 on first run if it is not installed.
@@ -19,7 +24,8 @@ param(
     [string]$Version = "",  # defaults to the version in pom.xml
     [ValidateSet("exe", "app-image")]
     [string]$Type = "exe",
-    [switch]$SkipTests
+    [switch]$SkipTests,
+    [switch]$SkipTranslations
 )
 
 $ErrorActionPreference = "Stop"
@@ -48,6 +54,23 @@ if ($Type -eq "exe" -and -not (Get-Command candle.exe -ErrorAction SilentlyConti
     $env:PATH = "$wix;$env:PATH"
 }
 
+if (-not $SkipTranslations) {
+    Need "python" "Install Python 3, or pass -SkipTranslations to ship the dictionaries as they are."
+    $venv = Join-Path $repo "tools\i18n\.venv"
+    $py = Join-Path $venv "Scripts\python.exe"
+    if (-not (Test-Path $py)) {
+        Write-Host "Setting up the build-time translator (first run only) ..."
+        & python -m venv $venv
+        if ($LASTEXITCODE -ne 0) { throw "Could not create $venv." }
+    }
+    & $py -m pip install -q -r (Join-Path $repo "tools\i18n\requirements.txt")
+    if ($LASTEXITCODE -ne 0) { throw "Could not install the translator (tools\i18n\requirements.txt)." }
+    Write-Host "Translating new UI strings ..."
+    $env:PYTHONIOENCODING = "utf-8"
+    & $py (Join-Path $repo "tools\i18n\translate.py")
+    if ($LASTEXITCODE -ne 0) { throw "Translation step failed." }
+}
+
 Write-Host "Building the app with Maven ..."
 $mvnArgs = @("-q", "clean", "package")
 if ($SkipTests) { $mvnArgs += "-DskipTests" }
@@ -62,14 +85,7 @@ New-Item -ItemType Directory $stage -Force | Out-Null
 Copy-Item $jar.FullName $stage
 Copy-Item "target\libs\*.jar" $stage
 
-# The music engine (Chromium, ~300 MB unpacked) ships inside the installer so it is never
-# downloaded in the middle of a session. Cached between builds.
-$engine = Join-Path $env:LOCALAPPDATA "almerion-build\jcef"
-Write-Host "Preparing the music engine in $engine ..."
-$cp = (@($jar.FullName) + (Get-ChildItem "target\libs\*.jar" | ForEach-Object FullName)) -join ";"
-& java -cp $cp com.dnd.ui.music.MusicPlayer $engine
-if ($LASTEXITCODE -ne 0 -or -not (Test-Path (Join-Path $engine "install.lock"))) { throw "Could not prepare the music engine." }
-Copy-Item $engine (Join-Path $stage "jcef") -Recurse
+# Music plays through JavaFX Media (javafx-media-*-win.jar in target\libs), so no extra engine is bundled.
 $dest = Join-Path $repo "target\installer"
 if (Test-Path $dest) { Remove-Item $dest -Recurse -Force }
 

@@ -403,7 +403,7 @@ final class StorylineEditorWindow {
             statusLabel.setText("Music fading out.");
         } else if (cue.kind() == com.dnd.music.MusicCue.Kind.SFX) {
             var sound = library.findSound(cue.name());
-            statusLabel.setText(sound != null && player.playSound(sound)
+            statusLabel.setText(sound != null && player.playSound(library, sound)
                 ? (sound.isAmbience() ? "🌧 " : "🔊 ") + sound.getName()
                 : "No sound called \"" + cue.name() + "\" - add it in the music panel.");
         } else {

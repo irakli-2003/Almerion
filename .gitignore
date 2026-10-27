@@ -29,3 +29,10 @@
 # Machine-translation cache and UI settings (per user)
 /data/translations/
 /data/settings.json
+
+# Linked GitHub account for campaign sync (per OS user, token encrypted on Windows; never committed)
+/data/github/
+
+# Build-time translator environment (tools/i18n/translate.py)
+/tools/i18n/.venv/
+__pycache__/

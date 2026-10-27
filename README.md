@@ -18,7 +18,7 @@ character sheets. Players follow along from their own computers.
 5. [Quick start for players](#5-quick-start-for-players)
 6. [Key concepts](#6-key-concepts)
 7. [Accounts and sign-in](#7-accounts-and-sign-in) · [Language](#7a-language)
-8. [Campaigns and members](#8-campaigns-and-members)
+8. [Campaigns and members](#8-campaigns-and-members) · [Sync with GitHub](#syncing-campaigns-between-computers-with-github)
 9. [The GM menu](#9-the-gm-menu)
 10. [Characters](#10-characters)
 11. [Worldbuilding](#11-worldbuilding)
@@ -46,7 +46,7 @@ character sheets. Players follow along from their own computers.
 | Create characters with a step-by-step wizard that explains every choice | Add your own portrait and appearance text |
 | Write session notes with read-aloud passages, map links and music cues | Follow the GM's live session from your own computer |
 | Run battles on a grid map: initiative, damage, healing, spells, ranges, rests | |
-| Play YouTube music, ambience and sound effects that follow the action | |
+| Play your own music, ambience and sound effects that follow the action (free starter pack included) | |
 | Show the battle map to the table on a second screen | |
 | Print standard character sheets as PDFs | |
 | Invite other GMs and players, and host a live online session | |
@@ -185,11 +185,12 @@ The app starts in **English**. To switch, pick a language from the **🌐 langua
 login screen or in the GM menu header. Every screen and window changes language right away, and
 the choice is remembered next time.
 
-- Translations are made automatically by a free online translation service the first time you
-  use a language, so you need an internet connection once. After that they are saved on your
-  computer and work offline.
-- Machine translation isn't perfect. Your own content (campaign names, notes, storyline text,
-  character names) is never translated.
+- Available languages: English, Arabic, Chinese (Simplified), French, Georgian, German, Hindi,
+  Italian, Japanese, Korean, Polish, Portuguese (Brazil), Russian, Spanish, Turkish and Ukrainian.
+- Translations are built into the app. They work offline and nothing is sent anywhere.
+  They are machine-made, so some wording may be imperfect; English is always the reference.
+- Your own content (campaign names, notes, storyline text, character names) is never
+  translated. Rules content such as spell, item and creature names stays in English.
 - Printed character sheets stay in English.
 - Choose **English** to switch back at any time.
 
@@ -213,6 +214,34 @@ After choosing **Game Master** you see every campaign you are a GM of, with your
   computer.
 
 When you are offline, the list you saw last time is shown with a note at the top.
+
+### Syncing campaigns between computers with GitHub
+
+Almerion can keep a campaign in sync between your computers using a free, private GitHub
+repository.
+
+1. **Link your account (once per computer):** on the campaign list click **Link GitHub
+   Account…**, then **Copy Code and Open GitHub**, paste the code on the GitHub page and approve.
+   If you are asked for a token instead, follow the on-screen link to create a *fine-grained
+   personal access token* with access to "All repositories", **Contents: Read and write** and
+   **Administration: Read and write**, and paste it.
+2. **First computer:** select your campaign, click **Sync with GitHub…** and choose **Create a
+   new private repository** (or pick one you already have).
+3. **Other computer:** link the same account, click **Get Campaign from GitHub…** and pick the
+   repository. The campaign appears in your list.
+
+After that, syncing is automatic. The latest changes are downloaded when you open the campaign,
+and your changes are uploaded while you play, when you leave the campaign and when you close
+Almerion. The badge in the GM screen shows **Synced**, **Syncing…**, **Offline – will retry**
+(nothing is lost; it uploads when you are back online) or **Conflict**.
+
+**Conflicts:** if the same file was changed on both computers before syncing, your version is
+kept and the other computer's version is saved next to it as `name.remote-<date-time>`. Compare
+them, keep what you want, and delete the copy.
+
+To stop syncing a campaign, use **Sync with GitHub… → Stop Syncing**. **Unlink** removes your
+GitHub sign-in from this computer. Your sign-in is stored only on this computer (encrypted for
+your Windows user) and is never put into a campaign folder.
 
 ### Inviting people: the Members window
 
@@ -418,15 +447,21 @@ Open it from a map link in your notes, or with **Run Battle**.
 
 ## 14. Music and sound
 
-Music comes from **YouTube links** and plays on the **GM's computer only**. Open it with
-**Music Panel** in the GM menu, or with **🎵** on the battle map or in the session editor.
+Music plays inside Almerion on the **GM's computer only**; no browser or account is needed.
+Open it with **Music Panel** in the GM menu, or with **🎵** on the battle map or in the session
+editor.
 
-- **Playlists:** create one (*Tavern*, *Dungeon*, *Boss fight*...), then add any YouTube video
-  or playlist link. Add `&t=1m30s` to a link to start partway in. Double-click a track to play it.
-  Switching playlists crossfades. **Shuffle** and **Loop** are available.
-- **★ Starter pack:** adds ready-made playlists (Tavern, City market, Harbor, Castle, Village,
-  Travel, Forest, Dungeon, Mystery, Horror, Combat, Boss fight, Sad, Camp, At sea), ambience
-  and sound effects. It only adds what's missing.
+- **★ Starter pack:** adds free, openly licensed playlists (Tavern, City market, Castle, Village,
+  Travel, Forest, Dungeon, Mystery, Horror, Combat, Boss fight, Sad, Camp, At sea), ambience and
+  sound effects. They download once, with a progress bar, and then play offline. It only adds
+  what's missing. **Credits** lists the author and license of every track.
+- **+ Add audio files…** / **+ Add folder…** copy MP3, WAV, AIFF or M4A files into the campaign's
+  `music` folder, so backups and moving to another computer keep them.
+- **+ Add link…** takes a *direct* link to an audio file (ending in .mp3, .wav, .m4a…). It is
+  downloaded once into `music/cache`. Links to YouTube, Spotify, SoundCloud and other web pages
+  can't be used.
+- **Playlists** have **Shuffle** and **Loop**; switching playlists crossfades. Double-click a
+  track to play it. A track can start at a set time (for example 1:30).
 - **Combat playlist:** plays automatically when initiative is rolled on a battle map, and
   switches back when the map closes.
 - **Map music:** give a map its own playlist that starts whenever the map opens.
@@ -437,11 +472,9 @@ Music comes from **YouTube links** and plays on the **GM's computer only**. Open
   `[sfx: stop]` in your notes, or use **Sound Cue**. Double-click a cue to play it.
 - **Quick controls** (⏮ ⏸ ⏭ ⏹) are in the GM menu.
 
-The first time you play, the app downloads a built-in web player (about 150 MB). Videos whose
-owners block playback outside YouTube are skipped automatically.
-
-> Only YouTube links are supported today. You are responsible for having the right to play the
-> music you link at your table or on a stream.
+> **Only use music you own or that is licensed for your use.** Libraries from older versions may
+> contain YouTube links. They are shown with ⚠ and skipped; click **Remove unsupported**, or press
+> **★ Starter pack** to replace same-named sounds.
 
 ---
 
@@ -573,7 +606,7 @@ Everything you create is stored in your Windows user profile, not in the install
 %APPDATA%\Almerion\
 ├── data\
 │   ├── custom-campaigns\<campaign>\   one folder per campaign: catalogues, players,
-│   │                                  maps, storyline, images, music.json
+│   │                                  maps, storyline, images, music.json, music\
 │   ├── auth\                          sign-in and connection settings
 │   ├── player-profiles\               players' own portraits and appearance text
 │   └── joined-sessions\               the last state of sessions you joined as a player
@@ -591,8 +624,9 @@ To open it, press **Win+R**, type `%APPDATA%\Almerion` and press Enter.
   folder back while the app is closed.
 - **Move to a new computer** by copying the whole `Almerion` folder.
 - **Printed sheets** go to your **Downloads** folder.
-- **Music player files** are kept in `%USERPROFILE%\.almerion` and can be deleted;
-  they download again when needed.
+- **Music** lives in each campaign: `music.json` holds playlists, sounds and credits, `music\`
+  holds imported audio, and `music\cache\` holds downloaded audio, which can be deleted safely
+  (it downloads again when needed).
 
 Membership, join codes and accounts are stored online. Campaign content stays on the GM's
 computer, so back it up.
@@ -607,7 +641,10 @@ computer, so back it up.
 | **"You aren't part of ..."** | You aren't a member yet. Apply with the join code and wait for a GM to accept you. |
 | **A campaign I created is missing from my list** | Look under *On this device, not registered to anyone* and click **Claim**. If it's under *Yours, but not on this device*, its files are on another computer. |
 | **"Offline - showing the campaign list saved from your last connection."** | You aren't connected. Local campaigns still open; joining and members need the internet. |
-| **Music doesn't play** | The first play downloads a 150 MB player, so wait for it to finish. Some videos block playback outside YouTube and are skipped. Check that the Windows volume isn't muted. |
+| **Music doesn't play** | Check that the Windows volume isn't muted. A track marked **⬇** is still downloading or failed: check the internet connection and press **★ Starter pack** again. |
+| **"That link is a web page, not an audio file."** | Use a direct link to an .mp3/.wav/.m4a file, or add a file from your computer. |
+| **A track shows ⚠ "YouTube links are no longer supported"** | Replace it with an audio file, or click **Remove unsupported**. |
+| **An OGG or FLAC file won't add** | Convert it to MP3 or M4A first. |
 | **The update failed** | The app tries again next start. You can also install the latest `.exe` from the [releases page](https://github.com/irakli-2003/Almerion/releases/latest). |
 | **SmartScreen blocks the installer** | Click **More info → Run anyway**. |
 | **The projector shows on the wrong screen** | Drag the *Battle Map - Players* window to the second screen and maximise it. |
@@ -632,6 +669,13 @@ extend the starter world.
 **Does the app play music for players too?**
 No. Music plays on the GM's computer only, so use speakers at the table.
 
+**Can I use YouTube or Spotify?**
+No. Their terms don't allow playing their audio inside other apps. Use files you own or openly
+licensed audio such as the starter pack.
+
+**Can I use the starter pack in streams or published games?**
+Yes, with credit: see **Credits** in the music panel (CC BY 3.0 requires attribution; CC0 does not).
+
 **Is it an official product of any tabletop game publisher?**
 No. See [Legal notice](#23-legal-notice).
 
@@ -648,6 +692,7 @@ Yes. See [Language](#7a-language). Guides in other languages are in the `Documen
   combat, magic, rests, conditions, homebrew changes and a GM guide.
 - [`Documentation/catalog`](Documentation/catalog): reference lists of classes, races, items,
   spells and creatures.
+- [Third-party notices](THIRD-PARTY-NOTICES.md): licenses of bundled libraries, fonts and music.
 - [Developer Guide](DEVELOPER.md): building from source, the command-line version, configuration
   and releasing.
 
@@ -665,3 +710,6 @@ https://dnd.wizards.com/resources/systems-reference-document and licensed under 
 Creative Commons Attribution 4.0 International License
 (https://creativecommons.org/licenses/by/4.0/legalcode). Monsters, subclasses and other content
 outside the SRD are original or renamed homebrew. The Artificer is a homebrew variant.
+
+Bundled libraries, fonts and starter-pack music and sounds belong to their authors and are used
+under their licenses; see [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).

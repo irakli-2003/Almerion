@@ -20,6 +20,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -33,7 +36,18 @@ public class UiTranslatorTest {
     @Rule
     public TemporaryFolder temp = new TemporaryFolder();
 
-    private final FakeProvider provider = new FakeProvider();
+    private static final List<String> UI_STRINGS = List.of("Create Character", "Level {0}", "Your name", "Hit points",
+        "Stats", "Open map", "Actions", "Roll the dice", "Log Out", "Added later", "Save", "Inventory");
+
+    /** Every known UI string translated as "DE:" + text; user text is deliberately absent. */
+    private static Map<String, String> fakeDictionary(String code) {
+        Map<String, String> map = new HashMap<>();
+        for (String key : UI_STRINGS) map.put(key, code.toUpperCase() + ":" + key);
+        map.put("My secret campaign notes", "LEAKED");
+        map.put("Player handout", "LEAKED");
+        map.put("Late note", "LEAKED");
+        return map;
+    }
     private TranslationService service;
     private UiTranslator translator;
 
@@ -71,15 +85,8 @@ public class UiTranslatorTest {
     }
 
     private void setUpTranslator() throws Exception {
-        service = new TranslationService(provider, temp.getRoot().toPath(), Platform::runLater, 10);
+        service = new TranslationService(UiTranslatorTest::fakeDictionary);
         onFx(() -> translator = new UiTranslator(service, AppSettings.load(temp.getRoot().toPath().resolve("settings.json"))));
-    }
-
-    /** Lets the background batch finish and its FX-thread callbacks run. */
-    private void settle() throws Exception {
-        service.awaitIdle(5000);
-        onFx(() -> { });
-        onFx(() -> { });
     }
 
     @Test
@@ -104,7 +111,6 @@ public class UiTranslatorTest {
             translator.applyLanguage("de");
             translator.hookScene(scene);
         });
-        settle();
 
         onFx(() -> {
             assertEquals("DE:Create Character", title.getText());
@@ -122,7 +128,6 @@ public class UiTranslatorTest {
             title.setText("Log Out");
             root.getChildren().add(new Label("Added later"));
         });
-        settle();
 
         onFx(() -> {
             assertEquals("DE:Log Out", title.getText());
@@ -154,7 +159,6 @@ public class UiTranslatorTest {
             translator.hookScene(scene);
             skipped.getChildren().add(new Label("Late note"));
         });
-        settle();
 
         onFx(() -> {
             assertEquals("DE:Save", normal.getText());
@@ -163,7 +167,6 @@ public class UiTranslatorTest {
             assertEquals("Late note", ((Label) skipped.getChildren().get(1)).getText());
             assertTrue(UiTranslator.isSkipped(notes));
         });
-        assertFalse(provider.requests.stream().anyMatch(r -> r.contains("secret") || r.contains("handout") || r.contains("Late note")));
     }
 
     @Test
@@ -172,13 +175,11 @@ public class UiTranslatorTest {
         Label label = new Label("Create Character");
         new Scene(new VBox(label));
         onFx(() -> translator.applyLanguage("en"));
-        settle();
         onFx(() -> {
             assertFalse(translator.isHooked());
             assertEquals("Create Character", label.getText());
             assertNull(label.getProperties().get("i18n.hooked"));
         });
-        assertTrue(provider.requests.isEmpty());
     }
 
     @Test
@@ -192,15 +193,15 @@ public class UiTranslatorTest {
             translator.applyLanguage("ar");
             translator.hookScene(scene);
             assertEquals(NodeOrientation.RIGHT_TO_LEFT, scene.getNodeOrientation());
-            translator.applyLanguage("am");
+            assertEquals("AR:Inventory", label.getText());
+            translator.applyLanguage("hi");
             assertEquals(NodeOrientation.INHERIT, scene.getNodeOrientation());
             assertEquals(1, root.getStylesheets().size());
             root.applyCss();
-            if (Font.getFamilies().contains("Ebrima")) assertEquals("Ebrima", label.getFont().getFamily());
+            if (Font.getFamilies().contains("Nirmala UI")) assertEquals("Nirmala UI", label.getFont().getFamily());
             translator.applyLanguage("de");
             assertTrue(root.getStylesheets().isEmpty());
         });
-        settle();
     }
 
     @Test

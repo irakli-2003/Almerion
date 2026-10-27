@@ -25,3 +25,7 @@
 # A player's own portraits, names and descriptions for their characters.
 /data/player-profiles/
 
+
+# Machine-translation cache and UI settings (per user)
+/data/translations/
+/data/settings.json

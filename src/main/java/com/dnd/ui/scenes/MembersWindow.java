@@ -19,7 +19,7 @@ import java.util.function.Supplier;
 /**
  * The DM's "Members" window: the join code to hand to players, who is in the campaign, and
  * who is waiting to be let in. What each button may do follows {@link CampaignDirectory}'s rules
- * (only the author manages Dungeon Masters); buttons the current DM can't use are hidden.
+ * (only the author manages Game Masters); buttons the current DM can't use are hidden.
  */
 public final class MembersWindow {
     private final BaseScene owner;
@@ -76,7 +76,7 @@ public final class MembersWindow {
         }
         boolean author = record.isAuthor(user);
         if (!record.isDm(user)) {
-            content.getChildren().add(owner.body("You're no longer a Dungeon Master of this campaign."));
+            content.getChildren().add(owner.body("You're no longer a Game Master of this campaign."));
             return;
         }
 
@@ -103,7 +103,7 @@ public final class MembersWindow {
                 owner.btn("Accept as Player", () -> act("Couldn't accept " + application.username,
                     () -> directory.accept(campaignId, user, application.username, Role.PLAYER))));
             if (author) {
-                row.getChildren().add(owner.btn("Accept as DM", () -> act("Couldn't accept " + application.username,
+                row.getChildren().add(owner.btn("Accept as GM", () -> act("Couldn't accept " + application.username,
                     () -> directory.accept(campaignId, user, application.username, Role.DM))));
             }
             row.getChildren().add(owner.dangerBtn("Reject", () -> act("Couldn't reject " + application.username,
@@ -114,11 +114,11 @@ public final class MembersWindow {
         content.getChildren().add(owner.sectionLabel("Members (" + record.members.size() + ")"));
         for (CampaignRecord.Member member : record.members.values()) {
             boolean isAuthor = record.isAuthor(member.username);
-            String label = member.username + "  -  " + (isAuthor ? "Author DM" : member.role == Role.DM ? "DM" : "Player");
+            String label = member.username + "  -  " + (isAuthor ? "Author GM" : member.role == Role.DM ? "GM" : "Player");
             HBox row = row(owner.body(label));
             if (author && !isAuthor) {
                 Role other = member.role == Role.DM ? Role.PLAYER : Role.DM;
-                row.getChildren().add(owner.btn(other == Role.DM ? "Make DM" : "Make Player",
+                row.getChildren().add(owner.btn(other == Role.DM ? "Make GM" : "Make Player",
                     () -> act("Couldn't change " + member.username + "'s role",
                         () -> directory.setRole(campaignId, user, member.username, other))));
             }
@@ -131,7 +131,7 @@ public final class MembersWindow {
         }
 
         if (!author) {
-            content.getChildren().add(owner.body("Only " + record.author + " (the author) can add or remove Dungeon Masters."));
+            content.getChildren().add(owner.body("Only " + record.author + " (the author) can add or remove Game Masters."));
         }
         content.getChildren().add(owner.btn("Refresh", this::reload));
     }

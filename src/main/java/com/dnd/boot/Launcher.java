@@ -21,7 +21,10 @@ import java.util.stream.Stream;
  */
 public final class Launcher {
     public static final String APP_MAIN = "com.dnd.cli.CliApp";
-    public static final String UPDATE_JAR = "dnd-campaign-manager.jar";
+    public static final String UPDATE_JAR = "almerion.jar";
+    public static final String APP_FOLDER = "Almerion";
+    /** The data folder's name before the app was renamed; moved to {@link #APP_FOLDER} on first start. */
+    static final String LEGACY_APP_FOLDER = "DnD Campaign Manager";
 
     private Launcher() {}
 
@@ -45,10 +48,26 @@ public final class Launcher {
     public static Path updateDir() {
         String home = System.getProperty("dnd.home");
         if (home != null && !home.isBlank()) return Paths.get(home, "app");
+        return userDataFolder().resolve("app");
+    }
+
+    /** {@code %APPDATA%\Almerion}, after moving the pre-rename folder there if it still exists. */
+    public static Path userDataFolder() {
         String appData = System.getenv("APPDATA");
         Path base = appData != null && !appData.isBlank()
             ? Paths.get(appData) : Paths.get(System.getProperty("user.home"));
-        return base.resolve("DnD Campaign Manager").resolve("app");
+        return migrateLegacy(base.resolve(LEGACY_APP_FOLDER), base.resolve(APP_FOLDER));
+    }
+
+    /** Renames {@code legacy} to {@code current} when only the old one exists; keeps using it if that fails. */
+    public static Path migrateLegacy(Path legacy, Path current) {
+        if (Files.exists(current) || !Files.isDirectory(legacy)) return current;
+        try {
+            return Files.move(legacy, current);
+        } catch (IOException e) {
+            System.err.println("Could not rename " + legacy + " to " + current + ": " + e);
+            return legacy;
+        }
     }
 
     public static boolean shouldUse(Path update, Path installedJar) {
@@ -71,7 +90,7 @@ public final class Launcher {
                 if (p.toString().endsWith(".jar") && !p.equals(installedJar)) urls.add(p.toUri().toURL());
             }
         }
-        return new URLClassLoader("dnd-update", urls.toArray(URL[]::new), ClassLoader.getPlatformClassLoader());
+        return new URLClassLoader("app-update", urls.toArray(URL[]::new), ClassLoader.getPlatformClassLoader());
     }
 
     private static Path ownJar() {

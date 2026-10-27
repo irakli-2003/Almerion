@@ -14,7 +14,7 @@
 
 ## Current Flow (Implemented)
 ### Landing Page
-Prompt: "Are you a Dungeon Master or a Player?"
+Prompt: "Are you a Game Master or a Player?"
 - `dm` -> Campaign Selection
 - `player` -> Player Mode (placeholder, intentionally kept for future work)
 

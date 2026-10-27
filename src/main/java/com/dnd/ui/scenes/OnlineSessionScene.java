@@ -104,7 +104,7 @@ public class OnlineSessionScene extends BaseScene {
 
         content.getChildren().addAll(
             title("Online Session  ● LIVE"),
-            body("Campaign state is pushed automatically when you navigate back to the DM Menu."),
+            body("Campaign state is pushed automatically when you navigate back to the GM Menu."),
             statusLabel,
             sectionLabel("Player Token"),
             tokenArea,

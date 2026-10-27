@@ -17,13 +17,13 @@ import java.util.stream.Stream;
  * Where the app keeps its writable files (campaigns, accounts, profiles).
  *
  * <p>Run from source, this is the working directory, as before. In the installed Windows app
- * the install folder is read-only, so everything lives in {@code %APPDATA%\DnD Campaign Manager}
+ * the install folder is read-only, so everything lives in {@code %APPDATA%\Almerion}
  * instead, and the campaigns bundled with the release are copied there on first start.
  * {@code -Ddnd.home=<folder>} overrides both.</p>
  */
 public final class AppHome {
     private static final Logger LOGGER = Logger.getLogger(AppHome.class.getName());
-    public static final String APP_FOLDER = "DnD Campaign Manager";
+    public static final String APP_FOLDER = com.dnd.boot.Launcher.APP_FOLDER;
 
     private AppHome() {}
 
@@ -36,10 +36,7 @@ public final class AppHome {
         String override = System.getProperty("dnd.home");
         if (override != null && !override.isBlank()) return Paths.get(override);
         if (!isInstalled()) return Paths.get("");
-        String appData = System.getenv("APPDATA");
-        Path base = appData != null && !appData.isBlank()
-            ? Paths.get(appData) : Paths.get(System.getProperty("user.home"));
-        return base.resolve(APP_FOLDER);
+        return com.dnd.boot.Launcher.userDataFolder();
     }
 
     public static Path resolve(String first, String... more) {

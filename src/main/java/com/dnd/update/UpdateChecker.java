@@ -23,7 +23,7 @@ import java.util.List;
  * {@value Launcher#UPDATE_JAR}; the installer .exe is offered when the libraries changed.
  */
 public final class UpdateChecker {
-    public static final String LATEST_RELEASE = "https://api.github.com/repos/irakli-2003/DnD/releases/latest";
+    public static final String LATEST_RELEASE = "https://api.github.com/repos/irakli-2003/Almerion/releases/latest";
 
     public record Release(String version, String jarUrl, String installerUrl, String pageUrl) {}
 
@@ -50,7 +50,7 @@ public final class UpdateChecker {
         HttpRequest request = HttpRequest.newBuilder(URI.create(LATEST_RELEASE))
             .timeout(Duration.ofSeconds(15))
             .header("Accept", "application/vnd.github+json")
-            .header("User-Agent", "DnD-Campaign-Manager")
+            .header("User-Agent", "Almerion")
             .build();
         HttpResponse<String> response = http.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() != 200) return null;
@@ -85,7 +85,7 @@ public final class UpdateChecker {
         Path partial = dir.resolve(Launcher.UPDATE_JAR + ".part");
         HttpRequest request = HttpRequest.newBuilder(URI.create(release.jarUrl()))
             .timeout(Duration.ofMinutes(5))
-            .header("User-Agent", "DnD-Campaign-Manager")
+            .header("User-Agent", "Almerion")
             .build();
         HttpResponse<InputStream> response = http.send(request, HttpResponse.BodyHandlers.ofInputStream());
         if (response.statusCode() != 200) throw new IOException("Download failed (HTTP " + response.statusCode() + ").");

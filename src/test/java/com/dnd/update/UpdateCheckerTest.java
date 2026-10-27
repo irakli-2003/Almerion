@@ -40,8 +40,8 @@ public class UpdateCheckerTest {
     @Test
     public void parsesTheLatestReleaseAssets() throws Exception {
         String json = "{\"tag_name\":\"v1.2.0\",\"html_url\":\"https://x/release\",\"assets\":["
-            + "{\"name\":\"dnd-campaign-manager.jar\",\"browser_download_url\":\"https://x/jar\"},"
-            + "{\"name\":\"DnD Campaign Manager-1.2.0.exe\",\"browser_download_url\":\"https://x/exe\"}]}";
+            + "{\"name\":\"almerion.jar\",\"browser_download_url\":\"https://x/jar\"},"
+            + "{\"name\":\"Almerion-1.2.0.exe\",\"browser_download_url\":\"https://x/exe\"}]}";
         UpdateChecker.Release r = UpdateChecker.parse(new ObjectMapper().readTree(json));
         assertEquals("1.2.0", r.version());
         assertEquals("https://x/jar", r.jarUrl());
@@ -50,11 +50,32 @@ public class UpdateCheckerTest {
     }
 
     @Test
+    public void oldReleaseJarNameIsNotTakenAsAnUpdate() throws Exception {
+        String json = "{\"tag_name\":\"v1.2.0\",\"assets\":["
+            + "{\"name\":\"dnd-campaign-manager.jar\",\"browser_download_url\":\"https://x/jar\"}]}";
+        assertNull(UpdateChecker.parse(new ObjectMapper().readTree(json)).jarUrl());
+    }
+
+    @Test
+    public void legacyDataFolderIsRenamedOnce() throws Exception {
+        Path base = Files.createTempDirectory("appdata");
+        Path legacy = Files.createDirectories(base.resolve("DnD Campaign Manager").resolve("data"));
+        Files.writeString(legacy.resolve("x.txt"), "kept");
+        Path current = base.resolve("Almerion");
+        assertEquals(current, Launcher.migrateLegacy(base.resolve("DnD Campaign Manager"), current));
+        assertEquals("kept", Files.readString(current.resolve("data").resolve("x.txt")));
+        assertFalse(Files.exists(base.resolve("DnD Campaign Manager")));
+        Files.createDirectories(base.resolve("DnD Campaign Manager"));
+        assertEquals(current, Launcher.migrateLegacy(base.resolve("DnD Campaign Manager"), current));
+        assertTrue(Files.isDirectory(base.resolve("DnD Campaign Manager")));
+    }
+
+    @Test
     public void launcherOnlyPicksANewerUpdateWhoseLibrariesAreInstalled() throws Exception {
         Path install = Files.createTempDirectory("install");
         Path updates = Files.createTempDirectory("updates");
         Files.writeString(install.resolve("lib-a-1.jar"), "x");
-        Path installed = jar(install, "dnd-campaign-manager-1.1.0.jar", "1.1.0", "lib-a-1.jar");
+        Path installed = jar(install, "almerion-1.1.0.jar", "1.1.0", "lib-a-1.jar");
 
         Path older = jar(updates, "older.jar", "1.0.0", "lib-a-1.jar");
         Path newer = jar(updates, "newer.jar", "1.2.0", "lib-a-1.jar");

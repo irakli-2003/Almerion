@@ -105,14 +105,14 @@ public class CampaignDirectory {
         JsonNode pointer = code.isEmpty() ? null : store.get("joinCodes/" + code);
         CampaignRecord record = pointer == null ? null : find(pointer.asText()).orElse(null);
         if (record == null || !code.equals(record.joinCode)) {
-            throw new MembershipException("No campaign uses that join code. Check it with your DM.");
+            throw new MembershipException("No campaign uses that join code. Check it with your GM.");
         }
         if (record.isMember(username)) {
             throw new MembershipException("You're already part of \"" + record.name + "\".");
         }
         String key = CloudKeys.of(username);
         if (record.applications.containsKey(key)) {
-            throw new MembershipException("You've already applied to \"" + record.name + "\". Wait for a DM to accept you.");
+            throw new MembershipException("You've already applied to \"" + record.name + "\". Wait for a GM to accept you.");
         }
         record.applications.put(key, new CampaignRecord.Application(username));
         save(record);
@@ -124,7 +124,7 @@ public class CampaignDirectory {
     public CampaignRecord accept(String campaignId, String actor, String applicant, Role role) {
         CampaignRecord record = require(campaignId);
         requireDm(record, actor);
-        if (role == Role.DM) requireAuthor(record, actor, "Only the campaign's author can add Dungeon Masters.");
+        if (role == Role.DM) requireAuthor(record, actor, "Only the campaign's author can add Game Masters.");
         String key = CloudKeys.of(applicant);
         CampaignRecord.Application application = record.applications.remove(key);
         if (application == null) throw new MembershipException(applicant + " has no pending application.");
@@ -150,8 +150,8 @@ public class CampaignDirectory {
     /** Promotes or demotes a member. Only the author may do this, and never to themselves. */
     public CampaignRecord setRole(String campaignId, String actor, String member, Role role) {
         CampaignRecord record = require(campaignId);
-        requireAuthor(record, actor, "Only the campaign's author can change who is a Dungeon Master.");
-        if (record.isAuthor(member)) throw new MembershipException("The author is always a Dungeon Master.");
+        requireAuthor(record, actor, "Only the campaign's author can change who is a Game Master.");
+        if (record.isAuthor(member)) throw new MembershipException("The author is always a Game Master.");
         String key = CloudKeys.of(member);
         CampaignRecord.Member m = record.members.get(key);
         if (m == null) throw new MembershipException(member + " is not part of this campaign.");
@@ -168,7 +168,7 @@ public class CampaignDirectory {
         if (record.isAuthor(member)) throw new MembershipException("The campaign's author can't be removed.");
         Role role = record.roleOf(member);
         if (role == null) throw new MembershipException(member + " is not part of this campaign.");
-        if (role == Role.DM) requireAuthor(record, actor, "Only the campaign's author can remove a Dungeon Master.");
+        if (role == Role.DM) requireAuthor(record, actor, "Only the campaign's author can remove a Game Master.");
         dropMember(record, member);
         return record;
     }
@@ -230,7 +230,7 @@ public class CampaignDirectory {
     }
 
     private static void requireDm(CampaignRecord record, String actor) {
-        if (!record.isDm(actor)) throw new MembershipException("Only a Dungeon Master of this campaign can do that.");
+        if (!record.isDm(actor)) throw new MembershipException("Only a Game Master of this campaign can do that.");
     }
 
     private static void requireAuthor(CampaignRecord record, String actor, String message) {

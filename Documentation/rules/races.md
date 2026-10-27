@@ -113,7 +113,7 @@
   - Languages: Common და Orc
   - Traits: aggressive movement, powerful build
 
-- Genasi
+- Elementborn
   - Ability Score Bonuses: +2 Constitution, +1 შესაბამისი ability ელემენტის მიხედვით
   - Size: Medium
   - Speed: 30 ft

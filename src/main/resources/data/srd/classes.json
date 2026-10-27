@@ -24,13 +24,13 @@
       "spellcasting": "NONE",
       "subclasses": [
         "Path of the Berserker",
-        "Path of the Totem Warrior",
-        "Path of the Zealot"
+        "Path of the Spirit Beast",
+        "Path of the Fervent"
       ],
       "subclassDescriptions": {
         "Path of the Berserker": "Pure, reckless fury. While raging you can enter a frenzy and make an extra weapon attack every turn, at the cost of exhaustion afterwards. Later you can't be charmed or frightened while raging and you can terrify enemies with a look. Best for players who want to hit as hard and as often as possible.",
-        "Path of the Totem Warrior": "A spiritual barbarian bonded to an animal spirit. You choose a totem (bear, eagle, wolf...) at several levels: Bear makes you resist almost all damage while raging, Eagle makes you fast and mobile, Wolf helps allies hit the enemies next to you. Flexible and very tough; great if you want to protect the party.",
-        "Path of the Zealot": "A warrior blessed (or cursed) by a god of battle. Your rage adds extra radiant or necrotic damage, you can be raised from the dead for free, and at high level you simply refuse to die while raging. Ideal for a fearless front-liner who wants to stay in the fight no matter what."
+        "Path of the Spirit Beast": "A spiritual barbarian bonded to an animal spirit. You choose a totem (bear, eagle, wolf...) at several levels: Bear makes you resist almost all damage while raging, Eagle makes you fast and mobile, Wolf helps allies hit the enemies next to you. Flexible and very tough; great if you want to protect the party.",
+        "Path of the Fervent": "A warrior blessed (or cursed) by a god of battle. Your rage adds extra radiant or necrotic damage, you can be raised from the dead for free, and at high level you simply refuse to die while raging. Ideal for a fearless front-liner who wants to stay in the fight no matter what."
       },
       "features": [
         {
@@ -57,7 +57,7 @@
           "level": 3,
           "name": "Divine Fury",
           "description": "The first creature you hit each turn while raging takes extra necrotic or radiant damage.",
-          "subclass": "Path of the Zealot"
+          "subclass": "Path of the Fervent"
         },
         {
           "level": 3,
@@ -74,19 +74,19 @@
           "level": 3,
           "name": "Spirit Seeker",
           "description": "You can cast beast sense and speak with animals as rituals.",
-          "subclass": "Path of the Totem Warrior"
+          "subclass": "Path of the Spirit Beast"
         },
         {
           "level": 3,
-          "name": "Totem Spirit",
+          "name": "Beast Spirit",
           "description": "Bond with a bear, eagle or wolf spirit to gain a defensive or tactical benefit while raging.",
-          "subclass": "Path of the Totem Warrior"
+          "subclass": "Path of the Spirit Beast"
         },
         {
           "level": 3,
           "name": "Warrior of the Gods",
           "description": "Spells that bring you back from death need no material components.",
-          "subclass": "Path of the Zealot"
+          "subclass": "Path of the Fervent"
         },
         {
           "level": 4,
@@ -107,13 +107,13 @@
           "level": 6,
           "name": "Aspect of the Beast",
           "description": "Your chosen totem animal grants a lasting physical gift such as carrying capacity, keen sight or tracking skill.",
-          "subclass": "Path of the Totem Warrior"
+          "subclass": "Path of the Spirit Beast"
         },
         {
           "level": 6,
           "name": "Fanatical Focus",
           "description": "Once per rage you can reroll a failed saving throw and must use the new roll.",
-          "subclass": "Path of the Zealot"
+          "subclass": "Path of the Fervent"
         },
         {
           "level": 6,
@@ -146,13 +146,13 @@
           "level": 10,
           "name": "Spirit Walker",
           "description": "You can cast commune with nature as a ritual to receive guidance from a totem spirit.",
-          "subclass": "Path of the Totem Warrior"
+          "subclass": "Path of the Spirit Beast"
         },
         {
           "level": 10,
           "name": "Zealous Presence",
           "description": "As a bonus action, up to ten allies gain advantage on attacks and saves until your next turn, once per long rest.",
-          "subclass": "Path of the Zealot"
+          "subclass": "Path of the Fervent"
         },
         {
           "level": 11,
@@ -173,7 +173,7 @@
           "level": 14,
           "name": "Rage Beyond Death",
           "description": "While raging, dropping to 0 hit points does not knock you out or kill you until the rage ends.",
-          "subclass": "Path of the Zealot"
+          "subclass": "Path of the Fervent"
         },
         {
           "level": 14,
@@ -183,9 +183,9 @@
         },
         {
           "level": 14,
-          "name": "Totemic Attunement",
+          "name": "Spirit Attunement",
           "description": "Your totem grants a powerful new aura or ability while you rage.",
-          "subclass": "Path of the Totem Warrior"
+          "subclass": "Path of the Spirit Beast"
         },
         {
           "level": 15,
@@ -242,14 +242,14 @@
       },
       "spellcasting": "FULL",
       "subclasses": [
-        "College of Glamour",
+        "College of Allure",
         "College of Lore",
-        "College of Valor"
+        "College of Heroes"
       ],
       "subclassDescriptions": {
-        "College of Glamour": "Bards touched by the Feywild who enchant crowds. Your performances give allies temporary hit points and free movement, and you can charm or frighten groups and wrap yourself in an awe-inspiring aura. Good for a charismatic support who controls the battlefield and social scenes.",
+        "College of Allure": "Bards touched by the Feywild who enchant crowds. Your performances give allies temporary hit points and free movement, and you can charm or frighten groups and wrap yourself in an awe-inspiring aura. Good for a charismatic support who controls the battlefield and social scenes.",
         "College of Lore": "Collectors of knowledge and secrets. You gain extra skill proficiencies, can use Bardic Inspiration to make enemies miss or fail checks (Cutting Words), and learn spells from other classes' lists early. The most flexible bard: a skill expert and the best spell 'thief' in the game.",
-        "College of Valor": "Battle-skalds who sing in the front line. You gain medium armour, shields and martial weapons, your inspiration can boost an ally's damage or armour class, and later you attack twice and can cast a spell and swing in the same turn. Choose this if you want a bard who fights."
+        "College of Heroes": "Battle-skalds who sing in the front line. You gain medium armour, shields and martial weapons, your inspiration can boost an ally's damage or armour class, and later you attack twice and can cast a spell and swing in the same turn. Choose this if you want a bard who fights."
       },
       "features": [
         {
@@ -287,13 +287,13 @@
           "level": 3,
           "name": "Bonus Proficiencies",
           "description": "Gain proficiency with medium armor, shields and martial weapons.",
-          "subclass": "College of Valor"
+          "subclass": "College of Heroes"
         },
         {
           "level": 3,
           "name": "Combat Inspiration",
           "description": "Allies can spend your inspiration die on weapon damage or to raise their AC against one attack.",
-          "subclass": "College of Valor"
+          "subclass": "College of Heroes"
         },
         {
           "level": 3,
@@ -305,7 +305,7 @@
           "level": 3,
           "name": "Enthralling Performance",
           "description": "After performing for at least a minute, charm a few listeners who fail a Wisdom save for an hour.",
-          "subclass": "College of Glamour"
+          "subclass": "College of Allure"
         },
         {
           "level": 3,
@@ -316,7 +316,7 @@
           "level": 3,
           "name": "Mantle of Inspiration",
           "description": "Spend a Bardic Inspiration use to grant nearby allies temporary hit points and a free reaction move.",
-          "subclass": "College of Glamour"
+          "subclass": "College of Allure"
         },
         {
           "level": 4,
@@ -348,13 +348,13 @@
           "level": 6,
           "name": "Extra Attack",
           "description": "Attack twice instead of once whenever you take the Attack action.",
-          "subclass": "College of Valor"
+          "subclass": "College of Heroes"
         },
         {
           "level": 6,
           "name": "Mantle of Majesty",
           "description": "Take on an awe-inspiring fey appearance and cast command as a bonus action each turn for a minute.",
-          "subclass": "College of Glamour"
+          "subclass": "College of Allure"
         },
         {
           "level": 8,
@@ -395,7 +395,7 @@
           "level": 14,
           "name": "Battle Magic",
           "description": "After casting a bard spell with your action, you can make one weapon attack as a bonus action.",
-          "subclass": "College of Valor"
+          "subclass": "College of Heroes"
         },
         {
           "level": 14,
@@ -412,7 +412,7 @@
           "level": 14,
           "name": "Unbreakable Majesty",
           "description": "Assume a majestic presence that forces attackers to save or pick a new target.",
-          "subclass": "College of Glamour"
+          "subclass": "College of Allure"
         },
         {
           "level": 15,
@@ -470,34 +470,34 @@
       "spellcasting": "FULL",
       "subclasses": [
         "Life Domain",
-        "Light Domain",
-        "Tempest Domain",
-        "War Domain"
+        "Dawn Domain",
+        "Storm Domain",
+        "Battle Domain"
       ],
       "subclassDescriptions": {
         "Life Domain": "The classic healer. Every healing spell you cast heals extra hit points, you can heal several allies at once with Channel Divinity, and you wear heavy armour. Later your healing also heals you. Best for players who want to keep the party alive.",
-        "Light Domain": "Priests of the sun and fire. You get blasting spells like Burning Hands and Fireball, can flash light to make an attacker miss, and Channel Divinity floods the area with radiant light that burns enemies. A damage-focused cleric that still heals.",
-        "Tempest Domain": "Servants of storm gods. You wear heavy armour, punish attackers with lightning, and can make your thunder and lightning spells deal maximum damage. Thunderwave and Call Lightning are your signature spells. Great for a tough, explosive front-line caster.",
-        "War Domain": "Clerics of war gods who fight in heavy armour with martial weapons. You can make extra attacks as a bonus action, add a big bonus to a single attack roll, and later resist weapon damage. Pick this for a holy warrior who prays and punches."
+        "Dawn Domain": "Priests of the sun and fire. You get blasting spells like Burning Hands and Fireball, can flash light to make an attacker miss, and Channel Divinity floods the area with radiant light that burns enemies. A damage-focused cleric that still heals.",
+        "Storm Domain": "Servants of storm gods. You wear heavy armour, punish attackers with lightning, and can make your thunder and lightning spells deal maximum damage. Thunderwave and Call Lightning are your signature spells. Great for a tough, explosive front-line caster.",
+        "Battle Domain": "Clerics of war gods who fight in heavy armour with martial weapons. You can make extra attacks as a bonus action, add a big bonus to a single attack roll, and later resist weapon damage. Pick this for a holy warrior who prays and punches."
       },
       "features": [
         {
           "level": 1,
           "name": "Bonus Cantrip",
           "description": "Learn the light cantrip if you do not already know it.",
-          "subclass": "Light Domain"
+          "subclass": "Dawn Domain"
         },
         {
           "level": 1,
           "name": "Bonus Proficiencies",
           "description": "Gain proficiency with martial weapons and heavy armor.",
-          "subclass": "Tempest Domain"
+          "subclass": "Storm Domain"
         },
         {
           "level": 1,
           "name": "Bonus Proficiencies",
           "description": "Gain proficiency with martial weapons and heavy armor.",
-          "subclass": "War Domain"
+          "subclass": "Battle Domain"
         },
         {
           "level": 1,
@@ -525,19 +525,19 @@
           "level": 1,
           "name": "War Priest",
           "description": "After taking the Attack action, make one extra weapon attack as a bonus action a few times per long rest.",
-          "subclass": "War Domain"
+          "subclass": "Battle Domain"
         },
         {
           "level": 1,
           "name": "Warding Flare",
           "description": "As a reaction, impose disadvantage on an attack against you by flashing divine light at the attacker.",
-          "subclass": "Light Domain"
+          "subclass": "Dawn Domain"
         },
         {
           "level": 1,
           "name": "Wrath of the Storm",
           "description": "As a reaction, deal lightning or thunder damage to a nearby creature that hits you.",
-          "subclass": "Tempest Domain"
+          "subclass": "Storm Domain"
         },
         {
           "level": 2,
@@ -548,13 +548,13 @@
           "level": 2,
           "name": "Channel Divinity: Destructive Wrath",
           "description": "Maximize the damage of a lightning or thunder roll instead of rolling it.",
-          "subclass": "Tempest Domain"
+          "subclass": "Storm Domain"
         },
         {
           "level": 2,
           "name": "Channel Divinity: Guided Strike",
           "description": "Add +10 to one of your attack rolls after seeing the roll.",
-          "subclass": "War Domain"
+          "subclass": "Battle Domain"
         },
         {
           "level": 2,
@@ -566,7 +566,7 @@
           "level": 2,
           "name": "Channel Divinity: Radiance of the Dawn",
           "description": "Dispel magical darkness and blast nearby hostile creatures with radiant damage.",
-          "subclass": "Light Domain"
+          "subclass": "Dawn Domain"
         },
         {
           "level": 2,
@@ -598,19 +598,19 @@
           "level": 6,
           "name": "Channel Divinity: War God's Blessing",
           "description": "Use your reaction to give an ally within 30 feet +10 on an attack roll.",
-          "subclass": "War Domain"
+          "subclass": "Battle Domain"
         },
         {
           "level": 6,
           "name": "Improved Flare",
           "description": "You can use Warding Flare to protect allies as well as yourself.",
-          "subclass": "Light Domain"
+          "subclass": "Dawn Domain"
         },
         {
           "level": 6,
           "name": "Thunderbolt Strike",
           "description": "Your lightning damage can push Large or smaller creatures 10 feet away.",
-          "subclass": "Tempest Domain"
+          "subclass": "Storm Domain"
         },
         {
           "level": 8,
@@ -632,19 +632,19 @@
           "level": 8,
           "name": "Divine Strike",
           "description": "Once per turn, your weapon hits deal an extra 1d8 thunder damage, rising to 2d8 at 14th level.",
-          "subclass": "Tempest Domain"
+          "subclass": "Storm Domain"
         },
         {
           "level": 8,
           "name": "Divine Strike",
           "description": "Once per turn, your weapon hits deal an extra 1d8 damage of the weapon's type, rising to 2d8 at 14th level.",
-          "subclass": "War Domain"
+          "subclass": "Battle Domain"
         },
         {
           "level": 8,
           "name": "Potent Spellcasting",
           "description": "Add your Wisdom modifier to the damage of your cleric cantrips.",
-          "subclass": "Light Domain"
+          "subclass": "Dawn Domain"
         },
         {
           "level": 10,
@@ -675,13 +675,13 @@
           "level": 17,
           "name": "Avatar of Battle",
           "description": "You resist bludgeoning, piercing and slashing damage from nonmagical weapons.",
-          "subclass": "War Domain"
+          "subclass": "Battle Domain"
         },
         {
           "level": 17,
           "name": "Corona of Light",
           "description": "Emit sunlight for a minute that gives enemies disadvantage on saves against fire and radiant spells.",
-          "subclass": "Light Domain"
+          "subclass": "Dawn Domain"
         },
         {
           "level": 17,
@@ -692,7 +692,7 @@
           "level": 17,
           "name": "Stormborn",
           "description": "You gain a flying speed equal to your walking speed whenever you are outdoors and not underground.",
-          "subclass": "Tempest Domain"
+          "subclass": "Storm Domain"
         },
         {
           "level": 17,
@@ -740,14 +740,14 @@
       },
       "spellcasting": "FULL",
       "subclasses": [
-        "Circle of Spores",
+        "Circle of Decay",
         "Circle of the Land",
-        "Circle of the Moon"
+        "Circle of Beasts"
       ],
       "subclassDescriptions": {
-        "Circle of Spores": "Druids of decay and the cycle of rot. You wrap yourself in a halo of spores that damages nearby enemies, can animate fallen creatures as zombies, and gain a symbiotic form with extra hit points and poison damage on hits. A close-range, grim druid.",
+        "Circle of Decay": "Druids of decay and the cycle of rot. You wrap yourself in a halo of spores that damages nearby enemies, can animate fallen creatures as zombies, and gain a symbiotic form with extra hit points and poison damage on hits. A close-range, grim druid.",
         "Circle of the Land": "Druids tied to one kind of land (forest, mountain, swamp...). Once a day you recover some spell slots on a short rest and get extra spells from your chosen land, always prepared. Later nature can't harm or slow you. The best pure spellcaster druid.",
-        "Circle of the Moon": "Shapeshifters. You Wild Shape as a bonus action into much stronger beasts (bears, later elementals) and can heal in beast form by spending spell slots. Pick this if you want to fight as an animal in melee."
+        "Circle of Beasts": "Shapeshifters. You Wild Shape as a bonus action into much stronger beasts (bears, later elementals) and can heal in beast form by spending spell slots. Pick this if you want to fight as an animal in melee."
       },
       "features": [
         {
@@ -770,19 +770,19 @@
           "level": 2,
           "name": "Circle Forms",
           "description": "Wild Shape into tougher beasts, up to CR 1 now and higher as you level.",
-          "subclass": "Circle of the Moon"
+          "subclass": "Circle of Beasts"
         },
         {
           "level": 2,
           "name": "Circle Spells",
           "description": "Gain the chill touch cantrip and decay-themed spells that are always prepared.",
-          "subclass": "Circle of Spores"
+          "subclass": "Circle of Decay"
         },
         {
           "level": 2,
           "name": "Combat Wild Shape",
           "description": "Wild Shape as a bonus action and burn spell slots to heal while transformed.",
-          "subclass": "Circle of the Moon"
+          "subclass": "Circle of Beasts"
         },
         {
           "level": 2,
@@ -791,9 +791,9 @@
         },
         {
           "level": 2,
-          "name": "Halo of Spores",
+          "name": "Halo of Rot",
           "description": "As a reaction, deal necrotic damage to a creature that moves near you or starts its turn close by.",
-          "subclass": "Circle of Spores"
+          "subclass": "Circle of Decay"
         },
         {
           "level": 2,
@@ -805,7 +805,7 @@
           "level": 2,
           "name": "Symbiotic Entity",
           "description": "Spend Wild Shape to gain temporary hit points and boost your spores and melee attacks with necrotic damage.",
-          "subclass": "Circle of Spores"
+          "subclass": "Circle of Decay"
         },
         {
           "level": 2,
@@ -832,7 +832,7 @@
           "level": 6,
           "name": "Fungal Infestation",
           "description": "When a small creature dies near you, animate it as a temporary zombie servant.",
-          "subclass": "Circle of Spores"
+          "subclass": "Circle of Decay"
         },
         {
           "level": 6,
@@ -844,7 +844,7 @@
           "level": 6,
           "name": "Primal Strike",
           "description": "Your attacks in beast form count as magical for overcoming resistance.",
-          "subclass": "Circle of the Moon"
+          "subclass": "Circle of Beasts"
         },
         {
           "level": 8,
@@ -860,7 +860,7 @@
           "level": 10,
           "name": "Elemental Wild Shape",
           "description": "Spend two uses of Wild Shape to become an air, earth, fire or water elemental.",
-          "subclass": "Circle of the Moon"
+          "subclass": "Circle of Beasts"
         },
         {
           "level": 10,
@@ -870,9 +870,9 @@
         },
         {
           "level": 10,
-          "name": "Spreading Spores",
+          "name": "Spreading Rot",
           "description": "Hurl your spores into a cube that damages creatures moving through it.",
-          "subclass": "Circle of Spores"
+          "subclass": "Circle of Decay"
         },
         {
           "level": 12,
@@ -883,7 +883,7 @@
           "level": 14,
           "name": "Fungal Body",
           "description": "You cannot be blinded, deafened, frightened or poisoned, and critical hits against you become normal hits.",
-          "subclass": "Circle of Spores"
+          "subclass": "Circle of Decay"
         },
         {
           "level": 14,
@@ -895,7 +895,7 @@
           "level": 14,
           "name": "Thousand Forms",
           "description": "You can cast alter self at will.",
-          "subclass": "Circle of the Moon"
+          "subclass": "Circle of Beasts"
         },
         {
           "level": 16,
@@ -947,14 +947,14 @@
       },
       "spellcasting": "NONE",
       "subclasses": [
-        "Battle Master",
+        "Tactician",
         "Champion",
-        "Eldritch Knight"
+        "Spellblade"
       ],
       "subclassDescriptions": {
-        "Battle Master": "A tactician. You learn manoeuvres powered by superiority dice: trip enemies, disarm them, push them back, command allies to attack, or riposte. Every hit can be a tactical choice. Best for players who like options and control in combat.",
+        "Tactician": "A tactician. You learn manoeuvres powered by superiority dice: trip enemies, disarm them, push them back, command allies to attack, or riposte. Every hit can be a tactical choice. Best for players who like options and control in combat.",
         "Champion": "Simple and deadly. Your critical hits happen on a 19 or 20 (later 18-20), you become more athletic, gain a second fighting style and regenerate hit points when badly hurt. Very easy to play: you just hit hard and crit often.",
-        "Eldritch Knight": "A fighter who learns wizard spells (mostly abjuration and evocation, like Shield and Magic Missile). You can bond to your weapon so it can't be taken from you, and later attack and cast in the same turn. Great for a sturdy warrior with a bit of magic."
+        "Spellblade": "A fighter who learns wizard spells (mostly abjuration and evocation, like Shield and Magic Missile). You can bond to your weapon so it can't be taken from you, and later attack and cast in the same turn. Great for a sturdy warrior with a bit of magic."
       },
       "features": [
         {
@@ -976,7 +976,7 @@
           "level": 3,
           "name": "Combat Superiority",
           "description": "Learn maneuvers fueled by superiority dice (d8) that add tactical effects to your attacks.",
-          "subclass": "Battle Master"
+          "subclass": "Tactician"
         },
         {
           "level": 3,
@@ -993,19 +993,19 @@
           "level": 3,
           "name": "Spellcasting",
           "description": "Learn a small set of wizard spells, mostly abjuration and evocation, cast with Intelligence.",
-          "subclass": "Eldritch Knight"
+          "subclass": "Spellblade"
         },
         {
           "level": 3,
           "name": "Student of War",
           "description": "Gain proficiency with one type of artisan's tools.",
-          "subclass": "Battle Master"
+          "subclass": "Tactician"
         },
         {
           "level": 3,
           "name": "Weapon Bond",
           "description": "Bond with up to two weapons so they cannot be disarmed and can be summoned to your hand.",
-          "subclass": "Eldritch Knight"
+          "subclass": "Spellblade"
         },
         {
           "level": 4,
@@ -1026,7 +1026,7 @@
           "level": 7,
           "name": "Know Your Enemy",
           "description": "Study a creature for a minute to learn how it compares to you in key capabilities.",
-          "subclass": "Battle Master"
+          "subclass": "Tactician"
         },
         {
           "level": 7,
@@ -1038,7 +1038,7 @@
           "level": 7,
           "name": "War Magic",
           "description": "After casting a cantrip with your action, make one weapon attack as a bonus action.",
-          "subclass": "Eldritch Knight"
+          "subclass": "Spellblade"
         },
         {
           "level": 8,
@@ -1060,13 +1060,13 @@
           "level": 10,
           "name": "Eldritch Strike",
           "description": "A creature you hit with a weapon has disadvantage on its next save against your spells.",
-          "subclass": "Eldritch Knight"
+          "subclass": "Spellblade"
         },
         {
           "level": 10,
           "name": "Improved Combat Superiority (d10)",
           "description": "Your superiority dice become d10s.",
-          "subclass": "Battle Master"
+          "subclass": "Tactician"
         },
         {
           "level": 11,
@@ -1092,13 +1092,13 @@
           "level": 15,
           "name": "Arcane Charge",
           "description": "When you Action Surge, you can also teleport up to 30 feet.",
-          "subclass": "Eldritch Knight"
+          "subclass": "Spellblade"
         },
         {
           "level": 15,
           "name": "Relentless",
           "description": "If you roll initiative with no superiority dice left, you regain one.",
-          "subclass": "Battle Master"
+          "subclass": "Tactician"
         },
         {
           "level": 15,
@@ -1125,13 +1125,13 @@
           "level": 18,
           "name": "Improved Combat Superiority (d12)",
           "description": "Your superiority dice become d12s.",
-          "subclass": "Battle Master"
+          "subclass": "Tactician"
         },
         {
           "level": 18,
           "name": "Improved War Magic",
           "description": "After casting any spell with your action, make one weapon attack as a bonus action.",
-          "subclass": "Eldritch Knight"
+          "subclass": "Spellblade"
         },
         {
           "level": 18,
@@ -1174,13 +1174,13 @@
       },
       "spellcasting": "NONE",
       "subclasses": [
-        "Way of Shadow",
-        "Way of the Four Elements",
+        "Way of the Veil",
+        "Way of the Elements",
         "Way of the Open Hand"
       ],
       "subclassDescriptions": {
-        "Way of Shadow": "Ninja-like monks. You spend ki to cast Darkness, Silence and similar spells, teleport from shadow to shadow, and later become invisible in dim light. A stealthy infiltrator and assassin.",
-        "Way of the Four Elements": "Monks who bend the elements. You spend ki to throw fire, water, earth and air effects (fire blasts, gusts, walls of water), effectively a monk that casts spells. Flashy but ki-hungry.",
+        "Way of the Veil": "Ninja-like monks. You spend ki to cast Darkness, Silence and similar spells, teleport from shadow to shadow, and later become invisible in dim light. A stealthy infiltrator and assassin.",
+        "Way of the Elements": "Monks who bend the elements. You spend ki to throw fire, water, earth and air effects (fire blasts, gusts, walls of water), effectively a monk that casts spells. Flashy but ki-hungry.",
         "Way of the Open Hand": "Masters of unarmed combat. Your Flurry of Blows can knock enemies prone, push them away or stop their reactions; you can heal yourself and later kill with a single touch. The classic, most reliable monk."
       },
       "features": [
@@ -1213,7 +1213,7 @@
           "level": 3,
           "name": "Disciple of the Elements",
           "description": "Learn elemental disciplines that spend ki to produce elemental spell effects.",
-          "subclass": "Way of the Four Elements"
+          "subclass": "Way of the Elements"
         },
         {
           "level": 3,
@@ -1230,7 +1230,7 @@
           "level": 3,
           "name": "Shadow Arts",
           "description": "Spend ki to cast darkness, darkvision, pass without trace or silence, and learn minor illusion.",
-          "subclass": "Way of Shadow"
+          "subclass": "Way of the Veil"
         },
         {
           "level": 4,
@@ -1256,7 +1256,7 @@
           "level": 6,
           "name": "Elemental Discipline (second)",
           "description": "Learn an additional elemental discipline.",
-          "subclass": "Way of the Four Elements"
+          "subclass": "Way of the Elements"
         },
         {
           "level": 6,
@@ -1267,7 +1267,7 @@
           "level": 6,
           "name": "Shadow Step",
           "description": "Teleport between areas of dim light or darkness and gain advantage on your next melee attack.",
-          "subclass": "Way of Shadow"
+          "subclass": "Way of the Veil"
         },
         {
           "level": 6,
@@ -1304,13 +1304,13 @@
           "level": 11,
           "name": "Cloak of Shadows",
           "description": "Become invisible while standing in dim light or darkness.",
-          "subclass": "Way of Shadow"
+          "subclass": "Way of the Veil"
         },
         {
           "level": 11,
           "name": "Elemental Discipline (third)",
           "description": "Learn another elemental discipline.",
-          "subclass": "Way of the Four Elements"
+          "subclass": "Way of the Elements"
         },
         {
           "level": 11,
@@ -1347,13 +1347,13 @@
           "level": 17,
           "name": "Elemental Discipline (fourth)",
           "description": "Learn a fourth elemental discipline.",
-          "subclass": "Way of the Four Elements"
+          "subclass": "Way of the Elements"
         },
         {
           "level": 17,
           "name": "Opportunist",
           "description": "Use your reaction to attack a nearby creature that was just hit by someone else.",
-          "subclass": "Way of Shadow"
+          "subclass": "Way of the Veil"
         },
         {
           "level": 17,
@@ -1402,13 +1402,13 @@
       "spellcasting": "HALF",
       "subclasses": [
         "Oath of Devotion",
-        "Oath of Vengeance",
-        "Oath of the Ancients"
+        "Oath of Retribution",
+        "Oath of the Wildwood"
       ],
       "subclassDescriptions": {
         "Oath of Devotion": "The knight in shining armour, sworn to honesty and justice. You can make your weapon holy (add Charisma to attack rolls), turn fiends and undead, and later you and nearby allies can't be charmed. A loyal protector.",
-        "Oath of Vengeance": "Avenger sworn to punish great evil. You can mark one enemy and gain advantage against it (Vow of Enmity), move after anyone who attacks you, and later fly and strike back. The most aggressive single-target paladin.",
-        "Oath of the Ancients": "Green knights who defend life, joy and nature. You can entangle enemies in vines, and your aura makes allies resist damage from spells. Later you can return from near death. A protector against magic."
+        "Oath of Retribution": "Avenger sworn to punish great evil. You can mark one enemy and gain advantage against it (Vow of Enmity), move after anyone who attacks you, and later fly and strike back. The most aggressive single-target paladin.",
+        "Oath of the Wildwood": "Green knights who defend life, joy and nature. You can entangle enemies in vines, and your aura makes allies resist damage from spells. Later you can return from near death. A protector against magic."
       },
       "features": [
         {
@@ -1440,13 +1440,13 @@
           "level": 3,
           "name": "Channel Divinity: Abjure Enemy",
           "description": "Frighten a creature and stop it from moving unless it passes a Wisdom save.",
-          "subclass": "Oath of Vengeance"
+          "subclass": "Oath of Retribution"
         },
         {
           "level": 3,
           "name": "Channel Divinity: Nature's Wrath",
           "description": "Spectral vines restrain a creature that fails a Strength or Dexterity save.",
-          "subclass": "Oath of the Ancients"
+          "subclass": "Oath of the Wildwood"
         },
         {
           "level": 3,
@@ -1458,7 +1458,7 @@
           "level": 3,
           "name": "Channel Divinity: Turn the Faithless",
           "description": "Force nearby fey and fiends to flee unless they pass a Wisdom save.",
-          "subclass": "Oath of the Ancients"
+          "subclass": "Oath of the Wildwood"
         },
         {
           "level": 3,
@@ -1470,7 +1470,7 @@
           "level": 3,
           "name": "Channel Divinity: Vow of Enmity",
           "description": "Gain advantage on attack rolls against one creature for a minute.",
-          "subclass": "Oath of Vengeance"
+          "subclass": "Oath of Retribution"
         },
         {
           "level": 3,
@@ -1507,13 +1507,13 @@
           "level": 7,
           "name": "Aura of Warding",
           "description": "You and nearby allies resist damage from spells.",
-          "subclass": "Oath of the Ancients"
+          "subclass": "Oath of the Wildwood"
         },
         {
           "level": 7,
           "name": "Relentless Avenger",
           "description": "After hitting with an opportunity attack, move up to half your speed without provoking.",
-          "subclass": "Oath of Vengeance"
+          "subclass": "Oath of Retribution"
         },
         {
           "level": 8,
@@ -1548,15 +1548,15 @@
         },
         {
           "level": 15,
-          "name": "Soul of Vengeance",
+          "name": "Soul of Retribution",
           "description": "When the target of your Vow of Enmity attacks, you can make a melee attack against it as a reaction.",
-          "subclass": "Oath of Vengeance"
+          "subclass": "Oath of Retribution"
         },
         {
           "level": 15,
           "name": "Undying Sentinel",
           "description": "Once per long rest, drop to 1 hit point instead of 0, and stop showing the effects of age.",
-          "subclass": "Oath of the Ancients"
+          "subclass": "Oath of the Wildwood"
         },
         {
           "level": 16,
@@ -1577,13 +1577,13 @@
           "level": 20,
           "name": "Avenging Angel",
           "description": "Sprout wings for flight and project a frightening aura for an hour.",
-          "subclass": "Oath of Vengeance"
+          "subclass": "Oath of Retribution"
         },
         {
           "level": 20,
           "name": "Elder Champion",
           "description": "Transform into a force of nature that regenerates, casts quickly and hinders enemy saves.",
-          "subclass": "Oath of the Ancients"
+          "subclass": "Oath of the Wildwood"
         },
         {
           "level": 20,
@@ -1616,13 +1616,13 @@
       },
       "spellcasting": "HALF",
       "subclasses": [
-        "Beast Master",
-        "Gloom Stalker",
+        "Beast Companion",
+        "Dusk Tracker",
         "Hunter"
       ],
       "subclassDescriptions": {
-        "Beast Master": "A ranger with a loyal animal companion (wolf, panther, hawk...) that fights beside you on your command. The companion grows stronger as you level. Choose this if you want a pet that matters in combat.",
-        "Gloom Stalker": "Hunters of the dark places. You act first in combat with an extra attack on the first turn, are invisible to creatures relying on darkvision, and resist fear. Excellent ambusher and scout.",
+        "Beast Companion": "A ranger with a loyal animal companion (wolf, panther, hawk...) that fights beside you on your command. The companion grows stronger as you level. Choose this if you want a pet that matters in combat.",
+        "Dusk Tracker": "Hunters of the dark places. You act first in combat with an extra attack on the first turn, are invisible to creatures relying on darkvision, and resist fear. Excellent ambusher and scout.",
         "Hunter": "Specialist slayer. At several levels you choose a technique: extra damage to wounded foes, hitting several enemies at once, defending against packs or giant monsters. A simple, strong damage ranger."
       },
       "features": [
@@ -1650,13 +1650,13 @@
           "level": 3,
           "name": "Dread Ambusher",
           "description": "Gain bonus initiative and a faster, harder-hitting first turn of combat.",
-          "subclass": "Gloom Stalker"
+          "subclass": "Dusk Tracker"
         },
         {
           "level": 3,
-          "name": "Gloom Stalker Magic",
+          "name": "Dusk Tracker Magic",
           "description": "Learn extra shadowy spells such as disguise self that are always known.",
-          "subclass": "Gloom Stalker"
+          "subclass": "Dusk Tracker"
         },
         {
           "level": 3,
@@ -1678,13 +1678,13 @@
           "level": 3,
           "name": "Ranger's Companion",
           "description": "Gain a loyal beast companion that fights alongside you at your command.",
-          "subclass": "Beast Master"
+          "subclass": "Beast Companion"
         },
         {
           "level": 3,
           "name": "Umbral Sight",
           "description": "Gain or extend darkvision and become invisible to creatures relying on darkvision to see you.",
-          "subclass": "Gloom Stalker"
+          "subclass": "Dusk Tracker"
         },
         {
           "level": 4,
@@ -1716,13 +1716,13 @@
           "level": 7,
           "name": "Exceptional Training",
           "description": "Your companion can Dash, Disengage, Dodge or Help as a bonus action, and its attacks count as magical.",
-          "subclass": "Beast Master"
+          "subclass": "Beast Companion"
         },
         {
           "level": 7,
           "name": "Iron Mind",
           "description": "Gain proficiency in Wisdom saving throws or another save if you already have it.",
-          "subclass": "Gloom Stalker"
+          "subclass": "Dusk Tracker"
         },
         {
           "level": 8,
@@ -1748,7 +1748,7 @@
           "level": 11,
           "name": "Bestial Fury",
           "description": "Your companion can make two attacks when you command it to attack.",
-          "subclass": "Beast Master"
+          "subclass": "Beast Companion"
         },
         {
           "level": 11,
@@ -1760,7 +1760,7 @@
           "level": 11,
           "name": "Stalker's Flurry",
           "description": "Once per turn when you miss with a weapon attack, you can make another attack.",
-          "subclass": "Gloom Stalker"
+          "subclass": "Dusk Tracker"
         },
         {
           "level": 12,
@@ -1781,13 +1781,13 @@
           "level": 15,
           "name": "Shadowy Dodge",
           "description": "Use your reaction to impose disadvantage on an attack against you.",
-          "subclass": "Gloom Stalker"
+          "subclass": "Dusk Tracker"
         },
         {
           "level": 15,
           "name": "Share Spells",
           "description": "Spells you cast on yourself can also affect your nearby companion.",
-          "subclass": "Beast Master"
+          "subclass": "Beast Companion"
         },
         {
           "level": 15,
@@ -1840,12 +1840,12 @@
       },
       "spellcasting": "NONE",
       "subclasses": [
-        "Arcane Trickster",
+        "Spellthief",
         "Assassin",
         "Thief"
       ],
       "subclassDescriptions": {
-        "Arcane Trickster": "A rogue who learns illusion and enchantment spells, with an invisible Mage Hand that can steal and pick locks from a distance. Later you can confuse enemies with your magic. Great for a clever, magical thief.",
+        "Spellthief": "A rogue who learns illusion and enchantment spells, with an invisible Mage Hand that can steal and pick locks from a distance. Later you can confuse enemies with your magic. Great for a clever, magical thief.",
         "Assassin": "Masters of the first strike. You have advantage against creatures that haven't acted yet, and any hit on a surprised creature is a critical. You can also build perfect false identities. The best ambusher.",
         "Thief": "The burglar. You use objects, pick locks and steal as a bonus action, climb faster and jump further, and at high level you take two turns in the first round. Ideal for heists and using magic items."
       },
@@ -1892,7 +1892,7 @@
           "level": 3,
           "name": "Mage Hand Legerdemain",
           "description": "Your invisible mage hand can pick pockets, plant items and open locks.",
-          "subclass": "Arcane Trickster"
+          "subclass": "Spellthief"
         },
         {
           "level": 3,
@@ -1909,7 +1909,7 @@
           "level": 3,
           "name": "Spellcasting",
           "description": "Learn a small set of wizard spells, mostly enchantment and illusion, cast with Intelligence.",
-          "subclass": "Arcane Trickster"
+          "subclass": "Spellthief"
         },
         {
           "level": 4,
@@ -1946,7 +1946,7 @@
           "level": 9,
           "name": "Magical Ambush",
           "description": "Creatures have disadvantage on saves against your spells if you are hidden when you cast them.",
-          "subclass": "Arcane Trickster"
+          "subclass": "Spellthief"
         },
         {
           "level": 9,
@@ -1983,9 +1983,9 @@
         },
         {
           "level": 13,
-          "name": "Versatile Trickster",
+          "name": "Versatile Thief",
           "description": "Use your mage hand to distract a creature and gain advantage against it.",
-          "subclass": "Arcane Trickster"
+          "subclass": "Spellthief"
         },
         {
           "level": 14,
@@ -2012,7 +2012,7 @@
           "level": 17,
           "name": "Spell Thief",
           "description": "Use your reaction to negate a spell aimed at you and steal knowledge of it for a time.",
-          "subclass": "Arcane Trickster"
+          "subclass": "Spellthief"
         },
         {
           "level": 17,
@@ -2061,13 +2061,13 @@
       "spellcasting": "FULL",
       "subclasses": [
         "Draconic Bloodline",
-        "Shadow Magic",
-        "Wild Magic"
+        "Umbral Magic",
+        "Chaos Magic"
       ],
       "subclassDescriptions": {
         "Draconic Bloodline": "Your magic comes from a dragon ancestor. You gain extra hit points, natural armour, bonus damage with one element, and later dragon wings and a frightening presence. A tougher sorcerer and great elemental blaster.",
-        "Shadow Magic": "Your power comes from the Shadowfell. You see in magical darkness, can summon a shadow hound to hunt a target, teleport between shadows and refuse to die once per rest. A dark, mysterious caster.",
-        "Wild Magic": "Your magic is chaotic. Casting spells can trigger random surges (fireballs, turning blue, teleporting...), and you can control luck with Tides of Chaos. Fun and unpredictable; best for players who enjoy surprises."
+        "Umbral Magic": "Your power comes from the Shadowfell. You see in magical darkness, can summon a shadow hound to hunt a target, teleport between shadows and refuse to die once per rest. A dark, mysterious caster.",
+        "Chaos Magic": "Your magic is chaotic. Casting spells can trigger random surges (fireballs, turning blue, teleporting...), and you can control luck with Tides of Chaos. Fun and unpredictable; best for players who enjoy surprises."
       },
       "features": [
         {
@@ -2086,7 +2086,7 @@
           "level": 1,
           "name": "Eyes of the Dark",
           "description": "Gain darkvision and later see through your own darkness spells.",
-          "subclass": "Shadow Magic"
+          "subclass": "Umbral Magic"
         },
         {
           "level": 1,
@@ -2102,19 +2102,19 @@
           "level": 1,
           "name": "Strength of the Grave",
           "description": "When reduced to 0 hit points, you may make a Charisma save to drop to 1 instead.",
-          "subclass": "Shadow Magic"
+          "subclass": "Umbral Magic"
         },
         {
           "level": 1,
           "name": "Tides of Chaos",
           "description": "Gain advantage on one roll, with a chance to trigger a surge later.",
-          "subclass": "Wild Magic"
+          "subclass": "Chaos Magic"
         },
         {
           "level": 1,
-          "name": "Wild Magic Surge",
+          "name": "Chaos Magic Surge",
           "description": "Casting spells may unleash a random magical effect.",
-          "subclass": "Wild Magic"
+          "subclass": "Chaos Magic"
         },
         {
           "level": 2,
@@ -2135,7 +2135,7 @@
           "level": 6,
           "name": "Bend Luck",
           "description": "Spend sorcery points to add or subtract 1d4 from another creature's roll.",
-          "subclass": "Wild Magic"
+          "subclass": "Chaos Magic"
         },
         {
           "level": 6,
@@ -2147,7 +2147,7 @@
           "level": 6,
           "name": "Hound of Ill Omen",
           "description": "Spend sorcery points to summon a shadowy hound that hunts a target and weakens its saves.",
-          "subclass": "Shadow Magic"
+          "subclass": "Umbral Magic"
         },
         {
           "level": 8,
@@ -2168,7 +2168,7 @@
           "level": 14,
           "name": "Controlled Chaos",
           "description": "Roll twice on the surge table and choose the result.",
-          "subclass": "Wild Magic"
+          "subclass": "Chaos Magic"
         },
         {
           "level": 14,
@@ -2180,7 +2180,7 @@
           "level": 14,
           "name": "Shadow Walk",
           "description": "Teleport between shadows as a bonus action while in dim light or darkness.",
-          "subclass": "Shadow Magic"
+          "subclass": "Umbral Magic"
         },
         {
           "level": 16,
@@ -2202,13 +2202,13 @@
           "level": 18,
           "name": "Spell Bombardment",
           "description": "When you roll maximum on a damage die, roll it again and add the result.",
-          "subclass": "Wild Magic"
+          "subclass": "Chaos Magic"
         },
         {
           "level": 18,
           "name": "Umbral Form",
           "description": "Become a shadowy form that moves through objects and resists most damage.",
-          "subclass": "Shadow Magic"
+          "subclass": "Umbral Magic"
         },
         {
           "level": 19,
@@ -2245,21 +2245,21 @@
       },
       "spellcasting": "PACT",
       "subclasses": [
-        "The Archfey",
+        "The Fey Sovereign",
         "The Fiend",
-        "The Great Old One"
+        "The Elder Void"
       ],
       "subclassDescriptions": {
-        "The Archfey": "Your patron is a fey lord or lady. You can charm or frighten creatures around you, vanish when hurt, and later trap enemies in illusions. Great for a tricky, enchanting warlock.",
+        "The Fey Sovereign": "Your patron is a fey lord or lady. You can charm or frighten creatures around you, vanish when hurt, and later trap enemies in illusions. Great for a tricky, enchanting warlock.",
         "The Fiend": "Your patron is a devil or demon. You gain temporary hit points whenever you kill an enemy, add fire spells like Fireball to your list, and later hurl foes through the lower planes. The sturdiest damage-dealing warlock.",
-        "The Great Old One": "Your patron is an alien, unknowable entity. You speak telepathically to any creature, can turn an enemy's attack against itself, and later charm minds with a touch. Ideal for a creepy psychic character."
+        "The Elder Void": "Your patron is an alien, unknowable entity. You speak telepathically to any creature, can turn an enemy's attack against itself, and later charm minds with a touch. Ideal for a creepy psychic character."
       },
       "features": [
         {
           "level": 1,
           "name": "Awakened Mind",
           "description": "Speak telepathically to any creature you can see within 30 feet.",
-          "subclass": "The Great Old One"
+          "subclass": "The Elder Void"
         },
         {
           "level": 1,
@@ -2271,7 +2271,7 @@
           "level": 1,
           "name": "Fey Presence",
           "description": "Charm or frighten creatures in a small cube around you once per short rest.",
-          "subclass": "The Archfey"
+          "subclass": "The Fey Sovereign"
         },
         {
           "level": 1,
@@ -2308,13 +2308,13 @@
           "level": 6,
           "name": "Entropic Ward",
           "description": "Impose disadvantage on an attack against you and gain advantage on your next attack if it misses.",
-          "subclass": "The Great Old One"
+          "subclass": "The Elder Void"
         },
         {
           "level": 6,
           "name": "Misty Escape",
           "description": "When damaged, use your reaction to turn invisible and teleport a short distance.",
-          "subclass": "The Archfey"
+          "subclass": "The Fey Sovereign"
         },
         {
           "level": 8,
@@ -2325,7 +2325,7 @@
           "level": 10,
           "name": "Beguiling Defenses",
           "description": "You are immune to being charmed and can turn charm attempts back on the caster.",
-          "subclass": "The Archfey"
+          "subclass": "The Fey Sovereign"
         },
         {
           "level": 10,
@@ -2337,7 +2337,7 @@
           "level": 10,
           "name": "Thought Shield",
           "description": "Your thoughts cannot be read, you resist psychic damage and you reflect it back at attackers.",
-          "subclass": "The Great Old One"
+          "subclass": "The Elder Void"
         },
         {
           "level": 11,
@@ -2358,13 +2358,13 @@
           "level": 14,
           "name": "Create Thrall",
           "description": "Touch an incapacitated humanoid to charm it indefinitely and link with it telepathically.",
-          "subclass": "The Great Old One"
+          "subclass": "The Elder Void"
         },
         {
           "level": 14,
           "name": "Dark Delirium",
           "description": "Plunge a creature into an illusory realm where it is charmed or frightened for a minute.",
-          "subclass": "The Archfey"
+          "subclass": "The Fey Sovereign"
         },
         {
           "level": 14,

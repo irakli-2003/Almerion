@@ -35,7 +35,7 @@ final class PlayerModeSupport {
         return repositories.players().getById(session.getActivePlayerCharacterId());
     }
 
-    /** 5 ft. per grid square is the standard D&D conversion. */
+    /** 5 ft. per grid square is the standard tabletop conversion. */
     static int speedCells(CharacterRace race) {
         int speedFeet = race != null ? race.getSpeed() : 30;
         return Math.max(speedFeet / 5, 1);

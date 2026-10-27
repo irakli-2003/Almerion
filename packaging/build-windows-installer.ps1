@@ -1,10 +1,10 @@
 <#
-  Builds the Windows installer: target\installer\DnD Campaign Manager-<version>.exe
+  Builds the Windows installer: target\installer\Almerion-<version>.exe
 
   The installer has a setup wizard (pick the install folder), adds a desktop shortcut and a
   Start-menu entry, and bundles its own Java runtime, so the target PC needs nothing else.
 
-  It also writes target\installer\dnd-campaign-manager.jar: attach it to the GitHub release next to
+  It also writes target\installer\almerion.jar: attach it to the GitHub release next to
   the installer, and installed apps update themselves to that version on their next start.
 
   Usage (from the repo root, in PowerShell):
@@ -26,7 +26,7 @@ $ErrorActionPreference = "Stop"
 $repo = Split-Path -Parent $PSScriptRoot
 Set-Location $repo
 
-$appName = "DnD Campaign Manager"
+$appName = "Almerion"
 $upgradeUuid = "4141426a-c9a8-4400-b1d5-fad1a8954174"  # never change: lets new versions replace old ones
 
 function Need($cmd, $hint) {
@@ -55,7 +55,7 @@ if ($SkipTests) { $mvnArgs += "-DskipTests" }
 if ($LASTEXITCODE -ne 0) { throw "Maven build failed." }
 
 if (-not $Version) { $Version = ([xml](Get-Content (Join-Path $repo "pom.xml"))).project.version }
-$jar = Get-ChildItem target -Filter "dnd-campaign-manager-*.jar" | Select-Object -First 1
+$jar = Get-ChildItem target -Filter "almerion-*.jar" | Select-Object -First 1
 $stage = Join-Path $repo "target\installer-input"
 if (Test-Path $stage) { Remove-Item $stage -Recurse -Force }
 New-Item -ItemType Directory $stage -Force | Out-Null
@@ -64,7 +64,7 @@ Copy-Item "target\libs\*.jar" $stage
 
 # The music engine (Chromium, ~300 MB unpacked) ships inside the installer so it is never
 # downloaded in the middle of a session. Cached between builds.
-$engine = Join-Path $env:LOCALAPPDATA "dnd-build\jcef"
+$engine = Join-Path $env:LOCALAPPDATA "almerion-build\jcef"
 Write-Host "Preparing the music engine in $engine ..."
 $cp = (@($jar.FullName) + (Get-ChildItem "target\libs\*.jar" | ForEach-Object FullName)) -join ";"
 & java -cp $cp com.dnd.ui.music.MusicPlayer $engine
@@ -77,8 +77,8 @@ $jpArgs = @(
     "--type", $Type,
     "--name", $appName,
     "--app-version", $Version,
-    "--vendor", "DnD Campaign Manager",
-    "--description", "Run Dungeons and Dragons campaigns: maps, combat, storyline and music.",
+    "--vendor", "Almerion",
+    "--description", "Almerion: Tabletop RPG Campaign Manager - maps, combat, storyline and music.",
     "--input", $stage,
     "--main-jar", $jar.Name,
     "--main-class", "com.dnd.boot.Launcher",
@@ -103,7 +103,7 @@ Write-Host "Packaging with jpackage ($Type) ..."
 if ($LASTEXITCODE -ne 0) { throw "jpackage failed." }
 
 # Attach this jar to the GitHub release as well: installed apps update themselves from it.
-Copy-Item $jar.FullName (Join-Path $dest "dnd-campaign-manager.jar")
+Copy-Item $jar.FullName (Join-Path $dest "almerion.jar")
 
 Write-Host ""
 Write-Host "Done:" -ForegroundColor Green

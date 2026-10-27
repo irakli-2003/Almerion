@@ -94,7 +94,7 @@ public final class UpdatePrompt {
 
     private static Alert alert(Stage owner, Alert.AlertType type, String header, String text, ButtonType... buttons) {
         Alert alert = new Alert(type, text, buttons);
-        alert.setTitle("DnD Campaign Manager update");
+        alert.setTitle("Almerion update");
         alert.setHeaderText(header);
         if (owner != null && owner.isShowing()) alert.initOwner(owner);
         var css = UpdatePrompt.class.getResource(CSS);

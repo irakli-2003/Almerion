@@ -6,12 +6,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.dnd</groupId>
-    <artifactId>dnd-campaign-manager</artifactId>
+    <artifactId>almerion</artifactId>
     <version>1.1.0</version>
     <packaging>jar</packaging>
 
-    <name>DnD Campaign Manager</name>
-    <description>Structured environment for running Dungeons and Dragons campaign</description>
+    <name>Almerion</name>
+    <description>Almerion: Tabletop RPG Campaign Manager</description>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>

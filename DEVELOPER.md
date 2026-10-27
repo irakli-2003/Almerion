@@ -1,4 +1,4 @@
-# DnD Campaign Manager — Developer Guide
+# Almerion — Developer Guide
 
 This guide covers building and running the app from source, the command-line version,
 configuration, the project layout and releasing. **Using** the desktop app is covered in the
@@ -34,9 +34,9 @@ configuration, the project layout and releasing. **Using** the desktop app is co
 
 ```powershell
 mvn test                          # run all tests
-mvn package                       # build target\dnd-campaign-manager-<version>.jar + target\libs\
+mvn package                       # build target\almerion-<version>.jar + target\libs\
 mvn javafx:run                    # launch the desktop UI (com.dnd.ui.GuiApp)
-java -jar target\dnd-campaign-manager-<version>.jar   # launch through com.dnd.boot.Launcher
+java -jar target\almerion-<version>.jar   # launch through com.dnd.boot.Launcher
 ```
 
 Handy variants:
@@ -115,7 +115,7 @@ Useful components:
 
 | Situation | Data root |
 |---|---|
-| Installed app | `%APPDATA%\DnD Campaign Manager` |
+| Installed app | `%APPDATA%\Almerion` |
 | Running from source | The working directory (the repo root) |
 | Overridden | `-Ddnd.home=<folder>` |
 
@@ -132,6 +132,14 @@ app\                                downloaded update jars (installed app only)
 
 On first start the installed app copies the bundled campaigns into `data\` without overwriting
 anything. `data/auth/*` is git-ignored: never commit it.
+
+The app was renamed from *DnD Campaign Manager*. `Launcher.userDataFolder()` moves an existing
+`%APPDATA%\DnD Campaign Manager` to `%APPDATA%\Almerion` once (falling back to the old folder if
+the move fails), and `MusicPlayer` moves `~/.dnd-campaign-manager` to `~/.almerion` the same way.
+The Java package (`com.dnd`), `-Ddnd.*` flags and the Firebase project id were kept unchanged.
+
+Translations (`com.dnd.ui.i18n`) live in `data\translations\<code>.json` and the chosen language in
+`data\settings.json`.
 
 ---
 
@@ -231,8 +239,8 @@ This is used when Firebase email isn't configured. It is created with placeholde
 
 - Needs JDK 21 (`jpackage`) and Maven on `PATH`. WiX Toolset 3.14 is downloaded automatically to
   `%LOCALAPPDATA%\wix314` if it's missing.
-- Output: `target\installer\DnD Campaign Manager-<version>.exe` and
-  `dnd-campaign-manager.jar` (the update payload).
+- Output: `target\installer\Almerion-<version>.exe` and
+  `almerion.jar` (the update payload).
 - The installer bundles a Java runtime, runs `com.dnd.boot.Launcher` with up to 2 GB of heap, and
   adds a Start-menu group and an optional desktop shortcut.
 - **Never change the installer's upgrade UUID.** Windows relies on it to upgrade in place.
@@ -244,11 +252,13 @@ This is used when Firebase email isn't configured. It is created with placeholde
 1. Bump `<version>` in `pom.xml`.
 2. Build the installer (see above).
 3. Create a GitHub release tagged `v<version>` and attach **both** the `.exe` and
-   `dnd-campaign-manager.jar`.
+   `almerion.jar`.
 
 Installed apps check the latest release on start and ignore drafts and pre-releases.
 
 - If only the jar is needed, they download it into `app\`, verify it, and switch on restart.
+- Old installs look for the asset by its old name, find none, and are offered the installer.
+  The installer keeps the same upgrade UUID, so it replaces the old install in place.
 - If the release has no jar, or the new jar needs libraries the installed app doesn't have (from
   its manifest `Class-Path`), they ask the user to run the new installer instead.
 - Running from source never updates.
@@ -262,3 +272,8 @@ Installed apps check the latest release on start and ignore drafts and pre-relea
 - Keep entity JSON backwards-compatible: unknown or deleted ids are shown as `(missing)` and are
   never dropped.
 - Never commit `data/auth/*`, personal campaigns or secrets.
+- Product text says **Game Master (GM)**, never another publisher's trademarks. Bundled content
+  must be SRD 5.1/5.2 (CC-BY-4.0) or original. Storyline notes use `[GM NOTE]`; `[DM NOTE]` is still
+  read for older files.
+- UI text is English in code. Mark user-authored text nodes with `UiTranslator.skip(node)` so
+  they are never machine-translated.

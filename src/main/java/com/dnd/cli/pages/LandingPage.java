@@ -17,18 +17,18 @@ public class LandingPage implements Page {
 
     @Override
     public String getTitle() {
-        return "DnD Campaign Manager";
+        return "Almerion";
     }
 
     @Override
     public String getBody() {
-        return "Are you a Dungeon Master or a Player?";
+        return "Are you a Game Master or a Player?";
     }
 
     @Override
     public List<CommandSpec> getCommands() {
         return Arrays.asList(
-            new CommandSpec("dm", "Dungeon Master mode", campaignSelectionPage),
+            new CommandSpec("dm", "Game Master mode", campaignSelectionPage),
             new CommandSpec("player", "Player mode", playerPage)
         );
     }

@@ -63,18 +63,18 @@ public class PlayerOnlineSessionScene extends BaseScene {
         codeField.setMaxWidth(260);
         Runnable apply = () -> {
             String code = codeField.getText().trim();
-            if (code.isEmpty()) { error.setText("Enter the join code your DM gave you."); return; }
+            if (code.isEmpty()) { error.setText("Enter the join code your GM gave you."); return; }
             error.setText("");
             background(() -> directory.apply(code, user()), record -> {
                 codeField.clear();
                 showInfo("Application sent",
-                    "You asked to join \"" + record.name + "\". Once a DM accepts you it appears under My Campaigns.");
+                    "You asked to join \"" + record.name + "\". Once a GM accepts you it appears under My Campaigns.");
                 uiSession.getRouter().goTo(SceneType.PLAYER_ONLINE_SESSION);
             }, failure -> error.setText(friendlyError(failure)));
         };
         codeField.setOnAction(e -> apply.run());
 
-        TextField tokenField = textField("Paste session token from DM");
+        TextField tokenField = textField("Paste session token from GM");
         tokenField.setMaxWidth(600);
         tokenField.setOnAction(e -> join(tokenField.getText().trim(), error));
         TitledPane tokenPane = new TitledPane("Join with a session token instead",
@@ -84,10 +84,10 @@ public class PlayerOnlineSessionScene extends BaseScene {
 
         content.getChildren().addAll(
             title("My Campaigns"),
-            body("Campaigns you've been accepted into. When the DM starts a live session, join it from here."),
+            body("Campaigns you've been accepted into. When the GM starts a live session, join it from here."),
             mine, error,
             sectionLabel("Join a Campaign"),
-            body("Ask your DM for the campaign's join code. They have to accept you before you can see it."),
+            body("Ask your GM for the campaign's join code. They have to accept you before you can see it."),
             new HBox(10, codeField, btn("Apply", apply)),
             pending,
             tokenPane
@@ -100,7 +100,7 @@ public class PlayerOnlineSessionScene extends BaseScene {
             if (member.isEmpty()) mine.getChildren().add(body("You aren't part of any campaign yet."));
             for (CampaignRecord record : member) {
                 boolean live = record.liveToken != null && !record.liveToken.isBlank();
-                Label name = body(record.name + "   (" + (record.isDm(user()) ? "DM" : "Player")
+                Label name = body(record.name + "   (" + (record.isDm(user()) ? "GM" : "Player")
                     + (live ? ", ● live now" : ", not running") + ")");
                 if (live) name.setStyle("-fx-text-fill: #80ff80;");
                 Button joinBtn = btn("Join Live Session", () -> join(record.liveToken, error));
@@ -117,8 +117,8 @@ public class PlayerOnlineSessionScene extends BaseScene {
             }
             pending.getChildren().clear();
             if (!waiting.isEmpty()) {
-                pending.getChildren().add(sectionLabel("Waiting for a DM to accept you"));
-                for (CampaignRecord record : waiting) pending.getChildren().add(body("• " + record.name));
+                pending.getChildren().add(sectionLabel("Waiting for a GM to accept you"));
+                for (CampaignRecord record : waiting) pending.getChildren().add(com.dnd.ui.i18n.UiTranslator.skip(body("• " + record.name)));
             }
             if (com.dnd.cloud.Cloud.isOffline()) {
                 error.setText("Offline - showing the list saved from your last connection.");
@@ -147,7 +147,7 @@ public class PlayerOnlineSessionScene extends BaseScene {
             return;
         }
         if (json == null) {
-            error.setText("Session not started yet. Ask your DM to start the session.");
+            error.setText("Session not started yet. Ask your GM to start the session.");
             return;
         }
 
@@ -188,13 +188,13 @@ public class PlayerOnlineSessionScene extends BaseScene {
      */
     private String membershipProblem(String campaignId) {
         if (campaignId == null) {
-            return "This campaign isn't registered yet. Ask your DM to claim it in Campaign Selection and give you its join code.";
+            return "This campaign isn't registered yet. Ask your GM to claim it in Campaign Selection and give you its join code.";
         }
         try {
             CampaignRecord record = CampaignDirectory.shared().find(campaignId).orElse(null);
-            if (record == null) return "This campaign isn't registered any more. Ask your DM.";
+            if (record == null) return "This campaign isn't registered any more. Ask your GM.";
             if (!record.isMember(user())) {
-                return "You aren't part of \"" + record.name + "\". Apply with its join code and wait for a DM to accept you.";
+                return "You aren't part of \"" + record.name + "\". Apply with its join code and wait for a GM to accept you.";
             }
             return null;
         } catch (RuntimeException e) {
@@ -223,7 +223,7 @@ public class PlayerOnlineSessionScene extends BaseScene {
     private void buildConnectedView(VBox root, VBox content) {
         HBox notifBar = new HBox();
         notifBar.getStyleClass().add("notification-bar");
-        Label notifLabel = new Label("● Connected — updates arrive automatically from the DM");
+        Label notifLabel = new Label("● Connected — updates arrive automatically from the GM");
         notifLabel.getStyleClass().add("notification-label");
         notifBar.getChildren().add(notifLabel);
         root.getChildren().add(1, notifBar);
@@ -233,7 +233,7 @@ public class PlayerOnlineSessionScene extends BaseScene {
         content.getChildren().addAll(
             title("Live Session"),
             body("Campaign: " + (context != null ? context.getName() : "unknown")),
-            body("Your DM is hosting this session. Your character sheet follows what they push; "
+            body("Your GM is hosting this session. Your character sheet follows what they push; "
                 + "your portrait, name and description are yours and stay on this machine."),
             btn("Go to My Character", () -> uiSession.getRouter().goTo(
                 uiSession.getSession().getActivePlayerCharacterId() != null

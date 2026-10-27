@@ -1,6 +1,6 @@
-# DnD Campaign Manager
+# Almerion: Tabletop RPG Campaign Manager
 
-**A desktop companion for running Dungeons & Dragons–style campaigns.** The Dungeon Master
+**A desktop companion for running fantasy tabletop role-playing campaigns.** The Game Master
 prepares the world, writes session notes, runs battles on a grid map with music, and prints
 character sheets. Players follow along from their own computers.
 
@@ -14,12 +14,12 @@ character sheets. Players follow along from their own computers.
 1. [What you can do with it](#1-what-you-can-do-with-it)
 2. [System requirements](#2-system-requirements)
 3. [Install, update and uninstall](#3-install-update-and-uninstall)
-4. [Quick start for Dungeon Masters](#4-quick-start-for-dungeon-masters)
+4. [Quick start for Game Masters](#4-quick-start-for-game-masters)
 5. [Quick start for players](#5-quick-start-for-players)
 6. [Key concepts](#6-key-concepts)
-7. [Accounts and sign-in](#7-accounts-and-sign-in)
+7. [Accounts and sign-in](#7-accounts-and-sign-in) · [Language](#7a-language)
 8. [Campaigns and members](#8-campaigns-and-members)
-9. [The DM menu](#9-the-dm-menu)
+9. [The GM menu](#9-the-gm-menu)
 10. [Characters](#10-characters)
 11. [Worldbuilding](#11-worldbuilding)
 12. [Storyline and session notes](#12-storyline-and-session-notes)
@@ -33,22 +33,23 @@ character sheets. Players follow along from their own computers.
 20. [Troubleshooting](#20-troubleshooting)
 21. [FAQ](#21-faq)
 22. [More documentation](#22-more-documentation)
+23. [Legal notice](#23-legal-notice)
 
 ---
 
 ## 1. What you can do with it
 
-| As a Dungeon Master | As a player |
+| As a Game Master | As a player |
 |---|---|
 | Keep several campaigns, each with its own world, party and notes | Join a campaign with a short join code |
 | Start from a ready-made rules set (races, classes, spells, items, monsters, maps) or from a blank world | Pick your character and see its stats, inventory and abilities |
 | Create characters with a step-by-step wizard that explains every choice | Add your own portrait and appearance text |
-| Write session notes with read-aloud passages, map links and music cues | Follow the DM's live session from your own computer |
+| Write session notes with read-aloud passages, map links and music cues | Follow the GM's live session from your own computer |
 | Run battles on a grid map: initiative, damage, healing, spells, ranges, rests | |
 | Play YouTube music, ambience and sound effects that follow the action | |
 | Show the battle map to the table on a second screen | |
 | Print standard character sheets as PDFs | |
-| Invite other DMs and players, and host a live online session | |
+| Invite other GMs and players, and host a live online session | |
 
 ---
 
@@ -69,11 +70,11 @@ You don't need to install Java or anything else. The installer includes everythi
 
 ### Install
 
-1. Open the [latest release](https://github.com/irakli-2003/DnD/releases/latest).
-2. Download **`DnD.Campaign.Manager-<version>.exe`**.
+1. Open the [latest release](https://github.com/irakli-2003/Almerion/releases/latest).
+2. Download **`Almerion-<version>.exe`**.
 3. Run it and follow the setup wizard. You can choose the install folder and whether to add a
    desktop shortcut.
-4. Start **DnD Campaign Manager** from the Start menu or the desktop shortcut.
+4. Start **Almerion** from the Start menu or the desktop shortcut.
 
 > Windows SmartScreen may warn that the installer is from an unknown publisher. Click
 > **More info → Run anyway**.
@@ -92,13 +93,13 @@ The app checks for a new version each time it starts.
 
 ### Uninstall
 
-Use **Windows Settings → Apps → Installed apps → DnD Campaign Manager → Uninstall**.
+Use **Windows Settings → Apps → Installed apps → Almerion → Uninstall**.
 Your campaigns and settings are **not** deleted. They stay in your data folder (see
 [Your data and backups](#19-your-data-and-backups)), so a later reinstall picks them up again.
 
 ---
 
-## 4. Quick start for Dungeon Masters
+## 4. Quick start for Game Masters
 
 This walkthrough takes about ten minutes and gets you from installing the app to running a first
 fight.
@@ -106,12 +107,12 @@ fight.
 1. **Create an account.** On the login screen, click **Create an account**. Enter a username,
    email and password (at least 6 characters), then verify your email (see
    [Accounts and sign-in](#7-accounts-and-sign-in)).
-2. **Choose your role.** After logging in, click **Dungeon Master**.
+2. **Choose your role.** After logging in, click **Game Master**.
 3. **Create a campaign.** Click **Create New Campaign** and type a name. Leave
    **Start blank** *unticked* to get a complete starter world (races, classes, spells, items,
    monsters, maps and a pregenerated party). Click **Create Campaign**.
 4. **Open it.** Double-click the campaign, or select it and click **Open Campaign**. The
-   [DM menu](#9-the-dm-menu) opens.
+   [GM menu](#9-the-gm-menu) opens.
 5. **Add a character.** In **Players**, click **Create Character** and follow the eight steps.
    Every option explains itself as you pick it.
 6. **Write a session.** Click **📜 Open Storyline**, then **New File**. Write what happens. Use
@@ -128,17 +129,17 @@ fight.
 
 1. **Create an account** and log in (see [Accounts and sign-in](#7-accounts-and-sign-in)).
 2. Click **Player**. The **My Campaigns** screen opens.
-3. Under **Join a Campaign**, type the join code your DM gave you (for example `K7QM2X`) and
-   click **Apply**. The campaign appears under *Waiting for a DM to accept you*.
-4. Once the DM accepts you, the campaign is listed with your role. When the DM is running a live
+3. Under **Join a Campaign**, type the join code your GM gave you (for example `K7QM2X`) and
+   click **Apply**. The campaign appears under *Waiting for a GM to accept you*.
+4. Once the GM accepts you, the campaign is listed with your role. When the GM is running a live
    session, click **Join Live Session**.
-5. Choose your character and click **Play This Character**. If the DM protected it with a
+5. Choose your character and click **Play This Character**. If the GM protected it with a
    password, enter that first.
 6. From your character's home screen you can **View Inventory**, **View Abilities**, open
    **My Profile** to upload a portrait and write your appearance, and return to the
    **Online Session**.
 
-Your DM controls stats, level, items and spells. Your portrait, name and appearance text are
+Your GM controls stats, level, items and spells. Your portrait, name and appearance text are
 kept on your own computer.
 
 ---
@@ -148,10 +149,10 @@ kept on your own computer.
 | Term | Meaning |
 |---|---|
 | **Campaign** | One world: its characters, catalogues (monsters, items, spells...), maps, session notes and music. |
-| **Author DM** | The person who created the campaign. Only they can delete it, and add or remove other DMs. |
-| **DM** | A co-Dungeon Master. Can open and edit the campaign. |
+| **Author GM** | The person who created the campaign. Only they can delete it, and add or remove other GMs. |
+| **GM** | A co-Game Master. Can open and edit the campaign. |
 | **Player** | A member who plays a character in the campaign. |
-| **Join code** | A short code (like `K7QM2X`) that lets someone *apply* to join a campaign. A DM still has to accept them. |
+| **Join code** | A short code (like `K7QM2X`) that lets someone *apply* to join a campaign. A GM still has to accept them. |
 | **Catalogue** | A list of things in the campaign, such as Monsters, Items or Spells. Edited from **Worldbuilding**. |
 | **Storyline** | Your session notes: text files organised in folders, shown as a story-arc timeline. |
 | **Battle map** | A grid map where encounters are fought with tokens. |
@@ -162,7 +163,7 @@ kept on your own computer.
 
 ## 7. Accounts and sign-in
 
-Everyone needs an account. One account works for both DM and player roles.
+Everyone needs an account. One account works for both GM and player roles.
 
 - **Log in** with your username or email and your password.
 - **Create an account** needs a username, an email address and a password of at least 6
@@ -178,20 +179,36 @@ Accounts are stored online, so you can sign in from any computer with the app in
 
 ---
 
+## 7a. Language
+
+The app starts in **English**. To switch, pick a language from the **🌐 language menu** on the
+login screen or in the GM menu header. Every screen and window changes language right away, and
+the choice is remembered next time.
+
+- Translations are made automatically by a free online translation service the first time you
+  use a language, so you need an internet connection once. After that they are saved on your
+  computer and work offline.
+- Machine translation isn't perfect. Your own content (campaign names, notes, storyline text,
+  character names) is never translated.
+- Printed character sheets stay in English.
+- Choose **English** to switch back at any time.
+
+---
+
 ## 8. Campaigns and members
 
 ### Your campaign list
 
-After choosing **Dungeon Master** you see every campaign you are a DM of, with your role in it.
+After choosing **Game Master** you see every campaign you are a GM of, with your role in it.
 
 - **Open Campaign**, or double-click a campaign, to open it.
 - **Create New Campaign** makes a new one. Tick **Start blank (no template data)** for empty
   catalogues; otherwise it starts with the [starter world](#the-starter-world).
-- **Delete Selected** deletes a campaign. Only the author DM can do this, and the app asks for
+- **Delete Selected** deletes a campaign. Only the author GM can do this, and the app asks for
   confirmation first.
 - **On this device, not registered to anyone** lists campaign folders on your computer that
   have no owner yet, for example ones made before accounts existed. Click **Claim** to become
-  their author DM.
+  their author GM.
 - **Yours, but not on this device** lists campaigns you belong to whose files are on another
   computer.
 
@@ -199,14 +216,14 @@ When you are offline, the list you saw last time is shown with a note at the top
 
 ### Inviting people: the Members window
 
-Open it with **👥 Members** in the DM menu.
+Open it with **👥 Members** in the GM menu.
 
 - **Join code:** **Copy** it to share it. **New Code** replaces it, and the old code stops
   working.
-- **Waiting to join:** each applicant has **Accept as Player**, **Accept as DM** and
+- **Waiting to join:** each applicant has **Accept as Player**, **Accept as GM** and
   **Reject**.
-- **Members:** everyone is labelled *Author DM*, *DM* or *Player*. You can **Make DM**,
-  **Make Player** or **Remove** them. Only the author DM can promote or remove DMs.
+- **Members:** everyone is labelled *Author GM*, *GM* or *Player*. You can **Make GM**,
+  **Make Player** or **Remove** them. Only the author GM can promote or remove GMs.
 - **Refresh** reloads the lists.
 
 People who aren't members can't see a campaign or join its sessions.
@@ -235,10 +252,10 @@ standard fantasy rules:
 
 ---
 
-## 9. The DM menu
+## 9. The GM menu
 
-The DM menu is the home screen of an open campaign. Its header reads
-*Dungeon Master of campaign: &lt;name&gt;*.
+The GM menu is the home screen of an open campaign. Its header reads
+*Game Master of campaign: &lt;name&gt;*.
 
 | Section | What's in it |
 |---|---|
@@ -253,7 +270,7 @@ The DM menu is the home screen of an open campaign. Its header reads
 
 ### Creating a character
 
-Click **Create Character** in the DM menu. The wizard has eight steps:
+Click **Create Character** in the GM menu. The wizard has eight steps:
 
 1. **Race**
 2. **Class**
@@ -336,7 +353,7 @@ Double-click a file to open it. The editor fills the window.
 |---|---|
 | **Insert Info** | Pick any catalogue entry (NPC, monster, item, spell...) from a searchable menu and insert a formatted summary |
 | **Insert Block** | Templates for a scene, encounter, NPC beat, skill check, loot or session recap |
-| **Read-Aloud** / **DM Note** | Mark text as player-facing prose or private notes |
+| **Read-Aloud** / **GM Note** | Mark text as player-facing prose or private notes |
 | **Player View** | A large, read-only window showing only the read-aloud passages |
 | **Insert Map** / **Open Map Link** | Insert a link to a battle map. Double-click the link to open the battle |
 | **Sound Cue** / **Music Panel** | Insert music or sound cues, or open the music panel (see [Music](#14-music-and-sound)) |
@@ -393,7 +410,7 @@ Open it from a map link in your notes, or with **Run Battle**.
   against the target's AC and adds the bonus damage.
 - **Rests:** **Short Rest** and **Long Rest** restore the party's features and resources.
 - **Terrain:** paint difficult ground, water or climbable areas. **Walls** toggles showing them.
-- **📽 Projector:** opens a clean copy of the map, without DM panels or health bars, for a
+- **📽 Projector:** opens a clean copy of the map, without GM panels or health bars, for a
   second screen. **Esc** closes it.
 - **⚔ Combat Music** and **Map Music:** see [Music](#14-music-and-sound).
 
@@ -401,8 +418,8 @@ Open it from a map link in your notes, or with **Run Battle**.
 
 ## 14. Music and sound
 
-Music comes from **YouTube links** and plays on the **DM's computer only**. Open it with
-**Music Panel** in the DM menu, or with **🎵** on the battle map or in the session editor.
+Music comes from **YouTube links** and plays on the **GM's computer only**. Open it with
+**Music Panel** in the GM menu, or with **🎵** on the battle map or in the session editor.
 
 - **Playlists:** create one (*Tavern*, *Dungeon*, *Boss fight*...), then add any YouTube video
   or playlist link. Add `&t=1m30s` to a link to start partway in. Double-click a track to play it.
@@ -418,10 +435,13 @@ Music comes from **YouTube links** and plays on the **DM's computer only**. Open
 - **Sound effects:** short clips you trigger with a button. The music dips while they play.
 - **Session cues:** write `[music: Playlist name]`, `[music: stop]`, `[sfx: Sound name]` or
   `[sfx: stop]` in your notes, or use **Sound Cue**. Double-click a cue to play it.
-- **Quick controls** (⏮ ⏸ ⏭ ⏹) are in the DM menu.
+- **Quick controls** (⏮ ⏸ ⏭ ⏹) are in the GM menu.
 
 The first time you play, the app downloads a built-in web player (about 150 MB). Videos whose
 owners block playback outside YouTube are skipped automatically.
+
+> Only YouTube links are supported today. You are responsible for having the right to play the
+> music you link at your table or on a stream.
 
 ---
 
@@ -430,13 +450,13 @@ owners block playback outside YouTube are skipped automatically.
 An online session shares the campaign with players' computers while you play. The data is
 AES-256 encrypted.
 
-**DM:**
+**GM:**
 
-1. Click **🌐 Online Session** in the DM menu.
+1. Click **🌐 Online Session** in the GM menu.
 2. Enter a **session passphrase** and click **Start Online Session**.
 3. Members can now click **Join Live Session**. You can also give the **Player Token** to
    someone who needs to join by token.
-4. The campaign is pushed automatically each time you return to the DM menu. **Push State Now**
+4. The campaign is pushed automatically each time you return to the GM menu. **Push State Now**
    sends it immediately.
 5. Click **Stop Session** when you're done.
 
@@ -448,11 +468,11 @@ AES-256 encrypted.
 
 ## 16. Printing character sheets
 
-1. In the DM menu, click **🖨 Print Character Sheets**.
+1. In the GM menu, click **🖨 Print Character Sheets**.
 2. Tick the characters (or **Select all**) and click **Print**.
 3. One PDF per character is saved to your **Downloads** folder. **Open folder** shows them.
 
-Each sheet follows the standard D&D layout:
+Each sheet follows the standard fifth-edition character sheet layout:
 
 - **Page 1:** abilities, saves, skills, combat stats, attacks and resources.
 - **Following pages:** the character's portrait (or an empty frame to draw in) next to their
@@ -550,7 +570,7 @@ charge type:
 Everything you create is stored in your Windows user profile, not in the install folder:
 
 ```
-%APPDATA%\DnD Campaign Manager\
+%APPDATA%\Almerion\
 ├── data\
 │   ├── custom-campaigns\<campaign>\   one folder per campaign: catalogues, players,
 │   │                                  maps, storyline, images, music.json
@@ -561,16 +581,20 @@ Everything you create is stored in your Windows user profile, not in the install
 └── app\                               downloaded updates
 ```
 
-To open it, press **Win+R**, type `%APPDATA%\DnD Campaign Manager` and press Enter.
+To open it, press **Win+R**, type `%APPDATA%\Almerion` and press Enter.
+
+> **Upgrading from "DnD Campaign Manager"?** The first time Almerion starts, it moves your old
+> `%APPDATA%\DnD Campaign Manager` folder here automatically, so all your campaigns carry over.
+> Old `[DM NOTE]` markers in session notes keep working.
 
 - **Back up** a campaign by copying its folder from `data\custom-campaigns`. To restore it, copy the
   folder back while the app is closed.
-- **Move to a new computer** by copying the whole `DnD Campaign Manager` folder.
+- **Move to a new computer** by copying the whole `Almerion` folder.
 - **Printed sheets** go to your **Downloads** folder.
-- **Music player files** are kept in `%USERPROFILE%\.dnd-campaign-manager` and can be deleted;
+- **Music player files** are kept in `%USERPROFILE%\.almerion` and can be deleted;
   they download again when needed.
 
-Membership, join codes and accounts are stored online. Campaign content stays on the DM's
+Membership, join codes and accounts are stored online. Campaign content stays on the GM's
 computer, so back it up.
 
 ---
@@ -580,11 +604,11 @@ computer, so back it up.
 | Problem | What to do |
 |---|---|
 | **No verification or reset email** | Check spam and click **Resend code**. If email can't be sent, the app shows the code on screen. On the login screen, **Test email settings** reports the exact reason. Office, university and VPN networks often block outgoing email. |
-| **"You aren't part of ..."** | You aren't a member yet. Apply with the join code and wait for a DM to accept you. |
+| **"You aren't part of ..."** | You aren't a member yet. Apply with the join code and wait for a GM to accept you. |
 | **A campaign I created is missing from my list** | Look under *On this device, not registered to anyone* and click **Claim**. If it's under *Yours, but not on this device*, its files are on another computer. |
 | **"Offline - showing the campaign list saved from your last connection."** | You aren't connected. Local campaigns still open; joining and members need the internet. |
 | **Music doesn't play** | The first play downloads a 150 MB player, so wait for it to finish. Some videos block playback outside YouTube and are skipped. Check that the Windows volume isn't muted. |
-| **The update failed** | The app tries again next start. You can also install the latest `.exe` from the [releases page](https://github.com/irakli-2003/DnD/releases/latest). |
+| **The update failed** | The app tries again next start. You can also install the latest `.exe` from the [releases page](https://github.com/irakli-2003/Almerion/releases/latest). |
 | **SmartScreen blocks the installer** | Click **More info → Run anyway**. |
 | **The projector shows on the wrong screen** | Drag the *Battle Map - Players* window to the second screen and maximise it. |
 | **A field shows `(missing)`** | The entry it pointed to was deleted. Pick a new one or leave it. |
@@ -594,11 +618,11 @@ computer, so back it up.
 ## 21. FAQ
 
 **Do players need to install the app?**
-Only to join online sessions or view their own character. A DM can run an in-person game alone,
+Only to join online sessions or view their own character. A GM can run an in-person game alone,
 using the projector and printed sheets.
 
-**Can two DMs work on one campaign?**
-Yes. Accept someone as **DM** in the Members window. They need a copy of the campaign folder to
+**Can two GMs work on one campaign?**
+Yes. Accept someone as **GM** in the Members window. They need a copy of the campaign folder to
 edit it on their own computer.
 
 **Can I use my own rules and content?**
@@ -606,14 +630,14 @@ Yes. Create a campaign with **Start blank** and build everything in Worldbuildin
 extend the starter world.
 
 **Does the app play music for players too?**
-No. Music plays on the DM's computer only, so use speakers at the table.
+No. Music plays on the GM's computer only, so use speakers at the table.
 
-**Is it official D&D content?**
-No. The bundled content is original text that describes the rules concepts of the System
-Reference Document (CC-BY-4.0). No SRD wording is copied. The Artificer is a homebrew variant.
+**Is it an official product of any tabletop game publisher?**
+No. See [Legal notice](#23-legal-notice).
 
 **Is the interface available in other languages?**
-The app is in English. Guides in other languages are in the `Documentation` folder (see below).
+Yes. See [Language](#7a-language). Guides in other languages are in the `Documentation` folder
+(see below).
 
 ---
 
@@ -621,8 +645,23 @@ The app is in English. Guides in other languages are in the `Documentation` fold
 
 - [`Documentation/guides`](Documentation/guides): character creation guide (English and Georgian).
 - [`Documentation/rules`](Documentation/rules): the rules the app follows, such as core rules,
-  combat, magic, rests, conditions, homebrew changes and a DM guide.
+  combat, magic, rests, conditions, homebrew changes and a GM guide.
 - [`Documentation/catalog`](Documentation/catalog): reference lists of classes, races, items,
   spells and creatures.
 - [Developer Guide](DEVELOPER.md): building from source, the command-line version, configuration
   and releasing.
+
+---
+
+## 23. Legal notice
+
+Almerion is independent software. It is **not affiliated with, endorsed, sponsored or approved by
+Wizards of the Coast** or any other tabletop game publisher. Names of other products are used only
+to describe compatibility.
+
+The bundled rules content is original text written to describe game mechanics from the
+*System Reference Document 5.1* and *5.2* by Wizards of the Coast LLC, available at
+https://dnd.wizards.com/resources/systems-reference-document and licensed under the
+Creative Commons Attribution 4.0 International License
+(https://creativecommons.org/licenses/by/4.0/legalcode). Monsters, subclasses and other content
+outside the SRD are original or renamed homebrew. The Artificer is a homebrew variant.

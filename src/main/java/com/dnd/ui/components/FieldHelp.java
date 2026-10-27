@@ -81,7 +81,7 @@ public final class FieldHelp {
         f("Blueprint.productQuantity", "How many of the product one crafting makes (e.g. 6 bolts).");
         f("Blueprint.category", "Free label to sort the blueprint book, e.g. Utility, Light combat, Medium combat.");
         f("Blueprint.minLevel", "Character level needed to understand these plans.");
-        f("Blueprint.craftMinutes", "In-game time the work takes, so the DM can judge whether there is time.");
+        f("Blueprint.craftMinutes", "In-game time the work takes, so the GM can judge whether there is time.");
         f("Blueprint.materials", "Items used up by crafting, with amounts.");
         f("Blueprint.toolIds", "Tool kits that must be in the pack. They are not used up.");
         f("Blueprint.charges", "Energy charges poured into the build (level 1 Steam-pressure, 2 Thermal, 3 Shock...).");
@@ -99,11 +99,11 @@ public final class FieldHelp {
         o(SpellcastingType.NONE, "No spells. The class fights with weapons and its own features (barbarian, fighter, rogue, monk).");
         o(SpellcastingType.FULL, "Gets spell slots from level 1 and reaches 9th-level spells - the strongest magic users (wizard, cleric, druid, bard, sorcerer).");
         o(SpellcastingType.HALF, "Gets fewer slots starting at level 2 and tops out at 5th-level spells; mixes magic with fighting (paladin, ranger).");
-        o(SpellcastingType.THIRD, "A dash of magic from level 3, up to 4th-level spells (Eldritch Knight, Arcane Trickster).");
+        o(SpellcastingType.THIRD, "A dash of magic from level 3, up to 4th-level spells (Spellblade, Spellthief).");
         o(SpellcastingType.PACT, "Very few slots, all at the highest level they know, but they come back after a short rest (warlock).");
         o(SpellcastingType.ENERGY, "Homebrew artificer. Same numbers as a half caster, but the 'slots' are energy charges: steam-pressure, thermal, "
             + "electric... Rests do NOT refill them - the workshop furnace does, by burning fuel.");
-        o(CastingResource.SPELL_SLOTS, "Standard D&D: each levelled spell uses one slot of its level or higher. Slots come back on a long rest.");
+        o(CastingResource.SPELL_SLOTS, "Standard rules: each levelled spell uses one slot of its level or higher. Slots come back on a long rest.");
         o(CastingResource.ENERGY_CHARGES, "Artificer charges. Work like slots, but are refilled by burning fuel in a workshop furnace, not by resting.");
         o(CastingResource.MANA, "Homebrew: every spell has a mana cost paid from a pool; half the missing mana returns on a short rest.");
         o(CastingResource.HIT_POINTS, "Blood magic: a spell's mana cost is paid in the caster's own hit points.");

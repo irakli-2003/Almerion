@@ -5,6 +5,7 @@ import com.dnd.auth.EmailService;
 import com.dnd.auth.SmtpConfig;
 import com.dnd.ui.SceneType;
 import com.dnd.ui.UiSession;
+import com.dnd.ui.i18n.LanguagePicker;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
@@ -28,7 +29,7 @@ public class LoginScene extends BaseScene {
         error.getStyleClass().add("error-label");
 
         root.getChildren().addAll(
-            title("⚔  DnD Campaign Manager  ⚔"),
+            title("⚔  Almerion  ⚔"),
             subtitle("Log in to continue"),
             identifierField,
             passwordField,
@@ -46,6 +47,7 @@ public class LoginScene extends BaseScene {
             btn("Forgot password?", () -> uiSession.getRouter().goTo(SceneType.FORGOT_PASSWORD)),
             btn("Test email settings", this::testEmailSettings)
         );
+        LanguagePicker.pinTopRight(root);
 
         return wrapInScene(root);
     }

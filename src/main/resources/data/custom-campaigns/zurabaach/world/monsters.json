@@ -1536,9 +1536,9 @@
     "languages" : [ "sylvan" ],
     "imagePath" : null
   }, {
-    "id" : "mind-flayer",
-    "name" : "Mind Flayer",
-    "description" : "An illithid that regards your skull as a lunch container.",
+    "id" : "mind-reaver",
+    "name" : "Mind Reaver",
+    "description" : "A mind reaver that regards your skull as a lunch container.",
     "type" : "aberration",
     "challengeRating" : "7",
     "stats" : {
@@ -1569,8 +1569,8 @@
     "languages" : [ "deep-speech", "undercommon" ],
     "imagePath" : null
   }, {
-    "id" : "beholder",
-    "name" : "Beholder",
+    "id" : "many-eyed-horror",
+    "name" : "Many-Eyed Horror",
     "description" : "A floating sphere of eyes, paranoia, and ten separate ways to end you.",
     "type" : "aberration",
     "challengeRating" : "13",

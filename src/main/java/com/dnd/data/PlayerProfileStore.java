@@ -23,7 +23,7 @@ public class PlayerProfileStore {
 
     private static final Path ROOT = AppHome.resolve("data", "player-profiles");
 
-    /** The cosmetic fields a player owns. A null field means "leave the DM's value alone". */
+    /** The cosmetic fields a player owns. A null field means "leave the GM's value alone". */
     public static class Profile {
         private String name;
         private String description;

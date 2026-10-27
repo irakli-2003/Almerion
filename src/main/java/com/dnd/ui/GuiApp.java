@@ -3,7 +3,11 @@ package com.dnd.ui;
 import com.dnd.cli.core.CliSession;
 import com.dnd.cli.core.SystemConsoleIO;
 import com.dnd.cli.storage.CampaignStorage;
+import com.dnd.ui.i18n.AppSettings;
+import com.dnd.ui.i18n.TranslationService;
+import com.dnd.ui.i18n.UiTranslator;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 
 import java.util.Scanner;
@@ -14,13 +18,14 @@ public class GuiApp extends Application {
         UiFonts.load();
         WindowOrder.install();
         TooltipPersistence.install();
+        UiTranslator.install(TranslationService.createDefault(Platform::runLater), AppSettings.load());
         primaryStage.getIcons().setAll(AppIcons.icons());
         AppIcons.install();
         CampaignStorage storage = new CampaignStorage();
         storage.ensureInitialized();
         CliSession session = new CliSession(storage, new SystemConsoleIO(new Scanner(System.in)));
         UiSession uiSession = new UiSession(session, storage, primaryStage);
-        primaryStage.setTitle("DnD Campaign Manager");
+        primaryStage.setTitle("Almerion: Tabletop RPG Campaign Manager");
         primaryStage.setWidth(900);
         primaryStage.setHeight(650);
         // "Windowed full screen": maximized with the OS chrome still visible, not true

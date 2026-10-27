@@ -37,7 +37,7 @@ import java.util.function.Consumer;
  * from a tiny localhost server because YouTube refuses to play embeds that have no origin.
  * The Chromium window must be on screen while the player initialises; after that it is
  * hidden and keeps playing in the background. The engine (~150 MB) downloads on first use
- * into {@code ~/.dnd-campaign-manager/jcef}.</p>
+ * into {@code ~/.almerion/jcef}.</p>
  *
  * <p>One shared instance per app. All listener callbacks arrive on the JavaFX thread.</p>
  */
@@ -180,7 +180,7 @@ public final class MusicPlayer {
             String url = "http://localhost:" + server.getAddress().getPort() + "/";
             SwingUtilities.invokeLater(() -> {
                 browser = client.createBrowser(url, false, false);
-                frame = new JFrame("D&D music engine");
+                frame = new JFrame("Almerion music engine");
                 frame.setAutoRequestFocus(false);
                 frame.setFocusableWindowState(false);
                 frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -201,7 +201,9 @@ public final class MusicPlayer {
 
     /** Downloaded on first use when the app wasn't installed with the engine bundled. */
     static File userEngineDir() {
-        return new File(System.getProperty("user.home"), ".dnd-campaign-manager/jcef");
+        java.nio.file.Path home = java.nio.file.Paths.get(System.getProperty("user.home"));
+        return com.dnd.boot.Launcher.migrateLegacy(home.resolve(".dnd-campaign-manager"), home.resolve(".almerion"))
+            .resolve("jcef").toFile();
     }
 
     /**

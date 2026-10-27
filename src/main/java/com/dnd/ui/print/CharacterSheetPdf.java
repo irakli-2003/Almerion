@@ -135,7 +135,7 @@ public final class CharacterSheetPdf {
                     items == null ? id -> null : items, spells == null ? id -> null : spells, campaignName, portrait);
             sheet.render();
             doc.getDocumentInformation().setTitle(nz(pc.getName()) + " - Character Sheet");
-            doc.getDocumentInformation().setCreator("DnD Campaign Manager");
+            doc.getDocumentInformation().setCreator("Almerion");
             doc.save(out.toFile());
         }
     }
@@ -584,7 +584,7 @@ public final class CharacterSheetPdf {
         private void frontPage() throws IOException {
             newPage();
             fill(M, M, CW, 16, BAND);
-            text("DUNGEONS & DRAGONS", M + 6, M + 11.5f, bold, 8.5f, WHITE);
+            text("ALMERION", M + 6, M + 11.5f, bold, 8.5f, WHITE);
             textRight("CHARACTER SHEET", M + CW - 6, M + 11.5f, bold, 8.5f, WHITE);
 
             float top = 50;

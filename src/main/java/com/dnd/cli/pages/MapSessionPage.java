@@ -300,7 +300,7 @@ public class MapSessionPage implements Page {
      */
     private <T> T pickFromList(ConsoleIO console, List<T> list, String label) {
         if (list.isEmpty()) {
-            console.println("No " + label + "s found in this campaign. Create one first via the DM menu.");
+            console.println("No " + label + "s found in this campaign. Create one first via the GM menu.");
             return null;
         }
         console.println("Available " + label + "s:");

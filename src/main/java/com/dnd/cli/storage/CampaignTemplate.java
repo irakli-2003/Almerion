@@ -91,8 +91,8 @@ public final class CampaignTemplate {
                 + "[READ ALOUD]The common room smells of woodsmoke and barley. A dwarf behind the bar "
                 + "is polishing the same tankard she was polishing when you walked in, and she has not "
                 + "taken her eyes off you once.[/READ ALOUD]\n\n"
-                + "[DM NOTE]Hilda knows about the caravan raids but will only talk after the party "
-                + "buys a round, or passes a DC 12 Charisma (Persuasion) check.[/DM NOTE]\n\n"
+                + "[GM NOTE]Hilda knows about the caravan raids but will only talk after the party "
+                + "buys a round, or passes a DC 12 Charisma (Persuasion) check.[/GM NOTE]\n\n"
                 + "Battle map if the evening turns ugly: "
                 + "[map:gilded-stag-ground|The Gilded Stag - Common Room]\n");
 
@@ -100,15 +100,15 @@ public final class CampaignTemplate {
             "Session 02 - The Roadside Camp\n\n"
                 + "[READ ALOUD]Cart tracks leave the road here and cut into the trees. Somewhere ahead "
                 + "you can smell woodsmoke that nobody bothered to hide.[/READ ALOUD]\n\n"
-                + "[DM NOTE]Four bandits and a bandit captain. They surrender at half strength if the "
-                + "captain falls.[/DM NOTE]\n\n"
+                + "[GM NOTE]Four bandits and a bandit captain. They surrender at half strength if the "
+                + "captain falls.[/GM NOTE]\n\n"
                 + "[map:bandit-camp-map|The Roadside Camp]\n");
 
         write(chapter.resolve("Session 03 - The Barrow Crypt.txt"),
             "Session 03 - The Barrow Crypt\n\n"
                 + "[READ ALOUD]The barrow door has been pulled open from the inside.[/READ ALOUD]\n\n"
-                + "[DM NOTE]The wight in the central tomb is the chapter's boss. Skeletons rise in the "
-                + "side chambers on round two.[/DM NOTE]\n\n"
+                + "[GM NOTE]The wight in the central tomb is the chapter's boss. Skeletons rise in the "
+                + "side chambers on round two.[/GM NOTE]\n\n"
                 + "[map:barrow-crypt-map|The Barrow Crypt]\n");
 
         Files.write(chapter.resolve(".storyline-order"), List.of(

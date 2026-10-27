@@ -8,7 +8,7 @@ import java.util.List;
  *
  * <p>Half and third casters use the full-caster table at a reduced "caster level"
  * (rounded up, starting at class level 2 and 3 respectively), which reproduces the
- * official paladin/ranger and Eldritch Knight/Arcane Trickster tables exactly.</p>
+ * official paladin/ranger and Spellblade/Spellthief tables exactly.</p>
  */
 public final class SpellSlots {
 

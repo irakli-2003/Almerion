@@ -337,7 +337,7 @@ public class PlayerMapPage implements Page {
         return PlayerModeSupport.displayName(pc);
     }
 
-    /** 5 ft. per grid square is the standard D&D conversion. */
+    /** 5 ft. per grid square is the standard tabletop conversion. */
     private int speedCells() {
         PlayerCharacter pc = token.getCharacter();
         CharacterRace race = pc != null ? repos.races().getById(pc.getRaceId()) : null;

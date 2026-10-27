@@ -66,8 +66,8 @@ public class PlayerCharacterSelectionScene extends BaseScene {
             title("Choose Your Character"),
             subtitle("Campaign: " + uiSession.getSession().getCampaignContext().getName()),
             body(players.isEmpty()
-                ? "No characters are available to you in this session. Ask your DM to assign one to your account."
-                : "Your DM hasn't assigned a character to your account yet, so pick the one you're playing."),
+                ? "No characters are available to you in this session. Ask your GM to assign one to your account."
+                : "Your GM hasn't assigned a character to your account yet, so pick the one you're playing."),
             list, passHint, passField, error, selectBtn
         );
         root.getChildren().add(content);

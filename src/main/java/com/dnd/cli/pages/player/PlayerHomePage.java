@@ -221,7 +221,7 @@ public class PlayerHomePage implements Page {
                 return new PlayerMapPage(map, token, repos, visionRadius, this);
             }
         }
-        console.println("Your character has not been placed on any map yet. Ask your DM to add you to one.");
+        console.println("Your character has not been placed on any map yet. Ask your GM to add you to one.");
         return this;
     }
 

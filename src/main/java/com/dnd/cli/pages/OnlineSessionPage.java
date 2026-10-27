@@ -51,7 +51,7 @@ public class OnlineSessionPage implements Page {
     @Override
     public String getBody() {
         if (session.isOnline()) {
-            return "Online session is active. Campaign state is pushed automatically when you navigate the DM menu.\n"
+            return "Online session is active. Campaign state is pushed automatically when you navigate the GM menu.\n"
                     + "Use 'stop' to end the session.";
         }
         return "Start an online session to let players connect and see live campaign state.\n"

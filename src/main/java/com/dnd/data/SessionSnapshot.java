@@ -109,7 +109,7 @@ public final class SessionSnapshot {
         try {
             snapshot = mapper.readTree(json);
         } catch (IOException e) {
-            throw new DataAccessException("The session data from the DM could not be read", e);
+            throw new DataAccessException("The session data from the GM could not be read", e);
         }
 
         try {

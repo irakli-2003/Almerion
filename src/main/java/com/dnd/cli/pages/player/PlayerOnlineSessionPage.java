@@ -42,11 +42,11 @@ public class PlayerOnlineSessionPage implements Page {
     public String getBody() {
         if (session.isOnline()) {
             boolean hasData = session.getFirebaseSync().getLatestSnapshot() != null;
-            return "Connected — listening for live updates from the DM.\n"
+            return "Connected — listening for live updates from the GM.\n"
                     + (hasData ? "Type 'view' to see the latest session state."
-                               : "Waiting for the DM to push session state...");
+                               : "Waiting for the GM to push session state...");
         }
-        return "Enter the session token shared by your DM to connect to the live game.";
+        return "Enter the session token shared by your GM to connect to the live game.";
     }
 
     @Override
@@ -58,7 +58,7 @@ public class PlayerOnlineSessionPage implements Page {
             );
         }
         return List.of(
-                new CommandSpec("join", "Join session with a token from your DM", this::join)
+                new CommandSpec("join", "Join session with a token from your GM", this::join)
         );
     }
 
@@ -75,7 +75,7 @@ public class PlayerOnlineSessionPage implements Page {
             return this;
         }
 
-        s.getConsole().print("Paste the session token from your DM: ");
+        s.getConsole().print("Paste the session token from your GM: ");
         String token = s.getConsole().readLine().trim();
         if (token.isEmpty()) {
             s.getConsole().println("Token cannot be empty.");
@@ -103,7 +103,7 @@ public class PlayerOnlineSessionPage implements Page {
         }
 
         if (initialJson == null) {
-            s.getConsole().println("Session not started yet. Ask your DM to start the session first.");
+            s.getConsole().println("Session not started yet. Ask your GM to start the session first.");
             return this;
         }
 
@@ -112,7 +112,7 @@ public class PlayerOnlineSessionPage implements Page {
             // This runs on the background listener thread.
             // We can't interrupt the user's stdin read, so we print a notification
             // line; the player sees it as soon as they press Enter.
-            s.getConsole().println("\n[SESSION UPDATE] The DM pushed new state — type 'view' to see it.");
+            s.getConsole().println("\n[SESSION UPDATE] The GM pushed new state — type 'view' to see it.");
         });
 
         s.setFirebaseSync(sync);
@@ -129,7 +129,7 @@ public class PlayerOnlineSessionPage implements Page {
         }
         String json = s.getFirebaseSync().getLatestSnapshot();
         if (json == null) {
-            s.getConsole().println("No data received yet. Waiting for the DM to push...");
+            s.getConsole().println("No data received yet. Waiting for the GM to push...");
         } else {
             printSnapshot(s, json);
         }

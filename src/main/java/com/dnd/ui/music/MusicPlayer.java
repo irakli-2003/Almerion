@@ -1,51 +1,41 @@
 package com.dnd.ui.music;
 
-import com.dnd.data.JsonMappers;
+import com.dnd.data.AppHome;
+import com.dnd.music.AudioFiles;
 import com.dnd.music.MusicLibrary;
-import com.dnd.music.YouTubeLink;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.sun.net.httpserver.HttpServer;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
-import me.friwi.jcefmaven.CefAppBuilder;
-import me.friwi.jcefmaven.EnumProgress;
-import org.cef.CefApp;
-import org.cef.CefClient;
-import org.cef.browser.CefBrowser;
-import org.cef.handler.CefDisplayHandlerAdapter;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
 
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import java.awt.GraphicsEnvironment;
-import java.awt.Rectangle;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.InetSocketAddress;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
 /**
- * Background music from YouTube links.
+ * Plays the campaign's music, ambience and sound effects from audio files with JavaFX Media
+ * (MP3, WAV, AIFF, M4A/AAC). Tracks that come from a download link are fetched once into the
+ * campaign's {@code music/cache} folder and played from disk afterwards.
  *
- * <p>JavaFX's WebView can't decode YouTube's streams, so this embeds Chromium (JCEF) and runs
- * YouTube's official IFrame player in it ({@code /music/player.html}). The page is served
- * from a tiny localhost server because YouTube refuses to play embeds that have no origin.
- * The Chromium window must be on screen while the player initialises; after that it is
- * hidden and keeps playing in the background. The engine (~150 MB) downloads on first use
- * into {@code ~/.dnd-campaign-manager/jcef}.</p>
- *
- * <p>One shared instance per app. All listener callbacks arrive on the JavaFX thread.</p>
+ * <p>Music plays on two decks so switching playlists crossfades; sound effects duck the music
+ * while they play; one ambience sound loops under everything. One shared instance per app.
+ * All work happens on the JavaFX thread and listener callbacks arrive there.</p>
  */
 public final class MusicPlayer {
 
     public enum Phase { OFF, DOWNLOADING, STARTING, READY, FAILED }
 
-    /** Snapshot of what the player is doing, for the music panel's "now playing" line. */
+    /**
+     * Snapshot of what the player is doing, for the music panel's "now playing" line.
+     * {@code state} is 1 while playing, 2 when paused, 3 while loading and 0 when stopped.
+     */
     public record Status(Phase phase, String message, String playlistName, String title,
                          int index, int count, int state, int time, int duration, boolean paused,
                          String error, boolean combat) {
@@ -54,34 +44,93 @@ public final class MusicPlayer {
         }
     }
 
+    public static final String DOWNLOADING_MESSAGE = "Downloading the track...";
+    public static final String MISSING_FILE_MESSAGE = "An audio file is missing from the campaign's music folder,"
+        + " so the track was skipped.";
+    public static final String TRACK_FAILED_MESSAGE = "A track couldn't be played, so it was skipped.";
+    public static final String ALL_FAILED_MESSAGE = "None of the tracks in this playlist could be played.";
+    public static final String SOUND_FAILED_MESSAGE = "The sound couldn't be played.";
+
     private static final MusicPlayer INSTANCE = new MusicPlayer();
     private static final int CROSSFADE_MS = 3000;
+    private static final int NEXT_FADE_MS = 1500;
+    private static final int PREVIOUS_FADE_MS = 800;
+    private static final int STOP_FADE_MS = 1500;
+    private static final int AMBIENCE_IN_MS = 2000;
+    private static final int AMBIENCE_OUT_MS = 1500;
+    private static final int DUCK_MS = 300;
+    private static final double DUCK_LEVEL = 0.4;
+    private static final int TICK_MS = 40;
 
     public static MusicPlayer get() {
         return INSTANCE;
     }
 
-    private final ObjectMapper mapper = JsonMappers.create();
     private final List<Consumer<Status>> listeners = new CopyOnWriteArrayList<>();
-    private final List<String> pending = new ArrayList<>();
+    private final Random random = new Random();
 
-    private volatile Status status = new Status(Phase.OFF, "Music is off.", null, null, -1, 0, -1, 0, 0, false, null, false);
-    private CefApp app;
-    private CefClient client;
-    private CefBrowser browser;
-    private JFrame frame;
-    private HttpServer server;
-    private boolean ready;
+    private volatile Status status = new Status(Phase.READY, null, null, null, -1, 0, 0, 0, 0, false, null, false);
 
-    private String playlistId;
+    private volatile String playlistId;
     private String playlistName;
     /** The playlist to go back to when combat ends (null = silence). */
     private String beforeCombatPlaylistId;
-    private boolean combat;
+    private volatile boolean combat;
     /** The looping ambience sound that is on, or null. */
     private volatile String ambienceSoundId;
 
+    // Everything below is only touched on the JavaFX thread.
+    private int volume = 60;
+    private int effectsVolume = 80;
+    private boolean shuffle;
+    private boolean loop = true;
+    private Path lastRoot;
+
+    private List<MusicLibrary.Track> queue = List.of();
+    private Path queueRoot;
+    private int index = -1;
+    private String title;
+    private int state;
+    private boolean paused;
+    private String error;
+    private Phase phase = Phase.READY;
+    private String phaseMessage;
+    private int errorStreak;
+    /** Bumped whenever a new track is requested, so late downloads/loads of older requests are ignored. */
+    private int musicToken;
+    private int ambienceToken;
+
+    private Deck music;
+    private Deck ambience;
+    private final List<Deck> fading = new ArrayList<>();
+    private MediaPlayer sfx;
+    private double duck = 1;
+    private double duckTarget = 1;
+    private Timeline ticker;
+    private int ticks;
+
     private MusicPlayer() {}
+
+    /** A media player with a fade gain on top of its layer's volume. */
+    private static final class Deck {
+        final MediaPlayer player;
+        final boolean ambience;
+        double gain;
+        double target = 1;
+        double step = 1;
+        boolean disposeAtZero;
+
+        Deck(MediaPlayer player, boolean ambience) {
+            this.player = player;
+            this.ambience = ambience;
+        }
+
+        void fadeTo(double to, int ms) {
+            target = to;
+            step = ms <= 0 ? 1 : (double) TICK_MS / ms;
+            if (ms <= 0) gain = to;
+        }
+    }
 
     public Status status() {
         return status;
@@ -104,356 +153,204 @@ public final class MusicPlayer {
         return combat;
     }
 
-    // ── Engine lifecycle ────────────────────────────────────────────────────
-
-    /** Starts the engine if it isn't running yet. Safe to call repeatedly. */
-    public synchronized void start() {
-        if (status.phase() != Phase.OFF && status.phase() != Phase.FAILED) return;
-        if (app != null) {
-            if (browser != null && !ready) {
-                update(Phase.STARTING, "Reconnecting to YouTube...");
-                SwingUtilities.invokeLater(() -> {
-                    if (frame != null) frame.setVisible(true);
-                    browser.reloadIgnoreCache();
-                });
-                startWatchdog();
-            }
-            return;
-        }
-        update(Phase.STARTING, "Starting the music engine...");
-        Thread thread = new Thread(this::boot, "music-engine-start");
-        thread.setDaemon(true);
-        thread.start();
-    }
-
-    private void boot() {
-        try {
-            server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
-            server.createContext("/", exchange -> {
-                byte[] page;
-                try (InputStream in = MusicPlayer.class.getResourceAsStream("/music/player.html")) {
-                    page = in == null ? new byte[0] : in.readAllBytes();
-                }
-                exchange.getResponseHeaders().add("Content-Type", "text/html; charset=utf-8");
-                exchange.sendResponseHeaders(200, page.length);
-                try (OutputStream out = exchange.getResponseBody()) {
-                    out.write(page);
-                }
-            });
-            server.start();
-
-            CefAppBuilder builder = new CefAppBuilder();
-            File bundled = bundledEngineDir();
-            if (bundled != null) {
-                // Shipped with the installer: nothing to download in the middle of a session.
-                builder.setInstallDir(bundled);
-                builder.setSkipInstallation(true);
-            } else {
-                builder.setInstallDir(userEngineDir());
-            }
-            builder.addJcefArgs("--autoplay-policy=no-user-gesture-required");
-            builder.getCefSettings().windowless_rendering_enabled = false;
-            // A profile folder per process: Chromium refuses to start a second instance on a shared
-            // profile ("Opening in existing browser session"), e.g. two app windows at once.
-            File cache = new File(System.getProperty("java.io.tmpdir"), "dnd-music-" + ProcessHandle.current().pid());
-            deleteStaleCaches(cache.getParentFile());
-            builder.getCefSettings().root_cache_path = cache.getAbsolutePath();
-            builder.getCefSettings().cache_path = cache.getAbsolutePath();
-            builder.setProgressHandler((state, percent) -> {
-                if (state == EnumProgress.DOWNLOADING) {
-                    update(Phase.DOWNLOADING, "Downloading the music engine (one time only, ~150 MB)"
-                        + (percent >= 0 ? ": " + Math.round(percent) + "%" : "..."));
-                } else if (state == EnumProgress.EXTRACTING || state == EnumProgress.INSTALL) {
-                    update(Phase.DOWNLOADING, "Installing the music engine...");
-                } else if (state == EnumProgress.INITIALIZING) {
-                    update(Phase.STARTING, "Starting the music engine...");
-                }
-            });
-            app = builder.build();
-            client = app.createClient();
-            client.addDisplayHandler(new CefDisplayHandlerAdapter() {
-                @Override
-                public void onTitleChange(CefBrowser b, String title) {
-                    onPageStatus(title);
-                }
-            });
-            String url = "http://localhost:" + server.getAddress().getPort() + "/";
-            SwingUtilities.invokeLater(() -> {
-                browser = client.createBrowser(url, false, false);
-                frame = new JFrame("D&D music engine");
-                frame.setAutoRequestFocus(false);
-                frame.setFocusableWindowState(false);
-                frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-                frame.getContentPane().add(browser.getUIComponent());
-                frame.setSize(360, 240);
-                Rectangle screen = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-                frame.setLocation(screen.x + screen.width - 370, screen.y + screen.height - 250);
-                frame.setVisible(true);
-            });
-            startWatchdog();
-        } catch (Throwable e) {
-            synchronized (this) {
-                app = null;
-            }
-            update(Phase.FAILED, "The music engine couldn't start: " + e.getMessage());
-        }
-    }
-
-    /** Downloaded on first use when the app wasn't installed with the engine bundled. */
-    static File userEngineDir() {
-        return new File(System.getProperty("user.home"), ".dnd-campaign-manager/jcef");
-    }
-
-    /**
-     * The engine the installer ships in {@code <install>\app\jcef}, or {@code -Ddnd.jcef.dir};
-     * null if there is no complete copy there.
-     */
-    static File bundledEngineDir() {
-        String override = System.getProperty("dnd.jcef.dir");
-        File dir = null;
-        if (override != null && !override.isBlank()) {
-            dir = new File(override);
-        } else {
-            String exe = System.getProperty("jpackage.app-path");
-            if (exe != null) dir = new File(new File(exe).getParentFile(), "app" + File.separator + "jcef");
-        }
-        return dir != null && new File(dir, "install.lock").isFile() ? dir : null;
-    }
-
-    /** Build step of the Windows installer: downloads the engine into the given folder. */
-    public static void main(String[] args) throws Exception {
-        if (args.length != 1) throw new IllegalArgumentException("Usage: MusicPlayer <install folder>");
-        CefAppBuilder builder = new CefAppBuilder();
-        builder.setInstallDir(new File(args[0]));
-        builder.setProgressHandler((state, percent) -> System.out.println("music engine: " + state
-            + (percent >= 0 ? " " + Math.round(percent) + "%" : "")));
-        builder.install();
-        System.out.println("music engine installed in " + args[0]);
-    }
-
-    private void startWatchdog() {
-        Thread watchdog = new Thread(() -> {
-            try {
-                Thread.sleep(45_000);
-            } catch (InterruptedException ignored) {
-                return;
-            }
-            if (!ready) update(Phase.FAILED, "Couldn't reach YouTube. Check the internet connection and press Play again.");
-        }, "music-engine-watchdog");
-        watchdog.setDaemon(true);
-        watchdog.start();
-    }
-
-    /** Removes profile folders left behind by earlier runs whose process has ended. */
-    private static void deleteStaleCaches(File dir) {
-        File[] old = dir.listFiles((d, name) -> name.startsWith("dnd-music-"));
-        if (old == null) return;
-        for (File f : old) {
-            try {
-                long pid = Long.parseLong(f.getName().substring("dnd-music-".length()));
-                if (pid == ProcessHandle.current().pid() || ProcessHandle.of(pid).isPresent()) continue;
-                try (var walk = java.nio.file.Files.walk(f.toPath())) {
-                    walk.sorted(java.util.Comparator.reverseOrder()).forEach(p -> p.toFile().delete());
-                }
-            } catch (Exception ignored) {
-                // Not ours, or still locked - try again next time.
-            }
-        }
-    }
-
-    private void onPageStatus(String title) {
-        if (title == null || !title.startsWith("DND|")) return;
-        JsonNode s;
-        try {
-            s = mapper.readTree(title.substring(4));
-        } catch (IOException e) {
-            return;
-        }
-        boolean nowReady = "ready".equals(s.path("phase").asText());
-        if (nowReady && !ready) {
-            List<String> queued;
-            synchronized (this) {
-                ready = true;
-                queued = new ArrayList<>(pending);
-                pending.clear();
-            }
-            SwingUtilities.invokeLater(() -> {
-                if (frame != null) frame.setVisible(false);
-            });
-            for (String js : queued) run(js);
-        }
-        String error = s.path("error").isNull() ? null : s.path("error").asText(null);
-        status = new Status(ready ? Phase.READY : status.phase(), ready ? null : status.message(), playlistName,
-            s.path("title").asText(""), s.path("index").asInt(-1), s.path("count").asInt(0),
-            s.path("state").asInt(-1), s.path("t").asInt(0), s.path("dur").asInt(0),
-            s.path("paused").asBoolean(false), error, combat);
-        fire();
-    }
-
-    private void update(Phase phase, String message) {
-        Status s = status;
-        status = new Status(phase, message, playlistName, s.title(), s.index(), s.count(), s.state(),
-            s.time(), s.duration(), s.paused(), s.error(), combat);
-        fire();
-    }
-
-    private void fire() {
-        Status s = status;
-        Runnable notify = () -> listeners.forEach(l -> l.accept(s));
-        try {
-            Platform.runLater(notify);
-        } catch (IllegalStateException toolkitNotRunning) {
-            notify.run();
-        }
-    }
-
-    /** Runs a script in the player page, queueing it until the player is ready. */
-    private void run(String js) {
-        synchronized (this) {
-            if (!ready) {
-                pending.add(js);
-                start();
-                return;
-            }
-        }
-        CefBrowser b = browser;
-        if (b != null) b.executeJavaScript(js, "", 0);
-    }
-
-    /** Closes the engine; call on app exit. Returns true if it had been started. */
-    public boolean shutdown() {
-        boolean started;
-        synchronized (this) {
-            started = app != null;
-        }
-        if (!started) return false;
-        Thread closer = new Thread(() -> {
-            try {
-                SwingUtilities.invokeAndWait(() -> {
-                    if (browser != null) browser.close(true);
-                    if (frame != null) frame.dispose();
-                    if (client != null) client.dispose();
-                    if (app != null) app.dispose();
-                });
-            } catch (Exception ignored) {
-            }
-        }, "music-engine-stop");
-        closer.setDaemon(true);
-        closer.start();
-        try {
-            closer.join(3000);
-        } catch (InterruptedException ignored) {
-        }
-        if (server != null) server.stop(0);
-        return true;
+    /** Stops every sound and releases the media players; call on app exit. */
+    public void shutdown() {
+        onFx(() -> {
+            musicToken++;
+            ambienceToken++;
+            if (ticker != null) ticker.stop();
+            for (Deck d : new ArrayList<>(fading)) dispose(d.player);
+            fading.clear();
+            if (music != null) dispose(music.player);
+            if (ambience != null) dispose(ambience.player);
+            if (sfx != null) dispose(sfx);
+            music = null;
+            ambience = null;
+            sfx = null;
+        });
     }
 
     // ── Playback commands ───────────────────────────────────────────────────
 
     /** Applies the campaign's volume / shuffle / loop settings. */
     public void applySettings(MusicLibrary library) {
-        run("dnd.setVolume(" + library.getVolume() + ");dnd.setFxVolume(" + library.getEffectsVolume()
-            + ");dnd.setShuffle(" + library.isShuffle() + ");dnd.setLoop(" + library.isLoop() + ");");
+        if (library == null) return;
+        int v = library.getVolume();
+        int fx = library.getEffectsVolume();
+        boolean sh = library.isShuffle();
+        boolean lp = library.isLoop();
+        Path root = library.campaignRoot();
+        onFx(() -> {
+            volume = v;
+            effectsVolume = fx;
+            shuffle = sh;
+            loop = lp;
+            if (root != null) lastRoot = root;
+            applyVolumes();
+        });
     }
 
-    /** Crossfades to a playlist, starting at {@code startIndex} (-1 = first, or random when shuffling). */
+    /**
+     * Crossfades to a playlist, starting at track {@code startIndex} (-1 = first, or random when
+     * shuffling). Tracks that can't be played (old YouTube links) are skipped. Returns false if the
+     * playlist has no playable track.
+     */
     public boolean playPlaylist(MusicLibrary library, MusicLibrary.Playlist playlist, int startIndex) {
-        if (playlist == null) return false;
-        ArrayNode items = mapper.createArrayNode();
-        int jsStart = -1;
-        int i = 0;
-        for (MusicLibrary.Track track : playlist.getTracks()) {
-            YouTubeLink link = track.link();
-            if (link == null) {
-                i++;
-                continue;
-            }
-            if (i == startIndex) jsStart = items.size();
-            var item = items.addObject();
-            if (link.videoId() != null && !link.isPlaylist()) item.put("v", link.videoId());
-            if (link.isPlaylist()) item.put("l", link.playlistId());
-            if (link.startSeconds() > 0) item.put("s", link.startSeconds());
-            item.put("t", track.label());
-            i++;
+        if (library == null || playlist == null) return false;
+        List<MusicLibrary.Track> tracks = new ArrayList<>();
+        int start = -1;
+        List<MusicLibrary.Track> all = playlist.getTracks();
+        for (int i = 0; i < all.size(); i++) {
+            MusicLibrary.Track t = all.get(i);
+            if (t == null || t.unsupported()) continue;
+            if (startIndex >= 0 && i >= startIndex && start < 0) start = tracks.size();
+            tracks.add(t);
         }
-        if (items.isEmpty()) return false;
+        if (tracks.isEmpty()) return false;
         playlistId = playlist.getId();
-        playlistName = playlist.getName();
+        String name = playlist.getName();
         applySettings(library);
-        run("dnd.play(" + items + "," + jsStart + "," + CROSSFADE_MS + ");");
-        update(status.phase(), status.message());
+        Path root = rootOf(library);
+        int first = start;
+        onFx(() -> {
+            playlistName = name;
+            queue = List.copyOf(tracks);
+            queueRoot = root;
+            errorStreak = 0;
+            error = null;
+            paused = false;
+            int at = first >= 0 ? first : shuffle ? random.nextInt(queue.size()) : 0;
+            playIndex(at, music != null ? CROSSFADE_MS : 0);
+        });
         return true;
     }
 
     public void pause() {
-        run("dnd.pause();");
+        onFx(() -> {
+            if (music == null || paused) return;
+            music.player.pause();
+            paused = true;
+            state = 2;
+            fire();
+        });
     }
 
     public void resume() {
-        run("dnd.resume();");
+        onFx(() -> {
+            if (!paused) return;
+            paused = false;
+            if (music != null) {
+                music.player.play();
+                state = 1;
+            } else if (!queue.isEmpty()) {
+                playIndex(Math.max(0, index), 0);
+            }
+            fire();
+        });
     }
 
     public void next() {
-        run("dnd.next();");
+        onFx(() -> advance(1, NEXT_FADE_MS, false));
     }
 
     public void previous() {
-        run("dnd.prev();");
+        onFx(() -> advance(-1, PREVIOUS_FADE_MS, false));
     }
 
+    /** Fades the music out. */
     public void stop() {
         playlistId = null;
-        playlistName = null;
-        run("dnd.stop(" + CROSSFADE_MS + ");");
-        update(status.phase(), status.message());
+        onFx(() -> {
+            playlistName = null;
+            stopMusic(STOP_FADE_MS);
+            fire();
+        });
     }
 
     public void setVolume(int volume) {
-        run("dnd.setVolume(" + Math.max(0, Math.min(100, volume)) + ");");
+        int v = clamp(volume);
+        onFx(() -> {
+            this.volume = v;
+            applyVolumes();
+        });
     }
 
     public void setEffectsVolume(int volume) {
-        run("dnd.setFxVolume(" + Math.max(0, Math.min(100, volume)) + ");");
+        int v = clamp(volume);
+        onFx(() -> {
+            effectsVolume = v;
+            applyVolumes();
+        });
     }
 
     public void setShuffle(boolean shuffle) {
-        run("dnd.setShuffle(" + shuffle + ");");
+        onFx(() -> this.shuffle = shuffle);
     }
 
     public void setLoop(boolean loop) {
-        run("dnd.setLoop(" + loop + ");");
+        onFx(() -> this.loop = loop);
+    }
+
+    /** Same as {@link #playSound(MusicLibrary, MusicLibrary.Sound)} for the campaign last played. */
+    public boolean playSound(MusicLibrary.Sound sound) {
+        return playSound(null, sound);
     }
 
     /**
      * Plays a sound over the music. One-shot effects play once and the music dips while they
      * play; ambience sounds (rain, river, wind...) fade in and loop under the music until
-     * {@link #stopAmbience()} or another ambience replaces them.
+     * {@link #stopAmbience()} or another ambience replaces them. Returns false when the sound has
+     * no playable audio.
      */
-    public boolean playSound(MusicLibrary.Sound sound) {
-        if (sound == null) return false;
-        YouTubeLink link = sound.link();
-        if (link == null || link.videoId() == null) return false;
-        int start = sound.getStartSeconds() > 0 ? sound.getStartSeconds() : link.startSeconds();
+    public boolean playSound(MusicLibrary library, MusicLibrary.Sound sound) {
+        if (sound == null || sound.unsupported()) return false;
+        if (library != null) applySettings(library);
+        Path explicitRoot = library == null ? null : library.campaignRoot();
         if (sound.isAmbience()) {
             ambienceSoundId = sound.getId();
-            run("dnd.ambience(" + mapper.valueToTree(link.videoId()) + "," + start + ");");
-            fire();
+            onFx(() -> {
+                int token = ++ambienceToken;
+                Path root = explicitRoot != null ? explicitRoot : rootOf(null);
+                withFile(sound, root, file -> {
+                    if (token == ambienceToken) startAmbience(sound, file);
+                }, message -> {
+                    if (token != ambienceToken) return;
+                    ambienceSoundId = null;
+                    error = message;
+                    fire();
+                });
+                fire();
+            });
             return true;
         }
-        run("dnd.sfx(" + mapper.valueToTree(link.videoId()) + "," + start + "," + sound.getEndSeconds() + ");");
+        onFx(() -> {
+            Path root = explicitRoot != null ? explicitRoot : rootOf(null);
+            withFile(sound, root, file -> startEffect(sound, file), message -> {
+                error = message;
+                fire();
+            });
+        });
         return true;
     }
 
     public void stopSound() {
-        run("dnd.stopSfx();");
+        onFx(() -> {
+            if (sfx != null) dispose(sfx);
+            sfx = null;
+            duckTarget = 1;
+        });
     }
 
     /** Fades out the looping ambience. */
     public void stopAmbience() {
         if (ambienceSoundId == null) return;
         ambienceSoundId = null;
-        run("dnd.stopAmbience();");
-        fire();
+        onFx(() -> {
+            ambienceToken++;
+            fadeOut(ambience, AMBIENCE_OUT_MS);
+            ambience = null;
+            fire();
+        });
     }
 
     /** Id of the ambience sound that is currently looping, or null. */
@@ -471,9 +368,15 @@ public final class MusicPlayer {
         if (combat) return true;
         MusicLibrary.Playlist battle = library.findPlaylist(library.getCombatPlaylistId());
         if (battle == null || battle.getTracks().isEmpty()) return false;
-        beforeCombatPlaylistId = playlistId;
+        String before = playlistId;
         combat = true;
-        return playPlaylist(library, battle, -1);
+        if (!playPlaylist(library, battle, -1)) {
+            combat = false;
+            return false;
+        }
+        beforeCombatPlaylistId = before;
+        fireLater();
+        return true;
     }
 
     /** Leaves combat music: back to {@code fallbackPlaylistId} if given, else to whatever played before. */
@@ -483,11 +386,8 @@ public final class MusicPlayer {
         String backTo = fallbackPlaylistId != null ? fallbackPlaylistId : beforeCombatPlaylistId;
         beforeCombatPlaylistId = null;
         MusicLibrary.Playlist previous = library.findPlaylist(backTo);
-        if (previous != null && !previous.getTracks().isEmpty()) {
-            playPlaylist(library, previous, -1);
-        } else {
-            stop();
-        }
+        if (previous == null || !playPlaylist(library, previous, -1)) stop();
+        fireLater();
     }
 
     /** Plays a map's own playlist unless it is already playing (or combat music is on). */
@@ -496,4 +396,344 @@ public final class MusicPlayer {
         MusicLibrary.Playlist playlist = library.findPlaylist(mapPlaylistId);
         if (playlist != null) playPlaylist(library, playlist, -1);
     }
+
+    // ── Music decks ─────────────────────────────────────────────────────────
+
+    private void playIndex(int at, int fadeMs) {
+        if (queue.isEmpty()) return;
+        index = Math.floorMod(at, queue.size());
+        int token = ++musicToken;
+        MusicLibrary.Track track = queue.get(index);
+        fadeOut(music, fadeMs);
+        music = null;
+        title = track.label();
+        state = 3;
+        fire();
+        withFile(track, queueRoot, file -> {
+            if (token == musicToken) startTrack(track, file, fadeMs);
+        }, message -> {
+            if (token == musicToken) trackFailed(message);
+        });
+    }
+
+    private void startTrack(MusicLibrary.Track track, Path file, int fadeMs) {
+        MediaPlayer mp;
+        try {
+            mp = new MediaPlayer(new Media(file.toUri().toString()));
+        } catch (RuntimeException e) {
+            trackFailed(TRACK_FAILED_MESSAGE);
+            return;
+        }
+        Deck deck = new Deck(mp, false);
+        deck.gain = fadeMs > 0 ? 0 : 1;
+        music = deck;
+        if (track.getStartSeconds() > 0) mp.setStartTime(Duration.seconds(track.getStartSeconds()));
+        applyVolume(deck);
+        mp.setOnReady(() -> {
+            if (music != deck) return;
+            errorStreak = 0;
+            if (!paused) {
+                mp.play();
+                state = 1;
+            } else {
+                state = 2;
+            }
+            deck.fadeTo(1, fadeMs);
+            ensureTicker();
+            fire();
+        });
+        mp.setOnEndOfMedia(() -> {
+            if (music == deck) advance(1, 0, true);
+        });
+        mp.setOnError(() -> {
+            if (music == deck) trackFailed(TRACK_FAILED_MESSAGE);
+        });
+        ensureTicker();
+    }
+
+    private void trackFailed(String message) {
+        error = message;
+        errorStreak++;
+        if (music != null) {
+            dispose(music.player);
+            music = null;
+        }
+        if (errorStreak >= queue.size()) {
+            error = queue.size() == 1 ? message : ALL_FAILED_MESSAGE;
+            stopMusic(0);
+            fire();
+            return;
+        }
+        playIndex(index + 1, 0);
+    }
+
+    /** Moves to another track; at the end of the list it wraps when looping (or when asked by hand). */
+    private void advance(int delta, int fadeMs, boolean atEnd) {
+        if (queue.isEmpty()) return;
+        int n;
+        if (shuffle && delta > 0 && queue.size() > 1) {
+            do {
+                n = random.nextInt(queue.size());
+            } while (n == index);
+        } else {
+            n = index + delta;
+        }
+        if (n >= queue.size() && atEnd && !loop) {
+            stopMusic(0);
+            fire();
+            return;
+        }
+        if (n < 0) n = queue.size() - 1;
+        paused = false;
+        playIndex(n % queue.size(), fadeMs);
+    }
+
+    private void stopMusic(int fadeMs) {
+        musicToken++;
+        fadeOut(music, fadeMs);
+        music = null;
+        queue = List.of();
+        index = -1;
+        title = null;
+        state = 0;
+        paused = false;
+        if (phase == Phase.DOWNLOADING) setPhase(Phase.READY, null);
+    }
+
+    // ── Sounds ──────────────────────────────────────────────────────────────
+
+    private void startAmbience(MusicLibrary.Sound sound, Path file) {
+        MediaPlayer mp;
+        try {
+            mp = new MediaPlayer(new Media(file.toUri().toString()));
+        } catch (RuntimeException e) {
+            ambienceSoundId = null;
+            error = SOUND_FAILED_MESSAGE;
+            fire();
+            return;
+        }
+        fadeOut(ambience, AMBIENCE_OUT_MS);
+        Deck deck = new Deck(mp, true);
+        ambience = deck;
+        cut(mp, sound);
+        mp.setCycleCount(MediaPlayer.INDEFINITE);
+        applyVolume(deck);
+        mp.setOnReady(() -> {
+            if (ambience != deck) return;
+            mp.play();
+            deck.fadeTo(1, AMBIENCE_IN_MS);
+            ensureTicker();
+        });
+        mp.setOnError(() -> {
+            if (ambience != deck) return;
+            dispose(mp);
+            ambience = null;
+            ambienceSoundId = null;
+            error = SOUND_FAILED_MESSAGE;
+            fire();
+        });
+        ensureTicker();
+    }
+
+    private void startEffect(MusicLibrary.Sound sound, Path file) {
+        MediaPlayer mp;
+        try {
+            mp = new MediaPlayer(new Media(file.toUri().toString()));
+        } catch (RuntimeException e) {
+            error = SOUND_FAILED_MESSAGE;
+            fire();
+            return;
+        }
+        if (sfx != null) dispose(sfx);
+        sfx = mp;
+        cut(mp, sound);
+        mp.setVolume(effectsVolume / 100.0);
+        Runnable done = () -> {
+            dispose(mp);
+            if (sfx == mp) {
+                sfx = null;
+                duckTarget = 1;
+            }
+        };
+        mp.setOnReady(() -> {
+            if (sfx != mp) return;
+            mp.play();
+            duckTarget = DUCK_LEVEL;
+            ensureTicker();
+        });
+        mp.setOnEndOfMedia(done);
+        mp.setOnStopped(done);
+        mp.setOnError(() -> {
+            done.run();
+            error = SOUND_FAILED_MESSAGE;
+            fire();
+        });
+    }
+
+    private static void cut(MediaPlayer mp, MusicLibrary.Sound sound) {
+        if (sound.getStartSeconds() > 0) mp.setStartTime(Duration.seconds(sound.getStartSeconds()));
+        if (sound.getEndSeconds() > sound.getStartSeconds()) mp.setStopTime(Duration.seconds(sound.getEndSeconds()));
+    }
+
+    // ── Files and downloads ─────────────────────────────────────────────────
+
+    /**
+     * Finds the local file for a track or sound, downloading it first if it only has a link.
+     * Both callbacks run on the JavaFX thread.
+     */
+    private void withFile(MusicLibrary.Audio audio, Path root, Consumer<Path> then, Consumer<String> fail) {
+        Path file = MusicLibrary.localFile(root, audio);
+        if (file != null) {
+            then.accept(file);
+            return;
+        }
+        if (!audio.downloadable() || root == null) {
+            fail.accept(MISSING_FILE_MESSAGE);
+            return;
+        }
+        setPhase(Phase.DOWNLOADING, DOWNLOADING_MESSAGE);
+        Thread t = new Thread(() -> {
+            try {
+                Path downloaded = AudioFiles.download(root, audio.getUrl(), null);
+                onFx(() -> {
+                    if (phase == Phase.DOWNLOADING) setPhase(Phase.READY, null);
+                    then.accept(downloaded);
+                });
+            } catch (IOException e) {
+                String message = e.getMessage();
+                onFx(() -> {
+                    if (phase == Phase.DOWNLOADING) setPhase(Phase.READY, null);
+                    fail.accept(message);
+                });
+            }
+        }, "music-download");
+        t.setDaemon(true);
+        t.start();
+    }
+
+    private Path rootOf(MusicLibrary library) {
+        Path root = library == null ? null : library.campaignRoot();
+        if (root == null) root = lastRoot;
+        if (root == null) root = AppHome.root();
+        return root;
+    }
+
+    // ── Fades and volume ────────────────────────────────────────────────────
+
+    private void fadeOut(Deck deck, int ms) {
+        if (deck == null) return;
+        if (ms <= 0 || deck.gain <= 0) {
+            dispose(deck.player);
+            return;
+        }
+        deck.fadeTo(0, ms);
+        deck.disposeAtZero = true;
+        fading.add(deck);
+        ensureTicker();
+    }
+
+    private void ensureTicker() {
+        if (ticker == null) {
+            ticker = new Timeline(new KeyFrame(Duration.millis(TICK_MS), e -> tick()));
+            ticker.setCycleCount(Animation.INDEFINITE);
+        }
+        if (ticker.getStatus() != Animation.Status.RUNNING) ticker.play();
+    }
+
+    private void tick() {
+        if (duck != duckTarget) duck = approach(duck, duckTarget, (double) TICK_MS / DUCK_MS * (1 - DUCK_LEVEL));
+        for (Deck d : new ArrayList<>(fading)) {
+            step(d);
+            if (d.gain <= 0) {
+                fading.remove(d);
+                dispose(d.player);
+            }
+        }
+        if (music != null) step(music);
+        if (ambience != null) step(ambience);
+        if (sfx != null) sfx.setVolume(effectsVolume / 100.0);
+        if (++ticks % 12 == 0 && music != null && state == 1) fire();
+        if (music == null && ambience == null && sfx == null && fading.isEmpty() && duck == duckTarget) ticker.stop();
+    }
+
+    private void step(Deck d) {
+        d.gain = approach(d.gain, d.target, d.step);
+        applyVolume(d);
+    }
+
+    private void applyVolumes() {
+        for (Deck d : fading) applyVolume(d);
+        if (music != null) applyVolume(music);
+        if (ambience != null) applyVolume(ambience);
+        if (sfx != null) sfx.setVolume(effectsVolume / 100.0);
+    }
+
+    private void applyVolume(Deck d) {
+        double level = d.ambience ? effectsVolume / 100.0 : volume / 100.0 * duck;
+        d.player.setVolume(Math.max(0, Math.min(1, d.gain * level)));
+    }
+
+    private static double approach(double value, double target, double step) {
+        if (value < target) return Math.min(target, value + step);
+        return Math.max(target, value - step);
+    }
+
+    private static void dispose(MediaPlayer mp) {
+        try {
+            mp.stop();
+            mp.dispose();
+        } catch (RuntimeException ignored) {
+            // Already disposed.
+        }
+    }
+
+    private static int clamp(int v) {
+        return Math.max(0, Math.min(100, v));
+    }
+
+    // ── Status ──────────────────────────────────────────────────────────────
+
+    private void setPhase(Phase phase, String message) {
+        this.phase = phase;
+        this.phaseMessage = message;
+        fire();
+    }
+
+    /** Publishes the current state to the listeners; call on the JavaFX thread. */
+    private void fire() {
+        int time = 0;
+        int duration = 0;
+        if (music != null) {
+            Duration now = music.player.getCurrentTime();
+            Duration total = music.player.getTotalDuration();
+            if (now != null && !now.isUnknown()) time = (int) now.toSeconds();
+            if (total != null && !total.isUnknown() && !total.isIndefinite()) duration = (int) total.toSeconds();
+        }
+        Status s = new Status(phase, phaseMessage, playlistName, title, index, queue.size(), state, time, duration,
+            paused, error, combat);
+        status = s;
+        listeners.forEach(l -> l.accept(s));
+    }
+
+    private void fireLater() {
+        onFx(this::fire);
+    }
+
+    /** Runs on the JavaFX thread: right away when already on it, else queued (starting JavaFX if needed). */
+    private static void onFx(Runnable r) {
+        if (Platform.isFxApplicationThread()) {
+            r.run();
+            return;
+        }
+        try {
+            Platform.runLater(r);
+        } catch (IllegalStateException notStarted) {
+            try {
+                Platform.startup(r);
+            } catch (IllegalStateException alreadyStarted) {
+                Platform.runLater(r);
+            }
+        }
+    }
+
 }

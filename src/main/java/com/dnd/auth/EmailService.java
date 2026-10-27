@@ -111,7 +111,7 @@ public class EmailService {
             throw new EmailNotConfiguredException(problem);
         }
         send(isBlank(config.fromAddress) ? config.username : config.fromAddress,
-            "DnD Campaign Manager test email",
+            "Almerion test email",
             "If you're reading this, your SMTP settings work. Verification and password-reset"
                 + " emails will be delivered normally.");
     }

@@ -65,6 +65,7 @@ public class BattleMapWindow {
     private MapObject detailToken;
     private VBox detailBars;
     private Label statusLabel;
+    private String lastStatus = "";
     private Label roundLabel;
     private SessionTimer timer;
 
@@ -296,7 +297,7 @@ public class BattleMapWindow {
         bar.setRowValignment(javafx.geometry.VPos.TOP);
         bar.getChildren().addAll(
             toolGroup("⚔ COMBAT",
-            tool("Roll NPCs", "Roll initiative for every creature the DM runs, leaving player rolls alone", () -> {
+            tool("Roll NPCs", "Roll initiative for every creature the GM runs, leaving player rolls alone", () -> {
                 int rolled = initiative.rollNonPlayers();
                 refreshAll();
                 status(rolled == 0
@@ -336,7 +337,7 @@ public class BattleMapWindow {
             }),
             tool("Zoom -", "Shrink the grid", () -> zoom(-8)),
             tool("Zoom +", "Enlarge the grid", () -> zoom(8)),
-            tool("📽 Projector", "Show only the map (no DM panels or health bars) on the second screen,"
+            tool("📽 Projector", "Show only the map (no GM panels or health bars) on the second screen,"
                 + " for a projector. Set Windows to Extend with Win+P first.", this::toggleProjector)),
             toolGroup("🛏 PARTY",
             tool("Rest...", "Give every player on the map a short or long rest", this::openPartyRestDialog)),
@@ -468,6 +469,7 @@ public class BattleMapWindow {
     }
 
     private void status(String text) {
+        lastStatus = text;
         if (statusLabel != null) statusLabel.setText(text);
     }
 
@@ -2148,7 +2150,7 @@ public class BattleMapWindow {
         if (!"Player".equals(type)) {
             armedTokenType = type;
             armedTokenId = id;
-            status(statusLabel.getText() + "  ·  Click another box to place one more, Esc to stop.");
+            status(lastStatus + "  ·  Click another box to place one more, Esc to stop.");
         }
     }
 

@@ -19,7 +19,7 @@ import com.dnd.model.item.weapons.magic_weapons.NatureWeapon;
 import com.dnd.model.item.weapons.magic_weapons.NecromancyWeapon;
 import com.dnd.model.item.weapons.magic_weapons.TeleportationWeapon;
 import com.dnd.model.item.weapons.magic_weapons.TransmutationWeapon;
-import com.dnd.model.item.weapons.magic_weapons.WitcherSignsWeapon;
+import com.dnd.model.item.weapons.magic_weapons.SignMagicWeapon;
 import com.dnd.model.item.weapons.physical_weapons.FinesseWeapon;
 import com.dnd.model.item.weapons.physical_weapons.MeleeWeapon;
 import com.dnd.model.item.weapons.physical_weapons.PhysicalWeapon;
@@ -65,7 +65,7 @@ public final class EntityInstanceFactory {
         NecromancyWeapon.class,
         TeleportationWeapon.class,
         TransmutationWeapon.class,
-        WitcherSignsWeapon.class
+        SignMagicWeapon.class
     );
     private static final List<Class<?>> WEAPON_TYPES = Arrays.asList(
         MeleeWeapon.class,
@@ -80,7 +80,7 @@ public final class EntityInstanceFactory {
         NecromancyWeapon.class,
         TeleportationWeapon.class,
         TransmutationWeapon.class,
-        WitcherSignsWeapon.class
+        SignMagicWeapon.class
     );
     private static final List<Class<?>> ALCHEMY_TYPES = Arrays.asList(
         Potion.class,
@@ -97,7 +97,7 @@ public final class EntityInstanceFactory {
         NecromancyWeapon.class,
         TeleportationWeapon.class,
         TransmutationWeapon.class,
-        WitcherSignsWeapon.class
+        SignMagicWeapon.class
     );
 
     private EntityInstanceFactory() {

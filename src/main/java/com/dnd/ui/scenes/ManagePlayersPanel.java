@@ -865,7 +865,7 @@ final class ManagePlayersPanel {
 
     static ActiveEffect toActive(Effect e) {
         return new ActiveEffect(e.getId(), e.getName(), Math.max(1, e.getDurationRounds()),
-            e.getDamageAmount(), e.getHealingAmount(), "DM");
+            e.getDamageAmount(), e.getHealingAmount(), "GM");
     }
 
     /** Creates a catalog item right here and gives it to the character in one step. */

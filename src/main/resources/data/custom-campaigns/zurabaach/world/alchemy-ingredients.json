@@ -101,9 +101,9 @@
       "description": "The intact venom sac of a wyvern, worth a small fortune intact."
     },
     {
-      "id": "mind-flayer-brine",
-      "name": "Mind Flayer Brine",
-      "description": "Preserving fluid from an illithid specimen; used in psychic wards."
+      "id": "mind-reaver-brine",
+      "name": "Mind Reaver Brine",
+      "description": "Preserving fluid from a mind reaver specimen; used in psychic wards."
     },
     {
       "id": "ghost-mushroom",

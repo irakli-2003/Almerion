@@ -25,7 +25,7 @@ public class Spell implements Printable {
     private Concentration concentration;
     private List<Effect> effects;
     private Damage damage;
-    /** D&D components: any of "V" (spoken words), "S" (gestures), "M" (a material). */
+    /** Spell components: any of "V" (spoken words), "S" (gestures), "M" (a material). */
     private List<String> components = new java.util.ArrayList<>();
     /** What the material component is, e.g. "a pinch of sulfur and bat guano". */
     private String materialComponent;

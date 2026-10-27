@@ -1,16 +1,21 @@
 <#
-  Builds the Windows installer: target\installer\DnD Campaign Manager-<version>.exe
+  Builds the Windows installer: target\installer\Almerion-<version>.exe
 
   The installer has a setup wizard (pick the install folder), adds a desktop shortcut and a
   Start-menu entry, and bundles its own Java runtime, so the target PC needs nothing else.
 
-  It also writes target\installer\dnd-campaign-manager.jar: attach it to the GitHub release next to
+  It also writes target\installer\almerion.jar: attach it to the GitHub release next to
   the installer, and installed apps update themselves to that version on their next start.
 
   Usage (from the repo root, in PowerShell):
       .\packaging\build-windows-installer.ps1                  # runs the tests, then builds
       .\packaging\build-windows-installer.ps1 -SkipTests
       .\packaging\build-windows-installer.ps1 -Type app-image  # unpacked app folder, no installer
+      .\packaging\build-windows-installer.ps1 -SkipTranslations  # don't update the UI translations
+
+  Before building, new UI strings are machine-translated offline with Argos Translate
+  (tools\i18n\translate.py, needs Python 3). The translator is only a build tool: the installer
+  ships just the finished dictionaries in src\main\resources\i18n.
 
   Needs JDK 21 (jpackage) and Maven on PATH. WiX Toolset 3.14, which jpackage uses to make the
   .exe, is downloaded to %LOCALAPPDATA%\wix314 on first run if it is not installed.
@@ -19,14 +24,15 @@ param(
     [string]$Version = "",  # defaults to the version in pom.xml
     [ValidateSet("exe", "app-image")]
     [string]$Type = "exe",
-    [switch]$SkipTests
+    [switch]$SkipTests,
+    [switch]$SkipTranslations
 )
 
 $ErrorActionPreference = "Stop"
 $repo = Split-Path -Parent $PSScriptRoot
 Set-Location $repo
 
-$appName = "DnD Campaign Manager"
+$appName = "Almerion"
 $upgradeUuid = "4141426a-c9a8-4400-b1d5-fad1a8954174"  # never change: lets new versions replace old ones
 
 function Need($cmd, $hint) {
@@ -48,6 +54,23 @@ if ($Type -eq "exe" -and -not (Get-Command candle.exe -ErrorAction SilentlyConti
     $env:PATH = "$wix;$env:PATH"
 }
 
+if (-not $SkipTranslations) {
+    Need "python" "Install Python 3, or pass -SkipTranslations to ship the dictionaries as they are."
+    $venv = Join-Path $repo "tools\i18n\.venv"
+    $py = Join-Path $venv "Scripts\python.exe"
+    if (-not (Test-Path $py)) {
+        Write-Host "Setting up the build-time translator (first run only) ..."
+        & python -m venv $venv
+        if ($LASTEXITCODE -ne 0) { throw "Could not create $venv." }
+    }
+    & $py -m pip install -q -r (Join-Path $repo "tools\i18n\requirements.txt")
+    if ($LASTEXITCODE -ne 0) { throw "Could not install the translator (tools\i18n\requirements.txt)." }
+    Write-Host "Translating new UI strings ..."
+    $env:PYTHONIOENCODING = "utf-8"
+    & $py (Join-Path $repo "tools\i18n\translate.py")
+    if ($LASTEXITCODE -ne 0) { throw "Translation step failed." }
+}
+
 Write-Host "Building the app with Maven ..."
 $mvnArgs = @("-q", "clean", "package")
 if ($SkipTests) { $mvnArgs += "-DskipTests" }
@@ -55,21 +78,14 @@ if ($SkipTests) { $mvnArgs += "-DskipTests" }
 if ($LASTEXITCODE -ne 0) { throw "Maven build failed." }
 
 if (-not $Version) { $Version = ([xml](Get-Content (Join-Path $repo "pom.xml"))).project.version }
-$jar = Get-ChildItem target -Filter "dnd-campaign-manager-*.jar" | Select-Object -First 1
+$jar = Get-ChildItem target -Filter "almerion-*.jar" | Select-Object -First 1
 $stage = Join-Path $repo "target\installer-input"
 if (Test-Path $stage) { Remove-Item $stage -Recurse -Force }
 New-Item -ItemType Directory $stage -Force | Out-Null
 Copy-Item $jar.FullName $stage
 Copy-Item "target\libs\*.jar" $stage
 
-# The music engine (Chromium, ~300 MB unpacked) ships inside the installer so it is never
-# downloaded in the middle of a session. Cached between builds.
-$engine = Join-Path $env:LOCALAPPDATA "dnd-build\jcef"
-Write-Host "Preparing the music engine in $engine ..."
-$cp = (@($jar.FullName) + (Get-ChildItem "target\libs\*.jar" | ForEach-Object FullName)) -join ";"
-& java -cp $cp com.dnd.ui.music.MusicPlayer $engine
-if ($LASTEXITCODE -ne 0 -or -not (Test-Path (Join-Path $engine "install.lock"))) { throw "Could not prepare the music engine." }
-Copy-Item $engine (Join-Path $stage "jcef") -Recurse
+# Music plays through JavaFX Media (javafx-media-*-win.jar in target\libs), so no extra engine is bundled.
 $dest = Join-Path $repo "target\installer"
 if (Test-Path $dest) { Remove-Item $dest -Recurse -Force }
 
@@ -77,8 +93,8 @@ $jpArgs = @(
     "--type", $Type,
     "--name", $appName,
     "--app-version", $Version,
-    "--vendor", "DnD Campaign Manager",
-    "--description", "Run Dungeons and Dragons campaigns: maps, combat, storyline and music.",
+    "--vendor", "Almerion",
+    "--description", "Almerion: Tabletop RPG Campaign Manager - maps, combat, storyline and music.",
     "--input", $stage,
     "--main-jar", $jar.Name,
     "--main-class", "com.dnd.boot.Launcher",
@@ -103,7 +119,7 @@ Write-Host "Packaging with jpackage ($Type) ..."
 if ($LASTEXITCODE -ne 0) { throw "jpackage failed." }
 
 # Attach this jar to the GitHub release as well: installed apps update themselves from it.
-Copy-Item $jar.FullName (Join-Path $dest "dnd-campaign-manager.jar")
+Copy-Item $jar.FullName (Join-Path $dest "almerion.jar")
 
 Write-Host ""
 Write-Host "Done:" -ForegroundColor Green

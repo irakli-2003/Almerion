@@ -1,31 +1,35 @@
 package com.dnd.ui.scenes;
 
+import com.dnd.music.Attribution;
+import com.dnd.music.AudioFiles;
+import com.dnd.music.AudioSource;
 import com.dnd.music.MusicLibrary;
-import com.dnd.music.YouTubeLink;
 import com.dnd.ui.music.MusicPlayer;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.net.URI;
-import java.net.URLEncoder;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 /**
- * The DM's "🎵 Music" window: playlists of YouTube links, the combat playlist, playback
- * controls and a sound-effect pad. One window per app - opening it again brings it forward.
+ * The DM's "🎵 Music" window: playlists of audio tracks, the combat playlist, playback
+ * controls, a sound-effect pad and the credits of openly licensed audio. Audio files are
+ * copied into the campaign folder; direct audio links are downloaded once into it.
+ * One window per app - opening it again brings it forward.
  */
 public final class MusicPanel {
 
@@ -50,6 +54,12 @@ public final class MusicPanel {
     private Stage stage;
     private String shownAmbience;
     private ComboBox<String> folderBox;
+    private Button starterButton;
+    private Button removeUnsupportedButton;
+    private HBox downloadRow;
+    private ProgressBar downloadBar;
+    private Label downloadCount;
+    private AtomicBoolean downloadCancel;
 
     private static final String ALL_FOLDERS = "All folders";
     private static final String NO_FOLDER = "General (no folder)";
@@ -88,8 +98,10 @@ public final class MusicPanel {
         VBox.setVgrow(columns, Priority.ALWAYS);
         root.getChildren().add(columns);
 
-        Label hint = owner.body("Paste any YouTube video or playlist link. Videos whose owners block playback"
-            + " outside YouTube are skipped automatically.\nIn a session file, wrap a scene in [music: Playlist name]"
+        Label hint = owner.body("Add audio files from your computer (MP3, WAV, AIFF or M4A) or direct links to audio"
+            + " files. Files are copied into the campaign folder, so backups and other computers have them too.\n"
+            + "Only use music you own or that is licensed for your use, such as the starter pack.\n"
+            + "In a session file, wrap a scene in [music: Playlist name]"
             + " ... [/music: Playlist name] or [sfx: Sound name] ... [/sfx: Sound name]; double-click the start"
             + " cue to play it and the end cue to stop it.");
         hint.setWrapText(true);
@@ -101,6 +113,7 @@ public final class MusicPanel {
         player.addListener(listener);
         stage.setOnHidden(e -> {
             player.removeListener(listener);
+            if (downloadCancel != null) downloadCancel.set(true);
             if (openStage == stage) openStage = null;
         });
 
@@ -109,6 +122,10 @@ public final class MusicPanel {
         openRoot = campaignRoot;
         refreshPlaylists(null);
         refreshSounds();
+        if (library.unsupportedCount() > 0) {
+            message.setText("Some tracks or sounds still use YouTube links, which are no longer supported."
+                + " Replace them with audio files, or press \"Remove unsupported\".");
+        }
         stage.show();
     }
 
@@ -168,7 +185,17 @@ public final class MusicPanel {
         message.setWrapText(true);
         message.setMaxWidth(Double.MAX_VALUE);
         message.setStyle("-fx-text-fill: #f0c674;");
-        return new VBox(2, nowPlaying, detail, message);
+        downloadBar = new ProgressBar(0);
+        downloadBar.setPrefWidth(260);
+        downloadCount = owner.body("");
+        Button cancel = tool("Cancel download", "Stop downloading; finished files are kept", () -> {
+            if (downloadCancel != null) downloadCancel.set(true);
+        });
+        downloadRow = new HBox(8, owner.body("⬇"), downloadBar, downloadCount, cancel);
+        downloadRow.setAlignment(Pos.CENTER_LEFT);
+        downloadRow.setVisible(false);
+        downloadRow.setManaged(false);
+        return new VBox(2, nowPlaying, detail, message, downloadRow);
     }
 
     private HBox buildControls() {
@@ -230,7 +257,7 @@ public final class MusicPanel {
 
     private void play(MusicLibrary.Playlist playlist, int trackIndex) {
         if (!player.playPlaylist(library, playlist, trackIndex)) {
-            message.setText("\"" + playlist.getName() + "\" has no playable YouTube links yet - add some with \"+ Add link\".");
+            message.setText("This playlist has no playable tracks yet. Add audio files or a direct link to an audio file.");
         }
     }
 
@@ -265,7 +292,7 @@ public final class MusicPanel {
     private VBox buildPlaylistColumn() {
         playlistList = new ListView<>();
         playlistList.getStyleClass().add("dnd-list-view");
-        playlistList.setPrefWidth(240);
+        playlistList.setPrefWidth(250);
         VBox.setVgrow(playlistList, Priority.ALWAYS);
         playlistList.getSelectionModel().selectedItemProperty().addListener((o, a, p) -> refreshTracks());
         playlistList.setOnMouseClicked(e -> {
@@ -332,19 +359,17 @@ public final class MusicPanel {
             save();
         });
 
-        Button starter = tool("★ Starter pack", "Add the popular YouTube playlists, ambience and sound effects that"
-            + " this campaign doesn't have yet (tavern, market, dungeon, combat, rain, river, thunder...)", () -> {
-            int added = library.addStarterPack();
-            save();
-            refreshPlaylists(playlistList.getSelectionModel().getSelectedItem());
-            refreshSounds();
-            message.setText(added == 0 ? "You already have everything from the starter pack."
-                : "Added " + added + " playlists and sounds from the starter pack.");
-        });
+        starterButton = tool("★ Starter pack", "Add free, openly licensed music, ambience and sound effects"
+            + " (tavern, market, dungeon, combat, rain, river, thunder...) and download them into this campaign."
+            + " Also downloads any other linked audio that isn't downloaded yet.", this::addStarterPack);
+        Button credits = tool("Credits", "Show who made the music and sounds in this library and their licenses",
+            this::showCredits);
+        removeUnsupportedButton = tool("Remove unsupported", "Remove every track and sound that still uses a"
+            + " YouTube link or another link that isn't an audio file", this::removeUnsupported);
 
         HBox row1 = new HBox(6, add, rename, folder, delete);
-        return new VBox(8, owner.sectionLabel("Playlists"), playlistList, row1, new HBox(6, playBtn, starter),
-            owner.body("⚔ Combat playlist:"), combatBox);
+        return new VBox(8, owner.sectionLabel("Playlists"), playlistList, row1, new HBox(6, playBtn, starterButton),
+            new HBox(6, credits, removeUnsupportedButton), owner.body("⚔ Combat playlist:"), combatBox);
     }
 
     private void refreshPlaylists(MusicLibrary.Playlist select) {
@@ -357,6 +382,119 @@ public final class MusicPanel {
         MusicLibrary.Playlist combat = library.findPlaylist(library.getCombatPlaylistId());
         combatBox.setValue(combat != null ? combat : "(none)");
         refreshTracks();
+        refreshUnsupported();
+    }
+
+    private void refreshUnsupported() {
+        if (removeUnsupportedButton == null) return;
+        boolean any = library.unsupportedCount() > 0;
+        removeUnsupportedButton.setVisible(any);
+        removeUnsupportedButton.setManaged(any);
+    }
+
+    private void removeUnsupported() {
+        if (!confirm("Remove every track and sound that uses a YouTube link or another link that isn't an audio file?")) {
+            return;
+        }
+        library.removeUnsupported();
+        save();
+        refreshPlaylists(playlistList.getSelectionModel().getSelectedItem());
+        refreshSounds();
+        message.setText("The unsupported tracks and sounds were removed.");
+    }
+
+    private void addStarterPack() {
+        int added = library.addStarterPack();
+        save();
+        refreshFolders(folderBox.getValue());
+        refreshPlaylists(playlistList.getSelectionModel().getSelectedItem());
+        refreshSounds();
+        List<MusicLibrary.Audio> pending = library.pendingDownloads();
+        if (pending.isEmpty()) {
+            message.setText(added == 0 ? "You already have everything from the starter pack."
+                : "The starter pack was added.");
+            return;
+        }
+        message.setText("Downloading the audio into the campaign folder. You can keep using the app meanwhile.");
+        downloadAll(pending);
+    }
+
+    /** Downloads linked audio into the campaign's cache in the background, with progress. */
+    private void downloadAll(List<MusicLibrary.Audio> pending) {
+        AtomicBoolean cancel = new AtomicBoolean();
+        downloadCancel = cancel;
+        starterButton.setDisable(true);
+        downloadBar.setProgress(0);
+        downloadCount.setText("0 / " + pending.size());
+        downloadRow.setVisible(true);
+        downloadRow.setManaged(true);
+        Thread t = new Thread(() -> {
+            int failed = 0;
+            int done = 0;
+            for (MusicLibrary.Audio audio : pending) {
+                if (cancel.get()) break;
+                int finished = done;
+                try {
+                    AudioFiles.download(campaignRoot, audio.getUrl(), (bytes, total) -> {
+                        double part = total > 0 ? Math.min(1, (double) bytes / total) : 0;
+                        Platform.runLater(() -> downloadBar.setProgress((finished + part) / pending.size()));
+                    });
+                } catch (IOException e) {
+                    failed++;
+                }
+                done++;
+                int count = done;
+                Platform.runLater(() -> {
+                    downloadBar.setProgress((double) count / pending.size());
+                    downloadCount.setText(count + " / " + pending.size());
+                });
+            }
+            boolean cancelled = cancel.get();
+            int failures = failed;
+            Platform.runLater(() -> {
+                downloadRow.setVisible(false);
+                downloadRow.setManaged(false);
+                starterButton.setDisable(false);
+                if (downloadCancel == cancel) downloadCancel = null;
+                trackList.refresh();
+                refreshSounds();
+                if (cancelled) {
+                    message.setText("The download was stopped. Press \"Starter pack\" to download the rest.");
+                } else if (failures > 0) {
+                    message.setText("Some audio files couldn't be downloaded. Check the internet connection and"
+                        + " press \"Starter pack\" to try again.");
+                } else {
+                    message.setText("All audio is downloaded and plays offline now.");
+                }
+            });
+        }, "music-download-all");
+        t.setDaemon(true);
+        t.start();
+    }
+
+    private void showCredits() {
+        List<Attribution> credits = library.credits();
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Music credits");
+        dialog.setHeaderText("Music and sounds in this library, with their authors and licenses."
+            + "\nIf you stream or publish recordings of your sessions, include these credits.");
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+        dialog.initOwner(stage);
+        owner.styleDialog(dialog);
+        if (credits.isEmpty()) {
+            dialog.getDialogPane().setContent(owner.body("No tracks or sounds in this library have credits yet."));
+        } else {
+            StringBuilder text = new StringBuilder();
+            for (Attribution a : credits) text.append(a.creditLine()).append('\n');
+            TextArea area = new TextArea(text.toString().trim());
+            area.setEditable(false);
+            area.setWrapText(true);
+            area.setPrefColumnCount(70);
+            area.setPrefRowCount(18);
+            dialog.getDialogPane().setContent(area);
+        }
+        dialog.setResizable(true);
+        dialog.showAndWait();
     }
 
     // ── Tracks ──────────────────────────────────────────────────────────────
@@ -368,22 +506,40 @@ public final class MusicPanel {
         trackList.setCellFactory(lv -> new ListCell<>() {
             @Override protected void updateItem(MusicLibrary.Track t, boolean empty) {
                 super.updateItem(t, empty);
+                setTooltip(null);
+                setOpacity(1);
                 if (empty || t == null) {
                     setText(null);
                     return;
                 }
-                YouTubeLink link = t.link();
-                setText((link == null ? "⚠ " : link.isPlaylist() ? "☰ " : "♪ ") + t.label());
+                if (t.unsupported()) {
+                    setText("⚠ " + t.label());
+                    setOpacity(0.5);
+                    setTooltip(new Tooltip(t.unsupportedReason()));
+                } else if (t.downloadable() && library.localFile(t) == null) {
+                    setText("⬇ " + t.label());
+                    setTooltip(new Tooltip("This track downloads the first time it plays."));
+                } else {
+                    setText("♪ " + t.label());
+                    if (t.getAttribution() != null) setTooltip(new Tooltip(t.getAttribution().creditLine()));
+                }
             }
         });
         trackList.setOnMouseClicked(e -> {
             MusicLibrary.Playlist p = playlistList.getSelectionModel().getSelectedItem();
+            MusicLibrary.Track t = trackList.getSelectionModel().getSelectedItem();
             int i = trackList.getSelectionModel().getSelectedIndex();
-            if (e.getClickCount() == 2 && p != null && i >= 0) play(p, i);
+            if (e.getClickCount() != 2 || p == null || t == null || i < 0) return;
+            if (t.unsupported()) message.setText(t.unsupportedReason());
+            else play(p, i);
         });
 
-        Button add = tool("+ Add link", "Add a YouTube video or playlist link", this::addTrack);
-        Button edit = tool("Edit", "Change the selected link or its title", this::editTrack);
+        Button addFiles = tool("+ Add audio files...", "Copy MP3, WAV, AIFF or M4A files from your computer into"
+            + " this playlist", this::addFiles);
+        Button addFolder = tool("+ Add folder...", "Copy every audio file in a folder into this playlist",
+            this::addFolder);
+        Button addLink = tool("+ Add link...", "Add a direct link to an audio file; it is downloaded once", this::addLink);
+        Button edit = tool("Edit", "Change the selected track's title, audio or start time", this::editTrack);
         Button remove = compact(owner.dangerBtn("Remove", () -> {
             MusicLibrary.Playlist p = playlistList.getSelectionModel().getSelectedItem();
             MusicLibrary.Track t = trackList.getSelectionModel().getSelectedItem();
@@ -391,19 +547,20 @@ public final class MusicPanel {
             p.getTracks().remove(t);
             save();
             refreshTracks();
+            refreshUnsupported();
         }));
         Button up = tool("▲", "Move up", () -> moveTrack(-1));
         Button down = tool("▼", "Move down", () -> moveTrack(1));
 
-        VBox column = new VBox(8, owner.sectionLabel("Tracks  (double-click to play)"), trackList,
-            new HBox(6, add, edit, remove, up, down));
+        FlowPane buttons = new FlowPane(6, 6, addFiles, addFolder, addLink, edit, remove, up, down);
+        VBox column = new VBox(8, owner.sectionLabel("Tracks  (double-click to play)"), trackList, buttons);
         HBox.setHgrow(column, Priority.ALWAYS);
         return column;
     }
 
     private void refreshTracks() {
         MusicLibrary.Playlist p = playlistList.getSelectionModel().getSelectedItem();
-        trackList.getItems().setAll(p == null ? java.util.List.of() : p.getTracks());
+        trackList.getItems().setAll(p == null ? List.of() : p.getTracks());
     }
 
     private void moveTrack(int delta) {
@@ -418,103 +575,244 @@ public final class MusicPanel {
         trackList.getSelectionModel().select(j);
     }
 
-    private void addTrack() {
+    private MusicLibrary.Playlist playlistForAdding() {
         MusicLibrary.Playlist p = playlistList.getSelectionModel().getSelectedItem();
-        if (p == null) {
-            message.setText("Create or pick a playlist first.");
+        if (p == null) message.setText("Create or pick a playlist first.");
+        return p;
+    }
+
+    private static FileChooser.ExtensionFilter audioFilter() {
+        List<String> patterns = AudioSource.EXTENSIONS.stream().map(e -> "*." + e).toList();
+        return new FileChooser.ExtensionFilter("Audio files (MP3, WAV, AIFF, M4A)", patterns);
+    }
+
+    private void addFiles() {
+        MusicLibrary.Playlist p = playlistForAdding();
+        if (p == null) return;
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Add audio files");
+        chooser.getExtensionFilters().add(audioFilter());
+        List<File> files = chooser.showOpenMultipleDialog(stage);
+        if (files == null || files.isEmpty()) return;
+        importInto(p, files.stream().map(File::toPath).toList());
+    }
+
+    private void addFolder() {
+        MusicLibrary.Playlist p = playlistForAdding();
+        if (p == null) return;
+        DirectoryChooser chooser = new DirectoryChooser();
+        chooser.setTitle("Add every audio file in a folder");
+        File dir = chooser.showDialog(stage);
+        if (dir == null) return;
+        List<Path> files;
+        try (Stream<Path> list = Files.list(dir.toPath())) {
+            files = list.filter(Files::isRegularFile).filter(AudioSource::isSupportedFile).sorted().toList();
+        } catch (IOException e) {
+            message.setText("That folder couldn't be read.");
             return;
         }
-        MusicLibrary.Track track = trackDialog(new MusicLibrary.Track(), "Add YouTube link");
+        if (files.isEmpty()) {
+            message.setText("That folder has no MP3, WAV, AIFF or M4A files.");
+            return;
+        }
+        importInto(p, files);
+    }
+
+    /** Copies files into the campaign's music folder in the background and adds them as tracks. */
+    private void importInto(MusicLibrary.Playlist playlist, List<Path> files) {
+        message.setText("Copying the audio files into the campaign folder...");
+        Thread t = new Thread(() -> {
+            List<MusicLibrary.Track> added = new ArrayList<>();
+            boolean failed = false;
+            for (Path f : files) {
+                try {
+                    String rel = AudioFiles.importFile(campaignRoot, f);
+                    added.add(MusicLibrary.Track.ofFile(stem(f), rel));
+                } catch (IOException e) {
+                    failed = true;
+                }
+            }
+            boolean anyFailed = failed;
+            Platform.runLater(() -> {
+                playlist.getTracks().addAll(added);
+                save();
+                refreshTracks();
+                message.setText(anyFailed ? "Some files couldn't be copied. Only MP3, WAV, AIFF and M4A files can be added."
+                    : "The audio files were added.");
+            });
+        }, "music-import");
+        t.setDaemon(true);
+        t.start();
+    }
+
+    private static String stem(Path file) {
+        String name = file.getFileName().toString();
+        int dot = name.lastIndexOf('.');
+        return dot > 0 ? name.substring(0, dot) : name;
+    }
+
+    private void addLink() {
+        MusicLibrary.Playlist p = playlistForAdding();
+        if (p == null) return;
+        MusicLibrary.Track track = trackDialog(new MusicLibrary.Track(), "Add a link to an audio file");
         if (track == null) return;
         p.getTracks().add(track);
         save();
         refreshTracks();
-        fillTitle(track);
+        prefetch(track);
     }
 
     private void editTrack() {
         MusicLibrary.Track t = trackList.getSelectionModel().getSelectedItem();
         if (t == null) return;
-        if (trackDialog(t, "Edit link") == null) return;
+        if (trackDialog(t, "Edit track") == null) return;
         save();
         refreshTracks();
-        fillTitle(t);
+        refreshUnsupported();
+        prefetch(t);
+    }
+
+    /** Downloads a newly linked track right away, so a bad link is reported now rather than mid-session. */
+    private void prefetch(MusicLibrary.Audio audio) {
+        if (!audio.downloadable() || library.localFile(audio) != null) return;
+        message.setText(MusicPlayer.DOWNLOADING_MESSAGE);
+        Thread t = new Thread(() -> {
+            String result;
+            try {
+                AudioFiles.download(campaignRoot, audio.getUrl(), null);
+                result = "The audio file was downloaded and plays offline now.";
+            } catch (IOException e) {
+                result = e.getMessage();
+            }
+            String text = result;
+            Platform.runLater(() -> {
+                message.setText(text);
+                trackList.refresh();
+            });
+        }, "music-prefetch");
+        t.setDaemon(true);
+        t.start();
+    }
+
+    /**
+     * Shared editor for a track's or sound's audio: a file from this computer (copied into the
+     * campaign) or a direct link to an audio file.
+     */
+    private final class AudioPicker {
+        final TextField url = new TextField();
+        final Label file = new Label();
+        final Label problem = new Label();
+        final Button choose = new Button("Choose file...");
+        String chosenFile;
+
+        AudioPicker(MusicLibrary.Audio audio, Runnable onChange) {
+            chosenFile = audio.getFile();
+            url.setText(audio.getFile() == null && audio.getUrl() != null ? audio.getUrl() : "");
+            url.setPromptText("https://example.com/music/tavern.mp3");
+            url.setPrefColumnCount(36);
+            problem.setWrapText(true);
+            problem.setMaxWidth(420);
+            problem.setStyle("-fx-text-fill: #f0c674;");
+            choose.getStyleClass().add("dnd-button");
+            compact(choose);
+            choose.setOnAction(e -> {
+                FileChooser chooser = new FileChooser();
+                chooser.setTitle("Choose an audio file");
+                chooser.getExtensionFilters().add(audioFilter());
+                File f = chooser.showOpenDialog(stage);
+                if (f == null) return;
+                try {
+                    chosenFile = AudioFiles.importFile(campaignRoot, f.toPath());
+                    url.setText("");
+                    onChange.run();
+                } catch (IOException ex) {
+                    onChange.run();
+                    problem.setText(ex.getMessage());
+                }
+            });
+            url.textProperty().addListener((o, a, b) -> {
+                if (!b.isBlank()) chosenFile = null;
+                onChange.run();
+            });
+        }
+
+        void refresh() {
+            file.setText(chosenFile == null ? "No file chosen." : chosenFile.substring(chosenFile.lastIndexOf('/') + 1));
+            String text = url.getText().trim();
+            if (chosenFile != null || text.isEmpty()) {
+                problem.setText("");
+            } else if (AudioSource.isYouTube(text)) {
+                problem.setText(AudioSource.YOUTUBE_MESSAGE);
+            } else {
+                String invalid = AudioSource.validateLink(text);
+                problem.setText(invalid == null ? "" : invalid);
+            }
+        }
+
+        boolean valid() {
+            String text = url.getText().trim();
+            return chosenFile != null || (!text.isEmpty() && AudioSource.validateLink(text) == null);
+        }
+
+        void addTo(GridPane grid, int row) {
+            grid.addRow(row, new Label("File:"), new HBox(8, choose, file));
+            grid.addRow(row + 1, new Label("Or link:"), url);
+            grid.add(problem, 1, row + 2);
+        }
+
+        String file() {
+            return chosenFile;
+        }
+
+        String link() {
+            return chosenFile == null ? url.getText().trim() : null;
+        }
     }
 
     private MusicLibrary.Track trackDialog(MusicLibrary.Track track, String heading) {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle(heading);
-        dialog.setHeaderText("Paste a YouTube link (a single video or a whole playlist)");
+        dialog.setHeaderText("Choose an audio file from your computer, or paste a direct link to an .mp3, .wav or"
+            + " .m4a file.\nLinks to YouTube, Spotify and other streaming pages can't be used.");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         dialog.initOwner(stage);
         owner.styleDialog(dialog);
 
-        TextField url = new TextField(track.getUrl() == null ? "" : track.getUrl());
-        url.setPromptText("https://www.youtube.com/watch?v=...");
-        url.setPrefColumnCount(40);
         TextField title = new TextField(track.getTitle() == null ? "" : track.getTitle());
-        title.setPromptText("Optional - filled in from YouTube if left empty");
-        Label kind = new Label();
+        title.setPromptText("Optional - the file name is used if left empty");
+        TextField start = new TextField(AudioSource.formatTime(track.getStartSeconds()));
+        start.setPromptText("0:00");
+        start.setPrefColumnCount(8);
+        AudioPicker[] picker = new AudioPicker[1];
         Runnable check = () -> {
-            YouTubeLink link = YouTubeLink.parse(url.getText());
-            kind.setText(url.getText().isBlank() ? "" : link == null ? "⚠ Not a YouTube link"
-                : link.isPlaylist() ? "☰ YouTube playlist - plays all of its videos" : "♪ Single video");
-            dialog.getDialogPane().lookupButton(ButtonType.OK).setDisable(link == null);
+            picker[0].refresh();
+            boolean timeOk = AudioSource.parseTime(start.getText()) >= 0;
+            if (!timeOk) picker[0].problem.setText("Write the start time like 1:30 or 90.");
+            dialog.getDialogPane().lookupButton(ButtonType.OK).setDisable(!picker[0].valid() || !timeOk);
         };
-        url.textProperty().addListener((o, a, b) -> check.run());
+        picker[0] = new AudioPicker(track, check);
+        start.textProperty().addListener((o, a, b) -> check.run());
 
         GridPane grid = new GridPane();
         grid.setHgap(8);
         grid.setVgap(8);
-        grid.addRow(0, new Label("Link:"), url);
-        grid.addRow(1, new Label("Title:"), title);
-        grid.add(kind, 1, 2);
+        grid.addRow(0, new Label("Title:"), title);
+        picker[0].addTo(grid, 1);
+        grid.addRow(4, new Label("Start at:"), start);
         dialog.getDialogPane().setContent(grid);
         check.run();
-        Platform.runLater(url::requestFocus);
 
         if (dialog.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) return null;
-        track.setUrl(url.getText().trim());
-        track.setTitle(title.getText().isBlank() ? null : title.getText().trim());
+        boolean audioChanged = !java.util.Objects.equals(picker[0].file(), track.getFile())
+            || !java.util.Objects.equals(picker[0].link(), track.getUrl());
+        track.setFile(picker[0].file());
+        track.setUrl(picker[0].link());
+        if (audioChanged) track.setAttribution(null);
+        String name = title.getText().trim();
+        if (name.isEmpty() && track.getFile() != null) name = stem(Path.of(track.getFile()));
+        track.setTitle(name.isEmpty() ? null : name);
+        track.setStartSeconds(Math.max(0, AudioSource.parseTime(start.getText())));
         return track;
-    }
-
-    /** Looks up the video/playlist title from YouTube's public oEmbed endpoint when none was typed. */
-    private void fillTitle(MusicLibrary.Track track) {
-        if (track.getTitle() != null) return;
-        String url = track.getUrl();
-        Thread t = new Thread(() -> {
-            String found = fetchTitle(url);
-            if (found == null) return;
-            Platform.runLater(() -> {
-                if (track.getTitle() != null || !url.equals(track.getUrl())) return;
-                track.setTitle(found);
-                save();
-                trackList.refresh();
-            });
-        }, "youtube-title");
-        t.setDaemon(true);
-        t.start();
-    }
-
-    static String fetchTitle(String url) {
-        try {
-            YouTubeLink link = YouTubeLink.parse(url);
-            if (link == null) return null;
-            String canonical = link.videoId() != null && !link.isPlaylist()
-                ? "https://www.youtube.com/watch?v=" + link.videoId()
-                : "https://www.youtube.com/playlist?list=" + link.playlistId();
-            HttpRequest request = HttpRequest.newBuilder(URI.create("https://www.youtube.com/oembed?format=json&url="
-                + URLEncoder.encode(canonical, StandardCharsets.UTF_8))).timeout(Duration.ofSeconds(8)).build();
-            HttpResponse<String> response = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build()
-                .send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() != 200) return null;
-            JsonNode json = new ObjectMapper().readTree(response.body());
-            String title = json.path("title").asText(null);
-            return title == null || title.isBlank() ? null : title;
-        } catch (Exception e) {
-            return null;
-        }
     }
 
     // ── Sound effects ───────────────────────────────────────────────────────
@@ -539,7 +837,7 @@ public final class MusicPanel {
             save();
         });
 
-        Button add = tool("+ Add sound", "Add a sound effect or looping ambience from a YouTube clip", () -> {
+        Button add = tool("+ Add sound", "Add a sound effect or looping ambience from an audio file", () -> {
             MusicLibrary.Sound s = new MusicLibrary.Sound();
             s.setFolder(currentFolder());
             s = soundDialog(s, "Add sound");
@@ -548,6 +846,7 @@ public final class MusicPanel {
             save();
             refreshFolders(folderBox.getValue());
             refreshSounds();
+            prefetch(s);
         });
         Button stopFx = tool("⏹ Stop sounds", "Stop the sound effect and the ambience", () -> {
             player.stopSound();
@@ -565,16 +864,20 @@ public final class MusicPanel {
         for (MusicLibrary.Sound sound : library.sortedSounds()) {
             if (!shown(sound.getFolder())) continue;
             boolean on = sound.isAmbience() && sound.getId().equals(shownAmbience);
-            Button b = tool((on ? "◼ " : "") + sound.getName(),
-                (sound.isAmbience() ? "Click to start or stop this loop" : "Click to play")
-                    + " · right-click to edit or remove", () -> {
-                    if (sound.isAmbience() && sound.getId().equals(player.ambienceSoundId())) {
-                        player.stopAmbience();
-                    } else if (!player.playSound(sound)) {
-                        message.setText("\"" + sound.getName() + "\" needs a single-video YouTube link.");
-                    }
-                    refreshSounds();
-                });
+            boolean unsupported = sound.unsupported();
+            String tip = unsupported ? sound.unsupportedReason()
+                : sound.isAmbience() ? "Click to start or stop this loop. Right-click to edit or remove it."
+                : "Click to play. Right-click to edit or remove it.";
+            Button b = tool((unsupported ? "⚠ " : on ? "◼ " : "") + sound.getName(), tip, () -> {
+                if (sound.isAmbience() && sound.getId().equals(player.ambienceSoundId())) {
+                    player.stopAmbience();
+                } else if (!player.playSound(library, sound)) {
+                    message.setText(unsupported ? sound.unsupportedReason()
+                        : "This sound has no playable audio. Right-click it and choose an audio file.");
+                }
+                refreshSounds();
+            });
+            if (unsupported) b.setOpacity(0.5);
             if (on) b.setStyle(b.getStyle() + "-fx-background-color: #6b4a00; -fx-border-color: #f0d080;");
             MenuItem edit = new MenuItem("Edit...");
             edit.setOnAction(e -> {
@@ -582,6 +885,8 @@ public final class MusicPanel {
                     save();
                     refreshFolders(folderBox.getValue());
                     refreshSounds();
+                    refreshUnsupported();
+                    prefetch(sound);
                 }
             });
             MenuItem remove = new MenuItem("Remove");
@@ -590,6 +895,7 @@ public final class MusicPanel {
                 library.getSounds().remove(sound);
                 save();
                 refreshSounds();
+                refreshUnsupported();
             });
             b.setContextMenu(new ContextMenu(edit, remove));
             (sound.isAmbience() ? ambiencePad : soundPad).getChildren().add(b);
@@ -601,17 +907,14 @@ public final class MusicPanel {
     private MusicLibrary.Sound soundDialog(MusicLibrary.Sound sound, String heading) {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle(heading);
-        dialog.setHeaderText("A clip from a YouTube video. Use start/end to cut out just the sound you want,"
-            + " or tick Ambience for a background loop (rain, river, wind...).");
+        dialog.setHeaderText("Choose an audio file or paste a direct link to one. Use start and end to play only part"
+            + " of it, or tick Ambience for a background loop (rain, river, wind...).");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         dialog.initOwner(stage);
         owner.styleDialog(dialog);
 
         TextField name = new TextField(sound.getName() == null ? "" : sound.getName());
         name.setPromptText("Thunder");
-        TextField url = new TextField(sound.getUrl() == null ? "" : sound.getUrl());
-        url.setPromptText("https://www.youtube.com/watch?v=...");
-        url.setPrefColumnCount(36);
         Spinner<Integer> start = new Spinner<>(0, 36000, sound.getStartSeconds());
         Spinner<Integer> end = new Spinner<>(0, 36000, sound.getEndSeconds());
         start.setEditable(true);
@@ -619,34 +922,43 @@ public final class MusicPanel {
         CheckBox ambience = owner.checkBox("Ambience - loop under the music until stopped");
         ambience.setSelected(sound.isAmbience());
         ComboBox<String> folder = folderPicker(sound.getFolder());
+        AudioPicker[] picker = new AudioPicker[1];
+        Runnable check = () -> {
+            picker[0].refresh();
+            dialog.getDialogPane().lookupButton(ButtonType.OK).setDisable(name.getText().isBlank() || !picker[0].valid());
+        };
+        picker[0] = new AudioPicker(sound, check);
         Button preview = new Button("▶ Preview");
         preview.getStyleClass().add("dnd-button");
         compact(preview);
-        preview.setOnAction(e -> player.playSound(new MusicLibrary.Sound("preview", url.getText(), start.getValue(), end.getValue())));
-        Runnable check = () -> {
-            YouTubeLink link = YouTubeLink.parse(url.getText());
-            dialog.getDialogPane().lookupButton(ButtonType.OK)
-                .setDisable(name.getText().isBlank() || link == null || link.videoId() == null);
-        };
+        preview.setOnAction(e -> {
+            if (!picker[0].valid()) return;
+            MusicLibrary.Sound test = new MusicLibrary.Sound("preview", picker[0].link(), start.getValue(), end.getValue());
+            test.setFile(picker[0].file());
+            if (!player.playSound(library, test)) message.setText("This sound has no playable audio.");
+        });
         name.textProperty().addListener((o, a, b) -> check.run());
-        url.textProperty().addListener((o, a, b) -> check.run());
 
         GridPane grid = new GridPane();
         grid.setHgap(8);
         grid.setVgap(8);
         grid.addRow(0, new Label("Name:"), name);
-        grid.addRow(1, new Label("Link:"), url);
-        grid.addRow(2, new Label("Start (s):"), start);
-        grid.addRow(3, new Label("End (s, 0 = to the end):"), end);
-        grid.add(ambience, 1, 4);
-        grid.addRow(5, new Label("Folder:"), folder);
-        grid.add(preview, 1, 6);
+        picker[0].addTo(grid, 1);
+        grid.addRow(4, new Label("Start (s):"), start);
+        grid.addRow(5, new Label("End (s, 0 = to the end):"), end);
+        grid.add(ambience, 1, 6);
+        grid.addRow(7, new Label("Folder:"), folder);
+        grid.add(preview, 1, 8);
         dialog.getDialogPane().setContent(grid);
         check.run();
 
         if (dialog.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) return null;
+        boolean audioChanged = !java.util.Objects.equals(picker[0].file(), sound.getFile())
+            || !java.util.Objects.equals(picker[0].link(), sound.getUrl());
         sound.setName(name.getText().trim());
-        sound.setUrl(url.getText().trim());
+        sound.setFile(picker[0].file());
+        sound.setUrl(picker[0].link());
+        if (audioChanged) sound.setAttribution(null);
         sound.setStartSeconds(start.getValue());
         sound.setEndSeconds(end.getValue());
         sound.setAmbience(ambience.isSelected());

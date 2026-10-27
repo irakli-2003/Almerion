@@ -27,7 +27,7 @@ public class VerifyEmailScene extends BaseScene {
         error.getStyleClass().add("error-label");
 
         root.getChildren().addAll(
-            title("⚔  DnD Campaign Manager  ⚔"),
+            title("⚔  Almerion  ⚔"),
             subtitle("Verify your email"),
             body("Enter the verification code sent to your email."),
             emailField,

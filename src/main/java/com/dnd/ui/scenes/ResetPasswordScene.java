@@ -29,7 +29,7 @@ public class ResetPasswordScene extends BaseScene {
         error.getStyleClass().add("error-label");
 
         root.getChildren().addAll(
-            title("⚔  DnD Campaign Manager  ⚔"),
+            title("⚔  Almerion  ⚔"),
             subtitle("Choose a new password"),
             emailField,
             codeField,

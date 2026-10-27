@@ -28,7 +28,7 @@ public class RegisterScene extends BaseScene {
         error.getStyleClass().add("error-label");
 
         root.getChildren().addAll(
-            title("⚔  DnD Campaign Manager  ⚔"),
+            title("⚔  Almerion  ⚔"),
             subtitle("Create an account"),
             usernameField,
             emailField,

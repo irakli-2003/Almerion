@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Locale;
 
 public enum School {
-    WITCHER_SIGNS("witcher signs"),
+    SIGN_MAGIC("sign magic"),
     ELEMENTAL("elemental magic"),
     DIVINE("divine magic"),
     DARK("dark magic"),
@@ -39,6 +39,7 @@ public enum School {
             return null;
         }
         String normalized = value.trim().toLowerCase(Locale.ROOT);
+        if (normalized.equals("witcher signs")) return SIGN_MAGIC;
         for (School school : values()) {
             if (school.value.equals(normalized)) {
                 return school;

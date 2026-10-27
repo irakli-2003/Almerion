@@ -8,6 +8,8 @@ import com.dnd.ui.EntityCategory;
 import com.dnd.ui.ImageStore;
 import com.dnd.ui.SceneType;
 import com.dnd.ui.UiSession;
+import com.dnd.ui.i18n.LanguagePicker;
+import com.dnd.ui.i18n.UiTranslator;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -44,13 +46,19 @@ public class DmMenuScene extends BaseScene {
 
         HBox header = new HBox(12);
         header.setAlignment(Pos.CENTER_LEFT);
-        header.getChildren().add(title("Dungeon Master of campaign: " + campaignName));
+        header.getChildren().addAll(title("Game Master of campaign:"), UiTranslator.skip(title(campaignName)));
         if (uiSession.getSession().isOnline()) {
             Label badge = new Label("● LIVE");
             badge.getStyleClass().add("success-badge");
             header.getChildren().add(badge);
         }
+        if (uiSession.campaignRoot() != null) {
+            header.getChildren().add(GitHubSyncUi.statusBadge(this, uiSession.campaignRoot()));
+        }
 
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        header.getChildren().addAll(spacer, new LanguagePicker());
         content.getChildren().add(header);
 
         content.getChildren().add(sessionSection());
@@ -199,7 +207,7 @@ public class DmMenuScene extends BaseScene {
         String className = lookupName(repos.classes().list(), pc.getClassId(), CharacterClass::getId, CharacterClass::getName);
         String raceName = lookupName(repos.races().list(), pc.getRaceId(), CharacterRace::getId, CharacterRace::getName);
 
-        Label name = smallLabel(pc.getName() != null ? pc.getName() : pc.getId(), true);
+        Label name = UiTranslator.skip(smallLabel(pc.getName() != null ? pc.getName() : pc.getId(), true));
         Label level = smallLabel("Lvl " + pc.getLevel(), false);
         Label cls = smallLabel(className, false);
         Label race = smallLabel(raceName, false);

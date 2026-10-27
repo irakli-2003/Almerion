@@ -3,6 +3,9 @@ package com.dnd.ui;
 import com.dnd.cli.core.CliSession;
 import com.dnd.cli.core.SystemConsoleIO;
 import com.dnd.cli.storage.CampaignStorage;
+import com.dnd.ui.i18n.AppSettings;
+import com.dnd.ui.i18n.TranslationService;
+import com.dnd.ui.i18n.UiTranslator;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -14,13 +17,14 @@ public class GuiApp extends Application {
         UiFonts.load();
         WindowOrder.install();
         TooltipPersistence.install();
+        UiTranslator.install(TranslationService.createDefault(), AppSettings.load());
         primaryStage.getIcons().setAll(AppIcons.icons());
         AppIcons.install();
         CampaignStorage storage = new CampaignStorage();
         storage.ensureInitialized();
         CliSession session = new CliSession(storage, new SystemConsoleIO(new Scanner(System.in)));
         UiSession uiSession = new UiSession(session, storage, primaryStage);
-        primaryStage.setTitle("DnD Campaign Manager");
+        primaryStage.setTitle("Almerion: Tabletop RPG Campaign Manager");
         primaryStage.setWidth(900);
         primaryStage.setHeight(650);
         // "Windowed full screen": maximized with the OS chrome still visible, not true
@@ -39,11 +43,9 @@ public class GuiApp extends Application {
 
     @Override
     public void stop() {
-        // The embedded music engine (Chromium) runs its own non-daemon threads, so the JVM
-        // would linger after the last window closes unless it is shut down explicitly.
-        if (com.dnd.ui.music.MusicPlayer.get().shutdown()) {
-            System.exit(0);
-        }
+        // Upload the open campaign's last changes to GitHub (bounded, so quitting never hangs).
+        com.dnd.sync.CampaignSyncService.shared().shutdown(20_000);
+        com.dnd.ui.music.MusicPlayer.get().shutdown();
     }
 
     public static void launch(String[] args) {

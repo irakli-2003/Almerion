@@ -34,7 +34,7 @@ public class DmMenuPage implements Page {
 
     @Override
     public String getTitle() {
-        return "Dungeon Master";
+        return "Game Master";
     }
 
     @Override

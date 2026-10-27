@@ -33,6 +33,12 @@ public class SceneRouter {
         }
         if (type == SceneType.DM_MENU) {
             autoPush();
+            if (uiSession.campaignRoot() != null) {
+                com.dnd.sync.CampaignSyncService.shared().opened(uiSession.campaignRoot());
+            }
+        } else if (type == SceneType.CAMPAIGN_SELECTION || type == SceneType.LANDING || type == SceneType.LOGIN) {
+            // Leaving the campaign: upload what changed and fetch the other computer's changes.
+            com.dnd.sync.CampaignSyncService.shared().closed();
         }
         // buildScene() can throw (e.g. a data file failed to load) - if that happens with no
         // try/catch here, the exception escapes into the JavaFX event queue uncaught, the stage

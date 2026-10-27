@@ -1333,11 +1333,11 @@
       "file": "world/monsters.json"
     },
     {
-      "id": "mind-flayer",
+      "id": "mind-reaver",
       "file": "world/monsters.json"
     },
     {
-      "id": "beholder",
+      "id": "many-eyed-horror",
       "file": "world/monsters.json"
     },
     {
@@ -1625,7 +1625,7 @@
       "file": "world/alchemy-ingredients.json"
     },
     {
-      "id": "mind-flayer-brine",
+      "id": "mind-reaver-brine",
       "file": "world/alchemy-ingredients.json"
     },
     {

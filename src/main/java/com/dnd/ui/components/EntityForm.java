@@ -501,7 +501,7 @@ public final class EntityForm {
         for (int i = 0; i < ABILITIES.size(); i++) {
             String ability = ABILITIES.get(i);
             // A freshly constructed stat block holds zeros, which the model rejects on save
-            // (scores are 1-30), so unset scores start at the D&D average instead.
+            // (scores are 1-30), so unset scores start at the standard average instead.
             int score = intProperty(stats, ability, 10);
             if (score < 1) {
                 score = 10;

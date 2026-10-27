@@ -37,8 +37,10 @@ final class StorylineEditorWindow {
 
     static final String READ_ALOUD_OPEN = "[READ ALOUD]";
     static final String READ_ALOUD_CLOSE = "[/READ ALOUD]";
-    static final String DM_NOTE_OPEN = "[DM NOTE]";
-    static final String DM_NOTE_CLOSE = "[/DM NOTE]";
+    static final String DM_NOTE_OPEN = "[GM NOTE]";
+    static final String DM_NOTE_CLOSE = "[/GM NOTE]";
+    static final String LEGACY_NOTE_OPEN = "[DM NOTE]";
+    static final String LEGACY_NOTE_CLOSE = "[/DM NOTE]";
 
     /**
      * Remembers each file's last scroll offset (keyed by its absolute path, hashed since
@@ -221,7 +223,7 @@ final class StorylineEditorWindow {
             toolGroup("🎭 MARK TEXT",
                 toolButton("Read-Aloud", "Wrap the selected text as prose to read to the players",
                     () -> wrapSelection(READ_ALOUD_OPEN, READ_ALOUD_CLOSE)),
-                toolButton("DM Note", "Wrap the selected text as a private DM-only note",
+                toolButton("GM Note", "Wrap the selected text as a private GM-only note",
                     () -> wrapSelection(DM_NOTE_OPEN, DM_NOTE_CLOSE))),
             toolGroup("¶ FORMAT",
                 toolButton("Heading", "Turn the current line into a section heading", this::insertHeading),
@@ -401,7 +403,7 @@ final class StorylineEditorWindow {
             statusLabel.setText("Music fading out.");
         } else if (cue.kind() == com.dnd.music.MusicCue.Kind.SFX) {
             var sound = library.findSound(cue.name());
-            statusLabel.setText(sound != null && player.playSound(sound)
+            statusLabel.setText(sound != null && player.playSound(library, sound)
                 ? (sound.isAmbience() ? "🌧 " : "🔊 ") + sound.getName()
                 : "No sound called \"" + cue.name() + "\" - add it in the music panel.");
         } else {
@@ -530,9 +532,9 @@ final class StorylineEditorWindow {
             <what the players see and hear>
             [/READ ALOUD]
 
-            [DM NOTE]
+            [GM NOTE]
             <what is really going on>
-            [/DM NOTE]
+            [/GM NOTE]
             """);
         add.accept("Encounter", """
 
@@ -917,7 +919,8 @@ final class StorylineEditorWindow {
     static int countWords(String text) {
         if (text == null) return 0;
         String stripped = text.replace(READ_ALOUD_OPEN, " ").replace(READ_ALOUD_CLOSE, " ")
-                .replace(DM_NOTE_OPEN, " ").replace(DM_NOTE_CLOSE, " ");
+                .replace(DM_NOTE_OPEN, " ").replace(DM_NOTE_CLOSE, " ")
+                .replace(LEGACY_NOTE_OPEN, " ").replace(LEGACY_NOTE_CLOSE, " ");
         if (stripped.isBlank()) return 0;
         return stripped.trim().split("\\s+").length;
     }

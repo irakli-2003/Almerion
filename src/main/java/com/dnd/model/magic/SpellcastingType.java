@@ -8,7 +8,7 @@ public enum SpellcastingType {
     FULL("Full caster"),
     /** Paladin, ranger. */
     HALF("Half caster"),
-    /** Eldritch Knight / Arcane Trickster subclasses. */
+    /** Spellblade / Spellthief subclasses. */
     THIRD("Third caster"),
     /** Warlock: few slots, all of the same level, back on a short rest. */
     PACT("Pact magic"),

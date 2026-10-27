@@ -1,7 +1,7 @@
 # General Implementation Overview
 
 ## Purpose
-This document summarizes how the current DnD homebrew system is implemented, with emphasis on the CLI. Detailed flow notes live in `Documentation/implementation/user flow.md`.
+This document summarizes how the current Almerion system is implemented, with emphasis on the CLI. Detailed flow notes live in `Documentation/implementation/user flow.md`.
 
 ## Status Snapshot (Current Code)
 - **CLI mode** is implemented and is the active entry point.

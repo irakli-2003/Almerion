@@ -1,7 +1,7 @@
 package com.dnd.model.character.stats;
 
 /**
- * The six core ability scores. Values are constrained to the standard D&D
+ * The six core ability scores. Values are constrained to the standard 5th-edition
  * range (1-30) at the point of mutation, so invalid stats can never enter the
  * system regardless of which caller (CLI, future API, tests) creates them.
  */

@@ -59,7 +59,7 @@ public final class CampaignAccess {
         if (existing != null) {
             if (existing.isDm(user)) return existing;
             throw new MembershipException("\"" + campaign.folder() + "\" is already registered by "
-                + existing.author + ". Ask them to add you as a Dungeon Master.");
+                + existing.author + ". Ask them to add you as a Game Master.");
         }
         return directory.register(id, campaign.folder(), user);
     }

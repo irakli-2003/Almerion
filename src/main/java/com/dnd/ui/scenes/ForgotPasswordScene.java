@@ -24,7 +24,7 @@ public class ForgotPasswordScene extends BaseScene {
         error.getStyleClass().add("error-label");
 
         root.getChildren().addAll(
-            title("⚔  DnD Campaign Manager  ⚔"),
+            title("⚔  Almerion  ⚔"),
             subtitle("Reset your password"),
             body("Enter the email associated with your account and we'll send a reset code."),
             emailField,

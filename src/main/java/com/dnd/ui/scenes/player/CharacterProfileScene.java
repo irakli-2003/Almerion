@@ -164,7 +164,7 @@ public class CharacterProfileScene extends BaseScene {
 
         VBox box = new VBox(8,
             sectionLabel("Appearance & Story"),
-            body("Yours to change. Stats, level, items and spells are set by your DM."),
+            body("Yours to change. Stats, level, items and spells are set by your GM."),
             nameField, descArea, saveBtn, saved);
         box.setPadding(new Insets(12, 0, 0, 0));
         return box;

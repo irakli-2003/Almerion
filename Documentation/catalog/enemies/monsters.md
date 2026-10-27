@@ -1,6 +1,6 @@
-# Monsters Catalog (Witcher Universe)
+# Monsters Catalog (early design notes)
 
-This catalog groups Witcher monsters by taxonomy. Each entry uses a compact stats window with the same field order for easier reading and future expansion.
+This catalog groups monster ideas by taxonomy. These are private design notes, not shipped content. Each entry uses a compact stats window with the same field order for easier reading and future expansion.
 
 ## Ogroids
 

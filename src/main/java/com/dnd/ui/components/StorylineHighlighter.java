@@ -37,7 +37,7 @@ public final class StorylineHighlighter {
     public static final String DIVIDER = "mk-divider";
 
     private static final Pattern READ_ALOUD_TAG = Pattern.compile("\\[/?READ ALOUD\\]");
-    private static final Pattern DM_NOTE_TAG = Pattern.compile("\\[/?DM NOTE\\]");
+    private static final Pattern DM_NOTE_TAG = Pattern.compile("\\[/?[DG]M NOTE\\]");
     private static final Pattern CHAPTER_LINE = Pattern.compile("(?m)^[ \\t]*(== |#{1,2} )\\S.*$");
     private static final Pattern SCENE_LINE = Pattern.compile("(?m)^[ \\t]*=== SCENE\\b.*$");
     private static final Pattern ENCOUNTER_LINE = Pattern.compile("(?m)^[ \\t]*=== ENCOUNTER\\b.*$");

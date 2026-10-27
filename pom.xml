@@ -6,12 +6,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.dnd</groupId>
-    <artifactId>dnd-campaign-manager</artifactId>
+    <artifactId>almerion</artifactId>
     <version>1.1.0</version>
     <packaging>jar</packaging>
 
-    <name>DnD Campaign Manager</name>
-    <description>Structured environment for running Dungeons and Dragons campaign</description>
+    <name>Almerion</name>
+    <description>Almerion: Tabletop RPG Campaign Manager</description>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -42,18 +42,17 @@
             <artifactId>javafx-fxml</artifactId>
             <version>21.0.2</version>
         </dependency>
+        <!-- Native audio playback (MP3/WAV/AIFF/M4A) for the music panel -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-media</artifactId>
+            <version>21.0.2</version>
+        </dependency>
         <!-- SMTP client for account verification / password recovery emails -->
         <dependency>
             <groupId>com.sun.mail</groupId>
             <artifactId>jakarta.mail</artifactId>
             <version>2.0.1</version>
-        </dependency>
-        <!-- Embedded Chromium: plays background music from YouTube links (JavaFX's WebView
-             can't decode YouTube streams). Native bundle (~150 MB) downloads on first use. -->
-        <dependency>
-            <groupId>me.friwi</groupId>
-            <artifactId>jcefmaven</artifactId>
-            <version>135.0.20</version>
         </dependency>
         <!-- PDF generation for printable character sheets -->
         <dependency>
@@ -66,6 +65,12 @@
             <groupId>org.fxmisc.richtext</groupId>
             <artifactId>richtextfx</artifactId>
             <version>0.11.3</version>
+        </dependency>
+        <!-- Pure-Java Git (EDL-1.0): syncs campaign folders with the GM's own GitHub repository -->
+        <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit</artifactId>
+            <version>7.8.0.202609011348-r</version>
         </dependency>
     </dependencies>
 
@@ -110,6 +115,10 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.2.0</version>
                 <configuration>
+                    <!-- Personal campaigns hold images of unknown origin; they must never ship to customers. -->
+                    <excludes>
+                        <exclude>data/custom-campaigns/**</exclude>
+                    </excludes>
                     <archive>
                         <manifest>
                             <mainClass>com.dnd.boot.Launcher</mainClass>

@@ -129,7 +129,7 @@ public class AuthService {
         }
 
         boolean sent = tryEmail(email,
-            "Verify your DnD Campaign Manager account",
+            "Verify your Almerion account",
             "Welcome, " + username + "!\n\nYour verification code is: " + code
                 + "\n\nIt expires in " + CODE_VALIDITY_MINUTES + " minutes.");
         return new CodeResult(true, "Account created. Enter the verification code to continue.", code, sent, lastEmailError);
@@ -248,7 +248,7 @@ public class AuthService {
         String code = generateCode();
         user.setResetCode(PasswordHasher.hash(code, user.getPasswordSalt()));
         user.setResetExpiresAtMillis(System.currentTimeMillis() + CODE_VALIDITY_MINUTES * 60_000L);
-        boolean sent = tryEmail(user.getEmail(), "Reset your DnD Campaign Manager password",
+        boolean sent = tryEmail(user.getEmail(), "Reset your Almerion password",
             "Your password reset code is: " + code + "\n\nIt expires in " + CODE_VALIDITY_MINUTES + " minutes.");
         if (!sent && !allowOnScreenResetCodes) {
             return CodeResult.failure("Password reset needs email delivery, which isn't set up for this app yet."

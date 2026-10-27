@@ -495,7 +495,7 @@
 
 ### რა უნდა იცოდეთ subclass-ზე
 * level 3-ზე თქვენი class სპეციალიზაციაში გადადის
-* მაგალითები: Wizard ხდება Necromancer, Fighter ხდება Battle Master, Rogue ხდება Assassin
+* მაგალითები: Wizard ხდება Necromancer, Fighter ხდება Tactician, Rogue ხდება Assassin
 * შეგიძლიათ უკვე იფიქროთ, რომელი მიმართულება მოგწონთ, მაგრამ ახლა არ უნდა გადაწყვიტოთ
 
 ### რა ჩაიწეროთ ახლა

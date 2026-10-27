@@ -1,6 +1,6 @@
 # Character Creation Guide / პერსონაჟის შექმნის გზამკვლევი
 
-This guide is a step-by-step walkthrough for building a character in this homebrew DnD project.
+This guide is a step-by-step walkthrough for building a character in this homebrew Almerion project.
 
 It follows the order in `rules/character creation.md` and provides all the concrete rules you need:
 * what options you can choose from
@@ -132,7 +132,7 @@ Race provides:
 * Languages: Common, Orc
 * Traits: Aggressive movement, powerful build
 
-#### Genasi
+#### Elementborn
 * Ability Bonuses: +2 Constitution, +1 to an elemental ability of your choice
 * Size: Medium
 * Speed: 30 ft
@@ -404,7 +404,7 @@ The rule is that subclass is chosen at level 3.
 
 ### What to know about subclass
 * At level 3, your class narrows into a specialization
-* Examples: Wizard becomes Necromancer, Fighter becomes Battle Master, Rogue becomes Assassin
+* Examples: Wizard becomes Necromancer, Fighter becomes Tactician, Rogue becomes Assassin
 * Think about which direction sounds interesting to you, but do not decide now
 
 ### What to write down now

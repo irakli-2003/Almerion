@@ -92,16 +92,48 @@ public class UpdateCheckerTest {
     public void installKeepsTheOldUpdateWhenLibrariesAreMissing() throws Exception {
         Path install = Files.createTempDirectory("install2");
         Path updates = Files.createTempDirectory("updates2");
-        Path target = updates.resolve(Launcher.UPDATE_JAR);
+        Path target = updates.resolve("almerion-1.2.0.jar");
 
         Path ok = jar(updates, "ok.part", "1.2.0", "");
-        assertEquals(UpdateChecker.Outcome.READY_AFTER_RESTART, UpdateChecker.install(ok, target, install));
+        assertEquals(UpdateChecker.Outcome.READY_AFTER_RESTART, UpdateChecker.install(ok, updates, install));
         assertTrue(Files.exists(target));
         assertFalse(Files.exists(ok));
 
         Path needsLibs = jar(updates, "libs.part", "1.3.0", "missing.jar");
-        assertEquals(UpdateChecker.Outcome.NEEDS_INSTALLER, UpdateChecker.install(needsLibs, target, install));
+        assertEquals(UpdateChecker.Outcome.NEEDS_INSTALLER, UpdateChecker.install(needsLibs, updates, install));
         assertEquals("1.2.0", Launcher.versionOf(target));
         assertFalse(Files.exists(needsLibs));
+        assertFalse(Files.exists(updates.resolve("almerion-1.3.0.jar")));
+    }
+
+    @Test
+    public void newUpdateNeverOverwritesTheJarInUse() throws Exception {
+        Path install = Files.createTempDirectory("install3");
+        Path updates = Files.createTempDirectory("updates3");
+        Path installed = jar(install, "almerion-1.2.0.jar", "1.2.0", "");
+        // The update the app is running from right now (Windows keeps it locked).
+        Path running = jar(updates, Launcher.UPDATE_JAR, "1.2.1", "");
+        try (java.util.jar.JarFile locked = new java.util.jar.JarFile(running.toFile())) {
+            Path downloaded = jar(updates, "almerion.jar.part", "1.2.3", "");
+            assertEquals(UpdateChecker.Outcome.READY_AFTER_RESTART, UpdateChecker.install(downloaded, updates, install));
+            assertEquals("1.2.1", Launcher.versionOf(running));
+        }
+        Path newest = Launcher.newestUpdate(updates, installed);
+        assertEquals(updates.resolve("almerion-1.2.3.jar"), newest);
+
+        Launcher.removeOldUpdates(updates, newest);
+        assertFalse(Files.exists(running));
+        assertTrue(Files.exists(newest));
+    }
+
+    @Test
+    public void installedVersionWinsOverOlderDownloads() throws Exception {
+        Path install = Files.createTempDirectory("install4");
+        Path updates = Files.createTempDirectory("updates4");
+        Path installed = jar(install, "almerion-1.3.0.jar", "1.3.0", "");
+        jar(updates, Launcher.UPDATE_JAR, "1.2.1", "");
+        jar(updates, "almerion-1.2.3.jar", "1.2.3", "");
+        assertNull(Launcher.newestUpdate(updates, installed));
+        assertEquals("almerion-1.2.3.jar", Launcher.updateJarName("1.2.3"));
     }
 }

@@ -70,11 +70,13 @@ public class CampaignSelectionScene extends BaseScene {
         Button openBtn = btn("Open Campaign", () -> {
             Entry selected = mine.getSelectionModel().getSelectedItem();
             if (selected == null) return;
-            Runnable open = () -> {
+            Runnable enter = () -> {
                 uiSession.getSession().setCampaignContext(
                     new CampaignContext(selected.local().folder(), selected.local().path()));
                 uiSession.getRouter().goTo(SceneType.DM_MENU);
             };
+            Runnable open = () -> GitHubSyncUi.reviewSetAsideIfAny(this, selected.local().folder(),
+                selected.local().path(), enter);
             if (!syncedFolders.contains(selected.local().folder())) {
                 open.run();
                 return;

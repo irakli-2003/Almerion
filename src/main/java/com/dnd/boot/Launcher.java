@@ -30,9 +30,10 @@ public final class Launcher {
 
     public static void main(String[] args) throws Throwable {
         Path installedJar = ownJar();
-        Path update = updateDir().resolve(UPDATE_JAR);
+        Path update = installedJar == null ? null : newestUpdate(updateDir(), installedJar);
+        if (installedJar != null) removeOldUpdates(updateDir(), update);
         ClassLoader loader = Launcher.class.getClassLoader();
-        if (installedJar != null && shouldUse(update, installedJar)) {
+        if (update != null) {
             try {
                 loader = updatedLoader(update, installedJar);
             } catch (IOException e) {
@@ -68,6 +69,62 @@ public final class Launcher {
             System.err.println("Could not rename " + legacy + " to " + current + ": " + e);
             return legacy;
         }
+    }
+
+    /**
+     * The newest downloaded update that can replace the installed jar, or null. Each update is
+     * saved under its own name ({@code almerion-<version>.jar}) because Windows keeps the jar of
+     * the running app locked, so a new download can never overwrite the one in use.
+     */
+    public static Path newestUpdate(Path dir, Path installedJar) {
+        Path best = null;
+        String bestVersion = null;
+        for (Path candidate : updateJars(dir)) {
+            if (!shouldUse(candidate, installedJar)) continue;
+            try {
+                String version = versionOf(candidate);
+                if (best == null || compareVersions(version, bestVersion) > 0) {
+                    best = candidate;
+                    bestVersion = version;
+                }
+            } catch (IOException ignored) {
+                // Unreadable: skipped.
+            }
+        }
+        return best;
+    }
+
+    /** Deletes downloaded updates other than {@code keep}; ones still in use are left for next time. */
+    public static void removeOldUpdates(Path dir, Path keep) {
+        for (Path candidate : updateJars(dir)) {
+            if (candidate.equals(keep)) continue;
+            try {
+                Files.deleteIfExists(candidate);
+            } catch (IOException | RuntimeException ignored) {
+                // Still open in another Almerion window: removed on a later start.
+            }
+        }
+    }
+
+    /** {@code almerion.jar} (older versions' name) and every {@code almerion-<version>.jar}. */
+    static List<Path> updateJars(Path dir) {
+        List<Path> jars = new ArrayList<>();
+        if (dir == null || !Files.isDirectory(dir)) return jars;
+        try (Stream<Path> files = Files.list(dir)) {
+            files.filter(p -> {
+                String name = p.getFileName().toString().toLowerCase(java.util.Locale.ROOT);
+                return name.equals(UPDATE_JAR) || (name.startsWith("almerion-") && name.endsWith(".jar"));
+            }).sorted().forEach(jars::add);
+        } catch (IOException ignored) {
+            // No updates can be read.
+        }
+        return jars;
+    }
+
+    /** The file name a downloaded update of {@code version} is saved as. */
+    public static String updateJarName(String version) {
+        String safe = version == null ? "unknown" : version.replaceAll("[^0-9A-Za-z._-]", "_");
+        return "almerion-" + safe + ".jar";
     }
 
     public static boolean shouldUse(Path update, Path installedJar) {

@@ -193,7 +193,16 @@ final class GitHubSyncUi {
         String repo = CampaignRepo.displayName(CampaignRepo.remoteUrl(folder).orElse(""));
         ButtonType syncNow = new ButtonType("Sync Now", ButtonBar.ButtonData.OK_DONE);
         ButtonType stop = new ButtonType("Stop Syncing", ButtonBar.ButtonData.OTHER);
-        Alert alert = new Alert(Alert.AlertType.INFORMATION, "", syncNow, stop, ButtonType.CLOSE);
+        List<CampaignRepo.SetAside> copies;
+        try {
+            copies = CampaignRepo.setAsideCopies(folder);
+        } catch (java.io.IOException e) {
+            copies = List.of();
+        }
+        ButtonType review = new ButtonType("Put-Aside Versions (" + copies.size() + ")", ButtonBar.ButtonData.OTHER);
+        Alert alert = copies.isEmpty()
+            ? new Alert(Alert.AlertType.INFORMATION, "", syncNow, stop, ButtonType.CLOSE)
+            : new Alert(Alert.AlertType.INFORMATION, "", review, syncNow, stop, ButtonType.CLOSE);
         alert.setHeaderText("This campaign syncs with GitHub");
         Label repoLabel = UiTranslator.skip(owner.sectionLabel(repo));
         Label state = owner.body(CampaignSyncService.shared().status(folder)
@@ -203,7 +212,9 @@ final class GitHubSyncUi {
         alert.getDialogPane().setPrefWidth(640);
         owner.styleDialog(alert);
         ButtonType choice = alert.showAndWait().orElse(ButtonType.CLOSE);
-        if (choice == syncNow) {
+        if (choice == review) {
+            reviewSetAside(owner, folderName, folder, copies, changed);
+        } else if (choice == syncNow) {
             CampaignSyncService.shared().syncNow(folder).thenAccept(result -> Platform.runLater(() ->
                 showResult(owner, folderName, folder, result, changed)));
         } else if (choice == stop) {
@@ -451,6 +462,121 @@ final class GitHubSyncUi {
         fitTexts(box);
         stage.setScene(owner.themedScene(box, 760, 620));
         stage.show();
+    }
+
+    /** Shows the put-aside versions for review when the campaign has any, then runs {@code after}. */
+    static void reviewSetAsideIfAny(BaseScene owner, String folderName, Path folder, Runnable after) {
+        owner.background(unchecked(() -> CampaignRepo.setAsideCopies(folder)), copies -> {
+            if (copies.isEmpty()) after.run();
+            else reviewSetAside(owner, folderName, folder, copies, after);
+        }, error -> after.run());
+    }
+
+    private enum SetAsideChoice { RESTORE, DISCARD, LATER }
+
+    /**
+     * Versions an earlier sync put aside next to a file ({@code name.remote-<date>}) instead of
+     * asking: let the GM put each one back, throw it away, or leave it for later.
+     */
+    static void reviewSetAside(BaseScene owner, String folderName, Path folder, List<CampaignRepo.SetAside> copies,
+                               Runnable after) {
+        AtomicBoolean finished = new AtomicBoolean();
+        Runnable done = () -> {
+            if (finished.compareAndSet(false, true)) after.run();
+        };
+        Stage stage = window("Put-aside versions - " + folderName);
+        java.util.Map<CampaignRepo.SetAside, ToggleGroup> groups = new java.util.LinkedHashMap<>();
+        VBox rows = new VBox(12);
+        for (CampaignRepo.SetAside copy : copies) {
+            ToggleGroup group = new ToggleGroup();
+            RadioButton restore = setAsideChoice(owner, "Use the put-aside version (replaces this computer's file)",
+                SetAsideChoice.RESTORE, group);
+            RadioButton discard = setAsideChoice(owner, "Keep this computer's file and delete the put-aside version",
+                SetAsideChoice.DISCARD, group);
+            RadioButton later = setAsideChoice(owner, "Decide later", SetAsideChoice.LATER, group);
+            later.setSelected(true);
+            Label what = owner.body(copy.putAside() == null
+                ? "GitHub's version, put aside because this computer had changed the same file."
+                : "GitHub's version, put aside on " + WHEN.format(copy.putAside())
+                    + " because this computer had changed the same file.");
+            Label current = owner.body(lastChanged(folder.resolve(copy.original())));
+            Label path = UiTranslator.skip(owner.sectionLabel(copy.original()));
+            VBox card = new VBox(6, path, what, current, restore, discard, later);
+            card.setPadding(new Insets(10));
+            card.setStyle("-fx-border-color: #c9a84c66; -fx-border-width: 1px; -fx-background-color: #ffffff08;");
+            rows.getChildren().add(card);
+            groups.put(copy, group);
+        }
+        ScrollPane scroll = new ScrollPane(rows);
+        scroll.setFitToWidth(true);
+        scroll.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
+        VBox.setVgrow(scroll, Priority.ALWAYS);
+
+        Label status = owner.body("");
+        Button allRestore = owner.btn("Use All Put-Aside Versions", () -> selectAllSetAside(groups, SetAsideChoice.RESTORE));
+        Button allDiscard = owner.btn("Keep All of This Computer's Files",
+            () -> selectAllSetAside(groups, SetAsideChoice.DISCARD));
+        Button apply = owner.btn("Apply Choices", () -> { });
+        Button close = owner.dangerBtn("Decide Later", stage::close);
+        apply.setOnAction(e -> {
+            java.util.Map<CampaignRepo.SetAside, SetAsideChoice> chosen = new java.util.LinkedHashMap<>();
+            groups.forEach((copy, group) -> chosen.put(copy, (SetAsideChoice) group.getSelectedToggle().getUserData()));
+            apply.setDisable(true);
+            close.setDisable(true);
+            owner.background(unchecked(() -> {
+                int changed = 0;
+                for (var entry : chosen.entrySet()) {
+                    if (entry.getValue() == SetAsideChoice.RESTORE) CampaignRepo.restoreSetAside(folder, entry.getKey());
+                    else if (entry.getValue() == SetAsideChoice.DISCARD) CampaignRepo.discardSetAside(folder, entry.getKey());
+                    else continue;
+                    changed++;
+                }
+                return changed;
+            }), changed -> {
+                if (changed > 0 && CampaignRepo.isSynced(folder)) CampaignSyncService.shared().syncNow(folder);
+                stage.close();
+            }, error -> {
+                apply.setDisable(false);
+                close.setDisable(false);
+                status.setText(explain(error));
+            });
+        });
+        stage.setOnHidden(e -> done.run());
+
+        Label intro = owner.body("Earlier versions of Almerion did not ask which version to keep when both computers"
+            + " had changed the same file: they kept this computer's file and saved GitHub's version next to it."
+            + " Choose what to do with each one. Your choices are synced to your other computers.");
+        VBox box = new VBox(12, intro, scroll, flow(allRestore, allDiscard), flow(apply, close), status);
+        box.setPadding(new Insets(20));
+        fitTexts(box);
+        stage.setScene(owner.themedScene(box, 760, 620));
+        stage.show();
+    }
+
+    private static String lastChanged(Path file) {
+        try {
+            return "This computer's file was last changed on " + WHEN.format(
+                java.nio.file.Files.getLastModifiedTime(file).toInstant().atZone(java.time.ZoneId.systemDefault())) + ".";
+        } catch (java.io.IOException e) {
+            return "This computer no longer has this file.";
+        }
+    }
+
+    private static RadioButton setAsideChoice(BaseScene owner, String text, SetAsideChoice choice, ToggleGroup group) {
+        RadioButton button = new RadioButton(text);
+        button.getStyleClass().add("body-label");
+        button.setWrapText(true);
+        button.setUserData(choice);
+        button.setToggleGroup(group);
+        return button;
+    }
+
+    private static void selectAllSetAside(java.util.Map<CampaignRepo.SetAside, ToggleGroup> groups, SetAsideChoice choice) {
+        for (ToggleGroup group : groups.values()) {
+            for (Toggle toggle : group.getToggles()) {
+                if (toggle.getUserData() == choice) toggle.setSelected(true);
+            }
+        }
     }
 
     private static RadioButton choice(BaseScene owner, String text, CampaignRepo.Choice choice, ToggleGroup group) {

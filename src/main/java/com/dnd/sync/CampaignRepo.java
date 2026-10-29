@@ -74,6 +74,58 @@ public final class CampaignRepo {
     public record Identity(String name, String email) {
     }
 
+    /**
+     * A version of {@code original} that a sync put aside as {@code copy}
+     * ({@code <file>.remote-<yyyyMMdd-HHmmss>}): GitHub's version of a file both computers had
+     * changed. Up to version 1.2.1 this happened automatically on every such conflict.
+     */
+    public record SetAside(String original, String copy, java.time.LocalDateTime putAside) {
+    }
+
+    private static final Pattern SET_ASIDE = Pattern.compile("^(.+)\\.remote-(\\d{8}-\\d{6})$");
+
+    /** Every put-aside copy in the campaign folder, oldest first (paths use '/'). */
+    public static List<SetAside> setAsideCopies(Path folder) throws IOException {
+        List<SetAside> found = new ArrayList<>();
+        if (!Files.isDirectory(folder)) return found;
+        try (java.util.stream.Stream<Path> files = Files.walk(folder)) {
+            for (Path file : (Iterable<Path>) files::iterator) {
+                String relative = folder.relativize(file).toString().replace('\\', '/');
+                if (relative.equals(".git") || relative.startsWith(".git/") || !Files.isRegularFile(file)) continue;
+                java.util.regex.Matcher m = SET_ASIDE.matcher(relative);
+                if (!m.matches()) continue;
+                java.time.LocalDateTime when;
+                try {
+                    when = java.time.LocalDateTime.parse(m.group(2), STAMP);
+                } catch (java.time.format.DateTimeParseException e) {
+                    when = null;
+                }
+                found.add(new SetAside(m.group(1), relative, when));
+            }
+        }
+        found.sort(java.util.Comparator.comparing(SetAside::putAside,
+            java.util.Comparator.nullsFirst(java.util.Comparator.naturalOrder())).thenComparing(SetAside::copy));
+        return found;
+    }
+
+    /** Puts the set-aside version back in place of the current file (the copy is removed). */
+    public static void restoreSetAside(Path folder, SetAside copy) throws IOException {
+        Path source = folder.resolve(copy.copy()).normalize();
+        Path target = folder.resolve(copy.original()).normalize();
+        if (!source.startsWith(folder.normalize()) || !target.startsWith(folder.normalize())) {
+            throw new IOException("Not a file of this campaign: " + copy.copy());
+        }
+        Files.createDirectories(target.getParent());
+        Files.move(source, target, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    /** Keeps the current file and deletes the set-aside copy. */
+    public static void discardSetAside(Path folder, SetAside copy) throws IOException {
+        Path source = folder.resolve(copy.copy()).normalize();
+        if (!source.startsWith(folder.normalize())) throw new IOException("Not a file of this campaign: " + copy.copy());
+        Files.deleteIfExists(source);
+    }
+
     public enum Outcome { SYNCED, CONFLICT, REMOTE_AHEAD, OFFLINE, AUTH_FAILED, FAILED }
 
     /** What to keep for a file both computers changed. */

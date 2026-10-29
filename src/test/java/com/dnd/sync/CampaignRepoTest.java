@@ -268,4 +268,25 @@ public class CampaignRepoTest {
         assertEquals("gm/almerion-campaign-x", CampaignRepo.displayName("https://github.com/gm/almerion-campaign-x.git"));
         assertEquals("gm/r", CampaignRepo.displayName("https://github.com/gm/r"));
     }
+
+    @Test
+    public void putAsideCopiesCanBeRestoredOrDiscarded() throws Exception {
+        Path folder = campaign("aside");
+        write(folder, "items/sword.json", "local");
+        write(folder, "items/sword.json.remote-20261027-183000", "github");
+        write(folder, "spells/fire.json", "mine");
+        write(folder, "spells/fire.json.remote-20261028-090000", "theirs");
+        write(folder, "notes.remote-old", "not a copy");
+
+        java.util.List<CampaignRepo.SetAside> copies = CampaignRepo.setAsideCopies(folder);
+        assertEquals(2, copies.size());
+        assertEquals("items/sword.json", copies.get(0).original());
+        assertEquals(java.time.LocalDateTime.of(2026, 10, 27, 18, 30), copies.get(0).putAside());
+
+        CampaignRepo.restoreSetAside(folder, copies.get(0));
+        assertEquals("github", read(folder, "items/sword.json"));
+        CampaignRepo.discardSetAside(folder, copies.get(1));
+        assertEquals("mine", read(folder, "spells/fire.json"));
+        assertTrue(CampaignRepo.setAsideCopies(folder).isEmpty());
+    }
 }

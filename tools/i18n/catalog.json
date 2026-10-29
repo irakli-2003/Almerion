@@ -45,14 +45,14 @@
   "key": "\"{A}\" is now on this computer and syncs with GitHub automatically. If it isn't in your list yet, claim it below or ask its author to add you as a Game Master.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:316"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:327"
   ]
  },
  {
   "key": "\"{A}\" is up to date on GitHub.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:377"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:388"
   ]
  },
  {
@@ -154,7 +154,7 @@
   "key": "(public)",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:354"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:365"
   ]
  },
  {
@@ -303,7 +303,7 @@
   "key": "+refs/heads/*:refs/remotes/{A}/*",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/sync/CampaignRepo.java:179"
+   "src/main/java/com/dnd/sync/CampaignRepo.java:231"
   ]
  },
  {
@@ -459,7 +459,7 @@
   "key": "A campaign with that folder name is already on this computer. Pick another name.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:306"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:317"
   ]
  },
  {
@@ -1025,7 +1025,7 @@
   "key": "Almerion campaign: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:247"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:258"
   ]
  },
  {
@@ -1153,7 +1153,7 @@
   "key": "another computer",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/sync/CampaignRepo.java:519"
+   "src/main/java/com/dnd/sync/CampaignRepo.java:571"
   ]
  },
  {
@@ -1195,7 +1195,8 @@
   "key": "Apply Choices",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:430"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:441",
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:519"
   ]
  },
  {
@@ -1587,14 +1588,14 @@
   "key": "Campaign downloaded",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:316"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:327"
   ]
  },
  {
   "key": "Campaign folder name",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:293"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:304"
   ]
  },
  {
@@ -1674,7 +1675,7 @@
   "key": "Can't reach GitHub. Check your internet connection and try again.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:604"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:730"
   ]
  },
  {
@@ -1862,7 +1863,7 @@
   "key": "changed by",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:478"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:604"
   ]
  },
  {
@@ -2054,7 +2055,7 @@
   "key": "Choose which version to keep - {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:402"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:413"
   ]
  },
  {
@@ -2075,14 +2076,14 @@
   "key": "Claim",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:162"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:164"
   ]
  },
  {
   "key": "Claim a campaign to become its author GM. Only you will see it until you add players or GMs.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:160"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:162"
   ]
  },
  {
@@ -2304,7 +2305,7 @@
   "key": "Combine with an existing repository",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:283"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:294"
   ]
  },
  {
@@ -2362,7 +2363,7 @@
   "key": "Confirm Delete",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:192"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:194"
   ]
  },
  {
@@ -2544,7 +2545,7 @@
   "key": "Could not rename {A} to {B}: {C}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/boot/Launcher.java:68"
+   "src/main/java/com/dnd/boot/Launcher.java:69"
   ]
  },
  {
@@ -2601,14 +2602,14 @@
   "key": "Couldn't claim \"{A}\"",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:165"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:167"
   ]
  },
  {
   "key": "Couldn't delete the campaign",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:200"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:202"
   ]
  },
  {
@@ -2678,7 +2679,7 @@
   "key": "Couldn't stop syncing",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:211"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:222"
   ]
  },
  {
@@ -2786,7 +2787,7 @@
   "key": "Create New Campaign",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:103"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:105"
   ]
  },
  {
@@ -2800,14 +2801,14 @@
   "key": "Create Private Repository and Upload",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:222"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:233"
   ]
  },
  {
   "key": "Creating the private repository...",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:245"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:256"
   ]
  },
  {
@@ -2871,7 +2872,7 @@
   "key": "d MMM yyyy, HH:mm",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:389"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:400"
   ]
  },
  {
@@ -2995,7 +2996,15 @@
   "key": "Decide Later",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:431"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:442",
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:520"
+  ]
+ },
+ {
+  "key": "Decide later",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:496"
   ]
  },
  {
@@ -3034,7 +3043,7 @@
   "key": "Delete campaign '{A}'? Its files and its member list are removed. This cannot be undone.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:190"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:192"
   ]
  },
  {
@@ -3062,7 +3071,7 @@
   "key": "Delete Selected",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:104"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:106"
   ]
  },
  {
@@ -3090,7 +3099,7 @@
   "key": "deleted by",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:478"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:604"
   ]
  },
  {
@@ -3278,7 +3287,7 @@
   "key": "Download Campaign",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:299"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:310"
   ]
  },
  {
@@ -3313,7 +3322,7 @@
   "key": "Downloading...",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:311"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:322"
   ]
  },
  {
@@ -3356,6 +3365,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/model/rules/FeatureRules.java:356"
+  ]
+ },
+ {
+  "key": "Earlier versions of Almerion did not ask which version to keep when both computers had changed the same file: they kept this computer's file and saved GitHub's version next to it. Choose what to do with each one. Your choices are synced to your other computers.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:546"
   ]
  },
  {
@@ -3898,7 +3914,7 @@
   "key": "Files changed both on this computer and on GitHub since they were last in step: {A}. Nothing was overwritten: choose which version to keep.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/sync/CampaignRepo.java:358"
+   "src/main/java/com/dnd/sync/CampaignRepo.java:410"
   ]
  },
  {
@@ -4217,14 +4233,14 @@
   "key": "Get a Campaign from GitHub",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:291"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:302"
   ]
  },
  {
   "key": "Get Campaign from GitHub...",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:121"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:123"
   ]
  },
  {
@@ -4328,7 +4344,7 @@
   "key": "Getting the latest changes from GitHub...",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:83"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:85"
   ]
  },
  {
@@ -4407,21 +4423,35 @@
   "key": "GitHub sync",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:503"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:629"
   ]
  },
  {
   "key": "GitHub sync on",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:514"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:640"
   ]
  },
  {
   "key": "GitHub's version is newer.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:413"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:424"
+  ]
+ },
+ {
+  "key": "GitHub's version, put aside because this computer had changed the same file.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:499"
+  ]
+ },
+ {
+  "key": "GitHub's version, put aside on {A} because this computer had changed the same file.",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:500"
   ]
  },
  {
@@ -4435,7 +4465,7 @@
   "key": "GitHub: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:408"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:419"
   ]
  },
  {
@@ -4799,7 +4829,7 @@
   "key": "Ignoring the downloaded update: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/boot/Launcher.java:39"
+   "src/main/java/com/dnd/boot/Launcher.java:40"
   ]
  },
  {
@@ -5222,21 +5252,35 @@
   "key": "Keep All from GitHub",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:429"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:440"
   ]
  },
  {
   "key": "Keep All from This Computer",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:428"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:439"
+  ]
+ },
+ {
+  "key": "Keep All of This Computer's Files",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:517"
   ]
  },
  {
   "key": "Keep both (GitHub's version is saved next to this computer's)",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:409"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:420"
+  ]
+ },
+ {
+  "key": "Keep this computer's file and delete the put-aside version",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:494"
   ]
  },
  {
@@ -5476,7 +5520,7 @@
   "key": "Loading your repositories...",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:363"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:374"
   ]
  },
  {
@@ -5828,21 +5872,21 @@
   "key": "Merge campaign changes from GitHub",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/sync/CampaignRepo.java:332"
+   "src/main/java/com/dnd/sync/CampaignRepo.java:384"
   ]
  },
  {
   "key": "Merge campaign changes from GitHub (chose versions of {A} file{B})",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/sync/CampaignRepo.java:391"
+   "src/main/java/com/dnd/sync/CampaignRepo.java:443"
   ]
  },
  {
   "key": "Merging and uploading...",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:437"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:448"
   ]
  },
  {
@@ -6212,7 +6256,7 @@
   "key": "New private repository",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:266"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:277"
   ]
  },
  {
@@ -6674,6 +6718,14 @@
   ]
  },
  {
+  "key": "Not a file of this campaign: {A}",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/sync/CampaignRepo.java:116",
+   "src/main/java/com/dnd/sync/CampaignRepo.java:125"
+  ]
+ },
+ {
   "key": "Not enough mana - needs {A}, has {B}.",
   "kind": "pattern",
   "where": [
@@ -6782,7 +6834,7 @@
   "key": "Offline - showing the campaign list saved from your last connection.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:147"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:149"
   ]
  },
  {
@@ -6817,7 +6869,7 @@
   "key": "On this device, not registered to anyone",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:159"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:161"
   ]
  },
  {
@@ -6901,7 +6953,7 @@
   "key": "Only the author can delete this campaign",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:185"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:187"
   ]
  },
  {
@@ -7035,7 +7087,7 @@
   "key": "Or an existing repository",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:268"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:279"
   ]
  },
  {
@@ -7291,7 +7343,7 @@
   "key": "Pick a campaign",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:116"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:118"
   ]
  },
  {
@@ -7340,7 +7392,7 @@
   "key": "Pick the repository you synced the campaign to from your other computer.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:327"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:338"
   ]
  },
  {
@@ -7731,6 +7783,20 @@
   ]
  },
  {
+  "key": "Put-Aside Versions ({A})",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:202"
+  ]
+ },
+ {
+  "key": "Put-aside versions - {A}",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:487"
+  ]
+ },
+ {
   "key": "Race",
   "kind": "exact",
   "where": [
@@ -8000,14 +8066,14 @@
   "key": "Repository name",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:217"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:228"
   ]
  },
  {
   "key": "Repository:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:202"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:211"
   ]
  },
  {
@@ -8327,7 +8393,7 @@
   "key": "Save it on this computer as:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:328"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:339"
   ]
  },
  {
@@ -8499,7 +8565,7 @@
   "key": "Select one of your campaigns in the list first.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:116"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:118"
   ]
  },
  {
@@ -9307,7 +9373,7 @@
   "key": "Sync \"{A}\" with GitHub",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:216"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:227"
   ]
  },
  {
@@ -9321,21 +9387,21 @@
   "key": "Sync problem",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:383"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:394"
   ]
  },
  {
   "key": "Sync with GitHub...",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:113"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:115"
   ]
  },
  {
   "key": "Synced automatically when you open and leave it.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:200"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:209"
   ]
  },
  {
@@ -9343,28 +9409,28 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/sync/CampaignSyncService.java:196",
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:376"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:387"
   ]
  },
  {
   "key": "Synced.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/sync/CampaignRepo.java:393"
+   "src/main/java/com/dnd/sync/CampaignRepo.java:445"
   ]
  },
  {
   "key": "Synced. GitHub's version was saved next to yours as: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/sync/CampaignRepo.java:394"
+   "src/main/java/com/dnd/sync/CampaignRepo.java:446"
   ]
  },
  {
   "key": "Syncing the campaign with the repository...",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:232"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:243"
   ]
  },
  {
@@ -9604,7 +9670,7 @@
   "key": "The campaign is uploaded to a private repository in your GitHub account. From then on it syncs automatically: changes from your other computers are fetched when you open it, and yours are uploaded while you work and when you leave it.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:263"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:274"
   ]
  },
  {
@@ -9661,7 +9727,7 @@
   "key": "The downloaded file is not an app update.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/update/UpdateChecker.java:100"
+   "src/main/java/com/dnd/update/UpdateChecker.java:105"
   ]
  },
  {
@@ -9851,7 +9917,7 @@
   "key": "This campaign syncs with GitHub",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:197"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:206"
   ]
  },
  {
@@ -9870,17 +9936,31 @@
   ]
  },
  {
+  "key": "This computer no longer has this file.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:561"
+  ]
+ },
+ {
+  "key": "This computer's file was last changed on {A}.",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:558"
+  ]
+ },
+ {
   "key": "This computer's version is newer.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:413"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:424"
   ]
  },
  {
   "key": "This computer: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:407"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:418"
   ]
  },
  {
@@ -9901,7 +9981,7 @@
   "key": "This repository already has files. They will be combined with this campaign. Where both have changed the same file, you will be asked which version to keep. Continue?",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:280"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:291"
   ]
  },
  {
@@ -10368,7 +10448,7 @@
   "key": "Uploading the campaign...",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:232"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:243"
   ]
  },
  {
@@ -10388,17 +10468,31 @@
   ]
  },
  {
+  "key": "Use All Put-Aside Versions",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:516"
+  ]
+ },
+ {
   "key": "Use only letters, numbers, dots, dashes and underscores in the repository name.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:241"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:252"
   ]
  },
  {
   "key": "Use Selected Repository",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:223"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:234"
+  ]
+ },
+ {
+  "key": "Use the put-aside version (replaces this computer's file)",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:492"
   ]
  },
  {
@@ -10767,7 +10861,7 @@
   "key": "Will sync later",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:378"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:389"
   ]
  },
  {
@@ -10894,7 +10988,7 @@
   "key": "You aren't a Game Master of any campaign on this device yet.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:146"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:148"
   ]
  },
  {
@@ -10922,7 +11016,7 @@
   "key": "You don't have any repositories on GitHub yet.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:369"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:380"
   ]
  },
  {
@@ -11042,7 +11136,7 @@
   "key": "Yours, but not on this device",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:176"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:178"
   ]
  },
  {
@@ -11261,7 +11355,7 @@
   "key": "{A} created \"{B}\". Ask them to delete it.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:186"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:188"
   ]
  },
  {
@@ -11289,7 +11383,7 @@
   "key": "{A} Files changed on only one side are merged automatically. Until you apply your choices, nothing is overwritten or uploaded; \"Decide Later\" keeps this computer's files as they are and asks again next time.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:446"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:457"
   ]
  },
  {
@@ -11634,7 +11728,7 @@
   "key": "• {A} - copy its folder into this device's campaigns folder to run it here.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:178"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:180"
   ]
  },
  {
@@ -11867,7 +11961,7 @@
   "key": "⚠ Conflict - choose versions",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:539"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:665"
   ]
  },
  {
@@ -11881,14 +11975,14 @@
   "key": "⚠ Offline - will retry",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:535"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:661"
   ]
  },
  {
   "key": "⚠ Sync problem",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:543"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:669"
   ]
  },
  {
@@ -11916,7 +12010,7 @@
   "key": "✓ Synced",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:531"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:657"
   ]
  },
  {
@@ -11972,7 +12066,7 @@
   "key": "⟳ Syncing...",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:527"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:653"
   ]
  },
  {

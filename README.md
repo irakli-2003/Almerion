@@ -244,6 +244,12 @@ when, and the newer one is selected for you. You can choose **This computer**, *
 **Keep both**, which keeps yours and saves GitHub's next to it as `name.remote-<date-time>`.
 If you click **Decide Later**, nothing is uploaded and you are asked again at the next sync.
 
+**Put-aside versions:** versions saved next to a file as `name.remote-<date-time>` (by **Keep
+both**, or automatically by Almerion 1.2.1 and older) are listed when you open the campaign, and
+under **Sync with GitHub… → Put-Aside Versions**. For each one choose **Use the put-aside
+version** (it replaces this computer's file), **Keep this computer's file** (the copy is deleted)
+or **Decide later**.
+
 To stop syncing a campaign, use **Sync with GitHub… → Stop Syncing**. **Unlink** removes your
 GitHub sign-in from this computer. Your sign-in is stored only on this computer (encrypted for
 your Windows user) and is never put into a campaign folder.

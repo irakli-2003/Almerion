@@ -92,15 +92,20 @@ public final class UpdateChecker {
         try (InputStream in = response.body()) {
             Files.copy(in, partial, StandardCopyOption.REPLACE_EXISTING);
         }
-        return install(partial, dir.resolve(Launcher.UPDATE_JAR), installedLibraries());
+        return install(partial, dir, installedLibraries());
     }
 
-    static Outcome install(Path downloaded, Path target, Path libDir) throws IOException {
+    /**
+     * Moves a downloaded jar into {@code dir} as {@code almerion-<version>.jar}. A new name per
+     * version, because the jar the app is running from is locked by Windows and can't be replaced.
+     */
+    static Outcome install(Path downloaded, Path dir, Path libDir) throws IOException {
         try {
-            if (Launcher.versionOf(downloaded) == null) throw new IOException("The downloaded file is not an app update.");
+            String version = Launcher.versionOf(downloaded);
+            if (version == null) throw new IOException("The downloaded file is not an app update.");
             List<String> missing = libDir == null ? List.of() : Launcher.missingLibraries(downloaded, libDir);
             if (!missing.isEmpty()) return Outcome.NEEDS_INSTALLER;
-            Files.move(downloaded, target, StandardCopyOption.REPLACE_EXISTING);
+            Files.move(downloaded, dir.resolve(Launcher.updateJarName(version)), StandardCopyOption.REPLACE_EXISTING);
             return Outcome.READY_AFTER_RESTART;
         } finally {
             Files.deleteIfExists(downloaded);

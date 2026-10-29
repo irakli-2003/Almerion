@@ -71,10 +71,19 @@ public final class FieldHelp {
         f("Spell.cooldownRounds", "Rounds before it can be used again; 0 = no wait.");
         f("Spell.requiredConsumables", "Items used up every time (e.g. ammunition). Casting fails without them.");
         f("Spell.requiredTools", "Items that must be carried but are not used up.");
-        f("Spell.components", "V = spoken words, S = hand gestures, M = a material. A gagged or bound caster can't cast spells that need V or S.");
-        f("Spell.materialComponent", "The material the spell needs (the M component), e.g. 'a pinch of sulfur'.");
-        f("Spell.materialCost", "Gold value of the material; 0 = trivial, a component pouch covers it.");
-        f("Spell.materialConsumed", "Tick if casting destroys the material, so it must be bought again.");
+        f("Spell.components", "What casting needs - tick each one that applies. A gagged or bound caster can't cast spells that need Verbal or Somatic.");
+        f("SpellComponents.verbal", "Tick if the spell needs spoken words.");
+        f("SpellComponents.somatic", "Tick if the spell needs hand gestures.");
+        f("SpellComponents.material", "Tick if the spell needs a material (describe it below).");
+        f("SpellComponents.materialComponent", "The material the spell needs, e.g. 'a pinch of sulfur'. Only used when Material is ticked.");
+        f("SpellComponents.materialCost", "Gold value of the material; 0 = trivial, a component pouch covers it.");
+        f("SpellComponents.materialConsumed", "Tick if casting destroys the material, so it must be bought again.");
+        f("Spell.effects", "Effects from this campaign that the spell applies. Each one's power (constant + dice) replaces the effect's own damage/healing amount; leave it at 0 with no dice to use the effect's own amount.");
+        f("SpellEffect.effectId", "The campaign effect this spell applies.");
+        f("SpellEffect.constant", "Flat part of the effect's power, added to the dice (e.g. the 2 in 1d4 + 2).");
+        f("SpellEffect.dice", "Dice rolled for the effect's power; the DM rolls them at the table when the spell is cast.");
+        f("Spell.damage", "Damage dealt on a hit: the dice rolled plus a flat constant, and the damage type.");
+        f("Damage.constant", "Flat amount added to the dice, e.g. the 3 in 2d6 + 3. Can be used on its own without dice.");
         f("Spell.concentration", "Concentration spells end if the caster casts another one or is badly hurt.");
 
         // Crafting

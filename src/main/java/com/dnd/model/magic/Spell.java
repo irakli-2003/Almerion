@@ -4,7 +4,11 @@ import com.dnd.model.combat.Damage;
 import com.dnd.model.combat.Effect;
 import com.dnd.model.interfaces.Printable;
 import com.dnd.model.item.Item;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Spell implements Printable {
@@ -23,16 +27,10 @@ public class Spell implements Printable {
     private List<Item> requiredConsumables;
     private List<Item> requiredTools;
     private Concentration concentration;
-    private List<Effect> effects;
+    private List<SpellEffect> effects = new ArrayList<>();
     private Damage damage;
-    /** Spell components: any of "V" (spoken words), "S" (gestures), "M" (a material). */
-    private List<String> components = new java.util.ArrayList<>();
-    /** What the material component is, e.g. "a pinch of sulfur and bat guano". */
-    private String materialComponent;
-    /** Gold value of a costly material (0 = trivial, covered by a component pouch or focus). */
-    private int materialCost;
-    /** True when casting uses the material up. */
-    private boolean materialConsumed;
+    /** Verbal / somatic / material ticks plus the material's description, cost and consumption. */
+    private SpellComponents components = new SpellComponents();
 
     public Spell() {
     }
@@ -52,53 +50,74 @@ public class Spell implements Printable {
         this.requiredConsumables = requiredConsumables;
         this.requiredTools = requiredTools;
         this.concentration = concentration;
-        this.effects = effects;
+        if (effects != null) {
+            for (Effect effect : effects) {
+                if (effect != null) this.effects.add(SpellEffect.of(effect));
+            }
+        }
         this.damage = damage;
     }
 
-    public List<String> getComponents() {
+    /** Edited in the DM's form as one group of separate fields; see the JSON accessors below. */
+    @JsonIgnore
+    public SpellComponents getComponents() {
         return components;
     }
 
-    public void setComponents(List<String> components) {
-        this.components = components == null ? new java.util.ArrayList<>() : components;
-    }
-
-    public String getMaterialComponent() {
-        return materialComponent;
-    }
-
-    public void setMaterialComponent(String materialComponent) {
-        this.materialComponent = materialComponent;
-    }
-
-    public int getMaterialCost() {
-        return materialCost;
-    }
-
-    public void setMaterialCost(int materialCost) {
-        this.materialCost = Math.max(0, materialCost);
-    }
-
-    public boolean isMaterialConsumed() {
-        return materialConsumed;
-    }
-
-    public void setMaterialConsumed(boolean materialConsumed) {
-        this.materialConsumed = materialConsumed;
+    @JsonIgnore
+    public void setComponents(SpellComponents components) {
+        this.components = components == null ? new SpellComponents() : components;
     }
 
     /** Short component line, e.g. "V, S, M (a bit of fleece)" or "V"; empty when none are listed. */
     public String componentsText() {
-        if (components == null || components.isEmpty()) return "";
-        StringBuilder sb = new StringBuilder(String.join(", ", components));
-        if (components.contains("M") && materialComponent != null && !materialComponent.isBlank()) {
-            sb.append(" (").append(materialComponent);
-            if (materialCost > 0) sb.append(", worth ").append(materialCost).append(" gp");
-            if (materialConsumed) sb.append(", consumed");
-            sb.append(")");
-        }
-        return sb.toString();
+        return components.text();
+    }
+
+    // Spell files keep the original shape: a "components" letter list beside top-level material
+    // fields. Reading also accepts a single line such as "V, S, M (a pinch of sulfur)".
+
+    @JsonProperty("components")
+    private List<String> jsonComponents() {
+        return components.letters();
+    }
+
+    @JsonProperty("components")
+    private void jsonComponents(JsonNode node) {
+        components.setVerbal(false);
+        components.setSomatic(false);
+        components.setMaterial(false);
+        components.readLegacy(node);
+    }
+
+    @JsonProperty("materialComponent")
+    private String jsonMaterialComponent() {
+        return components.getMaterialComponent();
+    }
+
+    @JsonProperty("materialComponent")
+    private void jsonMaterialComponent(String text) {
+        if (text != null && !text.isBlank()) components.setMaterialComponent(text);
+    }
+
+    @JsonProperty("materialCost")
+    private int jsonMaterialCost() {
+        return components.getMaterialCost();
+    }
+
+    @JsonProperty("materialCost")
+    private void jsonMaterialCost(int cost) {
+        if (cost > 0) components.setMaterialCost(cost);
+    }
+
+    @JsonProperty("materialConsumed")
+    private boolean jsonMaterialConsumed() {
+        return components.isMaterialConsumed();
+    }
+
+    @JsonProperty("materialConsumed")
+    private void jsonMaterialConsumed(boolean consumed) {
+        if (consumed) components.setMaterialConsumed(true);
     }
 
     public String getId() {
@@ -209,12 +228,13 @@ public class Spell implements Printable {
         this.concentration = concentration;
     }
 
-    public List<Effect> getEffects() {
+    /** Effects picked from the campaign's catalogue, each with the power this spell gives it. */
+    public List<SpellEffect> getEffects() {
         return effects;
     }
 
-    public void setEffects(List<Effect> effects) {
-        this.effects = effects;
+    public void setEffects(List<SpellEffect> effects) {
+        this.effects = effects == null ? new ArrayList<>() : effects;
     }
 
     public Damage getDamage() {

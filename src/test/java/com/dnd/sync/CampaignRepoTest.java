@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Clock;
+import java.util.Map;
 import java.time.Instant;
 import java.time.ZoneOffset;
 
@@ -115,7 +116,7 @@ public class CampaignRepoTest {
     }
 
     @Test
-    public void conflictKeepsBothVersions() throws Exception {
+    public void conflictIsNotDecidedWithoutTheGm() throws Exception {
         Path first = campaign("first");
         repo(first).connect(remote);
         Path second = cloneOf("second");
@@ -127,20 +128,99 @@ public class CampaignRepoTest {
         write(second, "world/npcs.json", "[\"from second\"]");
         CampaignRepo.Result result = repo(second).sync();
         assertEquals(result.message(), CampaignRepo.Outcome.CONFLICT, result.outcome());
+        assertEquals(1, result.conflicts().size());
+        CampaignRepo.Conflict conflict = result.conflicts().get(0);
+        assertEquals("world/npcs.json", conflict.path());
+        assertEquals("gm", conflict.mine().author());
+        assertEquals("gm", conflict.github().author());
+        assertFalse(conflict.github().deleted());
+        // Nothing was overwritten or merged half-way.
+        assertEquals("[\"from second\"]", read(second, "world/npcs.json"));
+        assertFalse(Files.exists(second.resolve("world/items.json")));
+        assertFalse(Files.exists(second.resolve("world/npcs.json.remote-20261027-183000")));
+        try (org.eclipse.jgit.api.Git git = org.eclipse.jgit.api.Git.open(second.toFile())) {
+            assertEquals(org.eclipse.jgit.lib.RepositoryState.SAFE, git.getRepository().getRepositoryState());
+        }
+        // And GitHub still has the first computer's version.
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(first).sync().outcome());
+        assertEquals("[\"from first\"]", read(first, "world/npcs.json"));
+    }
+
+    @Test
+    public void choosingGithubsVersionTakesItAndKeepsOtherChanges() throws Exception {
+        Path first = campaign("first");
+        repo(first).connect(remote);
+        Path second = cloneOf("second");
+
+        write(first, "world/npcs.json", "[\"from first\"]");
+        write(first, "world/items.json", "[\"only first touched this\"]");
+        repo(first).sync();
+        write(second, "world/npcs.json", "[\"from second\"]");
+        write(second, "world/places.json", "[\"only second touched this\"]");
+        assertEquals(CampaignRepo.Outcome.CONFLICT, repo(second).sync().outcome());
+
+        CampaignRepo.Result resolved = repo(second).resolve(Map.of("world/npcs.json", CampaignRepo.Choice.GITHUB));
+        assertEquals(resolved.message(), CampaignRepo.Outcome.SYNCED, resolved.outcome());
+        assertEquals("[\"from first\"]", read(second, "world/npcs.json"));
+        assertEquals("[\"only first touched this\"]", read(second, "world/items.json"));
+        assertEquals("[\"only second touched this\"]", read(second, "world/places.json"));
+
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(first).sync().outcome());
+        assertEquals("[\"from first\"]", read(first, "world/npcs.json"));
+        assertEquals("[\"only second touched this\"]", read(first, "world/places.json"));
+    }
+
+    @Test
+    public void choosingBothSavesGithubsVersionNextToThisOne() throws Exception {
+        Path first = campaign("first");
+        repo(first).connect(remote);
+        Path second = cloneOf("second");
+        write(first, "world/npcs.json", "[\"from first\"]");
+        repo(first).sync();
+        write(second, "world/npcs.json", "[\"from second\"]");
+
+        CampaignRepo.Result result = repo(second).resolve(Map.of("world/npcs.json", CampaignRepo.Choice.BOTH));
+        assertEquals(result.message(), CampaignRepo.Outcome.SYNCED, result.outcome());
         String copy = "world/npcs.json.remote-20261027-183000";
         assertEquals(java.util.List.of(copy), result.conflictCopies());
         assertEquals("[\"from second\"]", read(second, "world/npcs.json"));
         assertEquals("[\"from first\"]", read(second, copy));
-        assertEquals("[\"only first touched this\"]", read(second, "world/items.json"));
-
-        // The resolved merge was pushed, so the first computer gets both versions too.
-        assertEquals(CampaignRepo.Outcome.SYNCED, repo(first).sync().outcome());
-        assertEquals("[\"from second\"]", read(first, "world/npcs.json"));
-        assertEquals("[\"from first\"]", read(first, copy));
     }
 
     @Test
-    public void connectingAnExistingCopyMergesWithWhatIsAlreadyOnGitHub() throws Exception {
+    public void onlyGithubChangedIsTakenWithoutAsking() throws Exception {
+        Path first = campaign("first");
+        repo(first).connect(remote);
+        Path second = cloneOf("second");
+        write(second, "world/npcs.json", "[\"newer, from second\"]");
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(second).sync().outcome());
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(first).sync().outcome());
+        assertEquals("[\"newer, from second\"]", read(first, "world/npcs.json"));
+    }
+
+    @Test
+    public void localCommitIsDatedWhenTheFileWasEdited() throws Exception {
+        Path first = campaign("first");
+        repo(first).connect(remote);
+        Path second = cloneOf("second");
+        write(first, "world/npcs.json", "[\"edited long ago\"]");
+        Files.setLastModifiedTime(first.resolve("world/npcs.json"),
+            java.nio.file.attribute.FileTime.from(Instant.parse("2026-10-01T10:00:00Z")));
+        write(second, "world/npcs.json", "[\"edited later\"]");
+        Files.setLastModifiedTime(second.resolve("world/npcs.json"),
+            java.nio.file.attribute.FileTime.from(Instant.parse("2026-10-20T10:00:00Z")));
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(second).sync().outcome());
+
+        CampaignRepo.Result result = repo(first).sync();
+        assertEquals(CampaignRepo.Outcome.CONFLICT, result.outcome());
+        CampaignRepo.Conflict conflict = result.conflicts().get(0);
+        assertEquals(Instant.parse("2026-10-01T10:00:00Z"), conflict.mine().when());
+        assertEquals(Instant.parse("2026-10-20T10:00:00Z"), conflict.github().when());
+        assertEquals(CampaignRepo.Choice.GITHUB, conflict.newer());
+    }
+
+    @Test
+    public void connectingAnExistingCopyAsksAboutFilesBothHave() throws Exception {
         Path first = campaign("first");
         write(first, "world/npcs.json", "[\"first\"]");
         repo(first).connect(remote);
@@ -151,11 +231,20 @@ public class CampaignRepoTest {
         CampaignRepo.Result result = repo(second).connect(remote);
         assertEquals(result.message(), CampaignRepo.Outcome.CONFLICT, result.outcome());
         assertEquals("[\"second\"]", read(second, "world/npcs.json"));
-        assertEquals("[\"first\"]", read(second, "world/npcs.json.remote-20261027-183000"));
-        assertEquals("[\"second only\"]", read(second, "world/places.json"));
 
+        java.util.Map<String, CampaignRepo.Choice> choices = new java.util.HashMap<>();
+        for (CampaignRepo.Conflict c : result.conflicts()) choices.put(c.path(), CampaignRepo.Choice.MINE);
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(second).resolve(choices).outcome());
+        assertEquals("[\"second\"]", read(second, "world/npcs.json"));
         assertEquals(CampaignRepo.Outcome.SYNCED, repo(first).sync().outcome());
         assertEquals("[\"second only\"]", read(first, "world/places.json"));
+        assertEquals("[\"second\"]", read(first, "world/npcs.json"));
+    }
+
+    @Test
+    public void computerNameIsReadFromTheCommitMessage() {
+        assertEquals("DESKTOP-1", CampaignRepo.computerOf("Campaign changes from DESKTOP-1"));
+        assertEquals(null, CampaignRepo.computerOf("Merge campaign changes from GitHub"));
     }
 
     @Test

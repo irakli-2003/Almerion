@@ -5,6 +5,7 @@ import com.dnd.model.item.Item;
 import com.dnd.model.magic.CastingResource;
 import com.dnd.model.magic.SpellSlots;
 import com.dnd.model.magic.Spell;
+import com.dnd.model.magic.SpellEffect;
 import com.dnd.model.world.map.ActiveEffect;
 import com.dnd.model.world.map.CombatState;
 import com.dnd.model.world.map.MapObject;
@@ -21,8 +22,8 @@ import java.util.function.Function;
  * Turns "cast this spell at that square" into actual changes on the board.
  *
  * <p>Spells and abilities are described by two unrelated model classes with different
- * shapes - a spell embeds its {@link Effect}s and costs mana, an ability refers to effects
- * by id and costs nothing - so this first flattens either one into a {@link Castable} and
+ * shapes - a spell links catalogue {@link Effect}s with a power of its own and costs mana, an
+ * ability refers to effects by id and costs nothing - so this first flattens either one into a {@link Castable} and
  * then resolves that. The rest of the app therefore only has to know about one casting
  * path, and the resolution rules live in one place that can be exercised without a UI.</p>
  *
@@ -48,6 +49,8 @@ public final class CastResolver {
         private final double radiusFeet;
         private final int cooldownRounds;
         private final List<Effect> effects;
+        /** Per entry of {@link #effects}: the spell's power for it, or null to use the effect's own amount. */
+        private final List<SpellEffect> powers;
         private final Damage damage;
         private final List<Item> consumables;
         private final int spellLevel;
@@ -57,7 +60,7 @@ public final class CastResolver {
 
         private Castable(String id, String name, String description, boolean spell, int manaCost,
                          double rangeFeet, double radiusFeet, int cooldownRounds,
-                         List<Effect> effects, Damage damage, List<Item> consumables,
+                         List<Effect> effects, List<SpellEffect> powers, Damage damage, List<Item> consumables,
                          int spellLevel, int hpCost) {
             this.id = id;
             this.name = name;
@@ -68,6 +71,7 @@ public final class CastResolver {
             this.radiusFeet = radiusFeet;
             this.cooldownRounds = cooldownRounds;
             this.effects = effects == null ? List.of() : effects;
+            this.powers = powers == null ? List.of() : powers;
             this.damage = damage;
             this.consumables = consumables == null ? List.of() : consumables;
             this.spellLevel = Math.max(0, spellLevel);
@@ -103,9 +107,10 @@ public final class CastResolver {
                 }
                 dice.get(0).setCount(dice.get(0).getCount() + boost);
                 boosted = new Damage(dice, damage.getTypeId());
+                boosted.setConstant(damage.getConstant());
             }
             Castable c = new Castable(id, name, description, spell, manaCost, rangeFeet, radiusFeet, cooldownRounds,
-                effects, boosted, consumables, spellLevel, hpCost);
+                effects, powers, boosted, consumables, spellLevel, hpCost);
             c.chargeLevel = Math.max(0, level);
             return c;
         }
@@ -151,6 +156,22 @@ public final class CastResolver {
             return effects;
         }
 
+        /**
+         * The spell's power for {@code getEffects().get(index)} (a constant plus dice), or null
+         * when that effect simply uses its own damage/healing amount.
+         */
+        public SpellEffect getPower(int index) {
+            if (index < 0 || index >= powers.size()) return null;
+            SpellEffect power = powers.get(index);
+            return power != null && power.hasPower() ? power : null;
+        }
+
+        /** True when the DM must roll dice for the power of effect {@code index} before casting. */
+        public boolean needsEffectRoll(int index) {
+            SpellEffect power = getPower(index);
+            return power != null && power.hasPowerDice();
+        }
+
         public Damage getDamage() {
             return damage;
         }
@@ -166,7 +187,7 @@ public final class CastResolver {
 
         /** How this picks who it affects - see {@link Targeting}. */
         public Targeting getTargeting() {
-            boolean hasDamage = damage != null && damage.hasDice();
+            boolean hasDamage = damage != null && damage.hasAmount();
             if (radiusFeet > 0) return rangeFeet > 0 ? Targeting.AREA : Targeting.AURA;
             if (rangeFeet <= 0 && !hasDamage) return Targeting.SELF;
             return Targeting.SINGLE;
@@ -195,12 +216,30 @@ public final class CastResolver {
         SINGLE
     }
 
-    /** Flattens a spell into a castable. */
+    /** Flattens a spell into a castable, using the effects embedded in older spell files only. */
     public static Castable of(Spell spell) {
+        return of(spell, null);
+    }
+
+    /**
+     * Flattens a spell into a castable. Each of its effects is looked up in the campaign's effect
+     * catalogue (falling back to the copy an older spell file embedded) and keeps the power the
+     * spell gives it.
+     */
+    public static Castable of(Spell spell, Function<String, Effect> effectLookup) {
         if (spell == null) return null;
+        List<Effect> resolved = new ArrayList<>();
+        List<SpellEffect> powers = new ArrayList<>();
+        if (spell.getEffects() != null) {
+            for (SpellEffect spellEffect : spell.getEffects()) {
+                if (spellEffect == null) continue;
+                resolved.add(spellEffect.resolve(effectLookup));
+                powers.add(spellEffect);
+            }
+        }
         return new Castable(spell.getId(), spell.getName(), spell.getDescription(), true,
             spell.getManaCost(), spell.getRange(), spell.getRadius(), spell.getCooldownRounds(),
-            spell.getEffects(), spell.getDamage(), spell.getRequiredConsumables(), spell.getLevel(), 0);
+            resolved, powers, spell.getDamage(), spell.getRequiredConsumables(), spell.getLevel(), 0);
     }
 
     /**
@@ -219,7 +258,7 @@ public final class CastResolver {
         }
         return new Castable(ability.getId(), ability.getName(), ability.getDescription(), false,
             ability.getManaCost(), ability.getRange(), ability.getRadius(), ability.getRecharge(),
-            resolved, ability.getDamage(), List.of(), 0, ability.getHpCost());
+            resolved, null, ability.getDamage(), List.of(), 0, ability.getHpCost());
     }
 
     /** What happened when a cast was attempted. */
@@ -281,10 +320,20 @@ public final class CastResolver {
      * @param targets       every creature caught by it; empty is allowed for a cast at empty ground
      * @param distanceFeet  how far the aim point is from the caster, for the range check
      * @param rolledDamage  the DM's own roll of {@code action.getDamage()}'s dice, entered by
-     *                      hand rather than simulated; ignored when the action deals no damage
+     *                      hand rather than simulated; the damage's constant is added to it
      */
     public static Outcome cast(MapObject caster, Castable action, List<MapObject> targets, double distanceFeet,
                                int rolledDamage) {
+        return cast(caster, action, targets, distanceFeet, rolledDamage, List.of());
+    }
+
+    /**
+     * As {@link #cast(MapObject, Castable, List, double, int)}, with the DM's dice totals for
+     * effect powers: {@code rolledEffectDice.get(i)} belongs to {@code action.getEffects().get(i)}
+     * (missing or null entries count as 0, leaving just the power's constant).
+     */
+    public static Outcome cast(MapObject caster, Castable action, List<MapObject> targets, double distanceFeet,
+                               int rolledDamage, List<Integer> rolledEffectDice) {
         String blocked = blockedReason(caster, action);
         if (blocked != null) return Outcome.refused(blocked);
 
@@ -319,7 +368,7 @@ public final class CastResolver {
             hit.remove(caster);
         }
         for (MapObject target : hit) {
-            log.addAll(applyTo(caster, target, action, rolledDamage));
+            log.addAll(applyTo(caster, target, action, rolledDamage, rolledEffectDice));
         }
         if (!hasMechanicalEffect(action)) {
             // Nothing the board can apply by itself: leave the rules where the DM is looking
@@ -350,7 +399,7 @@ public final class CastResolver {
 
     /** True when it deals damage or carries at least one effect the board can track. */
     private static boolean hasMechanicalEffect(Castable action) {
-        if (action.getDamage() != null && action.getDamage().hasDice()) return true;
+        if (action.getDamage() != null && action.getDamage().hasAmount()) return true;
         for (Effect effect : action.getEffects()) {
             if (effect != null) return true;
         }
@@ -425,14 +474,16 @@ public final class CastResolver {
     }
 
     /** Applies one castable's damage, healing and lasting effects to a single target. */
-    private static List<String> applyTo(MapObject caster, MapObject target, Castable action, int rolledDamage) {
+    private static List<String> applyTo(MapObject caster, MapObject target, Castable action, int rolledDamage,
+                                        List<Integer> rolledEffectDice) {
         List<String> log = new ArrayList<>();
         CombatState state = TokenSupport.combatOf(target);
         String targetName = TokenSupport.nameOf(target);
         String sourceName = TokenSupport.nameOf(caster) + "'s " + action.getName();
 
         int dealtTotal = 0;
-        int directDamage = action.getDamage() != null && action.getDamage().hasDice() ? Math.max(0, rolledDamage) : 0;
+        int directDamage = action.getDamage() != null && action.getDamage().hasAmount()
+            ? action.getDamage().total(Math.max(0, rolledDamage)) : 0;
         if (directDamage > 0) {
             com.dnd.model.rules.CombatRules.Hit landed =
                 com.dnd.model.rules.CombatRules.damage(state, directDamage, action.getDamage().getTypeId());
@@ -442,15 +493,25 @@ public final class CastResolver {
                 + (type == null || type.isBlank() ? "" : " " + type) + " damage" + landed.note() + ".");
         }
 
-        for (Effect effect : action.getEffects()) {
+        for (int index = 0; index < action.getEffects().size(); index++) {
+            Effect effect = action.getEffects().get(index);
             if (effect == null) continue;
+            int damageAmount = effect.getDamageAmount();
+            int healingAmount = effect.getHealingAmount();
+            SpellEffect power = action.getPower(index);
+            if (power != null) {
+                Integer rolled = rolledEffectDice == null || index >= rolledEffectDice.size()
+                    ? null : rolledEffectDice.get(index);
+                damageAmount = power.power(rolled == null ? 0 : Math.max(0, rolled));
+                healingAmount = damageAmount;
+            }
             if (effect.isLasting()) {
                 ActiveEffect active = new ActiveEffect(
                     effect.getId(),
                     effect.getName() == null || effect.getName().isBlank() ? action.getName() : effect.getName(),
                     effect.getDurationRounds(),
-                    effect.isDamaging() ? effect.getDamageAmount() : 0,
-                    effect.isHealing() ? effect.getHealingAmount() : 0,
+                    effect.isDamaging() ? damageAmount : 0,
+                    effect.isHealing() ? healingAmount : 0,
                     sourceName);
                 active.setDescription(effect.getDescription());
                 state.addEffect(active);
@@ -461,17 +522,17 @@ public final class CastResolver {
             }
             // Instant effects land once, right now, and leave nothing behind.
             boolean instant = false;
-            if (effect.isDamaging() && effect.getDamageAmount() > 0) {
+            if (effect.isDamaging() && damageAmount > 0) {
                 com.dnd.model.rules.CombatRules.Hit landed =
-                    com.dnd.model.rules.CombatRules.damage(state, effect.getDamageAmount(), null);
+                    com.dnd.model.rules.CombatRules.damage(state, damageAmount, null);
                 dealtTotal += landed.dealt();
                 log.add(targetName + " takes " + landed.dealt() + " from " + displayName(effect, action)
                     + landed.note() + ".");
                 instant = true;
             }
-            if (effect.isHealing() && effect.getHealingAmount() > 0) {
-                state.heal(effect.getHealingAmount());
-                log.add(targetName + " recovers " + effect.getHealingAmount() + " from " + displayName(effect, action) + ".");
+            if (effect.isHealing() && healingAmount > 0) {
+                state.heal(healingAmount);
+                log.add(targetName + " recovers " + healingAmount + " from " + displayName(effect, action) + ".");
                 instant = true;
             }
             if (!instant) {

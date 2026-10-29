@@ -48,10 +48,14 @@ public class EntityDetailScene extends BaseScene {
         Object entity = isNew ? null : getEntity(repos, cat, entityId);
 
         ImageView imageView = new ImageView();
-        imageView.setFitWidth(120);
-        imageView.setFitHeight(120);
+        // Portraits are the point of a character page; never let them shrink to a thumbnail.
+        boolean portrait = cat == EntityCategory.PLAYER || cat == EntityCategory.NPC
+            || cat == EntityCategory.MONSTER || cat == EntityCategory.BEAST;
+        double imageSize = portrait ? 260 : 180;
+        imageView.setFitWidth(imageSize);
+        imageView.setFitHeight(imageSize);
         imageView.setPreserveRatio(true);
-        imageView.setStyle("-fx-border-color: #c9a84c; -fx-border-width: 1px;");
+        imageView.setSmooth(true);
         String currentImgPath = entity != null ? getImagePath(entity) : null;
         if (currentImgPath != null && uiSession.campaignRoot() != null) {
             Image img = ImageStore.load(uiSession.campaignRoot(), currentImgPath);
@@ -77,7 +81,12 @@ public class EntityDetailScene extends BaseScene {
             }
         });
 
-        HBox imageSection = new HBox(16, imageView, uploadImageBtn);
+        StackPane imageFrame = new StackPane(imageView);
+        imageFrame.setMinSize(imageSize + 8, imageSize + 8);
+        imageFrame.setPrefSize(imageSize + 8, imageSize + 8);
+        imageFrame.setMaxSize(imageSize + 8, imageSize + 8);
+        imageFrame.setStyle("-fx-border-color: #c9a84c; -fx-border-width: 1px; -fx-background-color: #12121f;");
+        HBox imageSection = new HBox(16, imageFrame, uploadImageBtn);
         imageSection.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         content.getChildren().add(imageSection);
 
@@ -297,6 +306,17 @@ public class EntityDetailScene extends BaseScene {
             .filter(i -> i instanceof com.dnd.model.item.crafting.Blueprint).toList()));
         catalogs.put("defaultSpells", refs(repos.spells().list()));
         catalogs.put("defaultItems", refs(repos.items().list()));
+        catalogs.put("effectId", refs(repos.effects().list()));
+        // A spell's required items: anything that is used up for consumables, kit for tools.
+        catalogs.put("requiredConsumables", refs(repos.items().list().stream()
+            .filter(i -> !(i instanceof com.dnd.model.item.crafting.Tool
+                || i instanceof com.dnd.model.item.crafting.Blueprint
+                || i instanceof com.dnd.model.item.crafting.Device)).toList()));
+        catalogs.put("requiredTools", refs(repos.items().list().stream()
+            .filter(i -> !(i instanceof com.dnd.model.item.crafting.Material
+                || i instanceof com.dnd.model.item.crafting.Fuel
+                || i instanceof com.dnd.model.item.alchemy.AlchemyItem
+                || i instanceof com.dnd.model.item.crafting.Blueprint)).toList()));
         return catalogs;
     }
 
@@ -305,7 +325,7 @@ public class EntityDetailScene extends BaseScene {
         for (Object entity : entities) {
             String id = invokeString(entity, "getId");
             if (id != null) {
-                refs.add(new EntityForm.Ref(id, invokeString(entity, "getName")));
+                refs.add(new EntityForm.Ref(id, invokeString(entity, "getName"), entity));
             }
         }
         return refs;

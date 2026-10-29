@@ -31,6 +31,8 @@ public class EntityListScene extends BaseScene {
     private final Map<String, String> classNames = new LinkedHashMap<>();
     private final Map<String, String> raceNames = new LinkedHashMap<>();
 
+    private static final String ALL = "All";
+
     public EntityListScene(UiSession uiSession) { super(uiSession); }
 
     @Override
@@ -61,13 +63,57 @@ public class EntityListScene extends BaseScene {
                 raceNames.put(race.getId(), race.getName());
             }
         }
-        List<?> entities = getEntities(repos, cat);
+        List<?> all = getEntities(repos, cat);
+        // Rows currently shown, in list order, so selection indexes map back to entities.
+        List<Object> entities = new ArrayList<>();
 
-        for (Object entity : entities) {
-            listView.getItems().add(buildRow(entity, cat));
-        }
+        TextField search = new TextField();
+        search.setPromptText("Search by name, id or details...");
+        search.getStyleClass().add("dnd-text-field");
+        HBox.setHgrow(search, Priority.ALWAYS);
+        ComboBox<String> filter = new ComboBox<>();
+        java.util.TreeSet<String> tags = new java.util.TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        for (Object entity : all) tags.addAll(tags(entity));
+        filter.getItems().add(ALL);
+        filter.getItems().addAll(tags);
+        filter.setValue(ALL);
+        filter.setVisible(!tags.isEmpty());
+        filter.setManaged(!tags.isEmpty());
+        Label count = new Label();
+        count.setStyle("-fx-text-fill: #8a7a52; -fx-font-size: 11px;");
+        count.setMinWidth(Region.USE_PREF_SIZE);
 
-        content.getChildren().add(listView);
+        Runnable refresh = () -> {
+            String query = search.getText() == null ? "" : search.getText().trim().toLowerCase(java.util.Locale.ROOT);
+            String tag = filter.getValue();
+            entities.clear();
+            listView.getItems().clear();
+            for (Object entity : all) {
+                if (tag != null && !ALL.equals(tag)
+                    && tags(entity).stream().noneMatch(t -> t.equalsIgnoreCase(tag))) continue;
+                if (!query.isEmpty()) {
+                    String haystack = (getEntityName(entity) + " " + getEntityId(entity) + " " + summarize(entity)
+                        + " " + String.join(" ", tags(entity))).toLowerCase(java.util.Locale.ROOT);
+                    boolean matches = true;
+                    for (String word : query.split("\\s+")) {
+                        if (!haystack.contains(word)) { matches = false; break; }
+                    }
+                    if (!matches) continue;
+                }
+                entities.add(entity);
+                listView.getItems().add(buildRow(entity, cat));
+            }
+            count.setText(entities.size() == all.size()
+                ? all.size() + " total" : entities.size() + " of " + all.size());
+        };
+        search.textProperty().addListener((obs, old, now) -> refresh.run());
+        filter.valueProperty().addListener((obs, old, now) -> refresh.run());
+        refresh.run();
+
+        HBox searchBar = new HBox(10, search, filter, count);
+        searchBar.setAlignment(Pos.CENTER_LEFT);
+        content.getChildren().addAll(searchBar, listView);
+        VBox.setVgrow(listView, Priority.ALWAYS);
 
         HBox actions = new HBox(10);
         Button viewBtn = btn("View / Edit", () -> {
@@ -189,6 +235,39 @@ public class EntityListScene extends BaseScene {
             }
         }
         return String.join("  •  ", parts);
+    }
+
+    /** Values the list can be narrowed down by, e.g. a spell's school and level or an item's type. */
+    private List<String> tags(Object entity) {
+        List<String> tags = new ArrayList<>();
+        if (entity instanceof Monster monster) {
+            addIfPresent(tags, monster.getType());
+            addIfPresent(tags, challengeRating(monster.getChallengeRating()));
+        } else if (entity instanceof Beast beast) {
+            addIfPresent(tags, beast.getHabitat() == null ? null : beast.getHabitat().getValue());
+            addIfPresent(tags, challengeRating(beast.getChallengeRating()));
+        } else if (entity instanceof Npc npc) {
+            addIfPresent(tags, npc.getRole());
+        } else if (entity instanceof PlayerCharacter player) {
+            addIfPresent(tags, lookupName(player.getRaceId(), raceNames));
+            addIfPresent(tags, lookupName(player.getClassId(), classNames));
+        } else if (entity instanceof Spell spell) {
+            tags.add(spell.getLevel() == 0 ? "Cantrip" : "Level " + spell.getLevel());
+            addIfPresent(tags, spell.getSchool() == null ? null : spell.getSchool().getValue());
+        } else if (entity instanceof Item item) {
+            addIfPresent(tags, item.getType());
+        } else {
+            for (String getter : new String[] {"getType", "getCategory", "getKind"}) {
+                try {
+                    Object value = entity.getClass().getMethod(getter).invoke(entity);
+                    if (value instanceof String text) addIfPresent(tags, text);
+                    else if (value instanceof Enum<?> e) addIfPresent(tags, e.name());
+                } catch (ReflectiveOperationException ignored) {
+                    // This kind of entry has no such property.
+                }
+            }
+        }
+        return tags;
     }
 
     private static void addIfPresent(List<String> parts, String value) {

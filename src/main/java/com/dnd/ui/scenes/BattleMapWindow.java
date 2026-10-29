@@ -209,6 +209,7 @@ public class BattleMapWindow {
         stage.initModality(Modality.NONE);
         stage.setTitle("Battle: " + map.getName());
 
+        renderer.setCellSize(Math.min(renderer.getCellSize(), maxCellSize()));
         canvas = new Canvas(map.getWidth() * renderer.getCellSize(), map.getHeight() * renderer.getCellSize());
         wireCanvas();
 
@@ -265,7 +266,9 @@ public class BattleMapWindow {
         stage.setMaximized(true);
         // onHidden covers both the window's X and the toolbar "Close" (stage.close() skips
         // close-request handlers).
+        com.dnd.sync.CampaignSyncService.shared().battle(true);
         stage.setOnHidden(e -> {
+            com.dnd.sync.CampaignSyncService.shared().battle(false);
             if (timer != null) timer.dispose();
             if (projector != null) projector.close();
             if (dirty) saveMap();
@@ -474,11 +477,23 @@ public class BattleMapWindow {
     }
 
     private void zoom(double delta) {
-        renderer.setCellSize(renderer.getCellSize() + delta);
+        renderer.setCellSize(Math.min(renderer.getCellSize() + delta, maxCellSize()));
         canvas.setWidth(map.getWidth() * renderer.getCellSize());
         canvas.setHeight(map.getHeight() * renderer.getCellSize());
         render();
     }
+
+    /**
+     * Largest square size that keeps the board within {@link #MAX_CANVAS_PIXELS} on each side.
+     * Graphics cards refuse bigger canvases, and a huge one costs hundreds of megabytes, so
+     * zooming a large map in too far used to make the window lag and crash.
+     */
+    private double maxCellSize() {
+        int longest = Math.max(1, Math.max(map.getWidth(), map.getHeight()));
+        return Math.max(12, Math.floor(MAX_CANVAS_PIXELS / longest));
+    }
+
+    private static final double MAX_CANVAS_PIXELS = 4096;
 
     // ── Canvas interaction ──────────────────────────────────────────────────
 
@@ -839,7 +854,24 @@ public class BattleMapWindow {
         render();
     }
 
+    /**
+     * Asks for a redraw on the next frame. Many actions (dragging especially) ask several times
+     * per frame; drawing the whole board each time made the window lag and piled up drawing
+     * commands in memory, so the requests are merged into one redraw per frame.
+     */
     private void render() {
+        if (renderPending) return;
+        renderPending = true;
+        javafx.application.Platform.runLater(() -> {
+            renderPending = false;
+            renderNow();
+        });
+    }
+
+    private boolean renderPending;
+
+    private void renderNow() {
+        if (canvas == null) return;
         decorations.currentTurn = initiative.current();
         if (roundLabel != null) roundLabel.setText("Round " + initiative.round());
         renderer.render(canvas, map, decorations);
@@ -1380,13 +1412,13 @@ public class BattleMapWindow {
                 + (spell.getRadius() > 0 ? "  ·  " + spell.getRadius() + " ft blast" : "");
             com.dnd.model.item.crafting.Device device = devices.get(spell.getId());
             if (!energy || device == null || spell.getLevel() <= 0) {
-                box.getChildren().add(castRow(token, state, CastResolver.of(spell), label, spell.getDescription(), spell));
+                box.getChildren().add(castRow(token, state, CastResolver.of(spell, repos.effects()::getById), label, spell.getDescription(), spell));
                 continue;
             }
             String level1 = com.dnd.model.magic.EnergyCharges.name(spell.getLevel());
             if (!device.isMechanical()) {
                 // Tuned devices run on exactly one charge type.
-                box.getChildren().add(castRow(token, state, CastResolver.of(spell).onCharge(spell.getLevel()),
+                box.getChildren().add(castRow(token, state, CastResolver.of(spell, repos.effects()::getById).onCharge(spell.getLevel()),
                     spell.getName() + "  ·  " + level1 + " charge only", spell.getDescription(), spell));
                 continue;
             }
@@ -1394,7 +1426,7 @@ public class BattleMapWindow {
             for (com.dnd.model.magic.SpellSlot slot : state.getSpellSlots()) {
                 if (slot == null || slot.getMax() <= 0 || slot.getLevel() < spell.getLevel()) continue;
                 int boost = slot.getLevel() - spell.getLevel();
-                box.getChildren().add(castRow(token, state, CastResolver.of(spell).onCharge(slot.getLevel()),
+                box.getChildren().add(castRow(token, state, CastResolver.of(spell, repos.effects()::getById).onCharge(slot.getLevel()),
                     spell.getName() + "  ·  " + com.dnd.model.magic.EnergyCharges.name(slot.getLevel())
                         + (boost > 0 ? " (+" + boost + " die)" : ""), spell.getDescription(), spell));
             }
@@ -1913,9 +1945,26 @@ public class BattleMapWindow {
             }
             rolledDamage = entered;
         }
+        List<Integer> rolledEffectDice = new ArrayList<>();
+        for (int i = 0; i < action.getEffects().size(); i++) {
+            Integer entered = null;
+            if (action.needsEffectRoll(i)) {
+                entered = promptRolledEffectPower(action, i);
+                if (entered == null) {
+                    if (!action.needsTarget()) {
+                        cancelCast();
+                        return;
+                    }
+                    status("Cast cancelled.");
+                    return;
+                }
+            }
+            rolledEffectDice.add(entered);
+        }
 
         double distanceFeet = distanceCells(caster, cx, cy) * FEET_PER_CELL;
-        CastResolver.Outcome outcome = CastResolver.cast(caster, action, targets, distanceFeet, rolledDamage);
+        CastResolver.Outcome outcome = CastResolver.cast(caster, action, targets, distanceFeet, rolledDamage,
+            rolledEffectDice);
         if (!outcome.isSuccess()) {
             if (!action.needsTarget()) {
                 armedCast = null;
@@ -1949,10 +1998,29 @@ public class BattleMapWindow {
      */
     private Integer promptRolledDamage(CastResolver.Castable action) {
         String formula = action.getDamage().formula(id -> repos.dice().getById(id));
+        int constant = action.getDamage().getConstant();
+        return promptRolledTotal("Rolled damage", action.getName() + (formula.isBlank() ? "" : " (" + formula + ")"),
+            constant == 0 ? "Enter the damage rolled:"
+                : "Enter the dice total rolled (" + (constant > 0 ? "+" : "") + constant + " is added for you):");
+    }
+
+    /** Asks the DM for the dice they rolled for one effect's power; null if they cancel. */
+    private Integer promptRolledEffectPower(CastResolver.Castable action, int index) {
+        com.dnd.model.magic.SpellEffect power = action.getPower(index);
+        com.dnd.model.combat.Effect effect = action.getEffects().get(index);
+        String effectName = effect.getName() == null || effect.getName().isBlank() ? effect.getId() : effect.getName();
+        String formula = power.powerFormula(id -> repos.dice().getById(id));
+        int constant = power.getConstant();
+        return promptRolledTotal("Rolled effect power", action.getName() + ": " + effectName + " (" + formula + ")",
+            constant == 0 ? "Enter the dice total rolled:"
+                : "Enter the dice total rolled (" + (constant > 0 ? "+" : "") + constant + " is added for you):");
+    }
+
+    private Integer promptRolledTotal(String title, String header, String prompt) {
         javafx.scene.control.TextInputDialog dialog = new javafx.scene.control.TextInputDialog();
-        dialog.setTitle("Rolled damage");
-        dialog.setHeaderText(action.getName() + (formula.isBlank() ? "" : " (" + formula + ")"));
-        dialog.setContentText("Enter the damage rolled:");
+        dialog.setTitle(title);
+        dialog.setHeaderText(header);
+        dialog.setContentText(prompt);
         while (true) {
             var result = dialog.showAndWait();
             if (result.isEmpty()) return null;

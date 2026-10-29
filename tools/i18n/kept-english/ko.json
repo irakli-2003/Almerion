@@ -1,6 +1,7 @@
 [
  "+refs/heads/*:refs/remotes/{A}/*",
  "GitHub:",
+ "GitHub: {A}",
  "HP:",
  "SHA-{0}",
  "STR {A} DEX {B} CON {C} INT {D} WIS {E} CHA {F}",

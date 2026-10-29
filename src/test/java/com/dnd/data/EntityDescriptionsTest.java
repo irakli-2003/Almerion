@@ -3,7 +3,6 @@ package com.dnd.data;
 import com.dnd.model.magic.Spell;
 import org.junit.Test;
 
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -33,8 +32,10 @@ public class EntityDescriptionsTest {
         s.setName("Fire Bolt");
         s.setLevel(0);
         s.setDescription("A mote of fire.");
-        s.setComponents(List.of("V", "S", "M"));
-        s.setMaterialComponent("a pinch of sulfur");
+        s.getComponents().setVerbal(true);
+        s.getComponents().setSomatic(true);
+        s.getComponents().setMaterial(true);
+        s.getComponents().setMaterialComponent("a pinch of sulfur");
         String body = new EntityDescriptions(id -> null, id -> null, id -> null).spellBody(s);
         assertTrue(body, body.contains("sulfur"));
         assertTrue(body, body.contains("A mote of fire."));

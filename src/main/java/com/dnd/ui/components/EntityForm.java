@@ -60,14 +60,25 @@ public final class EntityForm {
     public static final class Ref {
         private final String id;
         private final String label;
+        private final Object value;
 
         public Ref(String id, String label) {
+            this(id, label, null);
+        }
+
+        /** @param value the catalogue entry itself, for lists that store whole objects rather than ids */
+        public Ref(String id, String label, Object value) {
             this.id = id;
             this.label = label;
+            this.value = value;
         }
 
         public String id() {
             return id;
+        }
+
+        public Object value() {
+            return value;
         }
 
         @Override
@@ -215,6 +226,16 @@ public final class EntityForm {
         }
         List<Prop> props = new ArrayList<>(found.values());
         props.sort(Comparator.comparingInt(EntityForm::orderOf).thenComparing(Prop::name));
+        // A model class may list its fields in reading order (verbal, somatic, material...).
+        com.fasterxml.jackson.annotation.JsonPropertyOrder order =
+            type.getAnnotation(com.fasterxml.jackson.annotation.JsonPropertyOrder.class);
+        if (order != null) {
+            List<String> names = Arrays.asList(order.value());
+            props.sort(Comparator.comparingInt(prop -> {
+                int index = names.indexOf(prop.name());
+                return index < 0 ? names.size() : index;
+            }));
+        }
         return props;
     }
 
@@ -700,8 +721,52 @@ public final class EntityForm {
             } else {
                 addTextListEditor(prop, values);
             }
+        } else if (options != null && isModelObject(elementClass) && instantiate(elementClass) == null) {
+            // Abstract element types (a spell's required items) cannot be created blank: pick
+            // whole entries from the catalogue instead.
+            addRefObjectListEditor(prop, values, options);
         } else if (isModelObject(elementClass) && depth < MAX_DEPTH) {
             addObjectListEditor(prop, values, elementClass);
+        }
+    }
+
+    /** Lists of whole catalogue objects (a spell's required items) as a searchable tick list. */
+    private void addRefObjectListEditor(Prop prop, List<?> values, List<Ref> options) {
+        List<Ref> all = new ArrayList<>(options);
+        List<Ref> initial = new ArrayList<>();
+        for (Object value : values) {
+            if (value == null) continue;
+            String id = invokeString(value, "getId");
+            String name = invokeString(value, "getName");
+            String key = id != null && !id.isBlank() ? id : name;
+            Ref ref = key == null ? null : all.stream().filter(r -> key.equals(r.id())).findFirst().orElse(null);
+            if (ref == null) {
+                // Not (or no longer) in the catalogue: keep the stored entry as it is.
+                ref = new Ref(key == null ? "?" : key, (name == null ? "" : name + " ") + "(missing)", value);
+                all.add(ref);
+            }
+            if (!initial.contains(ref)) initial.add(ref);
+        }
+        List<Object> selected = new ArrayList<>(initial.stream().map(Ref::value).filter(v -> v != null).toList());
+        Button picker = SearchPicker.multi(all, initial, ref -> ref.label == null || ref.label.isBlank() ? ref.id() : ref.label,
+            refs -> {
+                selected.clear();
+                refs.forEach(ref -> {
+                    if (ref.value() != null) selected.add(ref.value());
+                });
+            });
+        picker.setPrefWidth(compact ? 260 : 560);
+        picker.setMaxWidth(560);
+        node.getChildren().add(labelled(prop.name(), picker));
+        bind(prop, () -> new ArrayList<>(selected));
+    }
+
+    private static String invokeString(Object owner, String method) {
+        try {
+            Object value = owner.getClass().getMethod(method).invoke(owner);
+            return value == null ? null : value.toString();
+        } catch (Exception e) {
+            return null;
         }
     }
 

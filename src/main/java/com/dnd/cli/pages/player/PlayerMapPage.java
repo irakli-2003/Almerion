@@ -10,8 +10,8 @@ import com.dnd.model.character.CharacterRace;
 import com.dnd.model.character.PlayerCharacter;
 import com.dnd.model.combat.Damage;
 import com.dnd.model.combat.DiceRoll;
-import com.dnd.model.combat.Effect;
 import com.dnd.model.magic.Spell;
+import com.dnd.model.magic.SpellEffect;
 import com.dnd.model.world.Dice;
 import com.dnd.model.world.map.GameMap;
 import com.dnd.model.world.map.GridCell;
@@ -291,7 +291,7 @@ public class PlayerMapPage implements Page {
         console.println(displayName(pc) + " casts " + spell.getName() + " at (" + tx + ", " + ty + ")!");
 
         Damage damage = spell.getDamage();
-        if (damage != null && damage.hasDice()) {
+        if (damage != null && damage.hasAmount()) {
             int rolled = 0;
             for (DiceRoll roll : damage.getDice()) {
                 Dice dice = repos.dice().getById(roll.getDiceId());
@@ -301,13 +301,14 @@ public class PlayerMapPage implements Page {
                 }
             }
             String damageType = damage.getTypeId() != null ? damage.getTypeId() : "damage";
-            console.println("Deals " + rolled + " " + damageType + " damage.");
+            console.println("Deals " + damage.total(rolled) + " " + damageType + " damage.");
         }
 
-        List<Effect> effects = spell.getEffects();
+        List<SpellEffect> effects = spell.getEffects();
         if (effects != null) {
-            for (Effect effect : effects) {
-                console.println("Effect: " + effect);
+            for (SpellEffect effect : effects) {
+                if (effect == null) continue;
+                console.println("Effect: " + effect.describe(repos.effects()::getById, repos.dice()::getById));
             }
         }
 

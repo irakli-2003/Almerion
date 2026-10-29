@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 /**
  * How much a spell hurts, described as the dice the DM should physically roll rather than a
@@ -20,6 +19,7 @@ import java.util.stream.Collectors;
 public class Damage implements Printable {
     private List<DiceRoll> dice = new ArrayList<>();
     private String typeId;
+    private int constant;
 
     public Damage() {
     }
@@ -186,6 +186,28 @@ public class Damage implements Printable {
     }
 
     /**
+     * Flat amount added on top of the rolled dice (the "+ 3" in "2d6 + 3"). Zero for every
+     * damage written before constants existed, so old campaigns roll exactly as they did.
+     */
+    public int getConstant() {
+        return constant;
+    }
+
+    public void setConstant(int constant) {
+        this.constant = constant;
+    }
+
+    /** True when this deals anything at all: dice to roll, a positive constant, or both. */
+    public boolean hasAmount() {
+        return hasDice() || constant > 0;
+    }
+
+    /** The damage actually dealt for a given dice total: the roll plus the constant, never negative. */
+    public int total(int rolledDice) {
+        return Math.max(0, (hasDice() ? rolledDice : 0) + constant);
+    }
+
+    /**
      * Reads the pre-rework shape ({@code "amount": {"id": "d6", ...}}, a single die with no
      * count) so campaigns written before dice became a list keep loading. The next save of
      * whatever entity owns this migrates it to the {@code dice} list permanently - there is no
@@ -205,22 +227,15 @@ public class Damage implements Printable {
         this.typeId = typeId;
     }
 
-    /** e.g. "2d6 + 1d4", resolving each entry's die label through the campaign's dice catalogue. */
+    /** e.g. "2d6 + 1d4 + 3", resolving each entry's die label through the campaign's dice catalogue. */
     public String formula(java.util.function.Function<String, Dice> diceLookup) {
-        if (dice.isEmpty()) return "";
-        return dice.stream()
-            .map(roll -> {
-                Dice die = diceLookup == null || roll.getDiceId() == null ? null : diceLookup.apply(roll.getDiceId());
-                String label = die != null ? die.toString() : roll.getDiceId();
-                return roll.getCount() + (label == null ? "" : label);
-            })
-            .collect(Collectors.joining(" + "));
+        return DiceRoll.formula(dice, constant, diceLookup);
     }
 
     @Override
     public String toString() {
-        String rolled = dice.isEmpty() ? "0" : dice.stream().map(DiceRoll::toString).collect(Collectors.joining(" + "));
-        return rolled + " " + (typeId != null ? typeId : "damage");
+        String rolled = DiceRoll.formula(dice, constant, null);
+        return (rolled.isEmpty() ? "0" : rolled) + " " + (typeId != null ? typeId : "damage");
     }
 
     public static class DamageResolution {

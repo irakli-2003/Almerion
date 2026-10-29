@@ -34,6 +34,30 @@ public class DiceRoll {
         this.count = Math.max(1, count);
     }
 
+    /**
+     * Readable "dice + constant" text, e.g. "2d6 + 3", "1d4 - 1" or just "5"; empty when there
+     * are no dice and the constant is 0. Die labels resolve through {@code diceLookup} when given.
+     */
+    public static String formula(java.util.List<DiceRoll> dice, int constant,
+                                 java.util.function.Function<String, com.dnd.model.world.Dice> diceLookup) {
+        StringBuilder sb = new StringBuilder();
+        if (dice != null) {
+            for (DiceRoll roll : dice) {
+                if (roll == null) continue;
+                com.dnd.model.world.Dice die = diceLookup == null || roll.getDiceId() == null
+                    ? null : diceLookup.apply(roll.getDiceId());
+                String label = die != null ? die.toString() : roll.getDiceId();
+                if (sb.length() > 0) sb.append(" + ");
+                sb.append(roll.getCount()).append(label == null ? "" : label);
+            }
+        }
+        if (constant != 0) {
+            if (sb.length() == 0) sb.append(constant);
+            else sb.append(constant > 0 ? " + " : " - ").append(Math.abs(constant));
+        }
+        return sb.toString();
+    }
+
     @Override
     public String toString() {
         return count + (diceId == null ? "" : diceId);

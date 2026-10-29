@@ -35,6 +35,8 @@ public final class CampaignSyncService {
     private static final Logger LOGGER = Logger.getLogger(CampaignSyncService.class.getName());
     static final long AUTOSAVE_SECONDS = 90;
     static final long RETRY_SECONDS = 120;
+    /** During a battle the board changes constantly; uploading it this rarely keeps the fight smooth. */
+    static final long BATTLE_AUTOSAVE_SECONDS = 600;
 
     public enum State { SYNCING, SYNCED, OFFLINE, CONFLICT, ERROR }
 
@@ -54,6 +56,8 @@ public final class CampaignSyncService {
     private final List<BiConsumer<Path, Status>> listeners = new CopyOnWriteArrayList<>();
     private volatile Path open;
     private volatile ScheduledFuture<?> autosave;
+    private final java.util.concurrent.atomic.AtomicInteger battles = new java.util.concurrent.atomic.AtomicInteger();
+    private volatile long lastAutosaveMillis = System.currentTimeMillis();
 
     CampaignSyncService(GitHubLink link) {
         this.link = link;
@@ -81,6 +85,12 @@ public final class CampaignSyncService {
         return submit(folder, CampaignRepo::sync);
     }
 
+    /** Full sync that settles files both computers changed as the GM chose (path to choice). */
+    public CompletableFuture<CampaignRepo.Result> resolve(Path folder, Map<String, CampaignRepo.Choice> choices) {
+        Map<String, CampaignRepo.Choice> copy = Map.copyOf(choices);
+        return submit(folder, repo -> repo.resolve(copy));
+    }
+
     /** Links {@code folder} to {@code remoteUrl} and pushes / merges it. */
     public CompletableFuture<CampaignRepo.Result> connect(Path folder, String remoteUrl) {
         return submit(folder, repo -> repo.connect(remoteUrl));
@@ -104,8 +114,26 @@ public final class CampaignSyncService {
         closed();
         if (!CampaignRepo.isSynced(folder)) return;
         open = key;
-        autosave = executor.scheduleWithFixedDelay(() -> run(key, CampaignRepo::commitAndPush),
-            AUTOSAVE_SECONDS, AUTOSAVE_SECONDS, TimeUnit.SECONDS);
+        lastAutosaveMillis = System.currentTimeMillis();
+        autosave = executor.scheduleWithFixedDelay(() -> {
+            if (battles.get() > 0
+                    && System.currentTimeMillis() - lastAutosaveMillis < BATTLE_AUTOSAVE_SECONDS * 1000) {
+                return;
+            }
+            lastAutosaveMillis = System.currentTimeMillis();
+            run(key, CampaignRepo::commitAndPush);
+        }, AUTOSAVE_SECONDS, AUTOSAVE_SECONDS, TimeUnit.SECONDS);
+    }
+
+    /**
+     * A battle map opened ({@code true}) or closed ({@code false}). While one is open, changes
+     * are uploaded only every {@link #BATTLE_AUTOSAVE_SECONDS} seconds instead of every
+     * {@link #AUTOSAVE_SECONDS}; nothing is lost: the normal pace resumes when the battle closes,
+     * and everything is uploaded when the campaign is closed.
+     */
+    public void battle(boolean open) {
+        if (open) battles.incrementAndGet();
+        else battles.updateAndGet(n -> Math.max(0, n - 1));
     }
 
     /** The GM left the open campaign (if any): stop autosaving and do a full sync. */

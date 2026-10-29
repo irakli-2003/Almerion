@@ -45,28 +45,28 @@
   "key": "\"{A}\" is now on this computer and syncs with GitHub automatically. If it isn't in your list yet, claim it below or ask its author to add you as a Game Master.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:317"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:316"
   ]
  },
  {
   "key": "\"{A}\" is up to date on GitHub.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:375"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:377"
   ]
  },
  {
   "key": "\"{A}\" will play whenever this map is opened.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:436"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:439"
   ]
  },
  {
   "key": "# Written by Almerion: operating-system clutter that shouldn't be synced",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/sync/CampaignRepo.java:62"
+   "src/main/java/com/dnd/sync/CampaignRepo.java:67"
   ]
  },
  {
@@ -80,7 +80,7 @@
   "key": "(crit)",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1782"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1814"
   ]
  },
  {
@@ -95,7 +95,7 @@
   "key": "(Level",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/magic/Spell.java:252"
+   "src/main/java/com/dnd/model/magic/Spell.java:272"
   ]
  },
  {
@@ -123,8 +123,8 @@
   "key": "(missing)",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/EntityForm.java:476",
-   "src/main/java/com/dnd/ui/components/EntityForm.java:728"
+   "src/main/java/com/dnd/ui/components/EntityForm.java:497",
+   "src/main/java/com/dnd/ui/components/EntityForm.java:793"
   ]
  },
  {
@@ -146,7 +146,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/model/world/map/TokenSupport.java:32",
-   "src/main/java/com/dnd/ui/components/EntityForm.java:418",
+   "src/main/java/com/dnd/ui/components/EntityForm.java:439",
    "src/main/java/com/dnd/ui/components/SearchPicker.java:61"
   ]
  },
@@ -204,7 +204,7 @@
   "key": "({A}, {B}) is now {C}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:688"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:703"
   ]
  },
  {
@@ -218,7 +218,7 @@
   "key": "*.tmp",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/sync/CampaignRepo.java:62"
+   "src/main/java/com/dnd/sync/CampaignRepo.java:67"
   ]
  },
  {
@@ -303,7 +303,7 @@
   "key": "+refs/heads/*:refs/remotes/{A}/*",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/sync/CampaignRepo.java:150"
+   "src/main/java/com/dnd/sync/CampaignRepo.java:179"
   ]
  },
  {
@@ -317,7 +317,7 @@
   "key": "+{A} damage on Strength melee attacks",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1527"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1559"
   ]
  },
  {
@@ -338,28 +338,28 @@
   "key": "+{A} Rage",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1752"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1784"
   ]
  },
  {
   "key": ", consumed",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/magic/Spell.java:98"
+   "src/main/java/com/dnd/model/magic/SpellComponents.java:114"
   ]
  },
  {
   "key": ", worth",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/magic/Spell.java:97"
+   "src/main/java/com/dnd/model/magic/SpellComponents.java:113"
   ]
  },
  {
   "key": "- nobody is close enough.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:345"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:394"
   ]
  },
  {
@@ -380,7 +380,7 @@
   "key": "1 {A} charge (refills a spent capsule)",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:128"
+   "src/main/java/com/dnd/data/EntityDescriptions.java:137"
   ]
  },
  {
@@ -459,7 +459,7 @@
   "key": "A campaign with that folder name is already on this computer. Pick another name.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:307"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:306"
   ]
  },
  {
@@ -487,7 +487,7 @@
   "key": "A dash of magic from level {0}, up to {1}th-level spells (Spellblade, Spellthief).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:103"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:112"
   ]
  },
  {
@@ -571,7 +571,7 @@
   "key": "Abilities",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1067"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1099"
   ]
  },
  {
@@ -627,7 +627,7 @@
   "key": "Ability: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1784"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1816"
   ]
  },
  {
@@ -733,7 +733,7 @@
   "key": "Active Effects",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1035",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1067",
    "src/main/java/com/dnd/ui/scenes/ManagePlayersPanel.java:424",
    "src/main/java/com/dnd/ui/scenes/ManagePlayersPanel.java:680"
   ]
@@ -798,7 +798,7 @@
   "key": "Add entry",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/EntityForm.java:647"
+   "src/main/java/com/dnd/ui/components/EntityForm.java:668"
   ]
  },
  {
@@ -847,14 +847,14 @@
   "key": "Add Token",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2514"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2582"
   ]
  },
  {
   "key": "Add {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/components/EntityForm.java:754"
+   "src/main/java/com/dnd/ui/components/EntityForm.java:819"
   ]
  },
  {
@@ -868,21 +868,21 @@
   "key": "Added for you: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1753"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1785"
   ]
  },
  {
   "key": "Added {A} at ({B},{C}).",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2196"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2264"
   ]
  },
  {
   "key": "Advance to the next living combatant",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:310"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:313"
   ]
  },
  {
@@ -960,7 +960,7 @@
   "key": "Aiming {A} - click {B}, or press Esc to cancel.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1854"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1886"
   ]
  },
  {
@@ -989,7 +989,8 @@
   "key": "All",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2494"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2562",
+   "src/main/java/com/dnd/ui/scenes/EntityListScene.java:34"
   ]
  },
  {
@@ -1024,14 +1025,14 @@
   "key": "Almerion campaign: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:248"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:247"
   ]
  },
  {
   "key": "Almerion syncs campaigns through private repositories in your own GitHub account. To allow that, create a fine-grained personal access token on GitHub:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:155"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:156"
   ]
  },
  {
@@ -1087,7 +1088,7 @@
   "key": "Ammunition",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:117"
+   "src/main/java/com/dnd/data/EntityDescriptions.java:126"
   ]
  },
  {
@@ -1152,7 +1153,7 @@
   "key": "another computer",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/sync/CampaignRepo.java:394"
+   "src/main/java/com/dnd/sync/CampaignRepo.java:519"
   ]
  },
  {
@@ -1188,6 +1189,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/player/PlayerOnlineSessionScene.java:91"
+  ]
+ },
+ {
+  "key": "Apply Choices",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:430"
   ]
  },
  {
@@ -1250,21 +1258,21 @@
   "key": "Armour class",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:99"
+   "src/main/java/com/dnd/data/EntityDescriptions.java:108"
   ]
  },
  {
   "key": "around itself, catching {A}.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:345"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:394"
   ]
  },
  {
   "key": "Artificer charges. Work like slots, but are refilled by burning fuel in a workshop furnace, not by resting.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:108"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:117"
   ]
  },
  {
@@ -1285,7 +1293,7 @@
   "key": "at empty ground.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:346"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:395"
   ]
  },
  {
@@ -1313,14 +1321,14 @@
   "key": "Attacking with {A} - click the target, or press Esc to cancel.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1665"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1697"
   ]
  },
  {
   "key": "Attacks",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1041"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1073"
   ]
  },
  {
@@ -1355,7 +1363,7 @@
   "key": "Award XP",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1338",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1370",
    "src/main/java/com/dnd/ui/scenes/ManagePlayersPanel.java:232",
    "src/main/java/com/dnd/ui/scenes/ManagePlayersPanel.java:233"
   ]
@@ -1414,7 +1422,7 @@
   "key": "Battle state saved.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:349"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:352"
   ]
  },
  {
@@ -1445,7 +1453,7 @@
   "key": "Blood magic: a spell's mana cost is paid in the caster's own hit points.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:110"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:119"
   ]
  },
  {
@@ -1506,20 +1514,6 @@
   ]
  },
  {
-  "key": "Both computers changed the same files",
-  "kind": "exact",
-  "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:377"
-  ]
- },
- {
-  "key": "Both computers changed {A} file{B}. This computer's version was kept; GitHub's version was saved next to it as: {C}",
-  "kind": "pattern",
-  "where": [
-   "src/main/java/com/dnd/sync/CampaignRepo.java:316"
-  ]
- },
- {
   "key": "Brave",
   "kind": "exact",
   "where": [
@@ -1544,7 +1538,7 @@
   "key": "Builds",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:127"
+   "src/main/java/com/dnd/data/EntityDescriptions.java:136"
   ]
  },
  {
@@ -1576,10 +1570,10 @@
   ]
  },
  {
-  "key": "Campaign changes from {A}",
-  "kind": "pattern",
+  "key": "Campaign changes from",
+  "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/sync/CampaignRepo.java:230"
+   "src/main/java/com/dnd/sync/CampaignRepo.java:70"
   ]
  },
  {
@@ -1593,14 +1587,14 @@
   "key": "Campaign downloaded",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:317"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:316"
   ]
  },
  {
   "key": "Campaign folder name",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:294"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:293"
   ]
  },
  {
@@ -1650,7 +1644,7 @@
   "key": "Campaign: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityListScene.java:49",
+   "src/main/java/com/dnd/ui/scenes/EntityListScene.java:51",
    "src/main/java/com/dnd/ui/scenes/player/PlayerCharacterSelectionScene.java:67",
    "src/main/java/com/dnd/ui/scenes/player/PlayerOnlineSessionScene.java:235"
   ]
@@ -1673,14 +1667,14 @@
   "key": "Can't move there: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:578"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:593"
   ]
  },
  {
   "key": "Can't reach GitHub. Check your internet connection and try again.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:481"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:604"
   ]
  },
  {
@@ -1694,7 +1688,7 @@
   "key": "Can't reach the online campaign directory. Check your internet connection and try again.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BaseScene.java:207"
+   "src/main/java/com/dnd/ui/scenes/BaseScene.java:219"
   ]
  },
  {
@@ -1708,14 +1702,14 @@
   "key": "Can't wall off a square with something standing on it.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:682"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:697"
   ]
  },
  {
   "key": "Cancel",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1765",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1797",
    "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:303",
    "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:117"
   ]
@@ -1731,14 +1725,14 @@
   "key": "Cancelled.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1619"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1651"
   ]
  },
  {
   "key": "Cannot cast spells at all.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:111"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:120"
   ]
  },
  {
@@ -1752,7 +1746,7 @@
   "key": "Cannot create: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:257"
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:266"
   ]
  },
  {
@@ -1770,6 +1764,13 @@
   ]
  },
  {
+  "key": "Cantrip",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/EntityListScene.java:255"
+  ]
+ },
+ {
   "key": "Cantrips are free and can be used every turn. Levelled spells cost {A} of their level or higher each cast. The class's usual spells are already ticked; tick or untick freely.{B}",
   "kind": "pattern",
   "where": [
@@ -1780,29 +1781,30 @@
   "key": "Cantrip{A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:43"
+   "src/main/java/com/dnd/data/EntityDescriptions.java:52"
   ]
  },
  {
   "key": "Capsule recipe: fills one energy charge of this level instead of making an item. {0} = makes the product.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:90"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:99"
   ]
  },
  {
   "key": "Cast cancelled.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1865",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1911"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1897",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1943",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1958"
   ]
  },
  {
   "key": "Casting",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:57"
+   "src/main/java/com/dnd/data/EntityDescriptions.java:66"
   ]
  },
  {
@@ -1816,7 +1818,7 @@
   "key": "Casts with: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2302",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2370",
    "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:53"
   ]
  },
@@ -1845,7 +1847,7 @@
   "key": "CHA",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1287",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1319",
    "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:70"
   ]
  },
@@ -1854,6 +1856,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/MusicPanel.java:542"
+  ]
+ },
+ {
+  "key": "changed by",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:478"
   ]
  },
  {
@@ -1896,14 +1905,14 @@
   "key": "Character level needed to understand these plans.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:84"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:93"
   ]
  },
  {
   "key": "character level {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:149"
+   "src/main/java/com/dnd/data/EntityDescriptions.java:158"
   ]
  },
  {
@@ -1931,14 +1940,14 @@
   "key": "Charge type: {0} Steam-pressure, {1} Thermal, {2} Shock, {3} Force, {4} Arcane Resonance. Higher charges can stand in for lower.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:92"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:101"
   ]
  },
  {
   "key": "Charges",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:148",
+   "src/main/java/com/dnd/data/EntityDescriptions.java:157",
    "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:52"
   ]
  },
@@ -1960,7 +1969,7 @@
   "key": "Check",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:131"
+   "src/main/java/com/dnd/data/EntityDescriptions.java:140"
   ]
  },
  {
@@ -1982,7 +1991,7 @@
   "key": "Choose a combat playlist in the music panel first.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:395"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:398"
   ]
  },
  {
@@ -2042,6 +2051,13 @@
   ]
  },
  {
+  "key": "Choose which version to keep - {A}",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:402"
+  ]
+ },
+ {
   "key": "Choose Your Character",
   "kind": "exact",
   "where": [
@@ -2059,14 +2075,14 @@
   "key": "Claim",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:160"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:162"
   ]
  },
  {
   "key": "Claim a campaign to become its author GM. Only you will see it until you add players or GMs.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:158"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:160"
   ]
  },
  {
@@ -2080,7 +2096,7 @@
   "key": "Class & Race Features",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1043",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1075",
    "src/main/java/com/dnd/ui/scenes/ManagePlayersPanel.java:421"
   ]
  },
@@ -2138,21 +2154,21 @@
   "key": "Click a token to inspect it. Drag it to move. Esc clears the selection.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:463"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:466"
   ]
  },
  {
   "key": "Click an empty box on the map to place it, or press Esc to cancel.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2122"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2190"
   ]
  },
  {
   "key": "Click to aim, then click a target.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1442"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1474"
   ]
  },
  {
@@ -2173,21 +2189,21 @@
   "key": "Click to use it - it hits everyone around the caster.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1441"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1473"
   ]
  },
  {
   "key": "Click to use it on itself.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1440"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1472"
   ]
  },
  {
   "key": "Click, then click the target.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1641"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1673"
   ]
  },
  {
@@ -2201,7 +2217,7 @@
   "key": "Climb (ft):",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1256"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1288"
   ]
  },
  {
@@ -2209,7 +2225,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/print/CharacterSheetPrintDialog.java:170",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:351",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:354",
    "src/main/java/com/dnd/ui/scenes/StorylineEditorWindow.java:587"
   ]
  },
@@ -2217,7 +2233,7 @@
   "key": "Close the battle map",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:351"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:354"
   ]
  },
  {
@@ -2238,7 +2254,7 @@
   "key": "Coins:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1214",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1246",
    "src/main/java/com/dnd/ui/scenes/StorylineEditorWindow.java:562"
   ]
  },
@@ -2267,43 +2283,43 @@
   "key": "Combat music off.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:399"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:402"
   ]
  },
  {
   "key": "Combatant",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:777"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:792"
   ]
  },
  {
   "key": "Combatants",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:878"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:910"
   ]
  },
  {
   "key": "Combine with an existing repository",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:284"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:283"
   ]
  },
  {
   "key": "comma separated",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/EntityForm.java:712",
-   "src/main/java/com/dnd/ui/components/EntityForm.java:714"
+   "src/main/java/com/dnd/ui/components/EntityForm.java:777",
+   "src/main/java/com/dnd/ui/components/EntityForm.java:779"
   ]
  },
  {
   "key": "Components",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:56"
+   "src/main/java/com/dnd/data/EntityDescriptions.java:65"
   ]
  },
  {
@@ -2317,7 +2333,7 @@
   "key": "CON",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1284",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1316",
    "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:70"
   ]
  },
@@ -2325,14 +2341,14 @@
   "key": "Concentration spells end if the caster casts another one or is badly hurt.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:78"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:87"
   ]
  },
  {
   "key": "Condition",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1025"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1057"
   ]
  },
  {
@@ -2346,7 +2362,7 @@
   "key": "Confirm Delete",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:190"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:192"
   ]
  },
  {
@@ -2416,7 +2432,7 @@
   "key": "Cooldown",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:65"
+   "src/main/java/com/dnd/data/EntityDescriptions.java:74"
   ]
  },
  {
@@ -2465,7 +2481,7 @@
   "key": "Costs double movement to enter.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:732"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:747"
   ]
  },
  {
@@ -2479,7 +2495,7 @@
   "key": "Could not find that entry in the campaign.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2179"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2247"
   ]
  },
  {
@@ -2500,7 +2516,7 @@
   "key": "Could not place the token: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2185"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2253"
   ]
  },
  {
@@ -2585,14 +2601,14 @@
   "key": "Couldn't claim \"{A}\"",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:163"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:165"
   ]
  },
  {
   "key": "Couldn't delete the campaign",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:198"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:200"
   ]
  },
  {
@@ -2606,7 +2622,7 @@
   "key": "Couldn't link the GitHub account",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:175"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:176"
   ]
  },
  {
@@ -2620,7 +2636,7 @@
   "key": "Couldn't read the campaign's sync settings",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:188"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:189"
   ]
  },
  {
@@ -2676,7 +2692,7 @@
   "key": "Count a failed death save; the third one kills",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1161"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1193"
   ]
  },
  {
@@ -2704,7 +2720,7 @@
   "key": "Crafting check DC: d{0} + INT + proficiency. Fail by {1} or more and the materials are ruined. {2} = no check.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:89"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:98"
   ]
  },
  {
@@ -2770,7 +2786,7 @@
   "key": "Create New Campaign",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:101"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:103"
   ]
  },
  {
@@ -2791,7 +2807,7 @@
   "key": "Creating the private repository...",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:246"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:245"
   ]
  },
  {
@@ -2820,14 +2836,14 @@
   "key": "Creatures without a climb speed cross it at half pace.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:731"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:746"
   ]
  },
  {
   "key": "Creatures without a swim speed cross it at half pace.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:730"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:745"
   ]
  },
  {
@@ -2841,7 +2857,7 @@
   "key": "Critical hit (roll the weapon dice twice, enter the total)",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1726"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1758"
   ]
  },
  {
@@ -2849,6 +2865,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/MusicPanel.java:339"
+  ]
+ },
+ {
+  "key": "d MMM yyyy, HH:mm",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:389"
   ]
  },
  {
@@ -2862,9 +2885,9 @@
   "key": "Damage",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:60",
-   "src/main/java/com/dnd/data/EntityDescriptions.java:91",
-   "src/main/java/com/dnd/data/EntityDescriptions.java:95"
+   "src/main/java/com/dnd/data/EntityDescriptions.java:69",
+   "src/main/java/com/dnd/data/EntityDescriptions.java:100",
+   "src/main/java/com/dnd/data/EntityDescriptions.java:104"
   ]
  },
  {
@@ -2882,10 +2905,17 @@
   ]
  },
  {
+  "key": "Damage dealt on a hit: the dice rolled plus a flat constant, and the damage type.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:85"
+  ]
+ },
+ {
   "key": "Damage type: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1155"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1187"
   ]
  },
  {
@@ -2930,7 +2960,7 @@
   "key": "data:image/png;base{0},iVBORw{1}KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR{2}mNk+M{3}QDwADhgGAWjR{4}awAAAABJRU{5}ErkJggg==",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/ImageStore.java:34"
+   "src/main/java/com/dnd/ui/ImageStore.java:70"
   ]
  },
  {
@@ -2944,7 +2974,7 @@
   "key": "DC {A} - d20 + INT + proficiency (tools)",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:131"
+   "src/main/java/com/dnd/data/EntityDescriptions.java:140"
   ]
  },
  {
@@ -2959,6 +2989,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/model/character/stats/Skills.java:20"
+  ]
+ },
+ {
+  "key": "Decide Later",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:431"
   ]
  },
  {
@@ -2988,7 +3025,7 @@
   "key": "Delete",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityListScene.java:96",
+   "src/main/java/com/dnd/ui/scenes/EntityListScene.java:142",
    "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:216",
    "src/main/java/com/dnd/ui/scenes/MusicPanel.java:331"
   ]
@@ -2997,35 +3034,35 @@
   "key": "Delete campaign '{A}'? Its files and its member list are removed. This cannot be undone.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:188"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:190"
   ]
  },
  {
   "key": "Delete Character",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:163"
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:172"
   ]
  },
  {
   "key": "Delete character '{A}'? This cannot be undone.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:166"
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:175"
   ]
  },
  {
   "key": "Delete failed: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:175"
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:184"
   ]
  },
  {
   "key": "Delete Selected",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:102"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:104"
   ]
  },
  {
@@ -3039,7 +3076,7 @@
   "key": "Delete {A} '{B}'?",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityListScene.java:102"
+   "src/main/java/com/dnd/ui/scenes/EntityListScene.java:148"
   ]
  },
  {
@@ -3047,6 +3084,13 @@
   "kind": "pattern",
   "where": [
    "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:470"
+  ]
+ },
+ {
+  "key": "deleted by",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:478"
   ]
  },
  {
@@ -3119,8 +3163,8 @@
   "key": "DEX",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1283",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1751",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1315",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1783",
    "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:70"
   ]
  },
@@ -3151,6 +3195,13 @@
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:94",
    "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:267"
+  ]
+ },
+ {
+  "key": "Dice rolled for the effect's power; the DM rolls them at the table when the spell is cast.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:84"
   ]
  },
  {
@@ -3227,7 +3278,7 @@
   "key": "Download Campaign",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:300"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:299"
   ]
  },
  {
@@ -3262,7 +3313,7 @@
   "key": "Downloading...",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:312"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:311"
   ]
  },
  {
@@ -3290,7 +3341,7 @@
   "key": "Durability",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:120"
+   "src/main/java/com/dnd/data/EntityDescriptions.java:129"
   ]
  },
  {
@@ -3350,12 +3401,26 @@
   ]
  },
  {
+  "key": "effectId",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/magic/SpellEffect.java:28"
+  ]
+ },
+ {
   "key": "Effects",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:63",
+   "src/main/java/com/dnd/data/EntityDescriptions.java:72",
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:90",
    "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:263"
+  ]
+ },
+ {
+  "key": "Effects from this campaign that the spell applies. Each one's power (constant + dice) replaces the effect's own damage/healing amount; leave it at {0} with no dice to use the effect's own amount.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:81"
   ]
  },
  {
@@ -3385,7 +3450,7 @@
   "key": "Email could not be sent",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BaseScene.java:164"
+   "src/main/java/com/dnd/ui/scenes/BaseScene.java:176"
   ]
  },
  {
@@ -3441,7 +3506,7 @@
   "key": "Energy charge level used per activation; {0} = runs on clockwork and costs nothing.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:98"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:107"
   ]
  },
  {
@@ -3463,7 +3528,7 @@
   "key": "Energy charges poured into the build (level {0} Steam-pressure, {1} Thermal, {2} Shock...).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:88"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:97"
   ]
  },
  {
@@ -3477,29 +3542,29 @@
   "key": "Enlarge the grid",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:339"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:342"
   ]
  },
  {
   "key": "Enter a whole number {0} or greater:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1964",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2389"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2032",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2457"
   ]
  },
  {
   "key": "Enter Initiative",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:766"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:781"
   ]
  },
  {
   "key": "Enter Initiative...",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:308"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:311"
   ]
  },
  {
@@ -3513,7 +3578,22 @@
   "key": "Enter the damage rolled:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1955"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2003"
+  ]
+ },
+ {
+  "key": "Enter the dice total rolled ({A} is added for you):",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2004",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2016"
+  ]
+ },
+ {
+  "key": "Enter the dice total rolled:",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2015"
   ]
  },
  {
@@ -3541,7 +3621,7 @@
   "key": "Enter the rolled dice totals as whole numbers.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1774"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1806"
   ]
  },
  {
@@ -3555,7 +3635,7 @@
   "key": "Entities",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityListScene.java:48"
+   "src/main/java/com/dnd/ui/scenes/EntityListScene.java:50"
   ]
  },
  {
@@ -3576,7 +3656,7 @@
   "key": "Every hit, spell, effect and step since then is undone.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2268"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2336"
   ]
  },
  {
@@ -3618,7 +3698,7 @@
   "key": "Extra Attack: {A} attacks per Attack action",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1650"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1682"
   ]
  },
  {
@@ -3646,7 +3726,7 @@
   "key": "Failed Save",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1159"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1191"
   ]
  },
  {
@@ -3739,7 +3819,7 @@
   "key": "Failed to upload: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:73"
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:77"
   ]
  },
  {
@@ -3812,6 +3892,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/MusicPanel.java:758"
+  ]
+ },
+ {
+  "key": "Files changed both on this computer and on GitHub since they were last in step: {A}. Nothing was overwritten: choose which version to keep.",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/sync/CampaignRepo.java:358"
   ]
  },
  {
@@ -3908,6 +3995,20 @@
   ]
  },
  {
+  "key": "Flat amount added to the dice, e.g. the {0} in {1}d{2} + {3}. Can be used on its own without dice.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:86"
+  ]
+ },
+ {
+  "key": "Flat part of the effect's power, added to the dice (e.g. the {0} in {1}d{2} + {3}).",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:83"
+  ]
+ },
+ {
   "key": "Flurry of Blows, Patient Defense, Step of the Wind, Stunning Strike - {0} point each.",
   "kind": "exact",
   "where": [
@@ -3975,7 +4076,7 @@
   "key": "Free label to sort the blueprint book, e.g. Utility, Light combat, Medium combat.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:83"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:92"
   ]
  },
  {
@@ -3989,7 +4090,7 @@
   "key": "From {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2018"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2086"
   ]
  },
  {
@@ -4010,7 +4111,7 @@
   "key": "Fuel value",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:111"
+   "src/main/java/com/dnd/data/EntityDescriptions.java:120"
   ]
  },
  {
@@ -4031,7 +4132,7 @@
   "key": "Full HP, mana, spell slots and feature uses; every effect and cooldown cleared",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2341"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2409"
   ]
  },
  {
@@ -4045,14 +4146,14 @@
   "key": "Furnace",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:113"
+   "src/main/java/com/dnd/data/EntityDescriptions.java:122"
   ]
  },
  {
   "key": "Furnace units per piece. A steam-pressure charge costs {0} units, thermal {1}, electric {2}, magnetic {3}, resonance {4}.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:94"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:103"
   ]
  },
  {
@@ -4066,14 +4167,14 @@
   "key": "Fury of the Small (+{A}, target is larger)",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1744"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1776"
   ]
  },
  {
   "key": "Fury of the Small: +{A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1786"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1818"
   ]
  },
  {
@@ -4116,14 +4217,14 @@
   "key": "Get a Campaign from GitHub",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:292"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:291"
   ]
  },
  {
   "key": "Get Campaign from GitHub...",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:119"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:121"
   ]
  },
  {
@@ -4141,6 +4242,13 @@
   ]
  },
  {
+  "key": "getCategory",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/EntityListScene.java:260"
+  ]
+ },
+ {
   "key": "getCurrentHitPoints",
   "kind": "exact",
   "where": [
@@ -4153,16 +4261,23 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:126",
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:306",
-   "src/main/java/com/dnd/ui/scenes/EntityListScene.java:265"
+   "src/main/java/com/dnd/ui/components/EntityForm.java:739",
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:326"
   ]
  },
  {
   "key": "getImagePath",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:346",
-   "src/main/java/com/dnd/ui/scenes/EntityListScene.java:273"
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:366",
+   "src/main/java/com/dnd/ui/scenes/EntityListScene.java:352"
+  ]
+ },
+ {
+  "key": "getKind",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/EntityListScene.java:260"
   ]
  },
  {
@@ -4185,21 +4300,21 @@
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:124",
    "src/main/java/com/dnd/data/JsonRepository.java:65",
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:164"
+   "src/main/java/com/dnd/ui/components/EntityForm.java:740"
   ]
  },
  {
   "key": "Gets fewer slots starting at level {0} and tops out at {1}th-level spells; mixes magic with fighting (paladin, ranger).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:102"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:111"
   ]
  },
  {
   "key": "Gets spell slots from level {0} and reaches {1}th-level spells - the strongest magic users (wizard, cleric, druid, bard, sorcerer).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:101"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:110"
   ]
  },
  {
@@ -4217,18 +4332,25 @@
   ]
  },
  {
+  "key": "getType",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/EntityListScene.java:260"
+  ]
+ },
+ {
   "key": "getValue",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/EntityForm.java:460"
+   "src/main/java/com/dnd/ui/components/EntityForm.java:481"
   ]
  },
  {
   "key": "GitHub account linked",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:141",
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:173"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:142",
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:174"
   ]
  },
  {
@@ -4285,14 +4407,21 @@
   "key": "GitHub sync",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:399"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:503"
   ]
  },
  {
   "key": "GitHub sync on",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:408"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:514"
+  ]
+ },
+ {
+  "key": "GitHub's version is newer.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:413"
   ]
  },
  {
@@ -4300,6 +4429,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:55"
+  ]
+ },
+ {
+  "key": "GitHub: {A}",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:408"
   ]
  },
  {
@@ -4313,7 +4449,7 @@
   "key": "Give every player on the map a short or long rest",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:343"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:346"
   ]
  },
  {
@@ -4334,7 +4470,7 @@
   "key": "Give this creature its full movement back for the current turn",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1245"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1277"
   ]
  },
  {
@@ -4383,7 +4519,7 @@
   "key": "Gold value of the material; {0} = trivial, a component pouch covers it.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:76"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:79"
   ]
  },
  {
@@ -4453,7 +4589,7 @@
   "key": "Heal",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1113"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1145"
   ]
  },
  {
@@ -4488,14 +4624,14 @@
   "key": "Health Bars",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:334"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:337"
   ]
  },
  {
   "key": "Heal…",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1496"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1528"
   ]
  },
  {
@@ -4523,7 +4659,7 @@
   "key": "Hit",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1763"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1795"
   ]
  },
  {
@@ -4544,14 +4680,14 @@
   "key": "Homebrew artificer. Same numbers as a half caster, but the 'slots' are energy charges: steam-pressure, thermal, electric... Rests do NOT refill them - the workshop furnace does, by burning fuel.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:105"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:114"
   ]
  },
  {
   "key": "Homebrew: every spell has a mana cost paid from a pool; half the missing mana returns on a short rest.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:109"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:118"
   ]
  },
  {
@@ -4572,21 +4708,21 @@
   "key": "How many charges of that type.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:93"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:102"
   ]
  },
  {
   "key": "How many of the product one crafting makes (e.g. {0} bolts).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:82"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:91"
   ]
  },
  {
   "key": "How many of this material one crafting uses.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:91"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:100"
   ]
  },
  {
@@ -4691,7 +4827,7 @@
   "key": "In-game time the work takes, so the GM can judge whether there is time.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:85"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:94"
   ]
  },
  {
@@ -4727,21 +4863,21 @@
   "key": "Initiative",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:777"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:792"
   ]
  },
  {
   "key": "Initiative updated for {A} combatant{B}.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:805"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:820"
   ]
  },
  {
   "key": "Initiative:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1215"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1247"
   ]
  },
  {
@@ -4811,7 +4947,7 @@
   "key": "INT",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1285",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1317",
    "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:70"
   ]
  },
@@ -4899,7 +5035,7 @@
   "key": "It wasn't emailed because:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BaseScene.java:166"
+   "src/main/java/com/dnd/ui/scenes/BaseScene.java:178"
   ]
  },
  {
@@ -4949,14 +5085,14 @@
   "key": "Item kind:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:115"
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:124"
   ]
  },
  {
   "key": "Item kind: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:119"
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:128"
   ]
  },
  {
@@ -4985,7 +5121,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:83",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1073",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1105",
    "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:256"
   ]
  },
@@ -5007,7 +5143,7 @@
   "key": "Items used up by crafting, with amounts.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:86"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:95"
   ]
  },
  {
@@ -5083,6 +5219,27 @@
   ]
  },
  {
+  "key": "Keep All from GitHub",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:429"
+  ]
+ },
+ {
+  "key": "Keep All from This Computer",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:428"
+  ]
+ },
+ {
+  "key": "Keep both (GitHub's version is saved next to this computer's)",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:409"
+  ]
+ },
+ {
   "key": "Ki points",
   "kind": "exact",
   "where": [
@@ -5093,7 +5250,7 @@
   "key": "Kill",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1174"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1206"
   ]
  },
  {
@@ -5172,7 +5329,7 @@
   "key": "Level & XP",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1055"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1087"
   ]
  },
  {
@@ -5207,7 +5364,7 @@
   "key": "Level {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:44",
+   "src/main/java/com/dnd/data/EntityDescriptions.java:53",
    "src/main/java/com/dnd/model/magic/EnergyCharges.java:41",
    "src/main/java/com/dnd/model/world/map/TokenSupport.java:339"
   ]
@@ -5223,7 +5380,7 @@
   "key": "Level:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1321",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1353",
    "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:674"
   ]
  },
@@ -5254,7 +5411,7 @@
   "where": [
    "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:94",
    "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:108",
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:151"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:152"
   ]
  },
  {
@@ -5282,8 +5439,8 @@
   "key": "Linked to GitHub as {A}.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:141",
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:173"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:142",
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:174"
   ]
  },
  {
@@ -5326,7 +5483,7 @@
   "key": "Loading...",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:406",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:409",
    "src/main/java/com/dnd/ui/scenes/MembersWindow.java:61",
    "src/main/java/com/dnd/ui/scenes/MusicPanel.java:270"
   ]
@@ -5384,8 +5541,8 @@
   "key": "Long Rest",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2339",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2409",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2407",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2477",
    "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:87"
   ]
  },
@@ -5393,7 +5550,7 @@
   "key": "Long rest: everyone is restored to full.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2406"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2474"
   ]
  },
  {
@@ -5429,7 +5586,7 @@
   "key": "Made Save",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1167"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1199"
   ]
  },
  {
@@ -5471,7 +5628,7 @@
   "key": "makes charges up to {A} (tier {B})",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:113"
+   "src/main/java/com/dnd/data/EntityDescriptions.java:122"
   ]
  },
  {
@@ -5485,7 +5642,7 @@
   "key": "Mana cost",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:64"
+   "src/main/java/com/dnd/data/EntityDescriptions.java:73"
   ]
  },
  {
@@ -5513,7 +5670,7 @@
   "key": "Mana:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1150",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1182",
    "src/main/java/com/dnd/ui/scenes/ManagePlayersPanel.java:691"
   ]
  },
@@ -5542,7 +5699,7 @@
   "key": "Map Music",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:403"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:406"
   ]
  },
  {
@@ -5604,10 +5761,31 @@
   ]
  },
  {
+  "key": "materialComponent",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/magic/SpellComponents.java:21"
+  ]
+ },
+ {
+  "key": "materialConsumed",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/magic/SpellComponents.java:21"
+  ]
+ },
+ {
+  "key": "materialCost",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/magic/SpellComponents.java:21"
+  ]
+ },
+ {
   "key": "Materials (used up)",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:137"
+   "src/main/java/com/dnd/data/EntityDescriptions.java:146"
   ]
  },
  {
@@ -5621,7 +5799,7 @@
   "key": "Max HP:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1149",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1181",
    "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:679"
   ]
  },
@@ -5650,14 +5828,21 @@
   "key": "Merge campaign changes from GitHub",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/sync/CampaignRepo.java:272"
+   "src/main/java/com/dnd/sync/CampaignRepo.java:332"
   ]
  },
  {
-  "key": "Merge campaign changes from GitHub (kept both versions of {A} file{B})",
+  "key": "Merge campaign changes from GitHub (chose versions of {A} file{B})",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/sync/CampaignRepo.java:314"
+   "src/main/java/com/dnd/sync/CampaignRepo.java:391"
+  ]
+ },
+ {
+  "key": "Merging and uploading...",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:437"
   ]
  },
  {
@@ -5671,14 +5856,14 @@
   "key": "Miss",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1764"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1796"
   ]
  },
  {
   "key": "Missing {A}.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:272"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:311"
   ]
  },
  {
@@ -5758,7 +5943,7 @@
   "key": "Movement",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1047"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1079"
   ]
  },
  {
@@ -5800,7 +5985,7 @@
   "key": "Music Panel",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:384",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:387",
    "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:109",
    "src/main/java/com/dnd/ui/scenes/StorylineEditorWindow.java:303"
   ]
@@ -5891,7 +6076,7 @@
   "key": "Needs",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:70"
+   "src/main/java/com/dnd/data/EntityDescriptions.java:79"
   ]
  },
  {
@@ -5969,7 +6154,7 @@
   "key": "New",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityListScene.java:88"
+   "src/main/java/com/dnd/ui/scenes/EntityListScene.java:134"
   ]
  },
  {
@@ -6027,7 +6212,7 @@
   "key": "New private repository",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:267"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:266"
   ]
  },
  {
@@ -6077,7 +6262,7 @@
   "key": "Next Turn ▸",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:310"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:313"
   ]
  },
  {
@@ -6149,8 +6334,8 @@
   "key": "No category",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:215",
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:237"
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:224",
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:246"
   ]
  },
  {
@@ -6178,21 +6363,21 @@
   "key": "No combatants on the map yet.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:761"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:776"
   ]
  },
  {
   "key": "No creatures on this map yet. Use \"＋ Add Token\".",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:883"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:915"
   ]
  },
  {
   "key": "No earlier turn of {A} has been recorded yet.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2264"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2332"
   ]
  },
  {
@@ -6265,7 +6450,7 @@
   "key": "No non-player combatants to roll for.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:304"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:307"
   ]
  },
  {
@@ -6279,7 +6464,7 @@
   "key": "No player characters on this map.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2401"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2469"
   ]
  },
  {
@@ -6350,14 +6535,14 @@
   "key": "No spell slot of level {A} left.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:382"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:431"
   ]
  },
  {
   "key": "No spell slot of level {A} or higher left.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:389"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:438"
   ]
  },
  {
@@ -6371,7 +6556,7 @@
   "key": "No spells. The class fights with weapons and its own features (barbarian, fighter, rogue, monk).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:100"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:109"
   ]
  },
  {
@@ -6406,7 +6591,7 @@
   "key": "No {A} charge (or stronger) left - refill at the workshop furnace.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:387"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:436"
   ]
  },
  {
@@ -6421,14 +6606,14 @@
   "key": "No {A} charge left{B}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:379"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:428"
   ]
  },
  {
   "key": "Nobody is standing.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:900"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:932"
   ]
  },
  {
@@ -6442,7 +6627,7 @@
   "key": "Nobody to rewind for.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2259"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2327"
   ]
  },
  {
@@ -6492,7 +6677,7 @@
   "key": "Not enough mana - needs {A}, has {B}.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:392"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:441"
   ]
  },
  {
@@ -6528,14 +6713,14 @@
   "key": "Nothing is caught in the blast.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1893"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1925"
   ]
  },
  {
   "key": "Nothing left standing.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:317"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:320"
   ]
  },
  {
@@ -6551,7 +6736,7 @@
   "key": "Nothing selected.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:262",
+   "src/main/java/com/dnd/model/combat/CastResolver.java:301",
    "src/main/java/com/dnd/model/crafting/Workshop.java:103"
   ]
  },
@@ -6559,7 +6744,7 @@
   "key": "Now acting: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:320"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:323"
   ]
  },
  {
@@ -6597,7 +6782,7 @@
   "key": "Offline - showing the campaign list saved from your last connection.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:145"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:147"
   ]
  },
  {
@@ -6625,14 +6810,14 @@
   "key": "On hit",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:93"
+   "src/main/java/com/dnd/data/EntityDescriptions.java:102"
   ]
  },
  {
   "key": "On this device, not registered to anyone",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:157"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:159"
   ]
  },
  {
@@ -6709,14 +6894,14 @@
   "key": "Only one screen found - the projector view opened as a window. Set Windows to Extend (Win+P) and reopen it.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:864"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:896"
   ]
  },
  {
   "key": "Only the author can delete this campaign",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:183"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:185"
   ]
  },
  {
@@ -6807,14 +6992,14 @@
   "key": "Open the GitHub Token Page",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:161"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:162"
   ]
  },
  {
   "key": "Open the music panel: playlists, sounds and volume",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:384",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:387",
    "src/main/java/com/dnd/ui/scenes/StorylineEditorWindow.java:303"
   ]
  },
@@ -6850,7 +7035,7 @@
   "key": "Or an existing repository",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:269"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:268"
   ]
  },
  {
@@ -6906,14 +7091,14 @@
   "key": "Paint difficult, water or climbable ground onto the map",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:700"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:715"
   ]
  },
  {
   "key": "Painting {A} ground - click squares. Esc to stop.{B}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:725"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:740"
   ]
  },
  {
@@ -6927,7 +7112,7 @@
   "key": "Party Rest",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2405"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2473"
   ]
  },
  {
@@ -7013,7 +7198,7 @@
   "key": "Paste a GitHub access token",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:152"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:153"
   ]
  },
  {
@@ -7049,7 +7234,7 @@
   "key": "pays {A} HP",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:417"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:466"
   ]
  },
  {
@@ -7106,14 +7291,14 @@
   "key": "Pick a campaign",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:114"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:116"
   ]
  },
  {
   "key": "Pick a creature, then click empty boxes to drop it. Esc stops.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2512"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2580"
   ]
  },
  {
@@ -7148,14 +7333,14 @@
   "key": "Pick the points, then click who is healed",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1498"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1530"
   ]
  },
  {
   "key": "Pick the repository you synced the campaign to from your other computer.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:328"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:327"
   ]
  },
  {
@@ -7176,7 +7361,7 @@
   "key": "Placement cancelled.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2128"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2196"
   ]
  },
  {
@@ -7421,7 +7606,7 @@
   "key": "Power",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:106"
+   "src/main/java/com/dnd/data/EntityDescriptions.java:115"
   ]
  },
  {
@@ -7514,21 +7699,21 @@
   "key": "Projector view closed.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:856"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:888"
   ]
  },
  {
   "key": "Projector view is on the second screen. Players see only the map; press Esc there or this button again to close.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:863"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:895"
   ]
  },
  {
   "key": "Purse & Stats",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1050"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1082"
   ]
  },
  {
@@ -7586,7 +7771,7 @@
   "key": "Rage: +{A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1785"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1817"
   ]
  },
  {
@@ -7651,7 +7836,7 @@
   "key": "Recover the HP rolled on hit dice, pact slots, half the missing mana and short-rest features; timed effects end",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2328"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2396"
   ]
  },
  {
@@ -7721,7 +7906,7 @@
   "key": "Remove",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/EntityForm.java:782",
+   "src/main/java/com/dnd/ui/components/EntityForm.java:847",
    "src/main/java/com/dnd/ui/scenes/MembersWindow.java:127",
    "src/main/java/com/dnd/ui/scenes/MusicPanel.java:543"
   ]
@@ -7772,7 +7957,7 @@
   "key": "Remove {A} from this map?",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:635",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:650",
    "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:733"
   ]
  },
@@ -7787,7 +7972,7 @@
   "key": "Removed {A}.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:654"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:669"
   ]
  },
  {
@@ -7822,7 +8007,7 @@
   "key": "Repository:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:200"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:202"
   ]
  },
  {
@@ -7836,7 +8021,7 @@
   "key": "Requires",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:149"
+   "src/main/java/com/dnd/data/EntityDescriptions.java:158"
   ]
  },
  {
@@ -7878,7 +8063,7 @@
   "key": "Reset Move",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1243"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1275"
   ]
  },
  {
@@ -7948,7 +8133,7 @@
   "key": "Resisted: {A} → {B}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1787"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1819"
   ]
  },
  {
@@ -7962,14 +8147,14 @@
   "key": "Resists: {A} (damage halved)",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1521"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1553"
   ]
  },
  {
   "key": "Rest...",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:343"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:346"
   ]
  },
  {
@@ -7997,7 +8182,7 @@
   "key": "Revive",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1181"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1213"
   ]
  },
  {
@@ -8018,35 +8203,42 @@
   "key": "Roll initiative for every creature the GM runs, leaving player rolls alone",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:300"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:303"
   ]
  },
  {
   "key": "Roll NPCs",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:300"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:303"
   ]
  },
  {
   "key": "Rolled damage",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1953"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2002"
+  ]
+ },
+ {
+  "key": "Rolled effect power",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2014"
   ]
  },
  {
   "key": "Rolled initiative for {A} non-player combatant{B}.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:305"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:308"
   ]
  },
  {
   "key": "Rolled {A}:",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1724"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1756"
   ]
  },
  {
@@ -8060,8 +8252,8 @@
   "key": "Round {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:835",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:844"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:850",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:876"
   ]
  },
  {
@@ -8096,8 +8288,8 @@
   "key": "Save",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:347",
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:135",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:350",
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:144",
    "src/main/java/com/dnd/ui/scenes/StorylineEditorWindow.java:248"
   ]
  },
@@ -8127,7 +8319,7 @@
   "kind": "pattern",
   "where": [
    "src/main/java/com/dnd/ui/scenes/CampaignNotesWindow.java:98",
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:150",
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:159",
    "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:1545"
   ]
  },
@@ -8135,7 +8327,7 @@
   "key": "Save it on this computer as:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:329"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:328"
   ]
  },
  {
@@ -8203,10 +8395,17 @@
   ]
  },
  {
+  "key": "Search by name, id or details...",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/EntityListScene.java:71"
+  ]
+ },
+ {
   "key": "Search creatures...",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2474"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2542"
   ]
  },
  {
@@ -8264,7 +8463,7 @@
   "key": "Select a token on the map first.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:631"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:646"
   ]
  },
  {
@@ -8279,7 +8478,7 @@
   "key": "Select Image",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:63"
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:67"
   ]
  },
  {
@@ -8300,7 +8499,7 @@
   "key": "Select one of your campaigns in the list first.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:114"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:116"
   ]
  },
  {
@@ -8343,7 +8542,7 @@
   "key": "self / touch",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:46"
+   "src/main/java/com/dnd/data/EntityDescriptions.java:55"
   ]
  },
  {
@@ -8406,7 +8605,7 @@
   "key": "setImagePath",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:351"
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:371"
   ]
  },
  {
@@ -8470,8 +8669,8 @@
   "key": "Short Rest",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2326",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2408",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2394",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2476",
    "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:66"
   ]
  },
@@ -8479,7 +8678,7 @@
   "key": "Short rest",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2330",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2398",
    "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:68"
   ]
  },
@@ -8487,14 +8686,14 @@
   "key": "Short rest: enter the HP each player rolled on their hit dice.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2406"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2474"
   ]
  },
  {
   "key": "Show only the map (no GM panels or health bars) on the second screen, for a projector. Set Windows to Extend with Win+P first.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:340"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:343"
   ]
  },
  {
@@ -8515,14 +8714,14 @@
   "key": "Show or hide health and mana bars on tokens",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:334"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:337"
   ]
  },
  {
   "key": "Show or hide the creature list: click an entry, then click boxes to place as many as you like (Esc stops)",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:328"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:331"
   ]
  },
  {
@@ -8543,7 +8742,7 @@
   "key": "Shrink the grid",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:338"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:341"
   ]
  },
  {
@@ -8629,14 +8828,14 @@
   "key": "Sneak Attack - rolled {A}d6:",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1733"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1765"
   ]
  },
  {
   "key": "Sneak Attack: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1783"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1815"
   ]
  },
  {
@@ -8727,28 +8926,28 @@
   "key": "Spell level must be between {A} and {B} but was {C}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/magic/Spell.java:134"
+   "src/main/java/com/dnd/model/magic/Spell.java:153"
   ]
  },
  {
   "key": "Spell mana cost must be non-negative but was {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/magic/Spell.java:153"
+   "src/main/java/com/dnd/model/magic/Spell.java:172"
   ]
  },
  {
   "key": "Spell radius must be non-negative but was {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/magic/Spell.java:175"
+   "src/main/java/com/dnd/model/magic/Spell.java:194"
   ]
  },
  {
   "key": "Spell range must be non-negative but was {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/magic/Spell.java:164"
+   "src/main/java/com/dnd/model/magic/Spell.java:183"
   ]
  },
  {
@@ -8778,7 +8977,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:84",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1061",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1093",
    "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:61"
   ]
  },
@@ -8849,7 +9048,7 @@
   "key": "Standard rules: each levelled spell uses one slot of its level or higher. Slots come back on a long rest.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:107"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:116"
   ]
  },
  {
@@ -8978,7 +9177,7 @@
   "key": "Stop Syncing",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:194"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:195"
   ]
  },
  {
@@ -9015,8 +9214,8 @@
   "key": "STR",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1282",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1751",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1314",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1783",
    "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:70"
   ]
  },
@@ -9031,7 +9230,7 @@
   "key": "STR {A} DEX {B} CON {C} INT {D} WIS {E} CHA {F}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityListScene.java:209"
+   "src/main/java/com/dnd/ui/scenes/EntityListScene.java:288"
   ]
  },
  {
@@ -9094,14 +9293,14 @@
   "key": "Swim (ft):",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1257"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1289"
   ]
  },
  {
   "key": "Switch to the campaign's combat playlist, and back to this map's music",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:389"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:392"
   ]
  },
  {
@@ -9115,36 +9314,50 @@
   "key": "Sync Now",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:193"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:194"
   ]
  },
  {
   "key": "Sync problem",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:378"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:383"
   ]
  },
  {
   "key": "Sync with GitHub...",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:111"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:113"
   ]
  },
  {
   "key": "Synced automatically when you open and leave it.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:199"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:200"
   ]
  },
  {
   "key": "Synced with GitHub",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/sync/CampaignSyncService.java:168",
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:375"
+   "src/main/java/com/dnd/sync/CampaignSyncService.java:196",
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:376"
+  ]
+ },
+ {
+  "key": "Synced.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/sync/CampaignRepo.java:393"
+  ]
+ },
+ {
+  "key": "Synced. GitHub's version was saved next to yours as: {A}",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/sync/CampaignRepo.java:394"
   ]
  },
  {
@@ -9158,7 +9371,7 @@
   "key": "Syncing with GitHub...",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/sync/CampaignSyncService.java:138"
+   "src/main/java/com/dnd/sync/CampaignSyncService.java:166"
   ]
  },
  {
@@ -9179,14 +9392,14 @@
   "key": "Take the selected token off the map",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:330"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:333"
   ]
  },
  {
   "key": "Target…",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1507"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1539"
   ]
  },
  {
@@ -9200,7 +9413,7 @@
   "key": "Terrain",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:698",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:713",
    "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:537"
   ]
  },
@@ -9222,7 +9435,7 @@
   "key": "Terrain painting off.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:745"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:760"
   ]
  },
  {
@@ -9243,7 +9456,7 @@
   "key": "That box isn't free - pick another one, or press Esc to cancel.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2142"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2210"
   ]
  },
  {
@@ -9278,8 +9491,8 @@
   "key": "That is off the map.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1882",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2137"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1914",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2205"
   ]
  },
  {
@@ -9321,7 +9534,7 @@
   "key": "The action this gadget performs on the battle map. Whoever carries it gets the action.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:96"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:105"
   ]
  },
  {
@@ -9381,10 +9594,17 @@
   ]
  },
  {
+  "key": "The campaign effect this spell applies.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:82"
+  ]
+ },
+ {
   "key": "The campaign is uploaded to a private repository in your GitHub account. From then on it syncs automatically: changes from your other computers are fetched when you open it, and yours are uploaded while you work and when you leave it.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:264"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:263"
   ]
  },
  {
@@ -9412,7 +9632,7 @@
   "key": "The code above is valid - use it to continue.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BaseScene.java:166"
+   "src/main/java/com/dnd/ui/scenes/BaseScene.java:178"
   ]
  },
  {
@@ -9455,7 +9675,7 @@
   "key": "The item that comes out of the workshop when this blueprint is crafted.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:81"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:90"
   ]
  },
  {
@@ -9480,10 +9700,10 @@
   ]
  },
  {
-  "key": "The material the spell needs (the M component), e.g. 'a pinch of sulfur'.",
+  "key": "The material the spell needs, e.g. 'a pinch of sulfur'. Only used when Material is ticked.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:75"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:78"
   ]
  },
  {
@@ -9497,21 +9717,21 @@
   "key": "The party takes a long rest.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2441"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2509"
   ]
  },
  {
   "key": "The party takes a short rest.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2441"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2509"
   ]
  },
  {
   "key": "The playlist that plays whenever this map is opened",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:405"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:408"
   ]
  },
  {
@@ -9546,7 +9766,7 @@
   "key": "The token is stored only on this computer, for your Windows user.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:162"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:163"
   ]
  },
  {
@@ -9631,7 +9851,7 @@
   "key": "This campaign syncs with GitHub",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:196"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:197"
   ]
  },
  {
@@ -9650,10 +9870,24 @@
   ]
  },
  {
+  "key": "This computer's version is newer.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:413"
+  ]
+ },
+ {
+  "key": "This computer: {A}",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:407"
+  ]
+ },
+ {
   "key": "This map no longer has its own music.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:438"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:441"
   ]
  },
  {
@@ -9664,7 +9898,7 @@
   ]
  },
  {
-  "key": "This repository already has files. They will be combined with this campaign. Where both have the same file, this computer's version is kept and GitHub's version is saved next to it with \".remote-\" and the date added to its name. Continue?",
+  "key": "This repository already has files. They will be combined with this campaign. Where both have changed the same file, you will be asked which version to keep. Continue?",
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:280"
@@ -9723,14 +9957,35 @@
   "key": "Tick if casting destroys the material, so it must be bought again.",
   "kind": "exact",
   "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:80"
+  ]
+ },
+ {
+  "key": "Tick if the spell needs a material (describe it below).",
+  "kind": "exact",
+  "where": [
    "src/main/java/com/dnd/ui/components/FieldHelp.java:77"
+  ]
+ },
+ {
+  "key": "Tick if the spell needs hand gestures.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:76"
+  ]
+ },
+ {
+  "key": "Tick if the spell needs spoken words.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:75"
   ]
  },
  {
   "key": "Ticked: a mechanical gadget that runs on this charge or any stronger one - a stronger charge adds a damage die per level. Unticked: tuned to exactly this charge type and nothing else.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:97"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:106"
   ]
  },
  {
@@ -9772,14 +10027,14 @@
   "key": "Tool kits that must be in the pack. They are not used up.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:87"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:96"
   ]
  },
  {
   "key": "Tools (kept)",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:143"
+   "src/main/java/com/dnd/data/EntityDescriptions.java:152"
   ]
  },
  {
@@ -9821,14 +10076,14 @@
   "key": "Turn on, then click any square to make it a wall or a floor again. No token needs to be selected.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:293"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:296"
   ]
  },
  {
   "key": "Turn Order",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:874"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:906"
   ]
  },
  {
@@ -9856,14 +10111,14 @@
   "key": "Turn time back to the previous turn of the selected creature (or the one acting now), undoing all damage, effects, spells and movement since - the rabbit's pocket watch",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:324"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:327"
   ]
  },
  {
   "key": "Turn time back to the start of {A}'s turn in round {B}?",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2268"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2336"
   ]
  },
  {
@@ -9877,14 +10132,14 @@
   "key": "Type of damage dealt by the Damage button - resistances halve it",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1091"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1123"
   ]
  },
  {
   "key": "Type the initiative each combatant rolled at the table",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:308"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:311"
   ]
  },
  {
@@ -10070,7 +10325,7 @@
   "key": "Untyped",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1092"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1124"
   ]
  },
  {
@@ -10099,7 +10354,7 @@
   "key": "Upload Image",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:62"
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:66"
   ]
  },
  {
@@ -10120,8 +10375,8 @@
   "key": "Use",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:104",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1507",
+   "src/main/java/com/dnd/data/EntityDescriptions.java:113",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1539",
    "src/main/java/com/dnd/ui/scenes/ManagePlayersPanel.java:602"
   ]
  },
@@ -10136,7 +10391,7 @@
   "key": "Use only letters, numbers, dots, dashes and underscores in the repository name.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:242"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:241"
   ]
  },
  {
@@ -10216,14 +10471,7 @@
   "key": "Uses up",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:67"
-  ]
- },
- {
-  "key": "V = spoken words, S = hand gestures, M = a material. A gagged or bound caster can't cast spells that need V or S.",
-  "kind": "exact",
-  "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:74"
+   "src/main/java/com/dnd/data/EntityDescriptions.java:76"
   ]
  },
  {
@@ -10286,14 +10534,14 @@
   "key": "Very few slots, all at the highest level they know, but they come back after a short rest (warlock).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:104"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:113"
   ]
  },
  {
   "key": "View / Edit",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityListScene.java:73"
+   "src/main/java/com/dnd/ui/scenes/EntityListScene.java:119"
   ]
  },
  {
@@ -10350,7 +10598,7 @@
   "key": "Waiting for you to approve the request on GitHub...",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:131"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:132"
   ]
  },
  {
@@ -10364,36 +10612,36 @@
   "key": "Walk (ft):",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1255"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1287"
   ]
  },
  {
   "key": "Wall painting off.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:673"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:688"
   ]
  },
  {
   "key": "Wall painting on - click any square to toggle it. Click the button again or press Esc to stop.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:671"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:686"
   ]
  },
  {
   "key": "Walls: off",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:290",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:666"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:293",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:681"
   ]
  },
  {
   "key": "Walls: ON",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:666"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:681"
   ]
  },
  {
@@ -10450,6 +10698,13 @@
   "kind": "pattern",
   "where": [
    "src/main/java/com/dnd/auth/AuthService.java:133"
+  ]
+ },
+ {
+  "key": "What casting needs - tick each one that applies. A gagged or bound caster can't cast spells that need Verbal or Somatic.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:74"
   ]
  },
  {
@@ -10512,14 +10767,14 @@
   "key": "Will sync later",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:376"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:378"
   ]
  },
  {
   "key": "WIS",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1286",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1318",
    "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:70"
   ]
  },
@@ -10576,7 +10831,7 @@
   "key": "Write the battle state back to the campaign",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:347"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:350"
   ]
  },
  {
@@ -10618,7 +10873,7 @@
   "key": "XP:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1347"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1379"
   ]
  },
  {
@@ -10639,7 +10894,7 @@
   "key": "You aren't a Game Master of any campaign on this device yet.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:144"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:146"
   ]
  },
  {
@@ -10773,7 +11028,7 @@
   "key": "Your {A} is: {B}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BaseScene.java:165"
+   "src/main/java/com/dnd/ui/scenes/BaseScene.java:177"
   ]
  },
  {
@@ -10787,7 +11042,7 @@
   "key": "Yours, but not on this device",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:174"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:176"
   ]
  },
  {
@@ -10801,21 +11056,21 @@
   "key": "yyyyMMdd-HHmmss",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/sync/CampaignRepo.java:65"
+   "src/main/java/com/dnd/sync/CampaignRepo.java:71"
   ]
  },
  {
   "key": "Zoom +",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:339"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:342"
   ]
  },
  {
   "key": "Zoom -",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:338"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:341"
   ]
  },
  {
@@ -10829,7 +11084,7 @@
   "key": "{0} = ordinary tool. Above {1} = a workshop furnace that can make energy charges up to this level. Raise it to 'upgrade' the workshop.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:95"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:104"
   ]
  },
  {
@@ -10864,35 +11119,35 @@
   "key": "{A}  ·  automatic",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1491"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1523"
   ]
  },
  {
   "key": "{A}  ·  Click another box to place one more, Esc to stop.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2153"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2221"
   ]
  },
  {
   "key": "{A}  ·  lvl {B}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1377"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1409"
   ]
  },
  {
   "key": "{A}  ·  {B} charge only",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1390"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1422"
   ]
  },
  {
   "key": "{A}  ·  {B} to hit  ·  {C}  ·  {D}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1632"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1664"
   ]
  },
  {
@@ -10913,14 +11168,14 @@
   "key": "{A} - click who receives it, or press Esc to cancel.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1574"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1606"
   ]
  },
  {
   "key": "{A} - HP recovered from hit dice rolled:",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2330",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2398",
    "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:70"
   ]
  },
@@ -10935,7 +11190,7 @@
   "key": "{A} can't reach that square this turn ({B} squares left).",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:564"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:579"
   ]
  },
  {
@@ -10949,21 +11204,21 @@
   "key": "{A} cannot drink the life it tears out - healing is blocked.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:495"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:556"
   ]
  },
  {
   "key": "{A} charge only (tuned device)",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:108"
+   "src/main/java/com/dnd/data/EntityDescriptions.java:117"
   ]
  },
  {
   "key": "{A} charge or stronger (mechanical: stronger hits harder)",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:107"
+   "src/main/java/com/dnd/data/EntityDescriptions.java:116"
   ]
  },
  {
@@ -10999,21 +11254,21 @@
   "key": "{A} costs {B} HP but only {C} HP remain.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:372"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:421"
   ]
  },
  {
   "key": "{A} created \"{B}\". Ask them to delete it.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:184"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:186"
   ]
  },
  {
   "key": "{A} drains {B} HP from {C}.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:500"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:561"
   ]
  },
  {
@@ -11031,41 +11286,48 @@
   ]
  },
  {
+  "key": "{A} Files changed on only one side are merged automatically. Until you apply your choices, nothing is overwritten or uploaded; \"Decide Later\" keeps this computer's files as they are and asks again next time.",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:446"
+  ]
+ },
+ {
   "key": "{A} ft area",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:47"
+   "src/main/java/com/dnd/data/EntityDescriptions.java:56"
   ]
  },
  {
   "key": "{A} ft away.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:296",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1591",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1682"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:345",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1623",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1714"
   ]
  },
  {
   "key": "{A} ft blast",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1411"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1443"
   ]
  },
  {
   "key": "{A} ft but the target is {B}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:296",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1681"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:345",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1713"
   ]
  },
  {
   "key": "{A} ft but they are {B}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1591"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1623"
   ]
  },
  {
@@ -11094,15 +11356,15 @@
   "key": "{A} is affected by {B} for {C}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:457",
-   "src/main/java/com/dnd/model/combat/CastResolver.java:486"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:518",
+   "src/main/java/com/dnd/model/combat/CastResolver.java:547"
   ]
  },
  {
   "key": "{A} is dead.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:264"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:303"
   ]
  },
  {
@@ -11141,7 +11403,7 @@
   "kind": "pattern",
   "where": [
    "src/main/java/com/dnd/model/rules/FeatureRules.java:476",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1566"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1598"
   ]
  },
  {
@@ -11155,28 +11417,28 @@
   "key": "{A} moved {B} square{C} - {D} left this turn.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:605"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:620"
   ]
  },
  {
   "key": "{A} needs a creature to hit.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1676"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1708"
   ]
  },
  {
   "key": "{A} needs a creature to target.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1897"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1929"
   ]
  },
  {
   "key": "{A} needs a creature.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1585"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1617"
   ]
  },
  {
@@ -11190,49 +11452,49 @@
   "key": "{A} of {B} squares left",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1240"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1272"
   ]
  },
  {
   "key": "{A} recharges in {B}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:267"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:306"
   ]
  },
  {
   "key": "{A} refuses to fall (1 HP).",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1788"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1820"
   ]
  },
  {
   "key": "{A} takes a long rest.{B}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2347"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2415"
   ]
  },
  {
   "key": "{A} takes a short rest.{B}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2336"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2404"
   ]
  },
  {
   "key": "{A} units per piece",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/data/EntityDescriptions.java:111"
+   "src/main/java/com/dnd/data/EntityDescriptions.java:120"
   ]
  },
  {
   "key": "{A} uses up {B}.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:305"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:354"
   ]
  },
  {
@@ -11267,7 +11529,14 @@
   "key": "{A} · level {B}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1008"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1040"
+  ]
+ },
+ {
+  "key": "{A}(missing)",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/ui/components/EntityForm.java:745"
   ]
  },
  {
@@ -11281,7 +11550,7 @@
   "key": "{A}: enter a whole number like 3, 0 or -1",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/components/EntityForm.java:585"
+   "src/main/java/com/dnd/ui/components/EntityForm.java:606"
   ]
  },
  {
@@ -11295,7 +11564,7 @@
   "key": "{A}: roll d20 {B} against AC {C} - a {D} or better on the die hits (20 always does).",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1709"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1741"
   ]
  },
  {
@@ -11316,7 +11585,7 @@
   "key": "·  recharging: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1425"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1457"
   ]
  },
  {
@@ -11337,21 +11606,21 @@
   "key": "• Pick an expiry date you are comfortable with; link again when it runs out.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:157"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:158"
   ]
  },
  {
   "key": "• Repository access: All repositories (or only your campaign repositories).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:157"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:158"
   ]
  },
  {
   "key": "• Repository permissions: Contents - Read and write; Administration - Read and write (only needed to create new repositories from Almerion).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:157"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:158"
   ]
  },
  {
@@ -11365,15 +11634,15 @@
   "key": "• {A} - copy its folder into this device's campaigns folder to run it here.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:176"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:178"
   ]
  },
  {
   "key": "← Back",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BaseScene.java:148",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:993",
+   "src/main/java/com/dnd/ui/scenes/BaseScene.java:160",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1025",
    "src/main/java/com/dnd/ui/scenes/ManagePlayersPanel.java:356"
   ]
  },
@@ -11411,7 +11680,7 @@
   "key": "⏱ TIMER",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:345",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:348",
    "src/main/java/com/dnd/ui/scenes/StorylineEditorWindow.java:246"
   ]
  },
@@ -11447,7 +11716,7 @@
   "key": "■ Stop painting {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:704"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:719"
   ]
  },
  {
@@ -11540,7 +11809,7 @@
   "key": "♟ TOKENS",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:327"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:330"
   ]
  },
  {
@@ -11563,7 +11832,7 @@
   "key": "⚔ COMBAT",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:299"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:302"
   ]
  },
  {
@@ -11577,14 +11846,14 @@
   "key": "⚔ Combat Music",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:387"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:390"
   ]
  },
  {
   "key": "⚔ Combat music!",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:449"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:452"
   ]
  },
  {
@@ -11595,10 +11864,10 @@
   ]
  },
  {
-  "key": "⚠ Conflict - both versions kept",
+  "key": "⚠ Conflict - choose versions",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:433"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:539"
   ]
  },
  {
@@ -11612,14 +11881,14 @@
   "key": "⚠ Offline - will retry",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:429"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:535"
   ]
  },
  {
   "key": "⚠ Sync problem",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:437"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:543"
   ]
  },
  {
@@ -11647,14 +11916,14 @@
   "key": "✓ Synced",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:425"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:531"
   ]
  },
  {
   "key": "✖ Remove Selected",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:330"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:333"
   ]
  },
  {
@@ -11682,35 +11951,35 @@
   "key": "⟲ Rewind",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:324"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:327"
   ]
  },
  {
   "key": "⟲ Rewind time",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2271"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2339"
   ]
  },
  {
   "key": "⟲ Time rewinds... it is round {A}, {B}'s turn again.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2282"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2350"
   ]
  },
  {
   "key": "⟳ Syncing...",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:421"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:527"
   ]
  },
  {
   "key": "＋ Add Token",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:328"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:331"
   ]
  },
  {
@@ -11738,7 +12007,7 @@
   "key": "🎵 MUSIC",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:344",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:347",
    "src/main/java/com/dnd/ui/scenes/StorylineEditorWindow.java:240"
   ]
  },
@@ -11768,7 +12037,7 @@
   "key": "💾 BATTLE",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:346"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:349"
   ]
  },
  {
@@ -11803,7 +12072,7 @@
   "key": "📽 Projector",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:340"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:343"
   ]
  },
  {
@@ -11845,14 +12114,14 @@
   "key": "🗺 MAP",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:331"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:334"
   ]
  },
  {
   "key": "🛏 PARTY",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:342"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:345"
   ]
  }
 ]

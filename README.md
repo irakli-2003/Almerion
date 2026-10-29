@@ -234,10 +234,15 @@ After that, syncing is automatic. The latest changes are downloaded when you ope
 and your changes are uploaded while you play, when you leave the campaign and when you close
 Almerion. The badge in the GM screen shows **Synced**, **Syncing…**, **Offline – will retry**
 (nothing is lost; it uploads when you are back online) or **Conflict**.
+While a battle map is open, changes are uploaded every 10 minutes instead of every 90 seconds,
+so the fight stays smooth. The normal pace resumes when the battle closes.
 
-**Conflicts:** if the same file was changed on both computers before syncing, your version is
-kept and the other computer's version is saved next to it as `name.remote-<date-time>`. Compare
-them, keep what you want, and delete the copy.
+**Conflicts:** syncing works like git. Changes made on only one computer are simply merged. If
+the same file was changed on both computers, nothing is overwritten. Almerion asks you which
+version to keep, file by file. For each version it shows who changed it, on which computer and
+when, and the newer one is selected for you. You can choose **This computer**, **GitHub**, or
+**Keep both**, which keeps yours and saves GitHub's next to it as `name.remote-<date-time>`.
+If you click **Decide Later**, nothing is uploaded and you are asked again at the next sync.
 
 To stop syncing a campaign, use **Sync with GitHub… → Stop Syncing**. **Unlink** removes your
 GitHub sign-in from this computer. Your sign-in is stored only on this computer (encrypted for
@@ -341,6 +346,9 @@ the challenge rating and ability scores of a monster.
 - **View / Edit** opens an entry. For a map, it opens the map editor.
 - **New** creates an entry. For players, it starts the character wizard.
 - **Delete** removes the selected entry.
+- **Search** above the list finds entries by name, id or details (type several words to narrow
+  it down). The drop-down next to it filters by kind, for example a spell's school or level, an
+  item's type or a monster's type and challenge rating.
 
 The editor shows the whole entity, not just its name:
 
@@ -349,6 +357,10 @@ The editor shows the whole entity, not just its name:
 - **links to other entries** (class, race, item, spell, damage type...) as searchable
   pickers, so you never type an internal id;
 - **lists** (monster abilities, carried items, known spells, languages) with add and remove;
+- **spells**: effects are picked from the campaign's effects, each with a power of a constant plus
+  dice (rolled at the table when cast); damage is dice plus a flat constant; components are
+  separate Verbal, Somatic and Material ticks with the material's description, cost and whether
+  it is used up; required consumables and tools are picked from the campaign's items;
 - **images**: click **Upload Image**. The picker opens in your images folder, and the chosen file
   is copied into the campaign.
 

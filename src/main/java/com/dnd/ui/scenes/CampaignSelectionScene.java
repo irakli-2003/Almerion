@@ -86,7 +86,9 @@ public class CampaignSelectionScene extends BaseScene {
             CampaignSyncService.shared().syncNow(selected.local().path()).thenAccept(result ->
                 javafx.application.Platform.runLater(() -> {
                     if (result.outcome() == CampaignRepo.Outcome.CONFLICT) {
-                        GitHubSyncUi.showResult(this, selected.local().folder(), result);
+                        GitHubSyncUi.resolveConflicts(this, selected.local().folder(), selected.local().path(),
+                            result, open);
+                        return;
                     }
                     open.run();
                 }));

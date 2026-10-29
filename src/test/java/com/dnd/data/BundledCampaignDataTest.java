@@ -101,7 +101,7 @@ public class BundledCampaignDataTest {
                 }
             }
             for (var spell : repos.spells().list()) {
-                assertFalse(spell.getId() + " needs components", spell.getComponents() == null || spell.getComponents().isEmpty());
+                assertFalse(spell.getId() + " needs components", spell.getComponents().none());
             }
             for (var cls : repos.classes().list()) {
                 cls.getDefaultSpells().forEach(s -> assertNotNull(cls.getId() + " " + s, repos.spells().getById(s)));

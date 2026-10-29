@@ -44,6 +44,18 @@ public abstract class BaseScene {
     protected void styleDialog(Dialog<?> dialog) {
         com.dnd.ui.WindowOrder.adopt(dialog);
         dialog.getDialogPane().getStylesheets().add(getClass().getResource(CSS_PATH).toExternalForm());
+        // Translated captions are often longer than the English ones; never cut them off with "...".
+        Runnable fitButtons = () -> {
+            for (javafx.scene.control.ButtonType type : dialog.getDialogPane().getButtonTypes()) {
+                javafx.scene.Node node = dialog.getDialogPane().lookupButton(type);
+                if (node instanceof Button b) {
+                    b.setMinWidth(javafx.scene.layout.Region.USE_PREF_SIZE);
+                    javafx.scene.control.ButtonBar.setButtonUniformSize(b, false);
+                }
+            }
+        };
+        fitButtons.run();
+        dialog.addEventHandler(javafx.scene.control.DialogEvent.DIALOG_SHOWING, e -> fitButtons.run());
     }
 
     protected Label title(String text) {

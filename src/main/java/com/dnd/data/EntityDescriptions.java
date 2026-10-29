@@ -9,6 +9,7 @@ import com.dnd.model.item.crafting.Fuel;
 import com.dnd.model.item.crafting.Tool;
 import com.dnd.model.magic.EnergyCharges;
 import com.dnd.model.magic.Spell;
+import com.dnd.model.magic.SpellEffect;
 import com.dnd.model.world.Dice;
 
 import java.util.ArrayList;
@@ -24,15 +25,23 @@ public final class EntityDescriptions {
     private final Function<String, Dice> dice;
     private final Function<String, Item> items;
     private final Function<String, Spell> spells;
+    private final Function<String, Effect> effects;
 
     public EntityDescriptions(Function<String, Dice> dice, Function<String, Item> items, Function<String, Spell> spells) {
+        this(dice, items, spells, null);
+    }
+
+    public EntityDescriptions(Function<String, Dice> dice, Function<String, Item> items, Function<String, Spell> spells,
+                              Function<String, Effect> effects) {
         this.dice = dice == null ? id -> null : dice;
         this.items = items == null ? id -> null : items;
         this.spells = spells == null ? id -> null : spells;
+        this.effects = effects == null ? id -> null : effects;
     }
 
     public static EntityDescriptions of(CampaignRepositories repos) {
-        return new EntityDescriptions(repos.dice()::getById, repos.items()::getById, repos.spells()::getById);
+        return new EntityDescriptions(repos.dice()::getById, repos.items()::getById, repos.spells()::getById,
+            repos.effects()::getById);
     }
 
     // ------------------------------------------------------------------ spells
@@ -59,8 +68,8 @@ public final class EntityDescriptions {
             String formula = s.getDamage().formula(dice);
             if (notBlank(formula)) line(sb, "Damage", formula);
         }
-        String effects = effectNames(s.getEffects());
-        if (!effects.isEmpty()) line(sb, "Effects", effects);
+        String effectList = spellEffectNames(s.getEffects());
+        if (!effectList.isEmpty()) line(sb, "Effects", effectList);
         if (s.getManaCost() > 0) line(sb, "Mana cost", String.valueOf(s.getManaCost()));
         if (s.getCooldownRounds() > 0) line(sb, "Cooldown", s.getCooldownRounds() + " rounds");
         if (s.getRequiredConsumables() != null && !s.getRequiredConsumables().isEmpty()) {
@@ -193,6 +202,18 @@ public final class EntityDescriptions {
         for (Effect e : effects) {
             if (e == null) continue;
             String n = notBlank(e.getName()) ? e.getName() : e.getId();
+            if (notBlank(n)) names.add(n);
+        }
+        return String.join(", ", names);
+    }
+
+    /** e.g. "Burning (1d4 + 2), Stunned", with names from the effect catalogue. */
+    private String spellEffectNames(List<SpellEffect> list) {
+        if (list == null) return "";
+        List<String> names = new ArrayList<>();
+        for (SpellEffect e : list) {
+            if (e == null) continue;
+            String n = e.describe(effects, dice);
             if (notBlank(n)) names.add(n);
         }
         return String.join(", ", names);

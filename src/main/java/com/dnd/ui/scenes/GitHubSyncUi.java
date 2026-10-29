@@ -122,7 +122,8 @@ final class GitHubSyncUi {
             owner.body("1. Copy this code.  2. Sign in on github.com and enter it.  3. Approve the request."),
             code, status, flow(open, token, cancel));
         box.setPadding(new Insets(20));
-        stage.setScene(owner.themedScene(box, 560, 360));
+        fitTexts(box);
+        stage.setScene(owner.themedScene(box, 640, 400));
         stage.show();
 
         DeviceFlow deviceFlow = new DeviceFlow(link.config().clientId(), link.http());
@@ -197,15 +198,14 @@ final class GitHubSyncUi {
         Label repoLabel = UiTranslator.skip(owner.sectionLabel(repo));
         Label state = owner.body(CampaignSyncService.shared().status(folder)
             .map(CampaignSyncService.Status::message).orElse("Synced automatically when you open and leave it."));
+        state.setWrapText(true);
         alert.getDialogPane().setContent(new VBox(8, owner.body("Repository:"), repoLabel, state));
-        alert.getDialogPane().setPrefWidth(520);
+        alert.getDialogPane().setPrefWidth(640);
         owner.styleDialog(alert);
         ButtonType choice = alert.showAndWait().orElse(ButtonType.CLOSE);
         if (choice == syncNow) {
-            CampaignSyncService.shared().syncNow(folder).thenAccept(result -> Platform.runLater(() -> {
-                showResult(owner, folderName, result);
-                changed.run();
-            }));
+            CampaignSyncService.shared().syncNow(folder).thenAccept(result -> Platform.runLater(() ->
+                showResult(owner, folderName, folder, result, changed)));
         } else if (choice == stop) {
             owner.background(unchecked(() -> { CampaignRepo.setSyncEnabled(folder, false); return true; }),
                 ok -> changed.run(), error -> owner.showError("Couldn't stop syncing", error));
@@ -232,8 +232,7 @@ final class GitHubSyncUi {
             status.setText(created ? "Uploading the campaign..." : "Syncing the campaign with the repository...");
             CampaignSyncService.shared().connect(folder, repo.cloneUrl()).thenAccept(result -> Platform.runLater(() -> {
                 stage.close();
-                showResult(owner, folderName, result);
-                changed.run();
+                showResult(owner, folderName, folder, result, changed);
             }));
         };
         create.setOnAction(e -> {
@@ -270,16 +269,16 @@ final class GitHubSyncUi {
             repos, useExisting, status);
         box.setPadding(new Insets(20));
         VBox.setVgrow(repos, Priority.ALWAYS);
-        stage.setScene(owner.themedScene(box, 600, 560));
+        fitTexts(box);
+        stage.setScene(owner.themedScene(box, 680, 600));
         stage.show();
         loadRepos(owner, repos, status);
     }
 
     private static boolean confirmMerge(BaseScene owner, GitHubApi.Repo repo) {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
-            "This repository already has files. They will be combined with this campaign. Where both have the"
-                + " same file, this computer's version is kept and GitHub's version is saved next to it with"
-                + " \".remote-\" and the date added to its name. Continue?",
+            "This repository already has files. They will be combined with this campaign. Where both have"
+                + " changed the same file, you will be asked which version to keep. Continue?",
             ButtonType.OK, ButtonType.CANCEL);
         confirm.setHeaderText("Combine with an existing repository");
         owner.styleDialog(confirm);
@@ -329,7 +328,8 @@ final class GitHubSyncUi {
                 repos, owner.body("Save it on this computer as:"), folderName, download, status);
             box.setPadding(new Insets(20));
             VBox.setVgrow(repos, Priority.ALWAYS);
-            stage.setScene(owner.themedScene(box, 560, 520));
+            fitTexts(box);
+            stage.setScene(owner.themedScene(box, 640, 560));
             stage.show();
             loadRepos(owner, repos, status);
         });
@@ -370,13 +370,112 @@ final class GitHubSyncUi {
         }, error -> status.setText(explain(error)));
     }
 
-    static void showResult(BaseScene owner, String folderName, CampaignRepo.Result result) {
+    /** Reports a sync, asking the GM to choose versions on a conflict; {@code after} runs once it's all settled. */
+    static void showResult(BaseScene owner, String folderName, Path folder, CampaignRepo.Result result, Runnable after) {
         switch (result.outcome()) {
-            case SYNCED -> owner.showInfo("Synced with GitHub", "\"" + folderName + "\" is up to date on GitHub.");
+            case SYNCED -> owner.showInfo("Synced with GitHub", result.conflictCopies().isEmpty()
+                ? "\"" + folderName + "\" is up to date on GitHub." : result.message());
             case REMOTE_AHEAD, OFFLINE -> owner.showInfo("Will sync later", result.message());
-            case CONFLICT -> owner.showInfo("Both computers changed the same files", result.message());
+            case CONFLICT -> {
+                resolveConflicts(owner, folderName, folder, result, after);
+                return;
+            }
             default -> owner.showInfo("Sync problem", result.message());
         }
+        after.run();
+    }
+
+    private static final java.time.format.DateTimeFormatter WHEN =
+        java.time.format.DateTimeFormatter.ofPattern("d MMM yyyy, HH:mm");
+
+    /**
+     * Both computers changed the same files: show who changed each version and when, and let the
+     * GM pick per file. "Decide Later" keeps everything as it is on this computer (nothing is
+     * uploaded until the conflict is settled). {@code after} runs exactly once.
+     */
+    static void resolveConflicts(BaseScene owner, String folderName, Path folder, CampaignRepo.Result result,
+                                 Runnable after) {
+        AtomicBoolean finished = new AtomicBoolean();
+        Runnable done = () -> {
+            if (finished.compareAndSet(false, true)) after.run();
+        };
+        Stage stage = window("Choose which version to keep - " + folderName);
+        java.util.Map<String, ToggleGroup> groups = new java.util.LinkedHashMap<>();
+        VBox rows = new VBox(12);
+        for (CampaignRepo.Conflict conflict : result.conflicts()) {
+            ToggleGroup group = new ToggleGroup();
+            RadioButton mine = choice(owner, "This computer: " + describe(conflict.mine()), CampaignRepo.Choice.MINE, group);
+            RadioButton github = choice(owner, "GitHub: " + describe(conflict.github()), CampaignRepo.Choice.GITHUB, group);
+            RadioButton both = choice(owner, "Keep both (GitHub's version is saved next to this computer's)",
+                CampaignRepo.Choice.BOTH, group);
+            (conflict.newer() == CampaignRepo.Choice.GITHUB ? github : mine).setSelected(true);
+            Label newer = owner.body(conflict.newer() == CampaignRepo.Choice.GITHUB
+                ? "GitHub's version is newer." : "This computer's version is newer.");
+            newer.setStyle("-fx-text-fill: #c9a84c;");
+            Label path = UiTranslator.skip(owner.sectionLabel(conflict.path()));
+            VBox card = new VBox(6, path, newer, mine, github, both);
+            card.setPadding(new Insets(10));
+            card.setStyle("-fx-border-color: #c9a84c66; -fx-border-width: 1px; -fx-background-color: #ffffff08;");
+            rows.getChildren().add(card);
+            groups.put(conflict.path(), group);
+        }
+        ScrollPane scroll = new ScrollPane(rows);
+        scroll.setFitToWidth(true);
+        scroll.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
+        VBox.setVgrow(scroll, Priority.ALWAYS);
+
+        Label status = owner.body("");
+        Button allMine = owner.btn("Keep All from This Computer", () -> selectAll(groups, CampaignRepo.Choice.MINE));
+        Button allGithub = owner.btn("Keep All from GitHub", () -> selectAll(groups, CampaignRepo.Choice.GITHUB));
+        Button apply = owner.btn("Apply Choices", () -> { });
+        Button later = owner.dangerBtn("Decide Later", stage::close);
+        apply.setOnAction(e -> {
+            java.util.Map<String, CampaignRepo.Choice> choices = new java.util.LinkedHashMap<>();
+            groups.forEach((file, group) -> choices.put(file, (CampaignRepo.Choice) group.getSelectedToggle().getUserData()));
+            apply.setDisable(true);
+            later.setDisable(true);
+            status.setText("Merging and uploading...");
+            CampaignSyncService.shared().resolve(folder, choices).thenAccept(r -> Platform.runLater(() -> {
+                stage.setOnHidden(null);
+                stage.close();
+                showResult(owner, folderName, folder, r, done);
+            }));
+        });
+        stage.setOnHidden(e -> done.run());
+
+        Label intro = owner.body(result.message() + " Files changed on only one side are merged automatically."
+            + " Until you apply your choices, nothing is overwritten or uploaded; \"Decide Later\" keeps this"
+            + " computer's files as they are and asks again next time.");
+        VBox box = new VBox(12, intro, scroll, flow(allMine, allGithub), flow(apply, later), status);
+        box.setPadding(new Insets(20));
+        fitTexts(box);
+        stage.setScene(owner.themedScene(box, 760, 620));
+        stage.show();
+    }
+
+    private static RadioButton choice(BaseScene owner, String text, CampaignRepo.Choice choice, ToggleGroup group) {
+        RadioButton button = new RadioButton(text);
+        button.getStyleClass().add("body-label");
+        button.setWrapText(true);
+        button.setUserData(choice);
+        button.setToggleGroup(group);
+        return button;
+    }
+
+    private static void selectAll(java.util.Map<String, ToggleGroup> groups, CampaignRepo.Choice choice) {
+        for (ToggleGroup group : groups.values()) {
+            for (Toggle toggle : group.getToggles()) {
+                if (toggle.getUserData() == choice) toggle.setSelected(true);
+            }
+        }
+    }
+
+    static String describe(CampaignRepo.Version version) {
+        String who = version.author() == null || version.author().isBlank() ? "unknown" : version.author();
+        if (version.computer() != null && !version.computer().isBlank()) who += " on " + version.computer();
+        String when = version.when() == null ? ""
+            : ", " + WHEN.format(version.when().atZone(java.time.ZoneId.systemDefault()));
+        return (version.deleted() ? "deleted by " : "changed by ") + who + when;
     }
 
     // ---- status badge -------------------------------------------------------------------------
@@ -395,8 +494,15 @@ final class GitHubSyncUi {
         badge.sceneProperty().addListener((obs, old, scene) -> {
             if (old != null && scene == null) service.removeListener(listener);
         });
-        badge.setOnMouseClicked(e -> service.status(folder).ifPresent(status ->
-            owner.showInfo("GitHub sync", status.message())));
+        badge.setOnMouseClicked(e -> service.status(folder).ifPresent(status -> {
+            if (status.state() == CampaignSyncService.State.CONFLICT) {
+                // Fetch again so the choices reflect GitHub as it is now.
+                service.syncNow(folder).thenAccept(result -> Platform.runLater(() -> showResult(owner,
+                    String.valueOf(folder.getFileName()), folder, result, () -> { })));
+            } else {
+                owner.showInfo("GitHub sync", status.message());
+            }
+        }));
         owner.background(() -> CampaignRepo.isSynced(folder), synced -> {
             if (!synced) return;
             badge.setVisible(true);
@@ -430,7 +536,7 @@ final class GitHubSyncUi {
                 badge.getStyleClass().setAll("label", "error-label");
             }
             case CONFLICT -> {
-                badge.setText("⚠ Conflict - both versions kept");
+                badge.setText("⚠ Conflict - choose versions");
                 badge.getStyleClass().setAll("label", "error-label");
             }
             case ERROR -> {
@@ -448,6 +554,23 @@ final class GitHubSyncUi {
         stage.initOwner(WindowOrder.current());
         stage.initModality(Modality.WINDOW_MODAL);
         return stage;
+    }
+
+    /**
+     * Long texts wrap and buttons keep their full width, so no label or button caption is cut
+     * off with "..." (translated captions are often much longer than the English ones).
+     */
+    static void fitTexts(javafx.scene.Parent root) {
+        for (Node node : root.getChildrenUnmodifiable()) {
+            if (node instanceof Labeled labeled && !(node instanceof ButtonBase)) {
+                labeled.setWrapText(true);
+                labeled.setMinHeight(javafx.scene.layout.Region.USE_PREF_SIZE);
+            }
+            if (node instanceof ButtonBase button) {
+                button.setMinWidth(javafx.scene.layout.Region.USE_PREF_SIZE);
+            }
+            if (node instanceof javafx.scene.Parent parent && !(node instanceof Control)) fitTexts(parent);
+        }
     }
 
     private static FlowPane flow(Node... nodes) {

@@ -80,4 +80,66 @@ public class WorldMapsTest {
         assertTrue(repos.maps().delete(world.getId()));
         assertEquals(1, worlds.list().size());
     }
+
+    @Test
+    public void locationsAreCreatedOnAFreeWorldSquareAndUnplacedMapsAreFound() {
+        CampaignRepositories repos = repos();
+        WorldMaps worlds = new WorldMaps(repos);
+        GameMap world = worlds.ensure().get(0);
+        repos.maps().add(new GameMap("old", "Old Cave", 2, 2));
+        worlds.ensure();
+        assertEquals(List.of("Old Cave"), worlds.unplaced().stream().map(GameMap::getName).toList());
+
+        GameMap chapel = worlds.createLocation("Royal Chapel", null, 6, 6, world.getId(), 4, 5);
+        assertEquals(chapel.getId(), repos.maps().getById(world.getId()).linkAt(4, 5).getMapId());
+        assertEquals(List.of(world.getName()), worlds.homes().get(chapel.getId()));
+
+        int before = repos.maps().list().size();
+        assertThrows(IllegalArgumentException.class,
+            () -> worlds.createLocation("Crypt", null, 6, 6, world.getId(), 4, 5));
+        assertThrows(IllegalArgumentException.class,
+            () -> worlds.createLocation("Crypt", null, 6, 6, world.getId(), -1, 0));
+        assertThrows(IllegalArgumentException.class,
+            () -> worlds.createLocation("Crypt", null, 6, 6, world.getId(), world.getWidth(), 0));
+        assertThrows(IllegalArgumentException.class,
+            () -> worlds.createLocation("Crypt", null, 6, 6, "old", 0, 0));
+        assertEquals(before, repos.maps().list().size());
+
+        worlds.link(world.getId(), "old", 0, 0);
+        assertTrue(worlds.unplaced().isEmpty());
+    }
+
+    @Test
+    public void upgradingPinsOldMapsAlongTheTopAndPinsCanBeMoved() {
+        CampaignRepositories repos = repos();
+        repos.maps().add(new GameMap("castle", "Castle", 2, 2));
+        repos.maps().add(new GameMap("cave", "Cave", 2, 2));
+        GameMap kingdom = new GameMap("kingdom", "Kingdom", 3, 3);
+        kingdom.moveParty(0, 0);
+        kingdom.linkMap("castle", "Castle", 1, 0);
+        repos.maps().add(kingdom);
+
+        WorldMaps worlds = new WorldMaps(repos);
+        worlds.ensure();
+        GameMap world = repos.maps().getById("kingdom");
+        assertTrue(world.isWorldMap());
+        assertEquals("cave", world.linkAt(2, 0).getMapId());
+        assertEquals(1, world.getMapLinks().stream().filter(p -> p.getMapId().equals("castle")).count());
+        assertTrue(worlds.unplaced().isEmpty());
+
+        worlds.movePin("kingdom", 2, 0, 1, 2);
+        world = repos.maps().getById("kingdom");
+        assertNull(world.linkAt(2, 0));
+        assertEquals("cave", world.linkAt(1, 2).getMapId());
+        assertThrows(IllegalArgumentException.class, () -> worlds.movePin("kingdom", 1, 2, 1, 0));
+        assertThrows(IllegalArgumentException.class, () -> worlds.movePin("kingdom", 2, 2, 0, 1));
+        assertThrows(IllegalArgumentException.class, () -> worlds.movePin("kingdom", 1, 2, 3, 0));
+
+        repos.maps().add(new GameMap("crypt", "Crypt", 2, 2));
+        worlds.ensure();
+        assertEquals("a map made after the upgrade stays flagged", List.of("Crypt"),
+            worlds.unplaced().stream().map(GameMap::getName).toList());
+        assertEquals(1, worlds.autoPlace(worlds.unplaced(), "kingdom"));
+        assertTrue(worlds.unplaced().isEmpty());
+    }
 }

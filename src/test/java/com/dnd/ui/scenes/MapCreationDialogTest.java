@@ -5,6 +5,9 @@ import com.dnd.data.MapTemplates;
 import com.dnd.model.world.map.GameMap;
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -64,12 +67,21 @@ public class MapCreationDialogTest {
                             .findFirst().orElseThrow();
                         create.fire();
                         assertTrue(window.isShowing());
-                        assertEquals(1, repos.maps().list().size());
+                        assertEquals(2, repos.maps().list().size());
                         name.setText("QUEEN'S CASTLE");
                         create.fire();
                         assertTrue(window.isShowing());
-                        assertEquals(1, repos.maps().list().size());
+                        assertEquals(2, repos.maps().list().size());
                         name.setText("Royal Chapel");
+                        create.fire();
+                        assertTrue("a location needs a square on a world map", window.isShowing());
+                        assertEquals(2, repos.maps().list().size());
+                        Canvas where = (Canvas) window.getScene().lookup("#map-world-location");
+                        double cell = where.getWidth() / 40;
+                        var point = where.localToScene(cell * 3.5, cell * 2.5);
+                        where.fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, point.getX(), point.getY(),
+                            0, 0, MouseButton.PRIMARY, 1, false, false, false, false, true, false, false,
+                            true, false, false, null));
                         create.fire();
                     } catch (Throwable t) {
                         failure.set(t);
@@ -84,7 +96,9 @@ public class MapCreationDialogTest {
                 assertNotEquals("temple-dawnfather-map", created.get().getId());
                 assertEquals(18, created.get().getWidth());
                 assertEquals("Royal Chapel", repos.maps().getById(created.get().getId()).getName());
-                assertEquals(2, repos.maps().list().size());
+                assertEquals(3, repos.maps().list().size());
+                GameMap world = new com.dnd.data.WorldMaps(repos).list().get(0);
+                assertEquals(created.get().getId(), world.linkAt(3, 2).getMapId());
             } catch (Throwable t) {
                 failure.set(t);
             } finally {

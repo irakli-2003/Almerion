@@ -30,6 +30,8 @@ public class EntityListScene extends BaseScene {
     /** Id to display name, so player rows can show class/race names instead of raw ids. */
     private final Map<String, String> classNames = new LinkedHashMap<>();
     private final Map<String, String> raceNames = new LinkedHashMap<>();
+    /** Map id to the world maps it is pinned on; maps missing here are flagged as unplaced. */
+    private Map<String, List<String>> mapHomes = Map.of();
 
     private static final String ALL = "All";
 
@@ -55,6 +57,15 @@ public class EntityListScene extends BaseScene {
         listView.setPrefHeight(350);
 
         CampaignRepositories repos = new CampaignRepositories(uiSession.campaignRoot());
+        if (cat == EntityCategory.MAP && uiSession.campaignRoot() != null) {
+            try {
+                var worlds = new com.dnd.data.WorldMaps(repos);
+                worlds.ensure();
+                mapHomes = worlds.homes();
+            } catch (RuntimeException e) {
+                System.err.println("Could not read world maps: " + e.getMessage());
+            }
+        }
         if (cat == EntityCategory.PLAYER) {
             for (CharacterClass characterClass : repos.classes().list()) {
                 classNames.put(characterClass.getId(), characterClass.getName());
@@ -239,6 +250,9 @@ public class EntityListScene extends BaseScene {
             parts.add("level " + spell.getLevel());
             addIfPresent(parts, spell.getSchool() == null ? null : spell.getSchool().getValue());
             if (spell.getRange() > 0) parts.add((int) spell.getRange() + " ft");
+        } else if (entity instanceof com.dnd.model.world.map.GameMap map) {
+            parts.add(map.getWidth() + " x " + map.getHeight());
+            parts.add(mapPlacement(map));
         } else if (entity instanceof Item item) {
             addIfPresent(parts, item.getType());
             if (item.getWeight() > 0) parts.add(item.getWeight() + " lb");
@@ -269,6 +283,10 @@ public class EntityListScene extends BaseScene {
             addIfPresent(tags, spell.getSchool() == null ? null : spell.getSchool().getValue());
         } else if (entity instanceof Item item) {
             addIfPresent(tags, item.getType());
+        } else if (entity instanceof com.dnd.model.world.map.GameMap map) {
+            if (map.isWorldMap()) tags.add("World map");
+            else if (!mapHomes.containsKey(map.getId())) tags.add("Not on a world map");
+            else tags.addAll(mapHomes.get(map.getId()));
         } else {
             for (String getter : new String[] {"getType", "getCategory", "getKind"}) {
                 try {
@@ -281,6 +299,13 @@ public class EntityListScene extends BaseScene {
             }
         }
         return tags;
+    }
+
+    private String mapPlacement(com.dnd.model.world.map.GameMap map) {
+        if (map.isWorldMap()) return "🧭 World map";
+        List<String> homes = mapHomes.get(map.getId());
+        return homes == null ? "⚠ Not on a world map - place it in the World Map panel"
+            : "on " + String.join(", ", homes);
     }
 
     private static void addIfPresent(List<String> parts, String value) {

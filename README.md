@@ -445,6 +445,10 @@ This panel runs the session from inside your notes:
 the location's own name, for example **Queen's Castle**. New map names must be non-empty and
 unique within the campaign (ignoring case and extra whitespace).
 
+Every location belongs to a world map. Before **Create Map**, choose the world map under
+**On world map:** and click the square where the location is; the new map is pinned there.
+The Maps list shows which world map each location is on, and flags any that are not.
+
 Templates are read-only starting layouts, not playable campaign locations. Each creation
 produces an independent map with its own ID and state; editing one never changes the template
 or another location made from it. To revisit the *same* location, reuse its existing map link.
@@ -471,16 +475,30 @@ Open **Maps** in Worldbuilding and click **View / Edit**.
 
 ### World maps
 
-Every campaign has at least one world map. Open it from the GM page with **Run the Session →
-🧭 World Map**. Older campaigns get one automatically: a map that already had world pins or the
-party flag becomes the world map, otherwise a blank **World Map** is created.
+Every campaign has at least one world map, and every location map is pinned on one. Open it
+from the GM page with **Run the Session → 🧭 World Map**.
+
+**Upgrading an existing campaign:** the first time a campaign without a world map is opened
+(GM page, World Map panel or Maps list), a map that already had world pins or the party flag
+becomes the world map, otherwise a blank **World Map** is created. All existing battle maps
+that aren't pinned yet are then pinned in rows from the top-left corner of that world map,
+so nothing is lost; drag each pin to where the place really is. The party starts hidden
+unless an older map already had the party flag; use **🚩 Move Party** to place it. Update
+the app on every computer that syncs the campaign, because older versions don't know which
+maps are world maps.
 
 - The picker at the top switches between world maps. **＋ New World Map...** creates more
-  (continents, regions, the underworld...) with unique names; **Rename...**, **Edit Terrain**
+  (continents, regions, the underworld...) with unique names; **Rename...**, **🖌 Edit Map & Images**
   and **Delete** manage them. The last world map can't be deleted.
+  **🖌 Edit Map & Images** opens the normal map editor, so world maps can have background
+  images (**+ Add Layer**), drawings and painted terrain just like battle maps.
 - **📍 Link Location** asks which map a square leads to (or creates a new location map), then
   you click the square. Double-click a pin to open that location in the battle map, or to switch
   to a linked world map. **✖ Remove Link** removes a pin; the destination map is kept.
+- Drag a pin to another square to move it, or use **✥ Move Location**: click the pin, then
+  the new square.
+- **⚠ Not on a world map: N** appears when a location has no pin (for example after removing
+  its link). Choose one and click its square, or **Place All Along the Top**.
 - **🚩 Move Party** puts the party flag on a square. The party is always in exactly one place:
   moving it to another world map removes the flag from the previous one. **Hide Party** removes
   the flag; **Find Party** jumps to the map where the party is.

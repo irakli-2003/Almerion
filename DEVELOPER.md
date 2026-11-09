@@ -271,6 +271,12 @@ This is used when Firebase email isn't configured. It is created with placeholde
   `MapRepository.saveWorldState`; ordinary `save`/`update` keep the stored world fields so
   battle and terrain editors can't overwrite them. `MapRepository.delete` refuses the last
   world map and removes pins pointing at a deleted map.
+- Every location map belongs to a world map: `MapCreationDialog` requires a world map and a
+  free square and calls `WorldMaps.createLocation` (nothing is saved if pinning fails). When
+  `ensure()` creates or promotes the first world map (the upgrade), it `autoPlace`s every
+  `unplaced()` map in rows from the top-left, skipping pins and the party square and spilling
+  onto other world maps. Maps unpinned later stay flagged instead (`homes()`/`unplaced()`,
+  World Map panel ⚠ button, Maps list tags). `movePin` moves a pin to a free square.
 - `ui/scenes/WorldMapScene` (GM page → 🧭 World Map) is the only UI that edits world state.
 
 ### GitHub campaign sync

@@ -30,7 +30,7 @@ import java.util.Objects;
  * maps, and the single square where the party currently is.
  */
 public class WorldMapScene extends BaseScene {
-    private enum Tool { NONE, LINK, UNLINK, PARTY }
+    private enum Tool { NONE, LINK, UNLINK, PARTY, MOVE }
 
     private CampaignRepositories repos;
     private WorldMaps worlds;
@@ -42,6 +42,11 @@ public class WorldMapScene extends BaseScene {
     private final Label partyLabel = new Label();
     private Tool tool = Tool.NONE;
     private GameMap linkTarget;
+    /** Square of the pin being moved (Move tool or drag), or null. */
+    private int[] moving;
+    private boolean dragged;
+    private ToggleButton linkButton;
+    private final Button unplacedButton = new Button();
 
     public WorldMapScene(UiSession uiSession) {
         super(uiSession);
@@ -84,19 +89,32 @@ public class WorldMapScene extends BaseScene {
         HBox header = new HBox(10, title("🧭 World Map"), picker,
             btn("＋ New World Map...", this::createWorldMap),
             btn("Rename...", this::rename),
-            btn("Edit Terrain", this::editTerrain),
+            withTip(btn("🖌 Edit Map & Images", this::editTerrain),
+                "Open the map editor: background images and layers, drawings, painted terrain"),
             dangerBtn("Delete", this::deleteCurrent));
         header.setAlignment(Pos.CENTER_LEFT);
         header.setPadding(new Insets(10, 20, 4, 20));
 
         ToggleGroup tools = new ToggleGroup();
         ToggleButton link = toolButton("📍 Link Location", "Click a square to make it lead to another map", tools, Tool.LINK);
+        linkButton = link;
+        unplacedButton.setId("world-unplaced");
+        unplacedButton.getStyleClass().add("danger-button");
+        unplacedButton.setTooltip(new Tooltip("Every location map belongs on a world map. Choose one, then click where it is."));
+        unplacedButton.setOnAction(e -> placeUnplaced());
         ToggleButton unlink = toolButton("✖ Remove Link", "Click a pin to remove it", tools, Tool.UNLINK);
+        ToggleButton move = toolButton("✥ Move Location", "Click a pin, then the square it belongs on (or just drag the pin)", tools, Tool.MOVE);
+        move.setOnAction(e -> {
+            tool = move.isSelected() ? Tool.MOVE : Tool.NONE;
+            moving = null;
+            if (move.isSelected()) status.setText("Click the pin to move. Esc cancels.");
+        });
         ToggleButton party = toolButton("🚩 Move Party", "Click the square where the party is now", tools, Tool.PARTY);
         tools.selectedToggleProperty().addListener((obs, old, now) -> {
             if (now == null) {
                 tool = Tool.NONE;
                 linkTarget = null;
+                moving = null;
             }
         });
         link.setOnAction(e -> {
@@ -118,24 +136,60 @@ public class WorldMapScene extends BaseScene {
             tool = party.isSelected() ? Tool.PARTY : Tool.NONE;
             if (party.isSelected()) status.setText("Click the square where the party is now. Esc cancels.");
         });
-        HBox toolbar = new HBox(8, link, unlink, party,
+        HBox toolbar = new HBox(8, link, move, unlink, party,
             btn("Hide Party", () -> run(() -> {
                 worlds.hideParty();
                 status.setText("The party marker is hidden.");
             })),
             btn("Find Party", this::findParty),
             new Separator(javafx.geometry.Orientation.VERTICAL),
+            unplacedButton,
             btn("−", () -> zoom(-8)), btn("+", () -> zoom(8)),
             partyLabel);
         toolbar.setAlignment(Pos.CENTER_LEFT);
         toolbar.setPadding(new Insets(4, 20, 8, 20));
 
+        canvas.setOnMousePressed(e -> {
+            dragged = false;
+            if (map == null || tool != Tool.NONE) return;
+            int[] at = square(e.getX(), e.getY());
+            if (at != null && map.linkAt(at[0], at[1]) != null) moving = at;
+        });
+        canvas.setOnMouseReleased(e -> {
+            if (tool != Tool.NONE || moving == null) return;
+            int[] from = moving;
+            moving = null;
+            int[] to = square(e.getX(), e.getY());
+            if (to == null || (to[0] == from[0] && to[1] == from[1])) return;
+            dragged = true;
+            movePin(from, to);
+        });
         canvas.setOnMouseClicked(e -> {
             if (map == null) return;
-            double cell = renderer.getCellSize();
-            int cx = (int) (e.getX() / cell);
-            int cy = (int) (e.getY() / cell);
-            if (cx < 0 || cy < 0 || cx >= map.getWidth() || cy >= map.getHeight()) return;
+            if (dragged) {
+                dragged = false;
+                return;
+            }
+            int[] at = square(e.getX(), e.getY());
+            if (at == null) return;
+            int cx = at[0];
+            int cy = at[1];
+            if (tool == Tool.MOVE) {
+                if (moving == null) {
+                    MapPin pin = map.linkAt(cx, cy);
+                    if (pin == null) {
+                        status.setText("Click a pin to move. Esc cancels.");
+                    } else {
+                        moving = at;
+                        status.setText("Now click the square where " + pin.getName() + " belongs. Esc cancels.");
+                    }
+                } else {
+                    int[] from = moving;
+                    tools.selectToggle(null);
+                    movePin(from, at);
+                }
+                return;
+            }
             if (tool != Tool.NONE) {
                 applyTool(cx, cy);
                 tools.selectToggle(null);
@@ -179,6 +233,27 @@ public class WorldMapScene extends BaseScene {
         return scene;
     }
 
+    private int[] square(double px, double py) {
+        if (map == null) return null;
+        double cell = renderer.getCellSize();
+        int x = (int) Math.floor(px / cell);
+        int y = (int) Math.floor(py / cell);
+        if (x < 0 || y < 0 || x >= map.getWidth() || y >= map.getHeight()) return null;
+        return new int[] {x, y};
+    }
+
+    private void movePin(int[] from, int[] to) {
+        run(() -> {
+            MapPin pin = worlds.movePin(map.getId(), from[0], from[1], to[0], to[1]);
+            status.setText("Moved " + pin.getName() + " to (" + to[0] + "," + to[1] + ").");
+        });
+    }
+
+    private static Button withTip(Button button, String tip) {
+        button.setTooltip(new Tooltip(tip));
+        return button;
+    }
+
     private ToggleButton toolButton(String text, String tip, ToggleGroup group, Tool kind) {
         ToggleButton button = new ToggleButton(text);
         button.setToggleGroup(group);
@@ -209,6 +284,10 @@ public class WorldMapScene extends BaseScene {
         canvas.setWidth(map.getWidth() * cell);
         canvas.setHeight(map.getHeight() * cell);
         renderer.render(canvas, map, null);
+        int unplaced = worlds.unplaced().size();
+        unplacedButton.setText("⚠ Not on a world map: " + unplaced);
+        unplacedButton.setVisible(unplaced > 0);
+        unplacedButton.setManaged(unplaced > 0);
         GameMap partyMap = worlds.partyMap();
         partyLabel.setText(partyMap == null ? "Party: hidden"
             : "Party: " + NAMES.toString(partyMap) + " (" + partyMap.getPartyPosition().getX()
@@ -236,8 +315,18 @@ public class WorldMapScene extends BaseScene {
                     worlds.moveParty(map.getId(), x, y);
                     status.setText("The party is now at (" + x + "," + y + ") on " + NAMES.toString(map) + ".");
                 }
-                case UNLINK -> status.setText(worlds.unlink(map.getId(), x, y)
-                    ? "Link removed." : "There was no pin on that square.");
+                case UNLINK -> {
+                    MapPin pin = map.linkAt(x, y);
+                    if (pin == null || !worlds.unlink(map.getId(), x, y)) {
+                        status.setText("There was no pin on that square.");
+                    } else if (!worlds.homes().containsKey(pin.getMapId())
+                            && repos.maps().getById(pin.getMapId()) != null
+                            && !repos.maps().getById(pin.getMapId()).isWorldMap()) {
+                        status.setText("Link removed. " + pin.getName() + " is now not on any world map - place it again.");
+                    } else {
+                        status.setText("Link removed.");
+                    }
+                }
                 case LINK -> {
                     MapPin pin = worlds.link(map.getId(), target.getId(), x, y);
                     status.setText("Linked to " + pin.getName() + ". Double-click the pin to open it.");
@@ -272,15 +361,56 @@ public class WorldMapScene extends BaseScene {
         dialog.setTitle("Link Location");
         dialog.setHeaderText("Which map does this place lead to?");
         Button create = new Button("Create New Location Map...");
-        create.setOnAction(e -> MapCreationDialog.show(this, repos, created -> {
-            box.getItems().add(created);
-            box.setValue(created);
+        GameMap[] made = {null};
+        create.setOnAction(e -> MapCreationDialog.show(this, repos, false, map.getId(), created -> {
+            made[0] = created;
+            dialog.setResult(null);
+            dialog.close();
         }));
         dialog.getDialogPane().setContent(new VBox(8, new Label("Map:"), box, create));
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
         dialog.setResultConverter(bt -> bt == ButtonType.OK ? box.getValue() : null);
         styleDialog(dialog);
-        return dialog.showAndWait().orElse(null);
+        GameMap chosen = dialog.showAndWait().orElse(null);
+        if (made[0] != null) {
+            reload(map.getId());
+            status.setText("Created " + made[0].getName() + " and pinned it on the chosen square.");
+            return null;
+        }
+        return chosen;
+    }
+
+    /** Places a location map that isn't on any world map yet: pick it, then click its square. */
+    private void placeUnplaced() {
+        List<GameMap> unplaced = worlds.unplaced();
+        if (unplaced.isEmpty() || map == null) return;
+        ComboBox<GameMap> box = new ComboBox<>(FXCollections.observableArrayList(unplaced));
+        box.setConverter(NAMES);
+        box.getSelectionModel().selectFirst();
+        box.setMaxWidth(Double.MAX_VALUE);
+        UiTranslator.skip(box);
+        Dialog<GameMap> dialog = new Dialog<>();
+        dialog.setTitle("Place Location");
+        dialog.setHeaderText("These maps are not on any world map yet. Choose one, then click where it is on "
+            + NAMES.toString(map) + ".");
+        dialog.getDialogPane().setContent(new VBox(8, new Label("Map:"), box));
+        ButtonType all = new ButtonType("Place All Along the Top", ButtonBar.ButtonData.LEFT);
+        dialog.getDialogPane().getButtonTypes().addAll(all, ButtonType.OK, ButtonType.CANCEL);
+        dialog.setResultConverter(bt -> bt == ButtonType.OK ? box.getValue() : null);
+        styleDialog(dialog);
+        dialog.getDialogPane().lookupButton(all).addEventFilter(javafx.event.ActionEvent.ACTION, e -> {
+            int[] placed = {0};
+            run(() -> {
+                placed[0] = worlds.autoPlace(worlds.unplaced(), map.getId());
+                status.setText("Placed " + placed[0] + " maps along the top. Drag each pin to where it belongs.");
+            });
+        });
+        dialog.showAndWait().ifPresent(target -> {
+            linkTarget = target;
+            tool = Tool.LINK;
+            linkButton.setSelected(true);
+            status.setText("Click the square that leads to " + NAMES.toString(target) + ". Esc cancels.");
+        });
     }
 
     private void openPin(MapPin pin) {

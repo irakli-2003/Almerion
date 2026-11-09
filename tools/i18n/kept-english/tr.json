@@ -76,7 +76,6 @@
  "Durability: {A}",
  "Dwarven Resilience",
  "Edit",
- "Edit Terrain",
  "Edit sound",
  "Edit track",
  "Edit...",
@@ -145,6 +144,8 @@
  "Pause",
  "Perception",
  "Persuasion",
+ "Place All Along the Top",
+ "Place Location",
  "Placed tokens",
  "Play This Character",
  "Playlist:",
@@ -247,5 +248,6 @@
  "✓ Synced",
  "✚ New player...",
  "🎵 Music",
- "📽 Projector"
+ "📽 Projector",
+ "🖌 Edit Map & Images"
 ]

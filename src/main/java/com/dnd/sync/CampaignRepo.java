@@ -541,14 +541,28 @@ public final class CampaignRepo {
             return Result.of(Outcome.AUTH_FAILED, "GitHub didn't accept the sign-in. Link your GitHub account again"
                 + " (and make sure it can access this repository).");
         }
-        if (text.contains("not found")) {
+        if (text.contains("repository not found") || (e instanceof TransportException && text.contains("not found"))) {
             return Result.of(Outcome.FAILED, "The GitHub repository wasn't found, or your account can't access it.");
         }
         if (e instanceof TransportException || hasNetworkCause(e)) {
             return Result.of(Outcome.OFFLINE, "Can't reach GitHub right now. Your changes are kept and will be"
                 + " synced later.");
         }
-        return Result.of(Outcome.FAILED, e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage());
+        if (text.contains("cannot lock") || text.contains("index.lock")) {
+            return Result.of(Outcome.FAILED, "Git could not lock this campaign's index. Close other Almerion"
+                + " windows and Git programs, then retry. If a previous process crashed, its index.lock may"
+                + " need to be removed after confirming no Git process is running.\n\n" + rootMessage(e));
+        }
+        return Result.of(Outcome.FAILED, rootMessage(e));
+    }
+
+    /** The most specific message in the cause chain ("add command failed" alone tells the user nothing). */
+    static String rootMessage(Throwable e) {
+        String message = null;
+        for (Throwable t = e; t != null; t = t.getCause()) {
+            if (t.getMessage() != null && !t.getMessage().isBlank()) message = t.getMessage();
+        }
+        return message == null ? e.getClass().getSimpleName() : message;
     }
 
     private static String messages(Throwable e) {

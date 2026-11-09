@@ -31,6 +31,7 @@ public class MapViewScene extends BaseScene {
         // Defensive: repair maps whose stored grid doesn't match their width/height (e.g. maps
         // created before GameMap.ensureGridSize() existed) so they can still be viewed here.
         map.ensureGridSize();
+        repos.maps().refreshPinNames(map);
 
         HBox header = new HBox(12, title("Map: " + map.getName()));
         if (uiSession.isDm()) {
@@ -51,6 +52,16 @@ public class MapViewScene extends BaseScene {
             int cx = (int) (e.getX() / cell);
             int cy = (int) (e.getY() / cell);
             if (cx >= 0 && cx < map.getWidth() && cy >= 0 && cy < map.getHeight()) {
+                var link = map.linkAt(cx, cy);
+                if (e.getClickCount() == 2 && link != null) {
+                    if (repos.maps().getById(link.getMapId()) == null) {
+                        infoLabel.setText("The linked map no longer exists.");
+                    } else {
+                        uiSession.setActiveMapId(link.getMapId());
+                        uiSession.getRouter().goTo(SceneType.MAP_VIEW);
+                    }
+                    return;
+                }
                 GridCell gridCell = map.getCell(cx, cy);
                 if (!gridCell.getOccupants().isEmpty()) {
                     StringBuilder sb = new StringBuilder();

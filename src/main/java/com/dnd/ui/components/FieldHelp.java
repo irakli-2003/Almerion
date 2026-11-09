@@ -81,7 +81,7 @@ public final class FieldHelp {
         f("Spell.effects", "Effects from this campaign that the spell applies. Each one's power (constant + dice) replaces the effect's own damage/healing amount; leave it at 0 with no dice to use the effect's own amount.");
         f("SpellEffect.effectId", "The campaign effect this spell applies.");
         f("SpellEffect.constant", "Flat part of the effect's power, added to the dice (e.g. the 2 in 1d4 + 2).");
-        f("SpellEffect.dice", "Dice rolled for the effect's power; the DM rolls them at the table when the spell is cast.");
+        f("SpellEffect.dice", "Dice rolled for the effect's power; the GM rolls them at the table when the spell is cast.");
         f("Spell.damage", "Damage dealt on a hit: the dice rolled plus a flat constant, and the damage type.");
         f("Damage.constant", "Flat amount added to the dice, e.g. the 3 in 2d6 + 3. Can be used on its own without dice.");
         f("Spell.concentration", "Concentration spells end if the caster casts another one or is badly hurt.");

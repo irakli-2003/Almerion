@@ -81,7 +81,9 @@ final class StorylineEditorWindow {
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setTitle(file.getFileName().toString());
 
-        area = new org.fxmisc.richtext.CodeArea(service.readText(file));
+        String savedText = service.readText(file);
+        String currentText = MapLink.refreshLabels(savedText, repos.maps().names());
+        area = new org.fxmisc.richtext.CodeArea(currentText);
         // The initial load is not an edit the DM should be able to undo away.
         area.getUndoManager().forgetHistory();
         area.setWrapText(true);
@@ -157,7 +159,7 @@ final class StorylineEditorWindow {
         scene.getAccelerators().put(new KeyCodeCombination(KeyCode.F, KeyCombination.CONTROL_DOWN), this::openFind);
         stage.setScene(scene);
         stage.setMaximized(true);
-        markDirty(false);
+        markDirty(!savedText.equals(currentText));
         updateStats(area.getText());
 
         stage.setOnCloseRequest(e -> {
@@ -277,14 +279,18 @@ final class StorylineEditorWindow {
         placeholder.setDisable(true);
         maps.getItems().add(placeholder);
         maps.setOnShowing(e -> {
-            if (maps.getItems().size() != 1 || maps.getItems().get(0) != placeholder) return;
             List<MenuItem> items = new ArrayList<>();
+            MenuItem create = new MenuItem("Create Map from Template...");
+            create.setOnAction(ev -> MapCreationDialog.show(owner, repos, this::insertMapLink));
+            items.add(create);
+            items.add(new SeparatorMenuItem());
             for (GameMap map : repos.maps().list()) {
                 MenuItem item = new MenuItem(map.getName());
-                item.setOnAction(ev -> insertAtCaret(MapLink.marker(map.getId(), map.getName())));
+                item.getProperties().put(com.dnd.ui.i18n.UiTranslator.SKIP_KEY, true);
+                item.setOnAction(ev -> insertMapLink(map));
                 items.add(item);
             }
-            if (items.isEmpty()) {
+            if (items.size() == 2) {
                 MenuItem empty = new MenuItem("No maps in this campaign yet.");
                 empty.setDisable(true);
                 items.add(empty);
@@ -292,6 +298,13 @@ final class StorylineEditorWindow {
             maps.getItems().setAll(items);
         });
         return maps;
+    }
+
+    private void insertMapLink(GameMap map) {
+        String marker = MapLink.marker(map.getId(), map.getName());
+        MapLink current = MapLink.at(area.getText(), area.getCaretPosition());
+        if (current == null) insertAtCaret(marker);
+        else area.replaceText(current.start(), current.end(), marker);
     }
 
     /**
@@ -429,7 +442,8 @@ final class StorylineEditorWindow {
             statusLabel.setText("The map \"" + link.label() + "\" is no longer in this campaign.");
             return;
         }
-        statusLabel.setText("Opened battle map: " + link.label());
+        GameMap target = repos.maps().getById(link.mapId());
+        statusLabel.setText("Opened battle map: " + (target == null ? link.label() : target.getName()));
         window.show();
     }
 
@@ -933,6 +947,8 @@ final class StorylineEditorWindow {
     }
 
     private void save() {
+        String refreshed = MapLink.refreshLabels(area.getText(), repos.maps().names());
+        if (!refreshed.equals(area.getText())) area.replaceText(refreshed);
         service.writeText(file, area.getText());
         markDirty(false);
         statusLabel.setText("Saved " + file.getFileName() + ".");

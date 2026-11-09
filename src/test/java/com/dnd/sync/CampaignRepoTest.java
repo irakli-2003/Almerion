@@ -289,4 +289,30 @@ public class CampaignRepoTest {
         assertEquals("mine", read(folder, "spells/fire.json"));
         assertTrue(CampaignRepo.setAsideCopies(folder).isEmpty());
     }
+
+    @Test
+    public void gitLockIsExplainedAndNeverDeletedByAgeAlone() throws Exception {
+        Path first = campaign("crashed");
+        repo(first).connect(remote);
+        Path lock = first.resolve(".git/index.lock");
+        Files.writeString(lock, "");
+        Files.setLastModifiedTime(lock, java.nio.file.attribute.FileTime.from(Instant.parse("2026-10-27T18:00:00Z")));
+
+        write(first, "world/npcs.json", "[{\"name\":\"Bob\"}]");
+        CampaignRepo.Result result = repo(first).sync();
+        assertEquals(result.message(), CampaignRepo.Outcome.FAILED, result.outcome());
+        assertTrue(result.message(), result.message().contains("index.lock"));
+        assertTrue(Files.exists(lock));
+        assertTrue(Files.readString(first.resolve("world/npcs.json")).contains("Bob"));
+    }
+
+    @Test
+    public void failureShowsTheRealCause() {
+        Exception e = new RuntimeException("Exception caught during execution of add command",
+            new java.io.IOException("Access is denied: images/map.png"));
+        assertEquals("Access is denied: images/map.png", CampaignRepo.failure(e).message());
+        Exception missing = new RuntimeException("Exception caught during execution of add command",
+            new java.io.IOException("Local file not found: images/map.png"));
+        assertEquals("Local file not found: images/map.png", CampaignRepo.failure(missing).message());
+    }
 }

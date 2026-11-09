@@ -108,8 +108,10 @@ public class MapEditorScene extends BaseScene {
         HBox header = new HBox(12);
         header.setPadding(new Insets(8, 20, 4, 20));
         header.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        Label heading = title("Map Editor: " + map.getName());
         header.getChildren().addAll(
-            title("Map Editor: " + map.getName()),
+            heading,
+            btn("Rename Map...", () -> renameMap(heading)),
             btn("Save Map", this::saveMap),
             btn("View Map", () -> uiSession.getRouter().goTo(SceneType.MAP_VIEW))
         );
@@ -1546,5 +1548,25 @@ public class MapEditorScene extends BaseScene {
             styleDialog(alert);
             alert.showAndWait();
         }
+
+    }
+
+    private void renameMap(Label heading) {
+        TextInputDialog dialog = new TextInputDialog(map.getName());
+        dialog.setTitle("Rename Map");
+        dialog.setHeaderText("Give this location a unique name. Existing links will still work.");
+        styleDialog(dialog);
+        dialog.showAndWait().ifPresent(name -> {
+            String previous = map.getName();
+            try {
+                repos.maps().validateName(name, map.getId());
+                map.setName(name.strip());
+                repos.maps().save(map);
+                heading.setText("Map Editor: " + map.getName());
+            } catch (RuntimeException e) {
+                map.setName(previous);
+                showError("Could not rename map", e);
+            }
+        });
     }
 }

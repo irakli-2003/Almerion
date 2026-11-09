@@ -22,6 +22,10 @@ public class GameMap implements Printable {
     private List<MapLayer> layers = new ArrayList<>();
     private List<Drawing> drawings = new ArrayList<>();
     private List<MapObjectGroup> groups = new ArrayList<>();
+    /** Squares that lead to other maps, when this is a region or world map. */
+    private List<MapPin> mapLinks = new ArrayList<>();
+    /** Where the party is on this (world) map right now; null = not shown. */
+    private Position partyPosition;
     /** Music playlist (from the campaign's music.json) that starts when this map is opened; null = none. */
     private String musicPlaylistId;
 
@@ -107,6 +111,41 @@ public class GameMap implements Printable {
 
     public List<Drawing> getDrawings() { return drawings; }
     public void setDrawings(List<Drawing> drawings) { this.drawings = drawings != null ? drawings : new ArrayList<>(); }
+
+    public List<MapPin> getMapLinks() { return mapLinks; }
+    public void setMapLinks(List<MapPin> mapLinks) { this.mapLinks = mapLinks != null ? mapLinks : new ArrayList<>(); }
+
+    public Position getPartyPosition() { return partyPosition; }
+    public void setPartyPosition(Position partyPosition) { this.partyPosition = partyPosition; }
+
+    /** The link on square {@code (x, y)}, or null. */
+    public MapPin linkAt(int x, int y) {
+        for (MapPin link : mapLinks) {
+            if (link.getX() == x && link.getY() == y) return link;
+        }
+        return null;
+    }
+
+    /** Links square {@code (x, y)} to {@code mapId}, replacing any link already there. */
+    public MapPin linkMap(String mapId, String name, int x, int y) {
+        requireInBounds(x, y);
+        if (mapId == null || mapId.isBlank()) throw new IllegalArgumentException("Choose a map to link to.");
+        if (mapId.equals(id)) throw new IllegalArgumentException("A map can't lead to itself.");
+        mapLinks.removeIf(link -> link.getX() == x && link.getY() == y);
+        MapPin link = new MapPin(mapId, name, x, y);
+        mapLinks.add(link);
+        return link;
+    }
+
+    public boolean unlinkAt(int x, int y) {
+        return mapLinks.removeIf(link -> link.getX() == x && link.getY() == y);
+    }
+
+    /** Puts the party marker on square {@code (x, y)}. */
+    public void moveParty(int x, int y) {
+        requireInBounds(x, y);
+        partyPosition = new Position(x, y);
+    }
 
     public List<MapObjectGroup> getGroups() { return groups; }
     public void setGroups(List<MapObjectGroup> groups) { this.groups = groups != null ? groups : new ArrayList<>(); }
@@ -213,4 +252,3 @@ public class GameMap implements Printable {
         return sb.toString();
     }
 }
-

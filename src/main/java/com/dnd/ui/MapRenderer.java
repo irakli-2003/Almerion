@@ -73,6 +73,52 @@ public class MapRenderer {
         if (decorations != null && decorations.reachable != null) drawReachable(gc, map, decorations);
         if (decorations != null && decorations.rangeOrigin != null) drawRange(gc, decorations);
         drawTokens(gc, map, decorations);
+        drawWorldMarkers(gc, map);
+    }
+
+    /** Pins for squares that lead to other maps, and the party marker, over everything else. */
+    private void drawWorldMarkers(GraphicsContext gc, GameMap map) {
+        double s = cellSize;
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc.setFont(Font.font("System", FontWeight.BOLD, Math.max(10, s * 0.24)));
+        for (MapPin link : map.getMapLinks()) {
+            if (link.getX() >= map.getWidth() || link.getY() >= map.getHeight()) continue;
+            double cx = link.getX() * s + s / 2;
+            double cy = link.getY() * s + s / 2;
+            double r = s * 0.22;
+            gc.setFill(Color.web("#c9a84c"));
+            gc.setStroke(Color.web("#1a1a2e"));
+            gc.setLineWidth(2);
+            gc.fillPolygon(new double[]{cx, cx + r, cx, cx - r}, new double[]{cy - r * 1.4, cy, cy + r * 1.4, cy}, 4);
+            gc.strokePolygon(new double[]{cx, cx + r, cx, cx - r}, new double[]{cy - r * 1.4, cy, cy + r * 1.4, cy}, 4);
+            String name = link.getName() == null ? "" : link.getName();
+            if (!name.isEmpty()) {
+                double ty = link.getY() * s + s + Math.max(10, s * 0.24);
+                gc.setStroke(Color.web("#000000cc"));
+                gc.setLineWidth(3);
+                gc.strokeText(name, cx, ty);
+                gc.setFill(Color.web("#f3e3b0"));
+                gc.fillText(name, cx, ty);
+            }
+        }
+        Position party = map.getPartyPosition();
+        if (party != null && party.getX() < map.getWidth() && party.getY() < map.getHeight()) {
+            double x = party.getX() * s;
+            double y = party.getY() * s;
+            double pad = s * 0.12;
+            gc.setFill(Color.web("#b3261ecc"));
+            gc.fillOval(x + pad, y + pad, s - 2 * pad, s - 2 * pad);
+            gc.setStroke(Color.WHITE);
+            gc.setLineWidth(2.5);
+            gc.strokeOval(x + pad, y + pad, s - 2 * pad, s - 2 * pad);
+            // A small flag: pole and pennant.
+            double poleX = x + s * 0.42;
+            gc.strokeLine(poleX, y + s * 0.25, poleX, y + s * 0.75);
+            gc.setFill(Color.WHITE);
+            gc.fillPolygon(new double[]{poleX, poleX + s * 0.28, poleX},
+                new double[]{y + s * 0.25, y + s * 0.36, y + s * 0.47}, 3);
+        }
+        gc.setTextAlign(TextAlignment.LEFT);
     }
 
     // ── Base map ────────────────────────────────────────────────────────────

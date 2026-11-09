@@ -1,7 +1,5 @@
 package com.dnd.data;
 
-import com.dnd.data.dto.MapCatalog;
-import com.dnd.model.world.map.GameMap;
 import com.dnd.data.dto.BeastCatalog;
 import com.dnd.data.dto.CharacterClassCatalog;
 import com.dnd.data.dto.CharacterRaceCatalog;
@@ -55,7 +53,7 @@ public class CampaignRepositories {
     private JsonRepository<AlchemyIngredient, AlchemyIngredientCatalog> alchemyIngredients;
     private JsonRepository<Book, BookCatalog> books;
     private JsonRepository<Dice, DiceCatalog> dice;
-    private JsonRepository<GameMap, MapCatalog> maps;
+    private MapRepository maps;
 
     public CampaignRepositories(Path campaignRoot) {
         this.paths = new CampaignPaths(campaignRoot);
@@ -292,17 +290,9 @@ public class CampaignRepositories {
         return dice;
     }
 
-    public JsonRepository<GameMap, MapCatalog> maps() {
+    public MapRepository maps() {
         if (maps == null) {
-            maps = new JsonRepository<>(
-                paths.mapsFile(),
-                mapper,
-                MapCatalog::new,
-                MapCatalog.class,
-                MapCatalog::getMaps,
-                MapCatalog::setMaps,
-                GameMap::getId
-            );
+            maps = new MapRepository(paths.mapsFile(), mapper);
         }
         return maps;
     }

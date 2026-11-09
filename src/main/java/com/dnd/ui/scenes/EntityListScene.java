@@ -132,6 +132,14 @@ public class EntityListScene extends BaseScene {
 
         if (uiSession.isDm()) {
             Button newBtn = btn("New", () -> {
+                if (cat == EntityCategory.MAP) {
+                    MapCreationDialog.show(this, repos, map -> {
+                        uiSession.setActiveMapId(map.getId());
+                        uiSession.setActiveEntityId(map.getId());
+                        uiSession.getRouter().goTo(SceneType.MAP_EDITOR);
+                    });
+                    return;
+                }
                 if (cat == EntityCategory.PLAYER) {
                     new CharacterCreationWizard(uiSession, repos).show(() -> uiSession.getRouter().goTo(SceneType.ENTITY_LIST));
                     return;

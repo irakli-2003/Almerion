@@ -20,6 +20,7 @@ public class GuiApp extends Application {
         UiTranslator.install(TranslationService.createDefault(), AppSettings.load());
         primaryStage.getIcons().setAll(AppIcons.icons());
         AppIcons.install();
+        ReportUi.install();
         CampaignStorage storage = new CampaignStorage();
         storage.ensureInitialized();
         CliSession session = new CliSession(storage, new SystemConsoleIO(new Scanner(System.in)));

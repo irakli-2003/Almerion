@@ -23,6 +23,8 @@
  "PBKDF{0}WithHmacSHA{1}",
  "Purse & Stats",
  "STR {A} DEX {B} CON {C} INT {D} WIS {E} CHA {F}",
+ "UTF-{0}",
+ "X-Unsent",
  "XP:",
  "Zoom +",
  "[CHECK] <skill> DC <n>",

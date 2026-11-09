@@ -1,4 +1,5 @@
 [
+ "*.eml",
  "*.webp",
  "+refs/heads/*:refs/remotes/{A}/*",
  "--- NPC: <name> ---",
@@ -8,6 +9,7 @@
  "HP:",
  "HTTP {A}",
  "Lvl {A}",
+ "OS: {A} {B}",
  "SHA-{0}",
  "XP:",
  "[CHECK] <skill> DC <n>",

@@ -78,4 +78,26 @@ public class GameMapTest {
             }
         }
     }
+
+    @Test
+    public void worldMapPinsAndPartySurviveSavingAndOldMapsStillLoad() throws Exception {
+        var json = com.dnd.data.JsonMappers.create();
+        GameMap world = new GameMap("world", "World", 10, 10);
+        world.linkMap("town", "Town", 3, 4);
+        world.linkMap("cave", "Cave", 3, 4);
+        world.moveParty(5, 6);
+
+        GameMap loaded = json.readValue(json.writeValueAsString(world), GameMap.class);
+        assertEquals(1, loaded.getMapLinks().size());
+        assertEquals("cave", loaded.linkAt(3, 4).getMapId());
+        assertEquals(new Position(5, 6), loaded.getPartyPosition());
+        assertThrows(IllegalArgumentException.class, () -> loaded.linkMap("world", "Self", 1, 1));
+        assertThrows(IndexOutOfBoundsException.class, () -> loaded.moveParty(10, 0));
+
+        var oldJson = json.valueToTree(new GameMap("old", "Old", 2, 2));
+        ((com.fasterxml.jackson.databind.node.ObjectNode) oldJson).remove(java.util.List.of("mapLinks", "partyPosition"));
+        GameMap old = json.treeToValue(oldJson, GameMap.class);
+        assertEquals(0, old.getMapLinks().size());
+        org.junit.Assert.assertNull(old.getPartyPosition());
+    }
 }

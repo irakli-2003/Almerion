@@ -60,4 +60,14 @@ public record MapLink(String mapId, String label, int start, int end) {
         return PATTERN.matcher(text).replaceAll(m -> Matcher.quoteReplacement(
             m.group(2) == null || m.group(2).isBlank() ? m.group(1).trim() : m.group(2).trim()));
     }
+
+    /** Keeps IDs stable while displaying the location's current name, not a stale template label. */
+    public static String refreshLabels(String text, java.util.Map<String, String> names) {
+        if (text == null) return "";
+        return PATTERN.matcher(text).replaceAll(m -> {
+            String name = names.get(m.group(1).trim());
+            return Matcher.quoteReplacement(name == null || name.isBlank()
+                ? m.group() : marker(m.group(1).trim(), name));
+        });
+    }
 }

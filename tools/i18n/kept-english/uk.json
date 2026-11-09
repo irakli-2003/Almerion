@@ -12,6 +12,7 @@
  "INT",
  "JavaFX could not load bundled font: {A}",
  "NETWORK",
+ "X-Unsent",
  "[CHECK] <skill> DC <n>",
  "d MMM yyyy, HH:mm",
  "getCurrentHitPoints",

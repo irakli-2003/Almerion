@@ -254,6 +254,11 @@ To stop syncing a campaign, use **Sync with GitHub… → Stop Syncing**. **Unli
 GitHub sign-in from this computer. Your sign-in is stored only on this computer (encrypted for
 your Windows user) and is never put into a campaign folder.
 
+If Git cannot stage a file, Almerion shows the underlying file/permission error instead of
+just "add command failed". An index lock is never deleted automatically: close other app or
+Git processes before retrying. A lock left by a crash should only be removed after confirming
+no process is using this campaign repository.
+
 ### Inviting people: the Members window
 
 Open it with **👥 Members** in the GM menu.
@@ -433,6 +438,25 @@ This panel runs the session from inside your notes:
 
 ## 13. Maps and battles
 
+### Templates and named locations
+
+**Maps → New** opens the template chooser. Choose a blank grid or a built-in layout such as
+**Temple**, **Castle - Ground Floor**, **Cave**, **Tavern** or **Village Square**, then enter
+the location's own name, for example **Queen's Castle**. New map names must be non-empty and
+unique within the campaign (ignoring case and extra whitespace).
+
+Templates are read-only starting layouts, not playable campaign locations. Each creation
+produces an independent map with its own ID and state; editing one never changes the template
+or another location made from it. To revisit the *same* location, reuse its existing map link.
+Templates are available in existing campaigns too, without replacing their maps.
+
+In the session editor, **Insert Map → Create Map from Template…** creates a named map and
+inserts its link. With the cursor inside an existing map link, choosing a map replaces that
+whole link, so a generic Temple link can become a separate Queen's Castle location.
+**Rename Map…** in the map editor keeps the map's ID unchanged. Session link labels refresh
+to the current name when notes are opened or saved; save the notes to preserve those labels
+in the text file. World-map pins and map pickers also use the location name.
+
 ### Map editor
 
 Open **Maps** in Worldbuilding and click **View / Edit**.
@@ -444,6 +468,15 @@ Open **Maps** in Worldbuilding and click **View / Edit**.
 - Mark cells as impassable (walls, furniture, deep water). They show as black.
 - **Save Map** saves your changes. **View Map** shows the read-only view, where **Run Battle**
   starts a fight.
+
+### World and region maps
+
+Any map can be a larger world/region map. In **Run Battle → WORLD**, choose **Link Map…**,
+pick a named campaign map and click a square to place its pin. Double-click the pin to open
+that map. **Unlink** removes a pin; it does not delete the destination map.
+**Move Party** places the party's flag on a square; **Hide Party** removes the flag.
+These changes are saved in the campaign and participate in normal GitHub sync.
+**Esc** cancels a placement. Existing maps need no conversion.
 
 ### Battle map
 
@@ -657,6 +690,14 @@ computer, so back it up.
 ---
 
 ## 20. Troubleshooting
+
+The small **🐞** button is available on app screens and dialogs. Choose **Bug** or
+**Suggestion**, describe the issue, and review the automatically captured app screenshot.
+Uncheck **Include screenshot** to leave it out. Nothing is sent until you click **Send**.
+The recipient defaults to the configured password-recovery sender address and can be edited.
+SMTP credentials are never included in the report. If SMTP is unavailable, **Save email
+draft…** writes an `.eml` file with the optional screenshot attached; open it in a compatible
+email application and send it there.
 
 | Problem | What to do |
 |---|---|

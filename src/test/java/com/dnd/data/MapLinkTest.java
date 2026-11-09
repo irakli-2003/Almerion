@@ -9,6 +9,16 @@ import static org.junit.Assert.*;
 public class MapLinkTest {
 
     @Test
+    public void currentLocationNamesReplaceStaleTemplateLabelsWithoutChangingLinksOrProse() {
+        String text = "Enter [map:castle|Temple]. Return to [map:castle]. Missing: [map:gone|Lost cave].";
+        assertEquals("Enter [map:castle|Queen's Castle $5]. Return to [map:castle|Queen's Castle $5]."
+                + " Missing: [map:gone|Lost cave].",
+            MapLink.refreshLabels(text, java.util.Map.of("castle", "Queen's Castle $5")));
+        assertEquals("", MapLink.refreshLabels(null, java.util.Map.of()));
+        assertEquals(text, MapLink.refreshLabels(text, java.util.Map.of()));
+    }
+
+    @Test
     public void markerIncludesLabelWhenGiven() {
         assertEquals("[map:map-1|Old Mill]", MapLink.marker("map-1", "Old Mill"));
         assertEquals("[map:map-1]", MapLink.marker("map-1", null));

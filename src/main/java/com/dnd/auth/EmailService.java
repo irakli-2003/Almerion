@@ -7,7 +7,13 @@ import jakarta.mail.Session;
 import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMultipart;
+import jakarta.activation.DataHandler;
+import jakarta.mail.util.ByteArrayDataSource;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -64,6 +70,16 @@ public class EmailService {
     }
 
     public void send(String to, String subject, String body) {
+        send(to, subject, body, null);
+    }
+
+    /** The recovery sender is also the default report recipient; credentials are never included. */
+    public String reportRecipient() {
+        if (config == null) return "";
+        return isBlank(config.fromAddress) ? (config.username == null ? "" : config.username) : config.fromAddress;
+    }
+
+    public void send(String to, String subject, String body, byte[] screenshot) {
         String problem = configProblem();
         if (problem != null) {
             throw new EmailNotConfiguredException(problem);
@@ -95,12 +111,46 @@ public class EmailService {
             MimeMessage message = new MimeMessage(session);
             String from = isBlank(config.fromAddress) ? config.username : config.fromAddress;
             message.setFrom(new InternetAddress(from));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
-            message.setSubject(subject);
-            message.setText(body);
+            populate(message, to, subject, body, screenshot);
             Transport.send(message);
         } catch (MessagingException e) {
             throw new EmailSendException(explain(e), e);
+        }
+    }
+
+    /** A complete email draft, including the optional screenshot, usable without SMTP. */
+    public byte[] reportDraft(String to, String subject, String body, byte[] screenshot) {
+        try {
+            MimeMessage message = new MimeMessage(Session.getInstance(new Properties()));
+            populate(message, to, subject, body, screenshot);
+            message.setHeader("X-Unsent", "1");
+            if (!isBlank(reportRecipient())) message.setFrom(new InternetAddress(reportRecipient(), true));
+            message.saveChanges();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            message.writeTo(out);
+            return out.toByteArray();
+        } catch (MessagingException | IOException e) {
+            throw new EmailSendException("Could not create the email draft: " + e.getMessage(), e);
+        }
+    }
+
+    private static void populate(MimeMessage message, String to, String subject, String body,
+                                 byte[] screenshot) throws MessagingException {
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to, true));
+        message.setSubject(subject, "UTF-8");
+        if (screenshot == null) {
+            message.setText(body, "UTF-8");
+        } else {
+            MimeBodyPart text = new MimeBodyPart();
+            text.setText(body, "UTF-8");
+            MimeBodyPart image = new MimeBodyPart();
+            image.setDataHandler(new DataHandler(new ByteArrayDataSource(screenshot, "image/png")));
+            image.setFileName("almerion-screenshot.png");
+            image.setDisposition(jakarta.mail.Part.ATTACHMENT);
+            MimeMultipart parts = new MimeMultipart();
+            parts.addBodyPart(text);
+            parts.addBodyPart(image);
+            message.setContent(parts);
         }
     }
 

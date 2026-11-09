@@ -106,6 +106,11 @@ public class BattleMapWindow {
     private String armedTokenType;
     /** Catalogue id of the token queued up to be placed by clicking the map. */
     private String armedTokenId;
+    /** Map the next click links to, or null. */
+    private com.dnd.model.world.map.GameMap armedLink;
+    private boolean armedUnlink;
+    /** True while the next click moves the party marker. */
+    private boolean armedParty;
 
     /** Board snapshots at each turn start, for the rabbit's time rewind. */
     private final com.dnd.model.combat.TurnHistory history = new com.dnd.model.combat.TurnHistory();
@@ -199,15 +204,40 @@ public class BattleMapWindow {
             alert.showAndWait();
             return;
         }
+        String windowKey = uiSession.campaignRoot().toAbsolutePath().normalize() + ":" + map.getId();
+        for (javafx.stage.Window window : javafx.stage.Window.getWindows()) {
+            if (window instanceof Stage existing && windowKey.equals(window.getProperties().get("almerion.map"))) {
+                existing.setIconified(false);
+                existing.toFront();
+                existing.requestFocus();
+                return;
+            }
+        }
         map.ensureGridSize();
+        repos.maps().refreshPinNames(map);
         syncFromSheets();
         seedSpeeds();
         rebuildInitiative();
         if (initiative.current() != null) history.record(map, initiative.current(), initiative.round());
 
         Stage stage = new Stage();
+        stage.getProperties().put("almerion.map", windowKey);
         stage.initModality(Modality.NONE);
         stage.setTitle("Battle: " + map.getName());
+        stage.focusedProperty().addListener((obs, old, focused) -> {
+            if (!focused) return;
+            try {
+                var current = repos.maps().getById(map.getId());
+                if (current != null) {
+                    map.setName(current.getName());
+                    stage.setTitle("Battle: " + map.getName());
+                }
+                repos.maps().refreshPinNames(map);
+                render();
+            } catch (RuntimeException e) {
+                status("Map names could not be refreshed: " + e.getMessage());
+            }
+        });
 
         renderer.setCellSize(Math.min(renderer.getCellSize(), maxCellSize()));
         canvas = new Canvas(map.getWidth() * renderer.getCellSize(), map.getHeight() * renderer.getCellSize());
@@ -254,6 +284,10 @@ public class BattleMapWindow {
                 }
                 if (armedTokenType != null) {
                     cancelTokenPlacement();
+                    return;
+                }
+                if (armedLink != null || armedUnlink || armedParty) {
+                    cancelWorldTools();
                     return;
                 }
                 decorations.selected = null;
@@ -344,6 +378,26 @@ public class BattleMapWindow {
                 + " for a projector. Set Windows to Extend with Win+P first.", this::toggleProjector)),
             toolGroup("🛏 PARTY",
             tool("Rest...", "Give every player on the map a short or long rest", this::openPartyRestDialog)),
+            toolGroup("🧭 WORLD",
+            tool("Link Map...", "Turn a square of this (world or region) map into a doorway to another map:"
+                + " pick the map, then click the square. Double-click the pin later to open that map.",
+                this::armMapLink),
+            tool("Unlink", "Click a map pin to remove it", () -> {
+                prepareWorldTool();
+                armedUnlink = true;
+                status("Click the pin to remove, or press Esc to cancel.");
+            }),
+            tool("Move Party", "Click a square to show where the party is on this map", () -> {
+                prepareWorldTool();
+                armedParty = true;
+                status("Click the square where the party is now, or press Esc to cancel.");
+            }),
+            tool("Hide Party", "Remove the party marker from this map", () -> {
+                prepareWorldTool();
+                map.setPartyPosition(null);
+                dirty = true;
+                persistWorldChange();
+            })),
             toolGroup("🎵 MUSIC", buildMusicControls()),
             toolGroup("⏱ TIMER", timer),
             toolGroup("💾 BATTLE",
@@ -526,6 +580,18 @@ public class BattleMapWindow {
                 placeArmedTokenAt(cx, cy);
                 return;
             }
+            if (armedLink != null || armedUnlink || armedParty) {
+                resolveWorldToolAt(cx, cy);
+                return;
+            }
+            if (e.getClickCount() == 2) {
+                var link = cx >= 0 && cy >= 0 ? map.linkAt(cx, cy) : null;
+                if (link != null) {
+                    dragging = null;
+                    openLinkedMap(link);
+                    return;
+                }
+            }
 
             MapObject hit = tokenAt(e.getX(), e.getY());
             dragging = hit;
@@ -677,6 +743,7 @@ public class BattleMapWindow {
      * confusing part of the old behaviour.</p>
      */
     private void setWallPaintMode(boolean on) {
+        if (on) cancelWorldTools();
         wallPaintMode = on;
         wallButton.setText(on ? "Walls: ON" : "Walls: off");
         if (on) {
@@ -731,6 +798,7 @@ public class BattleMapWindow {
     }
 
     private void startTerrainPainting(TerrainType choice) {
+        cancelWorldTools();
         paintTerrain = choice;
         setWallPaintMode(false);
         decorations.selected = null;
@@ -1594,6 +1662,7 @@ public class BattleMapWindow {
 
     /** Picks up a feature that needs a target so the next click on a creature uses it. */
     private void armFeature(MapObject user, FeatureRules.Action action, int points) {
+        cancelWorldTools();
         if (action.usesLeft(TokenSupport.combatOf(user).getFeatureUses()) <= 0) {
             status(action.getName() + " is spent until a " + action.getRecharge().label() + ".");
             return;
@@ -1690,6 +1759,7 @@ public class BattleMapWindow {
     }
 
     private void armAttack(MapObject attacker, FeatureRules.Attack attack) {
+        cancelWorldTools();
         cancelCastSilently();
         armedAttack = attack;
         armedAttacker = attacker;
@@ -1872,6 +1942,7 @@ public class BattleMapWindow {
         }
         cancelFeatureAndAttackSilently();
         armedCastFeature = feature;
+        cancelWorldTools();
         armedCaster = caster;
         armedCast = action;
         if (!action.needsTarget()) {
@@ -2185,6 +2256,7 @@ public class BattleMapWindow {
 
     /** Picks up a catalogue entry so the next click on an empty, passable box places it there. */
     private void armTokenPlacement(String type, String id) {
+        cancelWorldTools();
         armedTokenType = type;
         armedTokenId = id;
         status("Click an empty box on the map to place it, or press Esc to cancel.");
@@ -2264,7 +2336,111 @@ public class BattleMapWindow {
         status("Added " + TokenSupport.nameOf(token) + " at (" + x + "," + y + ").");
     }
 
+    private void armMapLink() {
+        List<com.dnd.model.world.map.GameMap> others = new ArrayList<>();
+        for (var m : repos.maps().list()) {
+            if (m.getId() != null && !m.getId().equals(map.getId())) others.add(m);
+        }
+        if (others.isEmpty()) {
+            status("Create another map first - there is nothing to link to yet.");
+            return;
+        }
+        others.sort(java.util.Comparator.comparing(m -> m.getName() == null ? "" : m.getName(),
+            String.CASE_INSENSITIVE_ORDER));
+        javafx.util.StringConverter<com.dnd.model.world.map.GameMap> names = new javafx.util.StringConverter<>() {
+            @Override public String toString(com.dnd.model.world.map.GameMap m) {
+                return m == null ? "" : (m.getName() == null || m.getName().isBlank() ? m.getId() : m.getName());
+            }
+            @Override public com.dnd.model.world.map.GameMap fromString(String s) { return null; }
+        };
+        javafx.scene.control.ComboBox<com.dnd.model.world.map.GameMap> box =
+            new javafx.scene.control.ComboBox<>(javafx.collections.FXCollections.observableArrayList(others));
+        box.setConverter(names);
+        box.getSelectionModel().selectFirst();
+        box.setMaxWidth(Double.MAX_VALUE);
+        com.dnd.ui.i18n.UiTranslator.skip(box);
+        javafx.scene.control.Dialog<com.dnd.model.world.map.GameMap> dialog = new javafx.scene.control.Dialog<>();
+        dialog.setTitle("Link Map");
+        dialog.setHeaderText("Which map does this place lead to?");
+        dialog.getDialogPane().setContent(new VBox(8, new Label("Map:"), box));
+        dialog.getDialogPane().getButtonTypes().addAll(
+            javafx.scene.control.ButtonType.OK, javafx.scene.control.ButtonType.CANCEL);
+        dialog.setResultConverter(bt -> bt == javafx.scene.control.ButtonType.OK ? box.getValue() : null);
+        owner.styleDialog(dialog);
+        dialog.showAndWait().ifPresent(target -> {
+            prepareWorldTool();
+            armedLink = target;
+            status("Click the square that leads to " + names.toString(target) + ", or press Esc to cancel.");
+        });
+    }
+
+    private void cancelWorldTools() {
+        boolean wasArmed = armedLink != null || armedUnlink || armedParty;
+        armedLink = null;
+        armedUnlink = false;
+        armedParty = false;
+        if (wasArmed) status("Cancelled.");
+    }
+
+    private void prepareWorldTool() {
+        cancelWorldTools();
+        cancelCastSilently();
+        cancelFeatureAndAttackSilently();
+        armedTokenType = null;
+        armedTokenId = null;
+        wallPaintMode = false;
+        wallButton.setText("Walls: off");
+        paintTerrain = null;
+        dragging = null;
+        decorations.reachable = null;
+        decorations.rangeOrigin = null;
+    }
+
+    private void resolveWorldToolAt(int cx, int cy) {
+        if (cx < 0 || cy < 0 || cx >= map.getWidth() || cy >= map.getHeight()) {
+            status("That is off the map.");
+            return;
+        }
+        if (armedParty) {
+            map.moveParty(cx, cy);
+            armedParty = false;
+            status("The party is now at (" + cx + "," + cy + ").");
+        } else if (armedUnlink) {
+            armedUnlink = false;
+            status(map.unlinkAt(cx, cy) ? "Link removed." : "There was no map pin on that square.");
+        } else if (armedLink != null) {
+            var target = armedLink;
+            armedLink = null;
+            String name = target.getName() == null || target.getName().isBlank() ? target.getId() : target.getName();
+            map.linkMap(target.getId(), name, cx, cy);
+            status("Linked to " + name + ". Double-click the pin to open it.");
+        }
+        dirty = true;
+        persistWorldChange();
+    }
+
+    private void persistWorldChange() {
+        try {
+            saveMap();
+        } catch (RuntimeException e) {
+            status("Map changes could not be saved: " + e.getMessage());
+        }
+        render();
+    }
+
+    private void openLinkedMap(com.dnd.model.world.map.MapPin link) {
+        if (dirty) saveMap();
+        BattleMapWindow window = new BattleMapWindow(owner, uiSession, link.getMapId());
+        if (!window.mapExists()) {
+            status("The linked map no longer exists. Use Unlink to remove the pin.");
+            return;
+        }
+        window.show();
+    }
+
     private void saveMap() {
+        var current = repos.maps().getById(map.getId());
+        if (current != null) map.setName(current.getName());
         pushAllToSheets();
         repos.maps().save(map);
         dirty = false;

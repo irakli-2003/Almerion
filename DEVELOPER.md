@@ -239,6 +239,33 @@ This is used when Firebase email isn't configured. It is created with placeholde
 - **Test email settings** on the login screen sends a real message and reports the exact
   error. When sending fails, the code is shown on screen instead.
 
+### Bug and suggestion reports
+
+- `ui/ReportUi` follows Stage scenes (including modal dialogs) and adds a compact report
+  button outside the content area. It captures only the app scene, not the desktop.
+- The report dialog previews the screenshot and permits removal before sending.
+  `auth/EmailService` sends UTF-8 MIME multipart reports with an optional PNG attachment;
+  the recipient defaults to the SMTP sender address, never its password.
+- Without usable SMTP, the user can export a complete `.eml` draft with the same optional
+  attachment. Screenshots remain in memory unless explicitly exported or sent.
+- PNG encoding uses `java.desktop` and JavaFX's PixelReader; no new runtime library or
+  `javafx-swing` dependency is required, so installed apps can use the jar-only updater.
+
+### Named maps and reusable layouts
+
+- `data/MapTemplates` reads the bundled starter layouts as read-only templates, available
+  in every campaign, and deep-copies them into independently named locations.
+  `ui/scenes/MapCreationDialog` serves both the map catalogue and the session editor.
+- `data/MapRepository` validates non-blank, campaign-unique names on add/save/update,
+  normalizing case, Unicode compatibility characters and whitespace for comparison.
+  Existing duplicate/blank names may still be saved unchanged to avoid breaking legacy
+  battle state; new names must satisfy the rule.
+- Renames keep IDs stable. `MapLink.refreshLabels` updates session markers' display labels
+  on open/save, while missing-map markers remain untouched. Map pickers reload on opening,
+  and world pins refresh names on window focus, never through per-frame disk reads.
+- `GameMap.mapLinks` and `partyPosition` are optional, backward-compatible world-map data.
+  `MapRenderer` draws them in the battle view, read-only view and projector.
+
 ### GitHub campaign sync
 
 - Uses JGit (EDL-1.0) over HTTPS. Code: `com.dnd.github` (OAuth device flow, REST API, token
@@ -255,8 +282,11 @@ This is used when Firebase email isn't configured. It is created with placeholde
   campaign folders.
 - Per-campaign settings live in the campaign's own `.git/config` (`remote.origin.url`,
   `almerion.sync`). Commits are authored as `<login> <id+login@users.noreply.github.com>`.
-- Conflicts: merge; for conflicted files keep the local version, save the remote one as
-  `<file>.remote-yyyyMMdd-HHmmss`, commit the merge and push.
+- Conflicts are resolved by the user, file by file, with author/computer/time metadata.
+  Keep both saves the remote content as `<file>.remote-yyyyMMdd-HHmmss`.
+- Staging failures show the deepest cause. Index locks are never removed based on age
+  alone: another Git program may still own one. Failed staging aborts before merge/push,
+  rather than silently omitting campaign files.
 - Running from source puts campaign repos (nested `.git`) under
   `src/main/resources/data/custom-campaigns`. Maven skips `.git`, but don't commit those folders
   to the app repo.

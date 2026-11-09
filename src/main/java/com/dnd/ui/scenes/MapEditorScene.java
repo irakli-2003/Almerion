@@ -94,7 +94,7 @@ public class MapEditorScene extends BaseScene {
 
         VBox root = new VBox(0);
         root.getStyleClass().add("root");
-        root.getChildren().add(backBar(SceneType.ENTITY_LIST));
+        root.getChildren().add(backBar(map != null && map.isWorldMap() ? SceneType.WORLD_MAP : SceneType.ENTITY_LIST));
 
         if (map == null) {
             root.getChildren().add(body("Map not found."));

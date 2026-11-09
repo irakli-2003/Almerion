@@ -60,7 +60,6 @@
  "Level Up",
  "Level Up ▲",
  "Link GitHub Account...",
- "Link Map",
  "Lvl {A}",
  "MP",
  "Made Save",
@@ -74,14 +73,12 @@
  "Max HP:",
  "Miss",
  "Monster",
- "Move Party",
  "NPC",
  "Name",
  "Name:",
  "Normal",
  "OS: {A} {B}",
  "Online Session{A}",
- "Open Map Link",
  "Oval",
  "PBKDF{0}WithHmacSHA{1}",
  "POST",
@@ -170,5 +167,6 @@
  "🏰 Worldbuilding",
  "💾 BATTLE",
  "📜 Open Storyline",
- "🗺 MAP"
+ "🗺 MAP",
+ "🚩 Move Party"
 ]

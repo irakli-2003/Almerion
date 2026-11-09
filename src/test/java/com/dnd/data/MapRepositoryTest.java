@@ -53,9 +53,9 @@ public class MapRepositoryTest {
         }
         MapRepository maps = repo();
         GameMap battle = maps.getById("old1");
-        battle.moveParty(1, 1);
+        battle.getCell(1, 1).setPassable(false);
         maps.save(battle);
-        assertEquals(new Position(1, 1), maps.getById("old1").getPartyPosition());
+        assertFalse(maps.getById("old1").getCell(1, 1).isPassable());
         assertEquals(2, maps.list().size());
         assertThrows(IllegalArgumentException.class, () -> maps.add(new GameMap("new", "Temple", 2, 2)));
     }

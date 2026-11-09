@@ -237,8 +237,7 @@ final class StorylineEditorWindow {
                 toolButton("Notes", "Campaign-wide scratch notes shared by every session file", this::openNotes)),
             toolGroup("🎲 AT THE TABLE",
                 toolButton("Player View", "Show only the read-aloud passages, for reading at the table",
-                    this::openPlayerView),
-                toolButton("Open Map Link", "Open the battle map linked at the cursor", this::openMapLinkAtCaret)),
+                    this::openPlayerView)),
             toolGroup("🎵 MUSIC", buildMusicControls()),
             toolGroup("☻ PLAYERS",
                 toolButton("Award XP", "Give a player character experience without leaving this file",
@@ -424,16 +423,6 @@ final class StorylineEditorWindow {
             statusLabel.setText(playlist != null && player.playPlaylist(library, playlist, -1)
                 ? "🎵 " + playlist.getName() : "No playable playlist called \"" + cue.name() + "\" - add it in the music panel.");
         }
-    }
-
-    /** Opens the map linked at the caret, reporting clearly when there isn't one. */
-    private void openMapLinkAtCaret() {
-        MapLink link = MapLink.at(area.getText(), area.getCaretPosition());
-        if (link == null) {
-            statusLabel.setText("Put the cursor inside a [map:...] link first, or insert one with \"Insert Map\".");
-            return;
-        }
-        openBattleMap(link);
     }
 
     private void openBattleMap(MapLink link) {

@@ -412,7 +412,7 @@ Double-click a file to open it. The editor fills the window.
 | **Insert Block** | Templates for a scene, encounter, NPC beat, skill check, loot or session recap |
 | **Read-Aloud** / **GM Note** | Mark text as player-facing prose or private notes |
 | **Player View** | A large, read-only window showing only the read-aloud passages |
-| **Insert Map** / **Open Map Link** | Insert a link to a battle map. Double-click the link to open the battle |
+| **Insert Map** | Insert a link to a battle map. Double-click the link to open the battle |
 | **Sound Cue** / **Music Panel** | Insert music or sound cues, or open the music panel (see [Music](#14-music-and-sound)) |
 | **Heading, Bullets, Checklist, Divider** | Basic formatting. Headings are coloured |
 | **Find** | Search the text, with match case and *n of m* |
@@ -469,14 +469,23 @@ Open **Maps** in Worldbuilding and click **View / Edit**.
 - **Save Map** saves your changes. **View Map** shows the read-only view, where **Run Battle**
   starts a fight.
 
-### World and region maps
+### World maps
 
-Any map can be a larger world/region map. In **Run Battle → WORLD**, choose **Link Map…**,
-pick a named campaign map and click a square to place its pin. Double-click the pin to open
-that map. **Unlink** removes a pin; it does not delete the destination map.
-**Move Party** places the party's flag on a square; **Hide Party** removes the flag.
-These changes are saved in the campaign and participate in normal GitHub sync.
-**Esc** cancels a placement. Existing maps need no conversion.
+Every campaign has at least one world map. Open it from the GM page with **Run the Session →
+🧭 World Map**. Older campaigns get one automatically: a map that already had world pins or the
+party flag becomes the world map, otherwise a blank **World Map** is created.
+
+- The picker at the top switches between world maps. **＋ New World Map...** creates more
+  (continents, regions, the underworld...) with unique names; **Rename...**, **Edit Terrain**
+  and **Delete** manage them. The last world map can't be deleted.
+- **📍 Link Location** asks which map a square leads to (or creates a new location map), then
+  you click the square. Double-click a pin to open that location in the battle map, or to switch
+  to a linked world map. **✖ Remove Link** removes a pin; the destination map is kept.
+- **🚩 Move Party** puts the party flag on a square. The party is always in exactly one place:
+  moving it to another world map removes the flag from the previous one. **Hide Party** removes
+  the flag; **Find Party** jumps to the map where the party is.
+- **−** / **+** zoom. **Esc** cancels a placement. Changes are saved at once and take part in
+  normal GitHub sync.
 
 ### Battle map
 

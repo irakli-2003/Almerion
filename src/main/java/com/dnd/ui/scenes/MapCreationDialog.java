@@ -4,6 +4,7 @@ import com.dnd.data.CampaignPaths;
 import com.dnd.data.CampaignRepositories;
 import com.dnd.data.IdHandler;
 import com.dnd.data.MapTemplates;
+import com.dnd.data.WorldMaps;
 import com.dnd.model.world.map.GameMap;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -16,20 +17,28 @@ final class MapCreationDialog {
     private MapCreationDialog() {}
 
     static void show(BaseScene owner, CampaignRepositories repos, Consumer<GameMap> created) {
+        show(owner, repos, false, created);
+    }
+
+    /** {@code world} creates a world map (blank 40 x 30 by default) for the World Map panel. */
+    static void show(BaseScene owner, CampaignRepositories repos, boolean world, Consumer<GameMap> created) {
         try {
             var templates = MapTemplates.builtIns();
             Dialog<GameMap> dialog = new Dialog<>();
-            dialog.setTitle("Create Map from Template");
-            dialog.setHeaderText("Choose a layout, then give this location its own unique name.");
+            dialog.setTitle(world ? "Create World Map" : "Create Map from Template");
+            dialog.setHeaderText(world ? "Choose a layout, then give this world or region its own unique name."
+                : "Choose a layout, then give this location its own unique name.");
             ComboBox<MapTemplates.Template> template = new ComboBox<>(FXCollections.observableArrayList(templates));
             template.setId("map-template");
             template.getSelectionModel().selectFirst();
             template.setMaxWidth(Double.MAX_VALUE);
             TextField name = new TextField();
             name.setId("map-location-name");
-            name.setPromptText("Location name, e.g. Queen's Castle");
-            Spinner<Integer> width = new Spinner<>(GameMap.MIN_DIMENSION, GameMap.MAX_DIMENSION, 20);
-            Spinner<Integer> height = new Spinner<>(GameMap.MIN_DIMENSION, GameMap.MAX_DIMENSION, 20);
+            name.setPromptText(world ? "World or region name, e.g. Northern Kingdoms" : "Location name, e.g. Queen's Castle");
+            Spinner<Integer> width = new Spinner<>(GameMap.MIN_DIMENSION, GameMap.MAX_DIMENSION,
+                world ? WorldMaps.DEFAULT_WIDTH : 20);
+            Spinner<Integer> height = new Spinner<>(GameMap.MIN_DIMENSION, GameMap.MAX_DIMENSION,
+                world ? WorldMaps.DEFAULT_HEIGHT : 20);
             Label size = new Label();
             Runnable updateSize = () -> {
                 var layout = template.getValue().layout();
@@ -53,6 +62,13 @@ final class MapCreationDialog {
             dialog.getDialogPane().lookupButton(create).addEventFilter(javafx.event.ActionEvent.ACTION, e -> {
                 e.consume();
                 try {
+                    if (world) {
+                        GameMap map = new WorldMaps(repos).create(name.getText(), template.getValue(),
+                            width.getValue(), height.getValue());
+                        dialog.setResult(map);
+                        dialog.close();
+                        return;
+                    }
                     repos.maps().validateName(name.getText(), null);
                     var ids = new IdHandler(new CampaignPaths(repos.campaignRoot()).idRegistryFile());
                     String id = ids.generateId(name.getText().strip(), "world/maps.json");

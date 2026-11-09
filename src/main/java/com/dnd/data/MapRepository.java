@@ -45,8 +45,43 @@ public class MapRepository extends JsonRepository<GameMap, MapCatalog> {
     }
 
     @Override public void add(GameMap map) { validate(map, true); super.add(map); }
-    @Override public void update(GameMap map) { validate(map, false); super.update(map); }
-    @Override public void save(GameMap map) { validate(map, false); super.save(map); }
+    @Override public void update(GameMap map) { validate(map, false); keepWorldState(map); super.update(map); }
+    @Override public void save(GameMap map) { validate(map, false); keepWorldState(map); super.save(map); }
+
+    /**
+     * World pins, the world flag and the party marker belong to the World Map panel. Battle and
+     * terrain editors save whole maps from older in-memory copies, so they must not overwrite them.
+     */
+    private void keepWorldState(GameMap map) {
+        GameMap stored = getById(map.getId());
+        if (stored == null) return;
+        map.setWorldMap(stored.isWorldMap());
+        map.setMapLinks(stored.getMapLinks());
+        map.setPartyPosition(stored.getPartyPosition());
+    }
+
+    /** Saves a map including its world state; only {@link WorldMaps} should call this. */
+    void saveWorldState(GameMap map) {
+        validate(map, false);
+        super.save(map);
+    }
+
+    /** Refuses to delete the campaign's last world map and removes pins leading to a deleted map. */
+    @Override
+    public boolean delete(String id) {
+        GameMap target = id == null ? null : getById(id);
+        if (target != null && target.isWorldMap()
+            && list().stream().filter(GameMap::isWorldMap).count() <= 1) {
+            throw new IllegalStateException("Every campaign needs at least one world map. Create another world map before deleting this one.");
+        }
+        boolean deleted = super.delete(id);
+        if (deleted) {
+            for (GameMap map : list()) {
+                if (map.getMapLinks().removeIf(pin -> id.equals(pin.getMapId()))) super.save(map);
+            }
+        }
+        return deleted;
+    }
 
     private static String nameKey(String name) {
         return name == null ? "" : Normalizer.normalize(name, Normalizer.Form.NFKC)

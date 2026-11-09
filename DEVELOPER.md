@@ -263,8 +263,15 @@ This is used when Firebase email isn't configured. It is created with placeholde
 - Renames keep IDs stable. `MapLink.refreshLabels` updates session markers' display labels
   on open/save, while missing-map markers remain untouched. Map pickers reload on opening,
   and world pins refresh names on window focus, never through per-frame disk reads.
-- `GameMap.mapLinks` and `partyPosition` are optional, backward-compatible world-map data.
-  `MapRenderer` draws them in the battle view, read-only view and projector.
+- `GameMap.worldMap`, `mapLinks` and `partyPosition` are optional, backward-compatible
+  world-map data. `MapRenderer` draws pins and the party flag wherever the map is shown.
+- `data/WorldMaps` owns world state: `ensure()` guarantees at least one world map (upgrading
+  1.2.4 maps with pins/party, else creating a blank one) and keeps the party on one map;
+  `moveParty` clears the flag everywhere else. Only it writes world state, through
+  `MapRepository.saveWorldState`; ordinary `save`/`update` keep the stored world fields so
+  battle and terrain editors can't overwrite them. `MapRepository.delete` refuses the last
+  world map and removes pins pointing at a deleted map.
+- `ui/scenes/WorldMapScene` (GM page → 🧭 World Map) is the only UI that edits world state.
 
 ### GitHub campaign sync
 

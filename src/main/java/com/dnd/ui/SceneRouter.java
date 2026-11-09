@@ -86,6 +86,7 @@ public class SceneRouter {
             case ENTITY_DETAIL: return new com.dnd.ui.scenes.EntityDetailScene(uiSession).build();
             case MAP_VIEW: return new com.dnd.ui.scenes.MapViewScene(uiSession).build();
             case MAP_EDITOR: return new com.dnd.ui.scenes.MapEditorScene(uiSession).build();
+            case WORLD_MAP: return new com.dnd.ui.scenes.WorldMapScene(uiSession).build();
             case CHARACTER_PROFILE: return new com.dnd.ui.scenes.player.CharacterProfileScene(uiSession).build();
             case STORYLINE: return new com.dnd.ui.scenes.StorylineScene(uiSession).build();
             default: return new LandingScene(uiSession).build();

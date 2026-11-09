@@ -61,6 +61,7 @@ public class DmMenuScene extends BaseScene {
         header.getChildren().addAll(spacer, new LanguagePicker());
         content.getChildren().add(header);
 
+        ensureWorldMap();
         content.getChildren().add(sessionSection());
         content.getChildren().add(musicSection());
         content.getChildren().add(playersSection());
@@ -73,6 +74,16 @@ public class DmMenuScene extends BaseScene {
         root.getChildren().add(scroll);
         VBox.setVgrow(scroll, Priority.ALWAYS);
         return wrapInScene(root);
+    }
+
+    /** Every campaign has at least one world map; older campaigns get one the first time the GM opens them. */
+    private void ensureWorldMap() {
+        if (uiSession.campaignRoot() == null) return;
+        try {
+            new com.dnd.data.WorldMaps(new CampaignRepositories(uiSession.campaignRoot())).ensure();
+        } catch (RuntimeException e) {
+            System.err.println("Could not prepare the world map: " + e.getMessage());
+        }
     }
 
     /** A boxed card with a title, so each area of the DM page reads as its own section. */
@@ -88,6 +99,7 @@ public class DmMenuScene extends BaseScene {
     private VBox sessionSection() {
         FlowPane row = new FlowPane(10, 10,
             btn("📜 Open Storyline", () -> uiSession.getRouter().goTo(SceneType.STORYLINE)),
+            btn("🧭 World Map", () -> uiSession.getRouter().goTo(SceneType.WORLD_MAP)),
             btn("👥 Members", () -> MembersWindow.open(this, uiSession.campaignRoot(),
                 uiSession.getCurrentUser() == null ? "" : uiSession.getCurrentUser().getUsername())),
             btn("🖨 Print Character Sheets", () -> {

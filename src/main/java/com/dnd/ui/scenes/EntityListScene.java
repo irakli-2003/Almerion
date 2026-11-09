@@ -157,7 +157,12 @@ public class EntityListScene extends BaseScene {
                 styleDialog(confirm);
                 confirm.showAndWait().ifPresent(bt -> {
                     if (bt == ButtonType.OK) {
-                        deleteEntity(repos, cat, id);
+                        try {
+                            deleteEntity(repos, cat, id);
+                        } catch (IllegalStateException ex) {
+                            showError("Could not delete " + catName, ex);
+                            return;
+                        }
                         uiSession.getRouter().goTo(SceneType.ENTITY_LIST);
                     }
                 });

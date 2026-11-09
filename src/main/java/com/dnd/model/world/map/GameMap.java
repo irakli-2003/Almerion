@@ -26,6 +26,8 @@ public class GameMap implements Printable {
     private List<MapPin> mapLinks = new ArrayList<>();
     /** Where the party is on this (world) map right now; null = not shown. */
     private Position partyPosition;
+    /** True for world/region maps managed from the GM page's World Map panel. */
+    private boolean worldMap;
     /** Music playlist (from the campaign's music.json) that starts when this map is opened; null = none. */
     private String musicPlaylistId;
 
@@ -117,6 +119,9 @@ public class GameMap implements Printable {
 
     public Position getPartyPosition() { return partyPosition; }
     public void setPartyPosition(Position partyPosition) { this.partyPosition = partyPosition; }
+
+    public boolean isWorldMap() { return worldMap; }
+    public void setWorldMap(boolean worldMap) { this.worldMap = worldMap; }
 
     /** The link on square {@code (x, y)}, or null. */
     public MapPin linkAt(int x, int y) {

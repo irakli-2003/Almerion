@@ -61,6 +61,7 @@
  "DejaVu Serif",
  "Divider",
  "DnD Campaign Manager",
+ "Edit Terrain",
  "Email",
  "Encryption failed",
  "Eraser",
@@ -103,7 +104,6 @@
  "Join Session",
  "Link GitHub Account",
  "Link GitHub Account...",
- "Link Map...",
  "Loop",
  "Lvl {A}",
  "MP",
@@ -237,10 +237,12 @@
  "⚔ combat",
  "✍ INSERT",
  "✓ Synced",
+ "✖ Remove Link",
  "🎵 MUSIC",
  "🏰 Worldbuilding",
  "💾 BATTLE",
  "💾 FILE",
+ "📍 Link Location",
  "📜 Open Storyline",
- "🧭 WORLD"
+ "🚩 Move Party"
 ]

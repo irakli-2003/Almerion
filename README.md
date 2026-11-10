@@ -524,6 +524,18 @@ Open it from a map link in your notes, or with **Run Battle**.
   **Next Turn** moves through the order, skips the dead and counts rounds.
 - **Tokens:** add, move and remove them. Click a token to see its sheet: portrait, stats, HP and
   mana, coins, items, spells and abilities. Click empty space or press **Esc** to deselect.
+  As GM, select a token and right-click any empty square to relocate it, ignoring movement
+  range and terrain without spending its movement. Drag the divider beside the left panel
+  to resize the turn order and character details.
+- **Active effects:** every creature's details have **Add Effect...**, even when no effects
+  are active. Choose a Worldbuilding effect and set its duration, damage and healing per round.
+  **Remove** ends an active effect immediately; changes also update linked character sheets.
+- **Rabbit's Pocket Watch Rewind:** use the rabbit's ability, not a toolbar button.
+  Enter the rabbit's d20 roll; the Arcana DC is that roll + 5. Enter each player character's
+  complete Arcana check total (including bonuses). Meeting or beating the DC keeps that
+  character's current state and position; everyone else returns to the start of the rabbit's
+  previous recorded turn. The ability's costs and cooldown remain spent. History lasts only while
+  the battle window is open, so a prior rabbit turn must first have been recorded there.
 - **Damage and healing:** edit HP in place, and choose a damage type for resistances. At 0 HP a
   creature falls unconscious. **Failed Save** counts down 3 → 2 → 1, then it dies.
   **Made Save** or healing brings it back.

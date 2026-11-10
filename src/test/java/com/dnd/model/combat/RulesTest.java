@@ -255,6 +255,56 @@ public class RulesTest {
     // ── Time rewind ─────────────────────────────────────────────────────────
 
     @Test
+    public void rewindCanUseMostRecentTurnWhenCasterIsNotCurrentlyActing() {
+        GameMap map = new GameMap("m", "M", 5, 5);
+        MonsterToken rabbit = caster(10);
+        MonsterToken orc = caster(20);
+        map.placeObject(rabbit, 0, 0);
+        map.placeObject(orc, 4, 4);
+        TurnHistory history = new TurnHistory();
+        history.record(map, rabbit, 1);
+        history.record(map, orc, 1);
+        assertNull(history.previousTurnOf(rabbit, true));
+        assertEquals(1, history.previousTurnOf(rabbit, false).getRound());
+    }
+
+    @Test
+    public void successfulChecksPreserveStatePositionNewTokensAndRemovedTokens() {
+        GameMap map = new GameMap("m", "M", 6, 6);
+        MonsterToken rabbit = caster(10);
+        MonsterToken unchanged = caster(20);
+        MonsterToken removed = caster(20);
+        map.placeObject(rabbit, 0, 0);
+        map.placeObject(unchanged, 4, 4);
+        map.placeObject(removed, 5, 5);
+        TurnHistory history = new TurnHistory();
+        history.record(map, rabbit, 1);
+        TurnHistory.Snapshot snapshot = history.previousTurnOf(rabbit, false);
+        TokenSupport.combatOf(rabbit).applyDamage(5);
+        CombatState kept = TokenSupport.combatOf(unchanged);
+        kept.applyDamage(7);
+        kept.setMaxMana(10);
+        kept.setCurrentMana(2);
+        kept.addEffect(new ActiveEffect("burn", "Burn", 3, 2, 0, "GM"));
+        map.moveObject(unchanged, 1, 1);
+        map.removeObject(removed);
+        MonsterToken newcomer = caster(9);
+        MonsterToken erased = caster(8);
+        map.placeObject(newcomer, 3, 3);
+        map.placeObject(erased, 2, 2);
+        history.restore(map, snapshot, null, java.util.Set.of(unchanged, removed, newcomer));
+        assertEquals(10, TokenSupport.combatOf(rabbit).getCurrentHitPoints());
+        assertSame(kept, TokenSupport.combatOf(unchanged));
+        assertEquals(13, kept.getCurrentHitPoints());
+        assertEquals(2, kept.getCurrentMana());
+        assertEquals(1, kept.getActiveEffects().size());
+        assertTrue(map.getCell(1, 1).getOccupants().contains(unchanged));
+        assertTrue(map.getCell(5, 5).getOccupants().isEmpty());
+        assertTrue(map.getCell(3, 3).getOccupants().contains(newcomer));
+        assertTrue(map.getCell(2, 2).getOccupants().isEmpty());
+    }
+
+    @Test
     public void rewindRestoresPositionsAndVitals() {
         GameMap map = new GameMap("m", "M", 5, 5);
         MonsterToken rabbit = caster(10);

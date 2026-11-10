@@ -25,7 +25,6 @@
  "userCampaigns/{A}",
  "userCampaigns/{A}/{B}",
  "⚡ Energy charges: {A}",
- "⟲ Time rewinds... it is round {A}, {B}'s turn again.",
  "📖 Copy \"{A}\" into the book",
  "📡 Host Session{A}",
  "🔥 Furnace makes charges up to {A} · fuel burning: {B} units"

@@ -19,7 +19,7 @@ import java.util.List;
  *
  * <p>Only creatures are recorded (positions and full combat state); walls and terrain are
  * the DM's to edit and are left alone. Tokens added after the snapshot was taken are
- * removed on rewind; tokens removed since are put back.</p>
+ * removed on rewind; tokens removed since are put back, unless explicitly preserved.</p>
  */
 public class TurnHistory {
 
@@ -61,6 +61,10 @@ public class TurnHistory {
         public int getRound() {
             return round;
         }
+
+        public List<MapObject> getTokens() {
+            return entries.stream().map(entry -> entry.token).toList();
+        }
     }
 
     /** Records the board as it is right now, as the start of {@code actor}'s turn. */
@@ -91,7 +95,12 @@ public class TurnHistory {
      * (the most recent one it owns) and returns the one before. Null when there is none.
      */
     public Snapshot previousTurnOf(MapObject actor) {
-        boolean skippedCurrent = false;
+        return previousTurnOf(actor, true);
+    }
+
+    /** Out-of-turn casts use the most recent recorded turn rather than skipping it. */
+    public Snapshot previousTurnOf(MapObject actor, boolean turnInProgress) {
+        boolean skippedCurrent = !turnInProgress;
         Iterator<Snapshot> it = snapshots.descendingIterator();
         while (it.hasNext()) {
             Snapshot snapshot = it.next();
@@ -111,6 +120,12 @@ public class TurnHistory {
      * is kept, so it becomes the actor's "current turn" again.
      */
     public void restore(GameMap map, Snapshot snapshot, InitiativeTracker tracker) {
+        restore(map, snapshot, tracker, java.util.Set.of());
+    }
+
+    /** Successful Arcana checks preserve the token's current state, position, or absence. */
+    public void restore(GameMap map, Snapshot snapshot, InitiativeTracker tracker,
+                        java.util.Set<MapObject> preserved) {
         List<MapObject> present = new ArrayList<>();
         for (int y = 0; y < map.getHeight(); y++) {
             for (int x = 0; x < map.getWidth(); x++) {
@@ -122,9 +137,10 @@ public class TurnHistory {
         List<MapObject> recorded = new ArrayList<>();
         for (Entry entry : snapshot.entries) recorded.add(entry.token);
         for (MapObject token : present) {
-            if (!recorded.contains(token)) map.removeObject(token);
+            if (!recorded.contains(token) && !preserved.contains(token)) map.removeObject(token);
         }
         for (Entry entry : snapshot.entries) {
+            if (preserved.contains(entry.token)) continue;
             map.removeObject(entry.token);
             map.getCell(entry.x, entry.y).addOccupant(entry.token);
             entry.token.setPosition(new Position(entry.x, entry.y));

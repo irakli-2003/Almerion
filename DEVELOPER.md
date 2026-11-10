@@ -292,6 +292,17 @@ This is used when Firebase email isn't configured. It is created with placeholde
   onto other world maps. Maps unpinned later stay flagged instead (`homes()`/`unplaced()`,
   World Map panel ⚠ button, Maps list tags). `movePin` moves a pin to a free square.
 - `ui/scenes/WorldMapScene` (GM page → 🧭 World Map) is the only UI that edits world state.
+- `BattleMapWindow` uses a horizontal `SplitPane` for adjustable creature details. Secondary
+  clicks relocate a selected token only for the GM, bypassing terrain/range but never
+  occupancy; they leave the token's movement budget untouched. Manual effect controls
+  replace matching catalog IDs and push changes into player sheets, including LAN viewers.
+- `pocket_watch_rewind` is intercepted at the ability's normal cast entry point, not through
+  a toolbar action. `TurnHistory.previousTurnOf(actor, turnInProgress)` chooses the previous
+  turn when acting, or the latest recorded turn when acting out of order. Selective restore
+  keeps successful player tokens' current combat state, position or absence (Arcana total
+  >= GM-entered rabbit d20 + 5), restores other creatures and trims the undone history.
+  Positions are preserved even when that means sharing a square with a restored token.
+  The rewind's costs and cooldown remain spent; cancellation never mutates the battle.
 
 ### GitHub campaign sync
 

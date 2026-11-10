@@ -246,14 +246,18 @@ public class BattleMapWindow {
 
         panelHost = new StackPane();
         panelHost.setPrefWidth(340);
-        panelHost.setMinWidth(340);
+        panelHost.setMinWidth(240);
+        mapScroll.setMinWidth(200);
         panelHost.getStyleClass().add("battle-panel");
 
+        SplitPane battleSplit = new SplitPane(panelHost, mapScroll);
+        battleSplit.setId("battle-panel-split");
+        battleSplit.setDividerPositions(0.29);
+        SplitPane.setResizableWithParent(panelHost, false);
         BorderPane root = new BorderPane();
         root.getStyleClass().add("root");
         root.setTop(buildToolbar(stage));
-        root.setLeft(panelHost);
-        root.setCenter(mapScroll);
+        root.setCenter(battleSplit);
         root.setBottom(buildStatusBar());
         rootPane = root;
 
@@ -351,8 +355,6 @@ public class BattleMapWindow {
                         + (ticked.isEmpty() ? "" : "  ·  " + ticked.get(0)), ticked);
                 }
             }),
-            tool("⟲ Rewind", "Turn time back to the previous turn of the selected creature (or the one acting now),"
-                + " undoing all damage, effects, spells and movement since - the rabbit's pocket watch", this::rewindTime),
             roundLabel),
             toolGroup("♟ TOKENS",
             tool("＋ Add Token", "Show or hide the creature list: click an entry, then click boxes to place"
@@ -485,12 +487,15 @@ public class BattleMapWindow {
         Button b = new Button(text);
         b.getStyleClass().add("dnd-button");
         b.setTooltip(new Tooltip(tooltip));
+        b.setMinWidth(Region.USE_PREF_SIZE);
         b.setOnAction(e -> action.run());
         return b;
     }
 
     private Node buildStatusBar() {
-        statusLabel = new Label("Click a token to inspect it. Drag it to move. Esc clears the selection.");
+        statusLabel = new Label("Click a token to inspect it. Drag it to move, or right-click an empty square"
+            + " for a free GM move. Esc clears the selection.");
+        statusLabel.setWrapText(true);
         statusLabel.getStyleClass().add("body-label");
         HBox bar = new HBox(statusLabel);
         bar.setPadding(new Insets(6, 12, 8, 12));
@@ -526,9 +531,19 @@ public class BattleMapWindow {
 
     private void wireCanvas() {
         canvas.setOnMousePressed(e -> {
-            int cx = (int) (e.getX() / renderer.getCellSize());
-            int cy = (int) (e.getY() / renderer.getCellSize());
+            int cx = (int) Math.floor(e.getX() / renderer.getCellSize());
+            int cy = (int) Math.floor(e.getY() / renderer.getCellSize());
 
+            if (e.getButton() == javafx.scene.input.MouseButton.SECONDARY) {
+                dragging = null;
+                clearDragOrigin();
+                if (uiSession.isDm() && decorations.selected != null) {
+                    forceMoveSelected(cx, cy);
+                }
+                e.consume();
+                return;
+            }
+            if (e.getButton() != javafx.scene.input.MouseButton.PRIMARY) return;
             if (wallPaintMode) {
                 toggleWallAt(cx, cy);
                 return;
@@ -636,6 +651,26 @@ public class BattleMapWindow {
      * it is dragged and would otherwise shift the origin under us.
      */
     private int[][] dragReachable;
+
+    private void forceMoveSelected(int cx, int cy) {
+        if (cx < 0 || cy < 0 || cx >= map.getWidth() || cy >= map.getHeight()) {
+            status("That is off the map.");
+            return;
+        }
+        MapObject token = decorations.selected;
+        if (token == null) return;
+        if (!map.getCell(cx, cy).getOccupants().isEmpty()) {
+            status("Choose an unoccupied destination.");
+            return;
+        }
+        map.removeObject(token);
+        map.getCell(cx, cy).addOccupant(token);
+        token.setPosition(new Position(cx, cy));
+        dirty = true;
+        updateReachable(token);
+        render();
+        status("GM moved " + TokenSupport.nameOf(token) + " without spending movement.");
+    }
 
     /** Charges the token for the ground it actually covered once the drag finishes. */
     private void commitMovementCost(MapObject token) {
@@ -1098,10 +1133,9 @@ public class BattleMapWindow {
         panel.getChildren().add(buildMagicEditor(token, state));
         panel.getChildren().add(buildRestButtons(token, state));
 
-        if (!state.getActiveEffects().isEmpty()) {
-            panel.getChildren().addAll(new Separator(), owner.sectionLabel("Active Effects"));
-            panel.getChildren().add(buildActiveEffectList(state));
-        }
+        panel.getChildren().addAll(new Separator(), owner.sectionLabel("Active Effects"),
+            tool("Add Effect...", "Apply an effect manually", () -> addManualEffect(token)),
+            buildActiveEffectList(token, state));
 
         FeatureRules.Kit kit = kitOf(token);
         if (kit != null) {
@@ -1494,6 +1528,10 @@ public class BattleMapWindow {
         row.setMaxWidth(Double.MAX_VALUE);
         row.setWrapText(true);
         if (action == null) return row;
+        if ("pocket_watch_rewind".equals(action.getId())) {
+            description = "Rewind to the rabbit's previous turn. Enter the rabbit's d20 roll: DC = roll + 5."
+                + " Characters whose Arcana check meets the DC keep their current state; the others rewind.";
+        }
 
         boolean armed = armedCast != null && armedCaster == token
             && action.getId() != null && action.getId().equals(armedCast.getId())
@@ -1905,6 +1943,10 @@ public class BattleMapWindow {
             status(blocked);
             return;
         }
+        if ("pocket_watch_rewind".equals(action.getId())) {
+            rewindTime(caster, action);
+            return;
+        }
         cancelFeatureAndAttackSilently();
         armedCastFeature = feature;
         armedCaster = caster;
@@ -2109,7 +2151,7 @@ public class BattleMapWindow {
      * The effects currently running on a creature, each with the rounds it has left, so the
      * DM can see at a glance what is still burning, freezing or blessing.
      */
-    private Node buildActiveEffectList(CombatState state) {
+    private Node buildActiveEffectList(MapObject token, CombatState state) {
         VBox box = new VBox(2);
         for (ActiveEffect effect : state.getActiveEffects()) {
             Label row = new Label("• " + effect.label()
@@ -2120,9 +2162,88 @@ public class BattleMapWindow {
             String tip = effect.getDescription() == null || effect.getDescription().isBlank()
                 ? effect.getSource() : effect.getDescription() + "\n\nFrom " + effect.getSource();
             if (tip != null) row.setTooltip(new Tooltip(tip));
-            box.getChildren().add(row);
+            Button remove = tool("Remove", "Remove this active effect", () -> {
+                state.getActiveEffects().remove(effect);
+                dirty = true;
+                pushToSheet(token);
+                refreshAll();
+                showDetail(token);
+            });
+            HBox line = new HBox(6, row, remove);
+            HBox.setHgrow(row, Priority.ALWAYS);
+            box.getChildren().add(line);
         }
         return box;
+    }
+
+    private void addManualEffect(MapObject token) {
+        var effects = repos.effects().list();
+        if (effects.isEmpty()) {
+            status("Create an effect in Worldbuilding first.");
+            return;
+        }
+        ComboBox<com.dnd.model.combat.Effect> picker = new ComboBox<>(
+            javafx.collections.FXCollections.observableArrayList(effects));
+        picker.setMaxWidth(Double.MAX_VALUE);
+        picker.getSelectionModel().selectFirst();
+        Spinner<Integer> rounds = new Spinner<>(1, 10000, 1);
+        Spinner<Integer> damage = new Spinner<>(0, 100000, 0);
+        Spinner<Integer> healing = new Spinner<>(0, 100000, 0);
+        Runnable defaults = () -> {
+            var effect = picker.getValue();
+            rounds.getValueFactory().setValue(Math.max(1, effect.getDurationRounds()));
+            damage.getValueFactory().setValue(effect.isDamaging() ? effect.getDamageAmount() : 0);
+            healing.getValueFactory().setValue(effect.isHealing() ? effect.getHealingAmount() : 0);
+        };
+        picker.setOnAction(e -> defaults.run());
+        defaults.run();
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Add Effect...");
+        dialog.setHeaderText(TokenSupport.nameOf(token));
+        VBox form = new VBox(8, picker, owner.body("Rounds left"), rounds,
+            owner.body("Damage per round"), damage, owner.body("Healing per round"), healing);
+        dialog.getDialogPane().setContent(form);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        editableNumbers(dialog, form, List.of(rounds, damage, healing));
+        owner.styleDialog(dialog);
+        if (dialog.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) return;
+        var template = picker.getValue();
+        ActiveEffect effect = new ActiveEffect(template.getId(), template.getName(), rounds.getValue(),
+            damage.getValue(), healing.getValue(), "GM");
+        effect.setDescription(template.getDescription());
+        CombatState state = TokenSupport.combatOf(token);
+        state.getActiveEffects().removeIf(current -> java.util.Objects.equals(current.getEffectId(), template.getId()));
+        state.addEffect(effect);
+        dirty = true;
+        pushToSheet(token);
+        refreshAll();
+        showDetail(token);
+    }
+
+    private void editableNumbers(Dialog<ButtonType> dialog, VBox form, List<Spinner<Integer>> inputs) {
+        inputs.forEach(input -> {
+            input.setEditable(true);
+            input.setMinWidth(Region.USE_PREF_SIZE);
+        });
+        Label error = owner.body("");
+        error.setWrapText(true);
+        error.setVisible(false);
+        error.managedProperty().bind(error.visibleProperty());
+        form.getChildren().add(error);
+        dialog.getDialogPane().lookupButton(ButtonType.OK).addEventFilter(
+            javafx.event.ActionEvent.ACTION, event -> {
+                try {
+                    for (Spinner<Integer> input : inputs) {
+                        Integer.parseInt(input.getEditor().getText().strip());
+                        input.commitValue();
+                    }
+                    error.setVisible(false);
+                } catch (IllegalArgumentException ex) {
+                    error.setText("Enter a whole number in every field.");
+                    error.setVisible(true);
+                    event.consume();
+                }
+            });
     }
 
     private Node buildItemList(MapObject token, List<Item> items) {
@@ -2367,26 +2488,83 @@ public class BattleMapWindow {
 
     // ── Time rewind ─────────────────────────────────────────────────────────
 
-    private void rewindTime() {
-        MapObject actor = decorations.selected != null && TokenSupport.isCreature(decorations.selected)
-            ? decorations.selected : initiative.current();
-        if (actor == null) {
-            status("Nobody to rewind for.");
-            return;
-        }
-        var snapshot = history.previousTurnOf(actor);
+    private void rewindTime(MapObject actor, CastResolver.Castable action) {
+        var snapshot = history.previousTurnOf(actor, initiative.current() == actor);
         if (snapshot == null) {
             status("No earlier turn of " + TokenSupport.nameOf(actor) + " has been recorded yet.");
             return;
         }
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
-            "Turn time back to the start of " + TokenSupport.nameOf(actor) + "'s turn in round "
-                + snapshot.getRound() + "?\nEvery hit, spell, effect and step since then is undone.",
-            ButtonType.OK, ButtonType.CANCEL);
-        confirm.setHeaderText("⟲ Rewind time");
+        Dialog<ButtonType> confirm = new Dialog<>();
+        confirm.setTitle(action.getName());
+        Spinner<Integer> rabbitRoll = new Spinner<>(1, 20, 10);
+        Label dc = owner.body("");
+        Runnable updateDc = () -> dc.setText("Arcana DC: " + (rabbitRoll.getValue() + 5));
+        rabbitRoll.valueProperty().addListener((o, old, value) -> updateDc.run());
+        updateDc.run();
+        VBox checks = new VBox(8, owner.body("Rabbit's d20 roll (+5 sets the DC)"), rabbitRoll, dc,
+            owner.body("Enter each character's Arcana check total. Success keeps their current state."));
+        java.util.Set<MapObject> candidates = new java.util.LinkedHashSet<>(snapshot.getTokens());
+        candidates.addAll(allCreatures());
+        java.util.Map<MapObject, Spinner<Integer>> totals = new java.util.LinkedHashMap<>();
+        for (MapObject token : candidates) {
+            if (!(token instanceof PlayerToken)) continue;
+            Spinner<Integer> total = new Spinner<>(-100, 1000, 0);
+            totals.put(token, total);
+            Label name = owner.body(TokenSupport.nameOf(token));
+            name.setWrapText(true);
+            name.setMaxWidth(Double.MAX_VALUE);
+            HBox.setHgrow(name, Priority.ALWAYS);
+            checks.getChildren().add(new HBox(8, name, total));
+        }
+        ScrollPane scroll = new ScrollPane(checks);
+        scroll.setFitToWidth(true);
+        scroll.setPrefViewportHeight(400);
+        scroll.setPrefViewportWidth(520);
+        confirm.getDialogPane().setContent(scroll);
+        confirm.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        List<Spinner<Integer>> inputs = new ArrayList<>();
+        inputs.add(rabbitRoll);
+        inputs.addAll(totals.values());
+        editableNumbers(confirm, checks, inputs);
         owner.styleDialog(confirm);
         if (confirm.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) return;
-        history.restore(map, snapshot, initiative);
+        CombatState beforeCast = TokenSupport.combatOf(actor).copy();
+        var outcome = CastResolver.cast(actor, action, List.of(actor), 0, 0);
+        if (!outcome.isSuccess()) {
+            status(outcome.getMessage());
+            return;
+        }
+        CombatState afterCast = TokenSupport.combatOf(actor);
+        java.util.Set<MapObject> preserved = new java.util.HashSet<>();
+        List<String> checksLog = new ArrayList<>();
+        totals.forEach((token, total) -> {
+            boolean success = total.getValue() >= rabbitRoll.getValue() + 5;
+            if (success) {
+                preserved.add(token);
+                checksLog.add(TokenSupport.nameOf(token) + ": Arcana " + total.getValue()
+                    + " / DC " + (rabbitRoll.getValue() + 5) + " - unchanged.");
+            } else {
+                checksLog.add(TokenSupport.nameOf(token) + ": Arcana " + total.getValue()
+                    + " / DC " + (rabbitRoll.getValue() + 5) + " - rewinds.");
+            }
+        });
+        history.restore(map, snapshot, initiative, preserved);
+        CombatState restored = TokenSupport.combatOf(actor);
+        // Rewinding cannot refund its own activation; a preserved caster has already paid.
+        if (!preserved.contains(actor)) {
+            restored.setCurrentMana(restored.getCurrentMana()
+                - Math.max(0, beforeCast.getCurrentMana() - afterCast.getCurrentMana()));
+            restored.setCurrentHitPoints(restored.getCurrentHitPoints()
+                - Math.max(0, beforeCast.getCurrentHitPoints() - afterCast.getCurrentHitPoints()));
+            for (var slot : beforeCast.getSpellSlots()) {
+                var paid = com.dnd.model.magic.SpellSlots.find(afterCast.getSpellSlots(), slot.getLevel());
+                var target = com.dnd.model.magic.SpellSlots.find(restored.getSpellSlots(), slot.getLevel());
+                if (paid != null && target != null) {
+                    target.setCurrent(target.getCurrent() - Math.max(0, slot.getCurrent() - paid.getCurrent()));
+                }
+            }
+        }
+        restored.startCooldown(action.getId(), action.getCooldownRounds());
         cancelCastSilently();
         decorations.selected = null;
         decorations.reachable = null;
@@ -2394,8 +2572,8 @@ public class BattleMapWindow {
         pushAllToSheets();
         refreshAll();
         showRoster();
-        status("⟲ Time rewinds... it is round " + snapshot.getRound() + ", "
-            + TokenSupport.nameOf(actor) + "'s turn again.");
+        logLines("Time rewinds: round " + snapshot.getRound() + ", "
+            + TokenSupport.nameOf(actor) + "'s turn again.", checksLog);
     }
 
     private void cancelCastSilently() {

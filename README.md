@@ -279,6 +279,13 @@ contents and directory layout intact when moving it to the other device, then ch
 **Import Files from Folder…** there. Imports verify every file and never overwrite a different
 local copy: move that copy somewhere safe first. You can reopen this tool under
 **Sync with GitHub… → Files Not Synced through GitHub…**. No Google account is required.
+The chosen transfer folder is remembered per campaign on this device. On later sync/open checks,
+Almerion verifies its copies and quietly adds new large files or refreshes changed versions,
+preserving replaced copies as `.previous-<id>`. Verified copies no longer trigger repeated
+notifications, including after app restarts. To reuse an export made before this feature, select
+that existing transfer folder with **Copy Files to Folder…** once. Missing files on a receiving
+device still show the import reminder. If the saved folder is unavailable, the copy reminder
+returns; locally changed transfer copies are never silently overwritten.
 
 If an older app already committed oversized files and GitHub rejected the upload, use
 **Sync with GitHub… → Repair oversized history…**. After confirmation, Almerion fetches the

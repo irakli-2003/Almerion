@@ -15,6 +15,66 @@ import static org.junit.Assert.*;
 public class ManualFilesTest {
     @Rule public TemporaryFolder temp = new TemporaryFolder();
 
+    @Test public void rememberedFolderSuppressesCopiedFilesAcrossChecksAndRefreshesNewVersions() throws Exception {
+        Path root = temp.newFolder("campaign").toPath();
+        try (Git git = Git.init().setDirectory(root.toFile()).call()) {
+            Path music = root.resolve("theme.mp3");
+            large(music, ManualFiles.MAX_GIT_BYTES + 1);
+            ManualFiles.prepare(root, git);
+            assertEquals(1, ManualFiles.notificationReport(root).available().size());
+            Path bundle = ManualFiles.exportFiles(root, temp.newFolder("desktop").toPath());
+            assertEquals(bundle, ManualFiles.transferFolder(root).orElseThrow());
+            assertTrue(ManualFiles.notificationReport(root).isEmpty());
+            assertTrue(ManualFiles.notificationReport(root).isEmpty());
+            try (RandomAccessFile file = new RandomAccessFile(music.toFile(), "rw")) { file.write(42); }
+            ManualFiles.prepare(root, git);
+            assertTrue(ManualFiles.notificationReport(root).isEmpty());
+            assertEquals(ManualFiles.hash(music), ManualFiles.hash(bundle.resolve("theme.mp3")));
+            try (var files = Files.list(bundle)) {
+                assertTrue(files.anyMatch(file -> file.getFileName().toString().startsWith("theme.mp3.previous-")));
+            }
+            large(root.resolve("new.mp3"), ManualFiles.MAX_GIT_BYTES + 2);
+            ManualFiles.prepare(root, git);
+            assertTrue(ManualFiles.notificationReport(root).isEmpty());
+            assertTrue(Files.exists(bundle.resolve("new.mp3")));
+            assertEquals(2, ManualFiles.read(bundle).size());
+            Files.delete(bundle.resolve("theme.mp3"));
+            assertTrue(ManualFiles.notificationReport(root).isEmpty());
+            assertTrue(Files.exists(bundle.resolve("theme.mp3")));
+            assertEquals(2, ManualFiles.inspect(root).available().size());
+        }
+    }
+
+    @Test public void existingExportCanBeAdoptedWithoutRecopyingAndMissingFilesStillWarn() throws Exception {
+        Path root = temp.newFolder("campaign").toPath();
+        try (Git git = Git.init().setDirectory(root.toFile()).call()) {
+            large(root.resolve("theme.mp3"), ManualFiles.MAX_GIT_BYTES + 1);
+            ManualFiles.prepare(root, git);
+            Path bundle = ManualFiles.exportFiles(root, temp.newFolder("desktop").toPath());
+            var modified = Files.getLastModifiedTime(bundle.resolve("theme.mp3"));
+            Files.delete(root.resolve(".git").resolve("almerion-transfer-folder.json"));
+            assertEquals(bundle, ManualFiles.exportFiles(root, bundle));
+            assertEquals(modified, Files.getLastModifiedTime(bundle.resolve("theme.mp3")));
+            Files.delete(root.resolve("theme.mp3"));
+            assertEquals(1, ManualFiles.notificationReport(root).missing().size());
+        }
+    }
+
+    @Test public void unavailableFolderWarnsAgainAndModifiedTransferCopiesAreProtected() throws Exception {
+        Path root = temp.newFolder("campaign").toPath();
+        try (Git git = Git.init().setDirectory(root.toFile()).call()) {
+            large(root.resolve("theme.mp3"), ManualFiles.MAX_GIT_BYTES + 1);
+            ManualFiles.prepare(root, git);
+            Path bundle = ManualFiles.exportFiles(root, temp.newFolder("desktop").toPath());
+            Files.writeString(bundle.resolve("theme.mp3"), "changed outside Almerion");
+            assertThrows(java.io.IOException.class, () -> ManualFiles.notificationReport(root));
+            assertEquals("changed outside Almerion", Files.readString(bundle.resolve("theme.mp3")));
+            Files.move(bundle, bundle.resolveSibling("moved-transfer"));
+            assertEquals(1, ManualFiles.notificationReport(root).available().size());
+            assertFalse(Files.exists(bundle));
+        }
+    }
+
     static void large(Path path, long size) throws Exception {
         Files.createDirectories(path.getParent());
         try (RandomAccessFile file = new RandomAccessFile(path.toFile(), "rw")) { file.setLength(size); }

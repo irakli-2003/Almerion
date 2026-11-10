@@ -48,7 +48,7 @@ public final class ManualFilesUi {
     static void review(BaseScene owner, Path root, boolean force, Runnable after) {
         Path key = CampaignSyncService.key(root);
         if (!CHECKING.add(key)) { after.run(); return; }
-        CampaignSyncService.shared().localFiles(() -> ManualFiles.inspect(root)).whenComplete((report, error) ->
+        CampaignSyncService.shared().localFiles(() -> force ? ManualFiles.inspect(root) : ManualFiles.notificationReport(root)).whenComplete((report, error) ->
             Platform.runLater(() -> {
             if (error != null) {
                 CHECKING.remove(key);
@@ -107,7 +107,7 @@ public final class ManualFilesUi {
         FlowPane actions = new FlowPane(10, 8, export, importFiles, close);
         for (var node : actions.getChildren()) ((Button) node).setMinWidth(Region.USE_PREF_SIZE);
         export.setOnAction(e -> {
-            File chosen = chooser("Choose where to create the transfer folder").showDialog(stage);
+            File chosen = chooser("Choose a transfer destination or an existing transfer folder").showDialog(stage);
             if (chosen == null) return;
             export.setDisable(true);
             importFiles.setDisable(true);

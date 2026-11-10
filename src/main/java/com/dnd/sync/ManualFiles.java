@@ -180,7 +180,34 @@ public final class ManualFiles {
         return new Report(List.copyOf(available), List.copyOf(missing));
     }
 
-    /** Creates one unique folder, keeping campaign-relative paths and a portable manifest. */
+    private static Path transferState(Path root) throws IOException {
+        Path git = root.resolve(".git");
+        if (!Files.isDirectory(git, LinkOption.NOFOLLOW_LINKS) || Files.isSymbolicLink(git)) {
+            throw new IOException("Manual-transfer folder settings require a local campaign Git repository.");
+        }
+        return git.resolve("almerion-transfer-folder.json");
+    }
+
+    public static Optional<Path> transferFolder(Path root) throws IOException {
+        if (!Files.exists(root.resolve(".git"))) return Optional.empty();
+        Path state = transferState(root);
+        if (!Files.exists(state)) return Optional.empty();
+        String path = JsonMappers.create().readValue(state.toFile(), String.class);
+        if (path == null || path.isBlank()) throw new IOException("Invalid saved transfer folder.");
+        return Optional.of(Path.of(path));
+    }
+
+    /** Refreshes verified copies before deciding whether a notification is needed. */
+    public static Report notificationReport(Path root) throws IOException {
+        Report report = inspect(root);
+        Optional<Path> folder = transferFolder(root);
+        if (folder.isEmpty()) return report;
+        if (!Files.isDirectory(folder.get())) return report;
+        updateTransferFolder(root, folder.get(), report.available());
+        return new Report(List.of(), report.missing());
+    }
+
+    /** Reuses an existing transfer folder, or creates one once and remembers it on this device. */
     public static Path exportFiles(Path root, Path destination) throws IOException {
         Files.createDirectories(destination);
         Path base = destination.toRealPath();
@@ -189,16 +216,54 @@ public final class ManualFiles {
         Files.createDirectories(base);
         List<Entry> entries = inspect(root).available();
         if (entries.isEmpty()) throw new IOException("No verified manual-transfer files are available on this device.");
-        Path bundle = Files.createTempDirectory(base, "Almerion-files-");
-        write(bundle, entries);
-        for (Entry entry : entries) {
-            Path source = resolve(root, entry.path()), target = resolve(bundle, entry.path());
-            Files.createDirectories(target.getParent());
-            Files.copy(source, target);
-            if (!matches(target, entry)) throw new IOException("File changed during export: " + entry.path()
-                + ". The incomplete transfer folder is " + bundle);
+        Path bundle = Files.exists(base.resolve(MANIFEST)) ? base
+            : Files.createTempDirectory(base, "Almerion-files-");
+        updateTransferFolder(root, bundle, entries);
+        Path state = transferState(root);
+        Files.createDirectories(state.getParent());
+        Path temp = Files.createTempFile(state.getParent(), "almerion-transfer-folder-", ".tmp");
+        try {
+            JsonMappers.create().writeValue(temp.toFile(), bundle.toString());
+            replace(temp, state);
+        } finally {
+            Files.deleteIfExists(temp);
         }
         return bundle;
+    }
+
+    private static void updateTransferFolder(Path root, Path bundle, List<Entry> entries) throws IOException {
+        Path campaign = root.toRealPath(), destination = bundle.toRealPath();
+        if (destination.startsWith(campaign)) throw new IOException("Choose a destination outside the campaign folder.");
+        Map<String, Entry> previous = new TreeMap<>();
+        for (Entry entry : read(bundle)) previous.put(entry.path(), entry);
+        for (Entry entry : entries) {
+            Path source = resolve(root, entry.path()), target = resolve(bundle, entry.path());
+            if (matches(target, entry)) continue;
+            if (Files.exists(target, LinkOption.NOFOLLOW_LINKS)) {
+                Entry old = previous.get(entry.path());
+                if (old == null || !matches(target, old)) {
+                    throw new IOException("A different local file already exists: " + entry.path()
+                        + ". Move it to a safe location before importing.");
+                }
+                // Preserve the previous exported version before replacing it.
+                Path backup = resolve(bundle, entry.path() + ".previous-" + UUID.randomUUID());
+                Files.copy(target, backup);
+            }
+            Files.createDirectories(target.getParent());
+            Path temp = Files.createTempFile(target.getParent(), ".almerion-copy-", ".tmp");
+            try {
+                Files.copy(source, temp, StandardCopyOption.REPLACE_EXISTING);
+                if (!matches(temp, entry)) throw new IOException("File changed during export: " + entry.path()
+                    + ". The incomplete transfer folder is " + bundle);
+                replace(temp, target);
+            } finally {
+                Files.deleteIfExists(temp);
+            }
+            previous.put(entry.path(), entry);
+        }
+        // Keep entries for files currently missing on this device, so the folder remains portable.
+        for (Entry entry : entries) previous.put(entry.path(), entry);
+        write(bundle, List.copyOf(previous.values()));
     }
 
     /** Verifies the whole selected bundle before importing. Existing different files are never overwritten. */

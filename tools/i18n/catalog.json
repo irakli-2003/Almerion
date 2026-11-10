@@ -544,7 +544,8 @@
   "key": "A different local file already exists: {A}. Move it to a safe location before importing.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/sync/ManualFiles.java:214"
+   "src/main/java/com/dnd/sync/ManualFiles.java:245",
+   "src/main/java/com/dnd/sync/ManualFiles.java:279"
   ]
  },
  {
@@ -1233,7 +1234,7 @@
   "key": "Almerion-files-",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/sync/ManualFiles.java:192"
+   "src/main/java/com/dnd/sync/ManualFiles.java:220"
   ]
  },
  {
@@ -2599,7 +2600,8 @@
   "key": "Choose a destination outside the campaign folder.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/sync/ManualFiles.java:188"
+   "src/main/java/com/dnd/sync/ManualFiles.java:215",
+   "src/main/java/com/dnd/sync/ManualFiles.java:236"
   ]
  },
  {
@@ -2644,6 +2646,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/model/combat/CastChecks.java:17"
+  ]
+ },
+ {
+  "key": "Choose a transfer destination or an existing transfer folder",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/ManualFilesUi.java:110"
   ]
  },
  {
@@ -2714,13 +2723,6 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/MapCreationDialog.java:66"
-  ]
- },
- {
-  "key": "Choose where to create the transfer folder",
-  "kind": "exact",
-  "where": [
-   "src/main/java/com/dnd/ui/scenes/ManualFilesUi.java:110"
   ]
  },
  {
@@ -5249,21 +5251,21 @@
   "key": "File changed during export: {A}. The incomplete transfer folder is {B}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/sync/ManualFiles.java:198"
+   "src/main/java/com/dnd/sync/ManualFiles.java:256"
   ]
  },
  {
   "key": "File changed during import: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/sync/ManualFiles.java:225"
+   "src/main/java/com/dnd/sync/ManualFiles.java:290"
   ]
  },
  {
   "key": "File changed while reading: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/sync/ManualFiles.java:275"
+   "src/main/java/com/dnd/sync/ManualFiles.java:340"
   ]
  },
  {
@@ -6686,6 +6688,13 @@
   ]
  },
  {
+  "key": "Invalid saved transfer folder.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/sync/ManualFiles.java:196"
+  ]
+ },
+ {
   "key": "Invalid session token format",
   "kind": "exact",
   "where": [
@@ -7491,7 +7500,7 @@
   "key": "Manual transfer cannot follow symbolic links: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/sync/ManualFiles.java:248"
+   "src/main/java/com/dnd/sync/ManualFiles.java:313"
   ]
  },
  {
@@ -7499,6 +7508,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/ManualFilesUi.java:61"
+  ]
+ },
+ {
+  "key": "Manual-transfer folder settings require a local campaign Git repository.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/sync/ManualFiles.java:186"
   ]
  },
  {
@@ -7512,14 +7528,14 @@
   "key": "Manual-transfer path leaves the campaign.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/sync/ManualFiles.java:245"
+   "src/main/java/com/dnd/sync/ManualFiles.java:310"
   ]
  },
  {
   "key": "Manual-transfer path leaves the campaign: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/sync/ManualFiles.java:250"
+   "src/main/java/com/dnd/sync/ManualFiles.java:315"
   ]
  },
  {
@@ -8583,7 +8599,7 @@
   "key": "No verified manual-transfer files are available on this device.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/sync/ManualFiles.java:191"
+   "src/main/java/com/dnd/sync/ManualFiles.java:218"
   ]
  },
  {
@@ -11298,7 +11314,7 @@
   "where": [
    "src/main/java/com/dnd/music/AudioSource.java:125",
    "src/main/java/com/dnd/security/PasswordHasher.java:20",
-   "src/main/java/com/dnd/sync/ManualFiles.java:268"
+   "src/main/java/com/dnd/sync/ManualFiles.java:333"
   ]
  },
  {
@@ -12944,7 +12960,7 @@
   "key": "This folder contains no missing files matching this campaign.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/sync/ManualFiles.java:218"
+   "src/main/java/com/dnd/sync/ManualFiles.java:283"
   ]
  },
  {
@@ -13190,7 +13206,7 @@
   "key": "Transfer file is missing or damaged: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/sync/ManualFiles.java:212"
+   "src/main/java/com/dnd/sync/ManualFiles.java:277"
   ]
  },
  {
@@ -13466,7 +13482,7 @@
   "key": "Unsafe manual-transfer path: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/sync/ManualFiles.java:242"
+   "src/main/java/com/dnd/sync/ManualFiles.java:307"
   ]
  },
  {

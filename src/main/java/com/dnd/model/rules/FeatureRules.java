@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.function.Function;
 
@@ -226,7 +227,8 @@ public final class FeatureRules {
         kit.upgradeSpeed = UpgradeRules.bonus(pc, UpgradeTree.Reward::getSpeed);
         if (pc.getUpgrades() != null) {
             for (var unlock : pc.getUpgrades().getUnlocks()) {
-                if (!unlock.isHistorical()) kit.passives.put("upgrade:" + unlock.getClassId() + ":" + unlock.getNodeId(),
+                if (!unlock.isHistorical() && unlock.getReward().getFeatures().stream()
+                        .noneMatch(f -> Objects.equals(f.getName(), unlock.getName()))) kit.passives.put("upgrade:" + unlock.getClassId() + ":" + unlock.getNodeId(),
                     new Passive(unlock.getName(), unlock.getDescription() == null ? "" : unlock.getDescription()));
             }
         }
@@ -246,6 +248,15 @@ public final class FeatureRules {
         if (cls != null) result.addAll(cls.featuresUpTo(pc.getLevel(), pc.getSubclass()));
         for (ClassFeature f : pc.getPersonalFeatures()) {
             if (f != null && f.getLevel() <= pc.getLevel() && f.appliesTo(pc.getSubclass())) result.add(f);
+        }
+        if (pc.getUpgrades() != null) {
+            for (var unlock : pc.getUpgrades().getUnlocks()) {
+                if (unlock.isHistorical()) continue;
+                for (ClassFeature f : unlock.getReward().getFeatures()) {
+                    if (f.getLevel() > pc.getLevel() || !f.appliesTo(pc.getSubclass())) continue;
+                    if (result.stream().noneMatch(existing -> Objects.equals(existing.getName(), f.getName()))) result.add(f);
+                }
+            }
         }
         return result;
     }
@@ -404,7 +415,14 @@ public final class FeatureRules {
                 "Action: unfold the turret within 5 ft (AC 8, HP " + Math.max(12, 5 * level - 13)
                     + "; Mending restores 1d6). Fire it as a bonus action. Free deployment once per long rest, later ones cost a charge.",
                 Kind.COUNTER, 1, Recharge.LONG_REST));
-            default -> kit.note(raw, desc);
+            default -> {
+                if (feature.getUsesPerRest() > 0) {
+                    String id = (feature.isShortRestRecharge() ? "feat-short:" : "feat-long:")
+                        + java.util.UUID.nameUUIDFromBytes(raw.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                    kit.add(new Action(id, raw, desc, Kind.COUNTER, feature.getUsesPerRest(),
+                        feature.isShortRestRecharge() ? Recharge.SHORT_REST : Recharge.LONG_REST));
+                } else kit.note(raw, desc);
+            }
         }
     }
 
@@ -608,6 +626,7 @@ public final class FeatureRules {
     /** Whether a feature's uses come back on a short rest for a character of {@code level}. */
     public static boolean rechargesOnShortRest(String id, int level) {
         if (id == null) return false;
+        if (id.startsWith("feat-short:")) return true;
         return switch (id) {
             case ENCORE, BODYGUARD, "second-wind", "action-surge", "ki", "channel-divinity", "wild-shape", "breath-weapon",
                  "stones-endurance", FURY_OF_THE_SMALL -> true;

@@ -32,6 +32,7 @@ public class UpgradeTree {
         private int minimumLevel = 2;
         private List<String> prerequisites = new ArrayList<>();
         private List<String> exclusiveWith = new ArrayList<>();
+        private List<String> existingTraining = new ArrayList<>();
         private Reward reward = new Reward();
 
         public String getId() { return id; }
@@ -50,6 +51,8 @@ public class UpgradeTree {
         public void setPrerequisites(List<String> value) { prerequisites = value == null ? new ArrayList<>() : value; }
         public List<String> getExclusiveWith() { return exclusiveWith; }
         public void setExclusiveWith(List<String> value) { exclusiveWith = value == null ? new ArrayList<>() : value; }
+        public List<String> getExistingTraining() { return existingTraining; }
+        public void setExistingTraining(List<String> value) { existingTraining = value == null ? new ArrayList<>() : value; }
         public Reward getReward() { return reward; }
         public void setReward(Reward value) { reward = value == null ? new Reward() : value; }
         @Override public String toString() { return name == null ? "" : name; }
@@ -67,6 +70,10 @@ public class UpgradeTree {
         private int rageDamage;
         private int speed;
         private List<String> spellIds = new ArrayList<>();
+        private List<ClassFeature> features = new ArrayList<>();
+
+        public List<ClassFeature> getFeatures() { return features; }
+        public void setFeatures(List<ClassFeature> value) { features = value == null ? new ArrayList<>() : value; }
 
         public int getHitPoints() { return hitPoints; }
         public void setHitPoints(int value) { hitPoints = value; }

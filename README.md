@@ -407,7 +407,9 @@ Click a character card, or open the player list, then **View / Edit**.
 ### Class upgrade trees
 
 Open **Worldbuilding > Class Upgrade Trees**, choose a class, and edit its visual tree.
-Each class starts with two named, editable training paths. Add or rename branches, click a
+Each class starts with a four-tier tree: an always-unlocked class foundation, two named
+training paths, four middle nodes and eight leaf nodes. Every non-leaf starter node has at
+least two children. Leaves require two prerequisites across paths. Add or rename branches, click a
 node to edit it, and select any number of prerequisite nodes (all must be unlocked).
 Prerequisites can cross branches. Branches may mix unless the GM links specific nodes as
 **Exclusive With**; a single link prevents taking both choices in either order. Cycles,
@@ -418,14 +420,23 @@ in a standard 48-pixel frame. Configure permanent HP, mana or ability-score incr
 AC, weapon/unarmed attack bonuses, basic attack damage, Rage damage and walking speed.
 To grant an active ability, first create it in **Spells**, then select it under the node's
 **Spell Ids** reward. It uses that spell's existing casting costs, effects and cooldowns.
-Description-only feats are reminders for the GM, not automatically interpreted rules.
+Every node must also grant a named feat under **Features** or an ability under **Spell Ids**.
+Feats can specify **Uses Per Rest** and **Short Rest Recharge** to get combat use counters.
+Recognized class feats retain their built-in mechanics; other feats give explicit GM-resolved
+effects, action costs and limits. Numeric bonuses alone are not sufficient to save a node.
+Use the zoom slider and drag the graph to explore the spreading branches.
+Whole-tree saves require at least four tiers, eight leaves, two children per non-leaf
+and a multi-prerequisite choice. Intermediate edits can be incomplete while you build.
 
 Use **Class Upgrade Tree** on a character's **Progression & Rest** panel to spend choices.
 Each level-up earns one; unspent choices can be saved. Existing level-5 characters start
 with four choices **already spent**, not four free rewards: matching existing class features
 and known spell nodes are marked as historical unlocks, with remaining old levels recorded
-as existing training. No old ability or bonus is applied again. The saved progression list
-keeps this history visible. Existing automatic class/subclass features continue unchanged;
+as existing training. No old ability or bonus is applied again. Existing class features
+mark matching lower nodes unlocked; remaining historical records and removed definitions
+are available by clicking the foundation, not drawn as a separate branch. The foundation
+costs no choice and describes starting class features, hit die, saves and starting abilities.
+Existing automatic class/subclass features continue unchanged;
 tree branches are additional specialisations, not replacements for the legacy subclass.
 
 Renaming or deleting a tree node does not refund choices or remove rewards already earned:
@@ -433,6 +444,8 @@ each unlock saves its original reward and description on the character. Close ba
 before editing trees or applying unlocks. Players can inspect the tree from their profile;
 the GM applies mechanical choices, just as with levels and spells. Numeric rewards appear
 in combat, shared sheets and PDFs through the same rules as the character sheet.
+Untouched older starter trees expand automatically. GM-customized and explicitly empty
+trees are preserved. Previously earned numeric rewards keep their saved values.
 
 ---
 

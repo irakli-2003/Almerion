@@ -42,6 +42,8 @@ public final class FieldHelp {
         f("CharacterClass.defaultSpells", "Spells pre-ticked when a new character picks this class. Players can still change them.");
         f("CharacterClass.defaultItems", "Starting equipment pre-ticked when a new character picks this class. Still changeable.");
         f("ClassFeature.level", "Character level at which the feature is gained.");
+        f("ClassFeature.usesPerRest", "For GM-resolved feats, a positive number adds a combat use counter. Zero keeps a passive reminder. Recognized class features retain their built-in mechanics.");
+        f("ClassFeature.shortRestRecharge", "Restore this GM-resolved feat's uses on a short rest as well as a long rest.");
         f("ClassFeature.subclass", "Only members of this subclass get it; blank means everyone in the class.");
         f("Node.minimumLevel", "Minimum character level for this choice. Every node costs one earned unlock.");
         f("Node.branchId", "The named direction this node belongs to. Branches may be mixed.");
@@ -56,6 +58,8 @@ public final class FieldHelp {
         f("Reward.armorClass", "Added to calculated AC or to the GM's fixed sheet AC.");
         f("Reward.speed", "Extra walking speed in feet.");
         f("Reward.spellIds", "Grant spells or GM-created active abilities from the campaign spell catalog. Existing spells are not duplicated.");
+        f("Reward.features", "Named feats granted by this node. Give each feat an effect, action cost and limits. GM-resolved feats can track uses per rest; recognized feature names use their built-in mechanics.");
+        f("Node.existingTraining", "Existing class-feature names that count as equivalent prior training for this node. Historical levels can mark it unlocked without granting rewards again.");
 
         // Races
         f("CharacterRace.abilityBonuses", "Bonuses added to ability scores, e.g. strength +2. Ability names in lowercase.");

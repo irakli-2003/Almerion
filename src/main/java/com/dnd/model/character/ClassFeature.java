@@ -13,6 +13,19 @@ public class ClassFeature implements Printable {
     private String description;
     /** Subclass this belongs to, or blank for features every member of the class gets. */
     private String subclass;
+    private int usesPerRest;
+    private boolean shortRestRecharge;
+
+    public int getUsesPerRest() { return usesPerRest; }
+    public void setUsesPerRest(int value) { usesPerRest = value; }
+    public boolean isShortRestRecharge() { return shortRestRecharge; }
+    public void setShortRestRecharge(boolean value) { shortRestRecharge = value; }
+
+    public ClassFeature copy() {
+        var copy = new ClassFeature(level, name, description, subclass);
+        copy.setUsesPerRest(usesPerRest); copy.setShortRestRecharge(shortRestRecharge);
+        return copy;
+    }
 
     public ClassFeature() {
     }

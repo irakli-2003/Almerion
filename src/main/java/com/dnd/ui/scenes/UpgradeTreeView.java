@@ -13,61 +13,54 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
 
-/** A deterministic layered graph; branch columns and prerequisite edges are always visible. */
+/** A rooted layered graph with spreading children and cross-path prerequisites. */
 final class UpgradeTreeView extends Pane {
     static final double ICON_SIZE = 48;
     private static final double COLUMN = 224, HEIGHT = 136, GAP = 32;
 
     UpgradeTreeView(Path root, CharacterClass cls, PlayerCharacter pc, Consumer<UpgradeTree.Node> clicked) {
+        setStyle("-fx-background-color: #101420;");
         UpgradeRules.validate(cls.getUpgradeTree());
-        Set<String> history = new HashSet<>();
-        UpgradeTree tree = withHistory(cls, pc, history);
+        UpgradeTree tree = new UpgradeTree();
+        tree.setBranches(cls.getUpgradeTree().getBranches());
+        tree.setNodes(new ArrayList<>(cls.getUpgradeTree().getNodes()));
+        var foundation = UpgradeRules.foundation(cls, pc);
+        tree.getNodes().addFirst(foundation);
         Map<String, Integer> depths = new HashMap<>();
         Map<String, UpgradeTree.Node> nodes = new LinkedHashMap<>();
         tree.getNodes().forEach(n -> nodes.put(n.getId(), n));
         tree.getNodes().forEach(n -> depth(n, nodes, depths));
         int maxDepth = depths.values().stream().mapToInt(Integer::intValue).max().orElse(0);
-        Map<String, Integer> slots = new HashMap<>();
-        int[] counts = new int[maxDepth + 1];
-        Map<String, Integer> positions = new HashMap<>();
-        for (var n : tree.getNodes()) {
-            int d = depths.get(n.getId());
-            String key = n.getBranchId() + ":" + d;
-            int slot = slots.getOrDefault(key, 0);
-            positions.put(n.getId(), slot);
-            slots.put(key, slot + 1);
-            counts[d] = Math.max(counts[d], slot + 1);
-        }
-        int[] starts = new int[maxDepth + 1];
-        for (int d = 1; d <= maxDepth; d++) starts[d] = starts[d - 1] + counts[d - 1];
+        List<List<UpgradeTree.Node>> rows = new ArrayList<>();
+        for (int d = 0; d <= maxDepth; d++) rows.add(new ArrayList<>());
+        tree.getNodes().forEach(n -> rows.get(depths.get(n.getId())).add(n));
+        Map<String, Integer> branchOrder = new HashMap<>();
+        for (int i = 0; i < tree.getBranches().size(); i++) branchOrder.put(tree.getBranches().get(i).getId(), i);
+        rows.forEach(row -> row.sort(Comparator.comparingInt(n -> branchOrder.getOrDefault(n.getBranchId(), -1))));
+        double width = Math.max(COLUMN, rows.stream().mapToInt(List::size).max().orElse(1) * COLUMN);
         Map<String, double[]> coordinates = new HashMap<>();
-        for (int column = 0; column < tree.getBranches().size(); column++) {
-            var branch = tree.getBranches().get(column);
-            Label title = new Label(branch.getName());
-            title.setManaged(false);
-            UiTranslator.skip(title);
-            title.setWrapText(true);
-            title.setAlignment(Pos.CENTER);
-            title.setStyle("-fx-text-fill: #dbb964; -fx-font-size: 16px; -fx-font-weight: bold;");
-            title.resizeRelocate(column * COLUMN + 10, 4, COLUMN - 20, 64);
-            getChildren().add(title);
-            for (var n : tree.getNodes()) {
-                if (!branch.getId().equals(n.getBranchId())) continue;
-                double x = column * COLUMN + 10;
-                double y = 80 + (starts[depths.get(n.getId())] + positions.get(n.getId())) * (HEIGHT + GAP);
-                coordinates.put(n.getId(), new double[]{x, y});
+        for (int d = 0; d < rows.size(); d++) {
+            var row = rows.get(d);
+            for (int i = 0; i < row.size(); i++) {
+                coordinates.put(row.get(i).getId(), new double[]{(i + 0.5) * width / row.size() - (COLUMN - 20) / 2,
+                    30 + d * (HEIGHT + GAP)});
             }
         }
         for (var n : tree.getNodes()) {
             double[] end = coordinates.get(n.getId());
-            for (String parent : n.getPrerequisites()) {
+            List<String> parents = n.getPrerequisites().isEmpty() && !UpgradeRules.ROOT.equals(n.getId())
+                ? List.of(UpgradeRules.ROOT) : n.getPrerequisites();
+            for (String parent : parents) {
                 double[] start = coordinates.get(parent);
                 double sx = start[0] + (COLUMN - 20) / 2, sy = start[1] + HEIGHT;
                 double ex = end[0] + (COLUMN - 20) / 2, ey = end[1];
                 CubicCurve edge = new CubicCurve(sx, sy, sx, (sy + ey) / 2, ex, (sy + ey) / 2, ex, ey);
                 edge.setFill(null);
-                edge.setStroke(Color.web("#9b8451"));
-                edge.setStrokeWidth(2);
+                boolean crossBranch = !UpgradeRules.ROOT.equals(parent)
+                    && !Objects.equals(nodes.get(parent).getBranchId(), n.getBranchId());
+                edge.setStroke(Color.web(crossBranch ? "#708db4" : "#b69b5e"));
+                edge.setStrokeWidth(crossBranch ? 1.5 : 2);
+                if (crossBranch) edge.getStrokeDashArray().setAll(5.0, 4.0);
                 edge.setMouseTransparent(true);
                 getChildren().add(edge);
             }
@@ -76,10 +69,10 @@ final class UpgradeTreeView extends Pane {
             var earned = pc == null || pc.getUpgrades() == null ? Optional.<UpgradeProgress.Unlock>empty()
                 : pc.getUpgrades().getUnlocks().stream().filter(u -> Objects.equals(cls.getId(), u.getClassId())
                     && Objects.equals(n.getId(), u.getNodeId())).findFirst();
-            boolean unlocked = history.contains(n.getId())
-                || pc != null && UpgradeRules.selected(pc.getUpgrades(), cls.getId(), n.getId());
+            boolean isRoot = UpgradeRules.ROOT.equals(n.getId());
+            boolean unlocked = isRoot || pc != null && UpgradeRules.selected(pc.getUpgrades(), cls.getId(), n.getId());
             String reason = pc == null ? "" : unlocked ? "Already unlocked" : UpgradeRules.blockedReason(pc, cls, n);
-            String state = pc == null ? "Edit node" : unlocked ? "Unlocked" : reason.isBlank() ? "Available" : "Locked";
+            String state = isRoot ? "Unlocked" : pc == null ? "Edit node" : unlocked ? "Unlocked" : reason.isBlank() ? "Available" : "Locked";
             ImageView image = new ImageView(ImageStore.load(root,
                 earned.isPresent() ? earned.get().getImagePath() : n.getImagePath()));
             image.setFitWidth(ICON_SIZE);
@@ -96,7 +89,11 @@ final class UpgradeTreeView extends Pane {
             name.setMaxHeight(40);
             UiTranslator.skip(name);
             name.setStyle("-fx-text-fill: #eeeeee; -fx-font-weight: bold;");
-            Label status = new Label(UiTranslator.text(state) + " / " + n.getMinimumLevel());
+            String branchName = tree.getBranches().stream().filter(b -> Objects.equals(b.getId(), n.getBranchId()))
+                .map(UpgradeTree.Branch::getName).findFirst().orElse("");
+            Label status = new Label(UiTranslator.text(state) + " / " + n.getMinimumLevel()
+                + (branchName.isBlank() ? "" : "\n" + branchName));
+            UiTranslator.skip(status);
             status.setStyle("-fx-text-fill: #c8c8c8;");
             VBox face = new VBox(4, icon, name, status);
             face.setAlignment(Pos.CENTER);
@@ -106,60 +103,37 @@ final class UpgradeTreeView extends Pane {
             button.setId("upgrade-node-" + n.getId());
             String color = unlocked ? "#70bc8a" : reason.isBlank() ? "#d7b85b" : "#596071";
             button.setStyle("-fx-background-color: #181c29; -fx-border-color: " + color + "; -fx-border-width: 2; -fx-background-radius: 8; -fx-border-radius: 8;");
-            button.setTooltip(new Tooltip(nameText + "\n"
+            String reference = isRoot && pc != null && pc.getUpgrades() != null
+                ? pc.getUpgrades().getUnlocks().stream().filter(u -> u.isHistorical()
+                    || tree.getNodes().stream().noneMatch(existing -> Objects.equals(existing.getId(), u.getNodeId())
+                        && Objects.equals(cls.getId(), u.getClassId())))
+                    .map(u -> u.getName() + "\n" + Objects.toString(u.getDescription(), "")
+                        + "\n" + UpgradeTreeWindow.rewardText(u.getReward())).collect(java.util.stream.Collectors.joining("\n\n"))
+                : "";
+            String details = nameText + "\n"
                 + Objects.toString(earned.isPresent() ? earned.get().getDescription() : n.getDescription(), "")
                 + "\n" + UpgradeTreeWindow.rewardText(earned.map(UpgradeProgress.Unlock::getReward).orElse(n.getReward()))
-                + (reason.isBlank() ? "" : "\n" + UiTranslator.text(reason))));
-            if (!history.contains(n.getId())) button.setOnAction(event -> clicked.accept(n));
+                + (reference.isBlank() ? "" : "\n\n" + reference)
+                + (reason.isBlank() ? "" : "\n" + UiTranslator.text(reason));
+            button.setTooltip(new Tooltip(details));
+            if (isRoot) button.setOnAction(event -> {
+                var summary = UpgradeRules.foundation(cls, pc);
+                summary.setDescription(details);
+                clicked.accept(summary);
+            });
+            else button.setOnAction(event -> clicked.accept(n));
             double[] p = coordinates.get(n.getId());
             button.resizeRelocate(p[0], p[1], COLUMN - 20, HEIGHT);
             getChildren().add(button);
         }
-        setMinSize(Math.max(COLUMN, tree.getBranches().size() * COLUMN),
-            100 + (starts[maxDepth] + Math.max(1, counts[maxDepth])) * (HEIGHT + GAP));
+        setMinSize(width, 60 + (maxDepth + 1) * (HEIGHT + GAP));
         setPrefSize(getMinWidth(), getMinHeight());
-    }
-
-    private static UpgradeTree withHistory(CharacterClass cls, PlayerCharacter pc, Set<String> history) {
-        UpgradeTree tree = new UpgradeTree();
-        tree.setBranches(new ArrayList<>(cls.getUpgradeTree().getBranches()));
-        tree.setNodes(new ArrayList<>(cls.getUpgradeTree().getNodes()));
-        if (pc == null || pc.getUpgrades() == null) return tree;
-        var saved = pc.getUpgrades().getUnlocks().stream().filter(u ->
-            !Objects.equals(u.getClassId(), cls.getId())
-                || tree.getNodes().stream().noneMatch(n -> n.getId().equals(u.getNodeId()))).toList();
-        if (saved.isEmpty()) return tree;
-        var branch = new UpgradeTree.Branch();
-        String branchId = "saved-progression";
-        while (containsBranch(tree, branchId)) branchId += "-saved";
-        branch.setId(branchId); branch.setName(UiTranslator.text("Saved progression"));
-        tree.getBranches().add(branch);
-        String parent = null;
-        int index = 0;
-        for (var u : saved) {
-            String id = "saved-progression-" + index++;
-            while (containsNode(tree, id)) id += "-saved";
-            var n = new UpgradeTree.Node();
-            n.setId(id); n.setBranchId(branch.getId()); n.setName(u.getName());
-            n.setDescription(u.getDescription()); n.setImagePath(u.getImagePath());
-            n.setMinimumLevel(Math.max(2, u.getLevel())); n.setReward(u.getReward());
-            if (parent != null) n.getPrerequisites().add(parent);
-            parent = id;
-            tree.getNodes().add(n); history.add(id);
-        }
-        return tree;
-    }
-
-    private static boolean containsBranch(UpgradeTree tree, String id) {
-        return tree.getBranches().stream().anyMatch(b -> b.getId().equals(id));
-    }
-    private static boolean containsNode(UpgradeTree tree, String id) {
-        return tree.getNodes().stream().anyMatch(n -> n.getId().equals(id));
     }
 
     private static int depth(UpgradeTree.Node node, Map<String, UpgradeTree.Node> nodes, Map<String, Integer> done) {
         if (done.containsKey(node.getId())) return done.get(node.getId());
-        int value = node.getPrerequisites().stream().mapToInt(id -> depth(nodes.get(id), nodes, done) + 1).max().orElse(0);
+        int value = node.getPrerequisites().stream().mapToInt(id -> depth(nodes.get(id), nodes, done) + 1)
+            .max().orElse(UpgradeRules.ROOT.equals(node.getId()) ? 0 : 1);
         done.put(node.getId(), value);
         return value;
     }

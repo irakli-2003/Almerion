@@ -75,6 +75,162 @@ public class UpgradeRulesTest {
         assertEquals(1, UpgradeRules.available(pc));
     }
 
+    @Test public void allStarterClassesHaveFourTiersEightLeavesAndFeatsOnEveryChoice() {
+        for (String id : List.of("barbarian", "wizard", "ranger", "bard", "cleric", "rogue", "fighter",
+                "artificer", "druid", "monk", "paladin", "sorcerer", "warlock", "custom")) {
+            var cls = new CharacterClass(); cls.setId(id);
+            var tree = cls.getUpgradeTree();
+            UpgradeRules.validateBranching(tree);
+            assertEquals(14, tree.getNodes().size());
+            Map<String, Integer> children = new HashMap<>();
+            Map<String, Integer> depth = new HashMap<>();
+            depth.put(UpgradeRules.ROOT, 0);
+            for (var n : tree.getNodes()) {
+                for (String parent : n.getPrerequisites()) children.merge(parent, 1, Integer::sum);
+                assertFalse(n.getReward().getFeatures().isEmpty());
+                assertFalse(n.getReward().getFeatures().getFirst().getDescription().isBlank());
+            }
+            for (int pass = 0; pass < 4; pass++) for (var n : tree.getNodes()) {
+                if (n.getPrerequisites().stream().allMatch(depth::containsKey)) {
+                    depth.put(n.getId(), 1 + n.getPrerequisites().stream().mapToInt(depth::get).max().orElseThrow());
+                }
+            }
+            assertEquals(15, depth.size());
+            assertEquals(3, depth.values().stream().mapToInt(Integer::intValue).max().orElseThrow());
+            assertEquals(8, tree.getNodes().stream().filter(n -> !children.containsKey(n.getId())).count());
+            assertTrue(children.values().stream().allMatch(count -> count >= 2));
+            assertEquals(8, tree.getNodes().stream().filter(n -> n.getPrerequisites().size() > 1).count());
+            assertTrue(UpgradeRules.selected(null, id, UpgradeRules.ROOT));
+            assertEquals(1, UpgradeRules.foundation(cls, null).getMinimumLevel());
+        }
+    }
+
+    @Test public void historicalCreditsMoveIntoLowerNodesWithoutNewPointsOrRewards() {
+        var cls = cls();
+        cls.setUpgradeTree(UpgradeRules.starter(cls));
+        var pc = pc(5);
+        UpgradeRules.initialize(pc, cls);
+        assertTrue(UpgradeRules.selected(pc.getUpgrades(), cls.getId(), "potency-1"));
+        assertEquals(4, pc.getUpgrades().getUnlocks().size());
+        assertEquals(0, UpgradeRules.available(pc));
+        assertEquals(30, pc.getMaxHitPoints());
+        var saved = pc.getUpgrades().getUnlocks().stream().filter(u -> u.getNodeId().equals("potency-1")).findFirst().orElseThrow();
+        saved.setNodeId("@historical-level-2");
+        assertTrue(UpgradeRules.initialize(pc, cls));
+        assertTrue(UpgradeRules.selected(pc.getUpgrades(), cls.getId(), "potency-1"));
+        assertFalse(UpgradeRules.initialize(pc, cls));
+        assertEquals(4, pc.getUpgrades().getUnlocks().size());
+        assertEquals(0, UpgradeRules.available(pc));
+    }
+
+    @Test public void wholeTreeSavesRejectSticksButIntermediateAndLegacyTreesRemainReadable() {
+        var cls = cls();
+        node(cls, "a", "berserker", UpgradeRules.ROOT);
+        node(cls, "b", "berserker", "a");
+        UpgradeRules.validate(cls.getUpgradeTree());
+        rejected(() -> UpgradeRules.validateBranching(cls.getUpgradeTree()), "two children");
+        cls.setUpgradeTree(new UpgradeTree());
+        UpgradeRules.validateBranching(cls.getUpgradeTree());
+        cls.setUpgradeTree(UpgradeRules.starter(cls));
+        UpgradeRules.validateBranching(cls.getUpgradeTree());
+        cls.getUpgradeTree().getNodes().removeIf(n -> n.getId().endsWith("-7"));
+        rejected(() -> UpgradeRules.validateBranching(cls.getUpgradeTree()), "eight leaf nodes");
+    }
+
+    @Test public void featGrantsAreSnapshotBasedAndAppearInCombatWithoutEditingTheClass() throws Exception {
+        var cls = cls();
+        var node = node(cls, "feat", "berserker", UpgradeRules.ROOT);
+        node.getReward().getFeatures().add(new ClassFeature(2, "Pit Guardian", "Protect an ally once per short rest."));
+        var pc = pc(1); earn(pc, cls);
+        UpgradeRules.unlock(pc, cls, "feat", id -> null);
+        node.getReward().getFeatures().getFirst().setName("Changed by GM");
+        var mapper = JsonMappers.create();
+        var restored = mapper.readValue(mapper.writeValueAsBytes(pc), PlayerCharacter.class);
+        assertNotNull(FeatureRules.kit(restored, cls, null).action(FeatureRules.BODYGUARD));
+        assertTrue(FeatureRules.features(restored, cls).stream().anyMatch(f -> f.getName().equals("Pit Guardian")));
+        assertTrue(cls.getFeatures().stream().noneMatch(f -> f.getName().equals("Pit Guardian")));
+        assertEquals(0, UpgradeRules.available(restored));
+    }
+
+    @Test public void generatedFeatsHaveRealUseCountersAndCorrectRestRecovery() {
+        var cls = cls(); cls.setFeatures(List.of()); cls.setUpgradeTree(UpgradeRules.starter(cls));
+        var pc = pc(1); earn(pc, cls);
+        UpgradeRules.unlock(pc, cls, "potency-1", id -> null);
+        var action = FeatureRules.kit(pc, cls, null).getActions().stream()
+            .filter(a -> a.getId().startsWith("feat-short:")).findFirst().orElseThrow();
+        var combat = new com.dnd.model.world.map.CombatState();
+        combat.setMaxHitPoints(30); combat.setCurrentHitPoints(30);
+        assertEquals(1, action.usesLeft(combat.getFeatureUses()));
+        FeatureRules.useOnSelf(action, combat, "Hero", new Random());
+        assertEquals(0, action.usesLeft(combat.getFeatureUses()));
+        FeatureRules.recover(combat.getFeatureUses(), false, pc.getLevel());
+        assertEquals(1, action.usesLeft(combat.getFeatureUses()));
+        assertEquals(30, combat.getCurrentHitPoints());
+        var feat = new ClassFeature(1, "Last Stand", "Once per long rest, reroll a prone save.");
+        feat.setUsesPerRest(1);
+        pc.setPersonalFeatures(List.of(feat));
+        var longRestAction = FeatureRules.kit(pc, cls, null).getActions().stream()
+            .filter(a -> a.getId().startsWith("feat-long:")).findFirst().orElseThrow();
+        FeatureRules.useOnSelf(longRestAction, combat, "Hero", new Random());
+        FeatureRules.recover(combat.getFeatureUses(), false, pc.getLevel());
+        assertEquals(0, longRestAction.usesLeft(combat.getFeatureUses()));
+        FeatureRules.recover(combat.getFeatureUses(), true, pc.getLevel());
+        assertEquals(1, longRestAction.usesLeft(combat.getFeatureUses()));
+    }
+
+    private UpgradeTree legacyStarter() {
+        var tree = new UpgradeTree();
+        for (String id : List.of("potency", "resilience")) {
+            var b = new UpgradeTree.Branch(); b.setId(id); b.setName(id.equals("potency") ? "Berserker" : "Iron Fist");
+            tree.getBranches().add(b);
+            for (int tier = 0; tier < 4; tier++) {
+                var n = new UpgradeTree.Node(); n.setId(id + "-" + (tier + 1)); n.setBranchId(id);
+                n.setName(b.getName() + " " + (tier + 1)); n.setMinimumLevel(new int[]{2, 6, 10, 14}[tier]);
+                n.setDescription("A step along the " + b.getName() + " path. The GM can replace these starter rewards.");
+                if (tier > 0) n.getPrerequisites().add(id + "-" + tier);
+                var r = n.getReward();
+                if (id.equals("potency")) {
+                    if (tier == 0) r.setRageDamage(1);
+                    if (tier == 1) r.setAttackBonus(1);
+                    if (tier == 2) r.setSpeed(5);
+                    if (tier == 3) r.setBasicAttackDamage(1);
+                } else {
+                    if (tier == 0) r.setBasicAttackDamage(1);
+                    if (tier == 1) r.setArmorClass(1);
+                    if (tier == 2) r.setSpeed(5);
+                    if (tier == 3) r.setHitPoints(5);
+                }
+                tree.getNodes().add(n);
+            }
+        }
+        return tree;
+    }
+
+    @Test public void untouchedLegacyStartersExpandButCustomizationsAndEarnedBonusesSurvive() {
+        var cls = cls(); var legacy = legacyStarter();
+        assertTrue(UpgradeRules.isLegacyStarter(cls, legacy));
+        cls.setUpgradeTree(legacy);
+        assertEquals(14, cls.getUpgradeTree().getNodes().size());
+        var pc = pc(1); earn(pc, cls);
+        UpgradeRules.unlock(pc, cls, "potency-1", id -> null);
+        var earned = pc.getUpgrades().getUnlocks().getFirst();
+        earned.setDescription("A step along the Berserker path. The GM can replace these starter rewards.");
+        earned.getReward().setFeatures(List.of());
+        int rage = earned.getReward().getRageDamage();
+        int count = pc.getUpgrades().getUnlocks().size();
+        assertTrue(UpgradeRules.initialize(pc, cls));
+        assertFalse(earned.getReward().getFeatures().isEmpty());
+        assertEquals(rage, earned.getReward().getRageDamage());
+        assertEquals(count, pc.getUpgrades().getUnlocks().size());
+        assertEquals(0, UpgradeRules.available(pc));
+        var edited = legacyStarter();
+        edited.getNodes().getFirst().getReward().setSpeed(10);
+        cls.setUpgradeTree(edited);
+        assertSame(edited, cls.getUpgradeTree());
+        cls.setUpgradeTree(new UpgradeTree());
+        assertTrue(cls.getUpgradeTree().getNodes().isEmpty());
+    }
+
     @Test public void knownSpellNodesMigrateWithoutDuplicateSpells() {
         var cls = cls();
         var node = node(cls, "magic", "berserker");

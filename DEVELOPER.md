@@ -382,12 +382,21 @@ credentials or custom provider addresses. To configure SMTP:
 
 - `CharacterClass.upgradeTree` contains stable-ID branches and a DAG of `UpgradeTree.Node`
   choices. Classes without that property get editable starter paths; an explicitly empty
-  tree stays empty. This is independent of legacy `ClassFeature`/subclass auto-grants.
+  tree stays empty. Untouched eight-node 1.3.0 starters are recognized conservatively
+  (including rewards and links) and expanded; customized definitions are never replaced.
+  Starters have 14 selectable nodes in a 2/4/8 topology under virtual `class-foundation`.
+  The root is always selected, immutable, level one and never consumes a budget entry.
+  Leaf prerequisites cross the two branches. This is independent of legacy class auto-grants.
+  `validateBranching` enforces four tiers, eight leaves, two children per non-leaf and
+  multi-prerequisite training on whole-tree GM saves; intermediate edits and legacy reads
+  use the basic graph validator so an older custom design can be repaired incrementally.
 - `UpgradeRules` validates graphs, all-prerequisite links and symmetric exclusivity
   (including contradictory ancestor sets), migrates existing training, and spends choices.
   `Progression.apply` awards one point only for a valid, non-stale next-level plan.
   Old sheets consume `level - 1` choices without granting rewards: known matching nodes are
-  marked historical and unmatched levels remain a visible historical ledger. No free
+  marked historical; `Node.existingTraining` associates equivalent class-feature names.
+  Generic historical credits can be attached to matching low nodes without changing
+  spent count or applying rewards. Unmatched history remains on the root. No free
   retroactive points, numeric double application, or guessed mechanics from feat prose.
 - `PlayerCharacter.upgrades` stores the earned budget and original reward snapshots.
   HP/mana/ability increases and spell grants apply once. `FeatureRules` reads saved AC,
@@ -395,7 +404,8 @@ credentials or custom provider addresses. To configure SMTP:
   earned rewards. Normal JSON repositories, online snapshots, LAN sheets and PDF rules
   retain these changes. Never recompute earned points from the character's current level.
 - `UpgradeTreeWindow` is the GM editor and shared character viewer; `UpgradeTreeView`
-  lays out fixed 48-pixel icons in named columns with cross-branch prerequisite curves.
+  lays out fixed 48-pixel icons in centered, spreading rows with prerequisite curves,
+  per-node branch labels and a zoomable/pannable viewport. No separate history branch.
   Uploaded pictures use campaign-relative `images/upgrades` paths. The generic entity form
   intentionally hides tree definitions and earned ledgers to avoid bypassing validation.
   Player profiles are read-only; mechanical selection remains GM-controlled.
@@ -408,6 +418,12 @@ Character-specific features live in `PlayerCharacter.personalFeatures`, not the 
 spell list. `FeatureRules.features` combines eligible class and personal features for
 combat, PDF and LAN consumers. Recognised names use existing mechanical hooks; other
 names remain passives. Historical upgrade migration also recognises personal training.
+`Reward.features` holds earned feat snapshots, included by `FeatureRules.features`
+alongside personal/class training. `ClassFeature.usesPerRest` enables a GM-resolved
+counter for unknown feature names; `shortRestRecharge` selects short versus long rest.
+Counter IDs use a name-derived UUID and recharge prefix; snapshots deep-copy the fields.
+Recognized feature names retain their existing mechanical hooks. GM tree saves require
+a feat or spell on every node, while older/custom numeric-only definitions remain readable.
 `support-encore` and `pit-guardian` recharge on short rests; map confirmation delegates
 unmodelled reaction/ally/success conditions to the GM. Inspiration effects record their
 giver in `source`; a fresh grant replaces the old marker rather than stacking dice.

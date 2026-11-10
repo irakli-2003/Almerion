@@ -42,7 +42,7 @@ public class SessionSnapshotTest {
             assertEquals(0, com.dnd.model.character.UpgradeRules.available(hero));
             assertEquals(1, com.dnd.model.character.UpgradeRules.bonus(hero,
                 com.dnd.model.character.UpgradeTree.Reward::getRageDamage));
-            assertEquals(8, received.classes().getById("barbarian").getUpgradeTree().getNodes().size());
+            assertEquals(14, received.classes().getById("barbarian").getUpgradeTree().getNodes().size());
             assertEquals("upgrade-ability", received.spells().getById("upgrade-ability").getId());
         } finally {
             try (var walk = Files.walk(joined)) {

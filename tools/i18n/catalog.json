@@ -513,6 +513,13 @@
   ]
  },
  {
+  "key": "A campaign with this name is already available above, but this online registration has a different ID. It may be an older duplicate; your local campaign is not missing.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:199"
+  ]
+ },
+ {
   "key": "A crackling shock capsule around a charged crystal. Needs an upgraded furnace with a dynamo coil.",
   "kind": "exact",
   "where": [
@@ -1605,6 +1612,13 @@
   ]
  },
  {
+  "key": "Author:",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:216"
+  ]
+ },
+ {
   "key": "authUrl",
   "kind": "exact",
   "where": [
@@ -1979,6 +1993,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/MapTemplates.java:30"
+  ]
+ },
+ {
+  "key": "Campaign access changed",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:211"
   ]
  },
  {
@@ -3088,6 +3109,13 @@
   ]
  },
  {
+  "key": "Compare this ID and join code with Campaign Members on your other device before removing anything. Matching names do not prove these are the same campaign.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:230"
+  ]
+ },
+ {
   "key": "Components",
   "kind": "exact",
   "where": [
@@ -3133,7 +3161,7 @@
   "key": "Confirm Delete",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:210"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:282"
   ]
  },
  {
@@ -3501,7 +3529,7 @@
   "key": "Couldn't delete the campaign",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:218"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:290"
   ]
  },
  {
@@ -3562,10 +3590,24 @@
   ]
  },
  {
+  "key": "Couldn't remove the online registration",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:270"
+  ]
+ },
+ {
   "key": "Couldn't remove {A}",
   "kind": "pattern",
   "where": [
    "src/main/java/com/dnd/ui/scenes/MembersWindow.java:127"
+  ]
+ },
+ {
+  "key": "Couldn't review the online registration",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:249"
   ]
  },
  {
@@ -4070,7 +4112,7 @@
   "key": "Delete campaign '{A}'? Its files and its member list are removed. This cannot be undone.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:208"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:280"
   ]
  },
  {
@@ -4634,6 +4676,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/MusicPanel.java:948"
+  ]
+ },
+ {
+  "key": "End this campaign's online session before removing its registration.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/cloud/CampaignAccess.java:93"
   ]
  },
  {
@@ -6840,6 +6889,13 @@
   ]
  },
  {
+  "key": "Join code:",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:217"
+  ]
+ },
+ {
   "key": "Join Live Session",
   "kind": "exact",
   "where": [
@@ -7200,6 +7256,13 @@
    "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:438",
    "src/main/java/com/dnd/ui/scenes/MembersWindow.java:61",
    "src/main/java/com/dnd/ui/scenes/MusicPanel.java:270"
+  ]
+ },
+ {
+  "key": "Local campaign ID:",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:226"
   ]
  },
  {
@@ -7673,6 +7736,13 @@
   "kind": "pattern",
   "where": [
    "src/main/java/com/dnd/ui/scenes/MembersWindow.java:114"
+  ]
+ },
+ {
+  "key": "Members:",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:218"
   ]
  },
  {
@@ -8326,6 +8396,20 @@
   ]
  },
  {
+  "key": "No local campaign folders, GitHub repositories or campaign files will be deleted. Keep the registration if another device still uses its ID.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:254"
+  ]
+ },
+ {
+  "key": "No local campaign matches this registration's ID. Use Get Campaign from GitHub or Import Complete Campaign to bring it here.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:198"
+  ]
+ },
+ {
   "key": "No maps in this campaign yet.",
   "kind": "exact",
   "where": [
@@ -8837,6 +8921,13 @@
   ]
  },
  {
+  "key": "Online registration ID:",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:215"
+  ]
+ },
+ {
   "key": "Online session push failed: {A}",
   "kind": "pattern",
   "where": [
@@ -8882,7 +8973,7 @@
   "key": "Only the author can delete this campaign",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:203"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:275"
   ]
  },
  {
@@ -9066,6 +9157,13 @@
   "kind": "pattern",
   "where": [
    "src/main/java/com/dnd/ui/ReportUi.java:233"
+  ]
+ },
+ {
+  "key": "Other online campaign registrations",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:194"
   ]
  },
  {
@@ -9354,6 +9452,13 @@
   ]
  },
  {
+  "key": "Pending applications:",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:221"
+  ]
+ },
+ {
   "key": "Peoples",
   "kind": "exact",
   "where": [
@@ -9508,6 +9613,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/player/PlayerCharacterSelectionScene.java:51"
+  ]
+ },
+ {
+  "key": "Playable local campaign:",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:224"
   ]
  },
  {
@@ -10196,6 +10308,20 @@
   ]
  },
  {
+  "key": "Remove online registration only?",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:259"
+  ]
+ },
+ {
+  "key": "Remove only this online registration...",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:238"
+  ]
+ },
+ {
   "key": "Remove Selected Token",
   "kind": "exact",
   "where": [
@@ -10208,6 +10334,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2341"
+  ]
+ },
+ {
+  "key": "Remove this online registration, its member list, pending applications and join code? This affects every device using this registration. It cannot be undone.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:254"
   ]
  },
  {
@@ -10535,6 +10668,20 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:224"
+  ]
+ },
+ {
+  "key": "Review online campaign registration",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:229"
+  ]
+ },
+ {
+  "key": "Review online registration...",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:202"
   ]
  },
  {
@@ -12808,10 +12955,25 @@
   ]
  },
  {
+  "key": "This online registration no longer exists.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/cloud/CampaignAccess.java:91",
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:209"
+  ]
+ },
+ {
   "key": "This playlist has no playable tracks yet. Add audio files or a direct link to an audio file.",
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/MusicPanel.java:260"
+  ]
+ },
+ {
+  "key": "This registration belongs to a campaign on this device. It was not removed.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/cloud/CampaignAccess.java:87"
   ]
  },
  {
@@ -14039,6 +14201,13 @@
   ]
  },
  {
+  "key": "You are no longer a Game Master of this registration.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:211"
+  ]
+ },
+ {
   "key": "You aren't a Game Master of any campaign on this device yet.",
   "kind": "exact",
   "where": [
@@ -14205,13 +14374,6 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:167"
-  ]
- },
- {
-  "key": "Yours, but not on this device",
-  "kind": "exact",
-  "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:194"
   ]
  },
  {
@@ -14467,7 +14629,7 @@
   "key": "{A} created \"{B}\". Ask them to delete it.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:204"
+   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:276"
   ]
  },
  {
@@ -14876,13 +15038,6 @@
   "kind": "pattern",
   "where": [
    "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:123"
-  ]
- },
- {
-  "key": "• {A} - copy its folder into this device's campaigns folder to run it here.",
-  "kind": "pattern",
-  "where": [
-   "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:196"
   ]
  },
  {

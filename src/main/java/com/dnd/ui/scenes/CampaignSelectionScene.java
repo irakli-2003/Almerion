@@ -165,7 +165,7 @@ public class CampaignSelectionScene extends BaseScene {
                 : (Cloud.isOffline() ? "Offline - showing the campaign list saved from your last connection." : ""));
             status.setManaged(!status.getText().isEmpty());
             fillUnclaimed(unclaimedBox, listing.unclaimed());
-            fillElsewhere(elsewhereBox, listing.elsewhere());
+            fillElsewhere(elsewhereBox, listing.elsewhere(), listing.mine());
         }, error -> status.setText(friendlyError(error)));
 
         return wrapInScene(root);
@@ -188,14 +188,86 @@ public class CampaignSelectionScene extends BaseScene {
         }
     }
 
-    private void fillElsewhere(VBox box, List<CampaignRecord> elsewhere) {
+    private void fillElsewhere(VBox box, List<CampaignRecord> elsewhere, List<Entry> local) {
         box.getChildren().clear();
         if (elsewhere.isEmpty()) return;
-        box.getChildren().add(sectionLabel("Yours, but not on this device"));
+        box.getChildren().add(sectionLabel("Other online campaign registrations"));
         for (CampaignRecord record : elsewhere) {
-            box.getChildren().add(body("• " + record.name
-                + " - copy its folder into this device's campaigns folder to run it here."));
+            List<Entry> matches = CampaignAccess.similarlyNamed(local, record);
+            Label explanation = body(matches.isEmpty()
+                ? "No local campaign matches this registration's ID. Use Get Campaign from GitHub or Import Complete Campaign to bring it here."
+                : "A campaign with this name is already available above, but this online registration has a different ID. It may be an older duplicate; your local campaign is not missing.");
+            explanation.setWrapText(true);
+            Label name = com.dnd.ui.i18n.UiTranslator.skip(sectionLabel(record.name));
+            Button review = btn("Review online registration...", () -> reviewRegistration(record.id, matches));
+            box.getChildren().add(new VBox(6, name, explanation, review));
         }
+    }
+
+    private void reviewRegistration(String id, List<Entry> matches) {
+        background(() -> directory.find(id).orElseThrow(() ->
+            new CampaignDirectory.MembershipException("This online registration no longer exists.")), record -> {
+            if (!record.isDm(user())) {
+                showInfo("Campaign access changed", "You are no longer a Game Master of this registration.");
+                return;
+            }
+            StringBuilder details = new StringBuilder();
+            details.append(com.dnd.ui.i18n.UiTranslator.text("Online registration ID: ")).append(record.id)
+                .append("\n").append(com.dnd.ui.i18n.UiTranslator.text("Author: ")).append(record.author)
+                .append("\n").append(com.dnd.ui.i18n.UiTranslator.text("Join code: ")).append(record.joinCode)
+                .append("\n").append(com.dnd.ui.i18n.UiTranslator.text("Members: "));
+            record.members.values().forEach(member ->
+                details.append(member.username).append(" (").append(member.role).append(") "));
+            details.append("\n").append(com.dnd.ui.i18n.UiTranslator.text("Pending applications: "))
+                .append(record.applications.size());
+            for (Entry entry : matches) {
+                details.append("\n\n").append(com.dnd.ui.i18n.UiTranslator.text("Playable local campaign: "))
+                    .append(entry.local().folder()).append("\n")
+                    .append(com.dnd.ui.i18n.UiTranslator.text("Local campaign ID: ")).append(entry.local().id());
+            }
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "", ButtonType.CLOSE);
+            alert.setHeaderText("Review online campaign registration");
+            Label intro = body("Compare this ID and join code with Campaign Members on your other device before removing anything. Matching names do not prove these are the same campaign.");
+            intro.setWrapText(true);
+            TextArea info = com.dnd.ui.i18n.UiTranslator.skip(new TextArea(details.toString()));
+            info.setEditable(false);
+            info.setWrapText(true);
+            info.setPrefRowCount(10);
+            VBox content = new VBox(10, intro, info);
+            if (record.isAuthor(user())) {
+                Button remove = dangerBtn("Remove only this online registration...", () -> {
+                    alert.close();
+                    confirmRemoveRegistration(record);
+                });
+                content.getChildren().add(remove);
+            }
+            alert.getDialogPane().setContent(content);
+            alert.getDialogPane().setPrefWidth(680);
+            alert.setResizable(true);
+            styleDialog(alert);
+            alert.showAndWait();
+        }, error -> showError("Couldn't review the online registration", error));
+    }
+
+    private void confirmRemoveRegistration(CampaignRecord record) {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+            "Remove this online registration, its member list, pending applications and join code?"
+                + " This affects every device using this registration. It cannot be undone."
+                + "\n\nNo local campaign folders, GitHub repositories or campaign files will be deleted."
+                + " Keep the registration if another device still uses its ID.",
+            ButtonType.OK, ButtonType.CANCEL);
+        confirm.setHeaderText("Remove online registration only?");
+        styleDialog(confirm);
+        if (confirm.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) return;
+        background(() -> {
+            List<LocalCampaign> current = new ArrayList<>();
+            for (String folder : uiSession.getStorage().listCustomCampaigns()) {
+                current.add(LocalCampaign.of(folder, uiSession.getStorage().resolveCustomCampaignPath(folder)));
+            }
+            CampaignAccess.removeUnavailableRegistration(record.id, current, user(), directory);
+            return true;
+        }, ok -> uiSession.getRouter().goTo(SceneType.CAMPAIGN_SELECTION),
+            error -> showError("Couldn't remove the online registration", error));
     }
 
     private void confirmDelete(Entry selected) {

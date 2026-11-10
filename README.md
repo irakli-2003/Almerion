@@ -250,6 +250,16 @@ when, and the newer one is selected for you. You can choose **This computer**, *
 **Keep both**, which keeps yours and saves GitHub's next to it as `name.remote-<date-time>`.
 If you click **Decide Later**, nothing is uploaded and you are asked again at the next sync.
 
+**Duplicate online registrations:** the campaign list matches copies by campaign ID, not name.
+Under **Other online campaign registrations**, a same-named local campaign is identified as a
+possible older duplicate, not reported as missing. **Review online registration…** shows the
+online ID, author, join code and members, plus matching local campaign IDs. Compare the join
+code with **Campaign Members** on the other device before removing anything.
+The author can remove an obsolete registration after confirmation; this deletes its online
+membership/application records and join code, **not** campaign files or GitHub repositories.
+Removal is refused if the registration is used by a local campaign or has a live online session.
+Do not remove an entry still used by another device. Matching names never merge IDs automatically.
+
 **Put-aside versions:** versions saved next to a file as `name.remote-<date-time>` (by **Keep
 both**, or automatically by Almerion 1.2.1 and older) are listed when you open the campaign, and
 under **Sync with GitHub… → Put-Aside Versions**. For each one choose **Use the put-aside

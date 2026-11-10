@@ -68,4 +68,30 @@ public final class CampaignAccess {
     public static boolean canRunAsDm(Path path, String user, CampaignDirectory directory) {
         return CampaignMeta.idOf(path).flatMap(directory::find).map(r -> r.isDm(user)).orElse(false);
     }
+
+    /** A name match suggests a duplicate registration, never proof that two identities may be merged. */
+    public static List<Entry> similarlyNamed(List<Entry> local, CampaignRecord online) {
+        return local.stream().filter(entry -> sameName(entry.record().name, online.name)
+            || sameName(entry.local().folder(), online.name)).toList();
+    }
+
+    private static boolean sameName(String a, String b) {
+        return a != null && b != null && !a.isBlank() && a.strip().equalsIgnoreCase(b.strip());
+    }
+
+    /** Removes directory metadata only. Re-read disk identities to protect a copy downloaded since review. */
+    public static void removeUnavailableRegistration(String id, List<LocalCampaign> local, String user,
+                                                     CampaignDirectory directory) {
+        for (LocalCampaign campaign : local) {
+            if (CampaignMeta.idOf(campaign.path()).filter(id::equals).isPresent()) {
+                throw new MembershipException("This registration belongs to a campaign on this device. It was not removed.");
+            }
+        }
+        CampaignRecord record = directory.find(id).orElseThrow(() ->
+            new MembershipException("This online registration no longer exists."));
+        if (record.liveToken != null && !record.liveToken.isBlank()) {
+            throw new MembershipException("End this campaign's online session before removing its registration.");
+        }
+        directory.delete(id, user);
+    }
 }

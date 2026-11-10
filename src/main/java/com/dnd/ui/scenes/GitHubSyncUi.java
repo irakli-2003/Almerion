@@ -191,36 +191,78 @@ final class GitHubSyncUi {
 
     private static void manageSynced(BaseScene owner, String folderName, Path folder, Runnable changed) {
         String repo = CampaignRepo.displayName(CampaignRepo.remoteUrl(folder).orElse(""));
-        ButtonType syncNow = new ButtonType("Sync Now", ButtonBar.ButtonData.OK_DONE);
-        ButtonType stop = new ButtonType("Stop Syncing", ButtonBar.ButtonData.OTHER);
         List<CampaignRepo.SetAside> copies;
         try {
             copies = CampaignRepo.setAsideCopies(folder);
         } catch (java.io.IOException e) {
             copies = List.of();
         }
-        ButtonType review = new ButtonType("Put-Aside Versions (" + copies.size() + ")", ButtonBar.ButtonData.OTHER);
-        Alert alert = copies.isEmpty()
-            ? new Alert(Alert.AlertType.INFORMATION, "", syncNow, stop, ButtonType.CLOSE)
-            : new Alert(Alert.AlertType.INFORMATION, "", review, syncNow, stop, ButtonType.CLOSE);
-        alert.setHeaderText("This campaign syncs with GitHub");
-        Label repoLabel = UiTranslator.skip(owner.sectionLabel(repo));
-        Label state = owner.body(CampaignSyncService.shared().status(folder)
-            .map(CampaignSyncService.Status::message).orElse("Synced automatically when you open and leave it."));
-        state.setWrapText(true);
-        alert.getDialogPane().setContent(new VBox(8, owner.body("Repository:"), repoLabel, state));
-        alert.getDialogPane().setPrefWidth(640);
-        owner.styleDialog(alert);
+        String state = CampaignSyncService.shared().status(folder)
+            .map(CampaignSyncService.Status::message).orElse("Synced automatically when you open and leave it.");
+        Alert alert = managementDialog(owner, repo, state, copies.size(), CampaignRepo.hasIndexLock(folder));
         ButtonType choice = alert.showAndWait().orElse(ButtonType.CLOSE);
-        if (choice == review) {
+        if (choice == REVIEW) {
             reviewSetAside(owner, folderName, folder, copies, changed);
-        } else if (choice == syncNow) {
+        } else if (choice == RECOVER) {
+            recoverIndexLock(owner, folderName, folder, changed);
+        } else if (choice == SYNC_NOW) {
             CampaignSyncService.shared().syncNow(folder).thenAccept(result -> Platform.runLater(() ->
                 showResult(owner, folderName, folder, result, changed)));
-        } else if (choice == stop) {
+        } else if (choice == STOP) {
             owner.background(unchecked(() -> { CampaignRepo.setSyncEnabled(folder, false); return true; }),
                 ok -> changed.run(), error -> owner.showError("Couldn't stop syncing", error));
         }
+    }
+
+    private static final ButtonType SYNC_NOW = new ButtonType("Sync Now");
+    private static final ButtonType STOP = new ButtonType("Stop Syncing");
+    private static final ButtonType REVIEW = new ButtonType("Put-Aside Versions");
+    private static final ButtonType RECOVER = new ButtonType("Review index lock...");
+
+    static Alert managementDialog(BaseScene owner, String repo, String state, int copies, boolean locked) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, "", ButtonType.CLOSE);
+        alert.setHeaderText("This campaign syncs with GitHub");
+        FlowPane actions = flow();
+        managementAction(owner, alert, actions, SYNC_NOW, SYNC_NOW.getText());
+        if (copies > 0) managementAction(owner, alert, actions, REVIEW, "Put-Aside Versions (" + copies + ")");
+        if (locked) managementAction(owner, alert, actions, RECOVER, RECOVER.getText());
+        managementAction(owner, alert, actions, STOP, STOP.getText());
+        Label repoLabel = UiTranslator.skip(owner.sectionLabel(repo));
+        repoLabel.setWrapText(true);
+        VBox content = new VBox(10, owner.body("Repository:"), repoLabel, owner.body(state), actions);
+        content.setPrefWidth(600);
+        fitTexts(content);
+        alert.getDialogPane().setContent(content);
+        alert.getDialogPane().setMinWidth(javafx.scene.layout.Region.USE_PREF_SIZE);
+        alert.setResizable(true);
+        owner.styleDialog(alert);
+        return alert;
+    }
+
+    private static void managementAction(BaseScene owner, Alert alert, FlowPane actions,
+                                         ButtonType result, String caption) {
+        Button button = owner.btn(caption, () -> {
+            alert.setResult(result);
+            alert.close();
+        });
+        actions.getChildren().add(button);
+    }
+
+    private static void recoverIndexLock(BaseScene owner, String folderName, Path folder, Runnable changed) {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+            "An index lock can belong to a running Git operation. Close all other Almerion windows and Git"
+                + " programs using this campaign before continuing. Only continue if you have confirmed none"
+                + " are running.\n\nAlmerion will move index.lock to a backup inside this campaign's .git"
+                + " folder and retry syncing. Campaign files and the existing index are not deleted.",
+            ButtonType.OK, ButtonType.CANCEL);
+        confirm.setHeaderText("Back up the leftover index lock and retry?");
+        owner.styleDialog(confirm);
+        if (confirm.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {
+            changed.run();
+            return;
+        }
+        CampaignSyncService.shared().recoverIndexLock(folder).thenAccept(result -> Platform.runLater(() ->
+            showResult(owner, folderName, folder, result, changed)));
     }
 
     private static void connectCampaign(BaseScene owner, String folderName, Path folder, Runnable changed) {
@@ -391,7 +433,19 @@ final class GitHubSyncUi {
                 resolveConflicts(owner, folderName, folder, result, after);
                 return;
             }
-            default -> owner.showInfo("Sync problem", result.message());
+            default -> {
+                if (result.outcome() == CampaignRepo.Outcome.FAILED && CampaignRepo.hasIndexLock(folder)) {
+                    Alert alert = new Alert(Alert.AlertType.WARNING, result.message(), RECOVER, ButtonType.CLOSE);
+                    alert.setHeaderText("Sync problem");
+                    owner.styleDialog(alert);
+                    if (alert.showAndWait().orElse(ButtonType.CLOSE) == RECOVER) {
+                        recoverIndexLock(owner, folderName, folder, after);
+                        return;
+                    }
+                } else {
+                    owner.showInfo("Sync problem", result.message());
+                }
+            }
         }
         after.run();
     }
@@ -625,6 +679,8 @@ final class GitHubSyncUi {
                 // Fetch again so the choices reflect GitHub as it is now.
                 service.syncNow(folder).thenAccept(result -> Platform.runLater(() -> showResult(owner,
                     String.valueOf(folder.getFileName()), folder, result, () -> { })));
+            } else if (status.state() == CampaignSyncService.State.ERROR) {
+                manageSynced(owner, String.valueOf(folder.getFileName()), folder, () -> { });
             } else {
                 owner.showInfo("GitHub sync", status.message());
             }
@@ -702,6 +758,7 @@ final class GitHubSyncUi {
     private static FlowPane flow(Node... nodes) {
         FlowPane pane = new FlowPane(10, 10, nodes);
         pane.setAlignment(Pos.CENTER_LEFT);
+        pane.setMinHeight(javafx.scene.layout.Region.USE_PREF_SIZE);
         return pane;
     }
 

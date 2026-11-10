@@ -753,6 +753,14 @@ computer, so back it up.
 
 ## 20. Troubleshooting
 
+**GitHub sync says it cannot lock the campaign index (`index.lock`):** another Almerion
+window or Git program may be using the same campaign, or a previous crash may have left a
+lock behind. Close other programs using that campaign and try **Sync Now** again. If the
+lock remains, choose **Review index lock...** in the sync window or error dialog. Continue
+only after confirming no other Git operation is running. Almerion backs up the lock inside
+the campaign's `.git\almerion-lock-backups` folder and retries; it does not delete your
+campaign files. Never remove a lock just because it is old.
+
 The small **🐞** button is available on app screens and dialogs. Choose **Bug** or
 **Suggestion**, describe the issue, and review the automatically captured app screenshot.
 Uncheck **Include screenshot** to leave it out. Nothing is sent until you click **Send**.

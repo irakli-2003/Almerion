@@ -307,6 +307,65 @@ public class CampaignRepoTest {
     }
 
     @Test
+    public void confirmedLockRecoveryBacksUpLockAndSyncsWithoutLosingChanges() throws Exception {
+        Path first = campaign("recover");
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(first).connect(remote).outcome());
+        Path lock = first.resolve(".git/index.lock");
+        byte[] interruptedIndex = {0, 1, 2, 3};
+        Files.write(lock, interruptedIndex);
+        write(first, "world/npcs.json", "[\"not yet synced\"]");
+        assertTrue(CampaignRepo.hasIndexLock(first));
+
+        CampaignRepo.Result result = repo(first).recoverIndexLock();
+
+        assertEquals(result.message(), CampaignRepo.Outcome.SYNCED, result.outcome());
+        assertFalse(CampaignRepo.hasIndexLock(first));
+        try (var backups = Files.list(first.resolve(".git/almerion-lock-backups"))) {
+            var files = backups.toList();
+            assertEquals(1, files.size());
+            org.junit.Assert.assertArrayEquals(interruptedIndex, Files.readAllBytes(files.getFirst()));
+        }
+        Path second = cloneOf("recovered-on-other-computer");
+        assertEquals("[\"not yet synced\"]", read(second, "world/npcs.json"));
+    }
+
+    @Test
+    public void lockRecoveryDoesNotRemoveUnexpectedDirectories() throws Exception {
+        Path first = campaign("unexpected-lock");
+        repo(first).connect(remote);
+        Path lock = first.resolve(".git/index.lock");
+        Files.createDirectory(lock);
+        write(first, ".git/index.lock/keep", "preserve");
+        CampaignRepo.Result result = repo(first).recoverIndexLock();
+        assertEquals(CampaignRepo.Outcome.FAILED, result.outcome());
+        assertTrue(result.message(), result.message().contains("not a regular file"));
+        assertEquals("preserve", read(first, ".git/index.lock/keep"));
+    }
+
+    @Test
+    public void failedLockBackupLeavesLockAndLocalChangesUntouched() throws Exception {
+        Path first = campaign("failed-backup");
+        repo(first).connect(remote);
+        write(first, ".git/index.lock", "interrupted index");
+        write(first, ".git/almerion-lock-backups", "not a directory");
+        write(first, "world/npcs.json", "[\"local\"]");
+        CampaignRepo.Result result = repo(first).recoverIndexLock();
+        assertEquals(CampaignRepo.Outcome.FAILED, result.outcome());
+        assertTrue(result.message(), result.message().contains("Could not back up"));
+        assertEquals("interrupted index", read(first, ".git/index.lock"));
+        assertEquals("[\"local\"]", read(first, "world/npcs.json"));
+    }
+
+    @Test
+    public void retryAfterLockDisappearsStillSyncs() throws Exception {
+        Path first = campaign("already-unlocked");
+        repo(first).connect(remote);
+        write(first, "world/npcs.json", "[\"local\"]");
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(first).recoverIndexLock().outcome());
+        assertEquals("[\"local\"]", read(cloneOf("retried"), "world/npcs.json"));
+    }
+
+    @Test
     public void failureShowsTheRealCause() {
         Exception e = new RuntimeException("Exception caught during execution of add command",
             new java.io.IOException("Access is denied: images/map.png"));

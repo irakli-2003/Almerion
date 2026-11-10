@@ -85,6 +85,11 @@ public final class CampaignSyncService {
         return submit(folder, CampaignRepo::sync);
     }
 
+    /** User-confirmed leftover-lock recovery, serialized with all other sync operations. */
+    public CompletableFuture<CampaignRepo.Result> recoverIndexLock(Path folder) {
+        return submit(folder, CampaignRepo::recoverIndexLock);
+    }
+
     /** Full sync that settles files both computers changed as the GM chose (path to choice). */
     public CompletableFuture<CampaignRepo.Result> resolve(Path folder, Map<String, CampaignRepo.Choice> choices) {
         Map<String, CampaignRepo.Choice> copy = Map.copyOf(choices);

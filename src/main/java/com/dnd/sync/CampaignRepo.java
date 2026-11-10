@@ -265,6 +265,34 @@ public final class CampaignRepo {
         return resolve(Map.of());
     }
 
+    public static boolean hasIndexLock(Path folder) {
+        return isRepository(folder) && Files.exists(folder.resolve(".git/index.lock"),
+            java.nio.file.LinkOption.NOFOLLOW_LINKS);
+    }
+
+    /**
+     * Only after the user confirms that other Almerion and Git processes are stopped.
+     * A lock's age cannot tell us whether another process is still using it.
+     */
+    public Result recoverIndexLock() {
+        Path lock = folder.resolve(".git/index.lock");
+        try {
+            if (hasIndexLock(folder)) {
+                if (!Files.isRegularFile(lock, java.nio.file.LinkOption.NOFOLLOW_LINKS)) {
+                    return Result.of(Outcome.FAILED, "The index lock is not a regular file. It was not changed.");
+                }
+                Path backups = folder.resolve(".git/almerion-lock-backups");
+                Files.createDirectories(backups);
+                Path backup = backups.resolve("index.lock-" + java.util.UUID.randomUUID());
+                Files.move(lock, backup);
+            }
+        } catch (IOException e) {
+            return Result.of(Outcome.FAILED, "Could not back up the index lock. Close other Almerion and Git"
+                + " programs and check the campaign folder permissions, then try again.\n\n" + rootMessage(e));
+        }
+        return sync();
+    }
+
     /**
      * As {@link #sync()}, settling files both computers changed as {@code choices} says (path to
      * choice). If a conflicting file has no choice, nothing is merged and the conflicts are returned.

@@ -308,6 +308,12 @@ This is used when Firebase email isn't configured. It is created with placeholde
 - Staging failures show the deepest cause. Index locks are never removed based on age
   alone: another Git program may still own one. Failed staging aborts before merge/push,
   rather than silently omitting campaign files.
+  The sync manager and index-lock error offer **Review index lock...**. Recovery requires
+  confirmation that other Almerion/Git processes using this campaign have stopped. It runs
+  on the sync executor, moves the lock into `.git/almerion-lock-backups/`, then retries a
+  full sync. It does not delete the index or campaign files; a failed backup leaves the lock.
+- Sync-manager actions live in a wrapping FlowPane instead of a crowded dialog button bar,
+  so translated captions remain fully visible.
 - Running from source puts campaign repos (nested `.git`) under
   `src/main/resources/data/custom-campaigns`. Maven skips `.git`, but don't commit those folders
   to the app repo.

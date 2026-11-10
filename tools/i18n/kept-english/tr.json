@@ -270,6 +270,7 @@
  "getValue",
  "hitDice",
  "materialCost",
+ "statSchema",
  "{A}(missing)",
  "{A}: Arcana {B} / DC {C} - rewinds.",
  "↑ Forward",

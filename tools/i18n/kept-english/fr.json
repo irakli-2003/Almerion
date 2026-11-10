@@ -93,6 +93,7 @@
  "getType",
  "getValue",
  "setImagePath",
+ "statSchema",
  "text/event-stream; charset=utf-{0}",
  "text/html; charset=utf-{0}",
  "¶ FORMAT",

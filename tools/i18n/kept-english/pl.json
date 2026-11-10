@@ -110,6 +110,7 @@
  "setImagePath",
  "spellAttackBonus",
  "spellSaveDc",
+ "statSchema",
  "temporaryHitPoints",
  "valueGold",
  "{A} ft away.",

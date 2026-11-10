@@ -172,6 +172,7 @@
  "spellAttackBonus",
  "spellSaveDc",
  "spellcastingAbility",
+ "statSchema",
  "temporaryHitPoints",
  "text/event-stream; charset=utf-{0}",
  "text/html; charset=utf-{0}",

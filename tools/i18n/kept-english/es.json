@@ -243,6 +243,7 @@
  "rootPath",
  "self / touch",
  "setImagePath",
+ "statSchema",
  "text/plain; charset=utf-{0}",
  "userApplications/{A}",
  "userApplications/{A}/{B}",

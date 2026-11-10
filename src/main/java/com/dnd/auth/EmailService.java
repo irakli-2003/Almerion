@@ -73,10 +73,11 @@ public class EmailService {
         send(to, subject, body, null);
     }
 
-    /** The recovery sender is also the default report recipient; credentials are never included. */
+    /** Uses the configured sender or Almerion's support address; credentials are never included. */
     public String reportRecipient() {
-        if (config == null) return "";
-        return isBlank(config.fromAddress) ? (config.username == null ? "" : config.username) : config.fromAddress;
+        if (config == null) return SmtpConfig.SERVICE_ADDRESS;
+        return isBlank(config.fromAddress) ? (isBlank(config.username) ? SmtpConfig.SERVICE_ADDRESS : config.username)
+            : config.fromAddress;
     }
 
     public void send(String to, String subject, String body, byte[] screenshot) {

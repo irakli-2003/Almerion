@@ -260,6 +260,40 @@ To stop syncing a campaign, use **Sync with GitHub… → Stop Syncing**. **Unli
 GitHub sign-in from this computer. Your sign-in is stored only on this computer (encrypted for
 your Windows user) and is never put into a campaign folder.
 
+**Large music, images and other files:** files larger than **100 MiB** stay in your campaign
+folder but are excluded before Git staging/upload. A small checksummed manifest syncs instead.
+After syncing, Almerion lists files that were not uploaded, or are missing/different on this
+device. Choose **Ignore and Continue** to leave them alone, or **Copy Files to Folder…** to
+create one new transfer folder in a location you choose (Desktop by default). Keep that folder's
+contents and directory layout intact when moving it to the other device, then choose
+**Import Files from Folder…** there. Imports verify every file and never overwrite a different
+local copy: move that copy somewhere safe first. You can reopen this tool under
+**Sync with GitHub… → Files Not Synced through GitHub…**. No Google account is required.
+
+If an older app already committed oversized files and GitHub rejected the upload, use
+**Sync with GitHub… → Repair oversized history…**. After confirmation, Almerion fetches the
+published history, backs up the original local commits inside `.git`, and removes oversized
+blobs only from unpublished commits before retrying. It does not delete your campaign files,
+rewrite published commits or force-push. Keep the `.git` folder if you need that history backup.
+Update every device before syncing so an older version does not recommit large files.
+
+**Complete campaign transfer:** the campaign list has **Export Complete Campaign…** and
+**Import Complete Campaign…**. Export produces one `.almerion.zip` containing all files stored
+inside the campaign, including large audio, images, maps and campaign identity. Git history,
+GitHub connections and app-level account credentials are not included. Downloaded music caches
+are included; links that were never downloaded remain links.
+If the campaign's transfer manifest lists missing/different files, import their verified copies
+first so the complete export does not silently omit known assets.
+
+Import identifies the campaign by its ID, even after a folder rename. If it already exists,
+missing files are added and newer imported files replace older local files; local-only content
+and newer/equally dated local versions are kept. This is a **file-level merge**, not a merge of
+individual characters/items inside a JSON file. Replaced files are backed up under
+`campaign-import-backups` beside `custom-campaigns`. Files are verified before the existing
+campaign is changed. Keep device clocks correct because file modification times determine which
+version is newer. A same-named campaign with a different ID is imported into a separate folder.
+Existing campaign membership rules still apply; an unregistered import can be claimed below.
+
 If Git cannot stage a file, Almerion shows the underlying file/permission error instead of
 just "add command failed". An index lock is never deleted automatically: close other app or
 Git processes before retrying. A lock left by a crash should only be removed after confirming

@@ -52,7 +52,7 @@ public class EmailReportTest {
         SmtpConfig config = new SmtpConfig();
         config.username = "sender@example.com";
         assertEquals(config.username, new EmailService(config).reportRecipient());
-        assertEquals("", new EmailService(null).reportRecipient());
+        assertEquals(SmtpConfig.SERVICE_ADDRESS, new EmailService(null).reportRecipient());
     }
 
     private static MimeMessage read(byte[] draft) throws Exception {

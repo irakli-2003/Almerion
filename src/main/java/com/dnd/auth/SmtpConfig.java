@@ -20,9 +20,10 @@ import java.nio.file.Paths;
  * exactly what to fill in.</p>
  */
 public class SmtpConfig {
+    public static final String SERVICE_ADDRESS = "almerion.d20@gmail.com";
     public String host = "smtp.gmail.com";
     public int port = 587;
-    public String username = "";
+    public String username = SERVICE_ADDRESS;
     public String password = "";
     public String fromAddress = "";
     public boolean useTls = true;
@@ -35,7 +36,15 @@ public class SmtpConfig {
         try {
             if (Files.exists(FILE)) {
                 ObjectMapper mapper = JsonMappers.create();
-                return mapper.readValue(FILE.toFile(), SmtpConfig.class);
+                SmtpConfig config = mapper.readValue(FILE.toFile(), SmtpConfig.class);
+                if (config != null && migrateServiceAddress(config)) {
+                    try { mapper.writeValue(FILE.toFile(), config); }
+                    catch (IOException saveFailure) {
+                        java.util.logging.Logger.getLogger(SmtpConfig.class.getName()).log(java.util.logging.Level.WARNING,
+                            "Service address updated in memory, but SMTP configuration could not be saved", saveFailure);
+                    }
+                }
+                return config;
             }
             SmtpConfig template = new SmtpConfig();
             Files.createDirectories(FILE.getParent());
@@ -51,5 +60,18 @@ public class SmtpConfig {
 
     public static Path configPath() {
         return FILE;
+    }
+
+    static boolean migrateServiceAddress(SmtpConfig config) {
+        boolean changed = false;
+        if ("dndmanagerd20@gmail.com".equalsIgnoreCase(config.username)) {
+            config.username = SERVICE_ADDRESS;
+            changed = true;
+        }
+        if ("dndmanagerd20@gmail.com".equalsIgnoreCase(config.fromAddress)) {
+            config.fromAddress = SERVICE_ADDRESS;
+            changed = true;
+        }
+        return changed;
     }
 }

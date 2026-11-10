@@ -120,6 +120,65 @@ public class CampaignRepoTest {
         assertFalse(Files.exists(first.resolve("storyline/chapter1.md")));
     }
 
+    @Test public void oversizedFilesStayLocalAndRecipientGetsTransferNotice() throws Exception {
+        Path first = campaign("first");
+        ManualFilesTest.large(first.resolve("music").resolve("theme.mp3"), ManualFiles.MAX_GIT_BYTES + 1);
+        var result = repo(first).connect(remote);
+        assertEquals(result.message(), CampaignRepo.Outcome.SYNCED, result.outcome());
+        Path second = cloneOf("second");
+        assertFalse(Files.exists(second.resolve("music").resolve("theme.mp3")));
+        assertEquals(1, ManualFiles.inspect(second).missing().size());
+        assertEquals(1, ManualFiles.inspect(first).available().size());
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(second).sync().outcome());
+        assertEquals(ManualFiles.read(first), ManualFiles.read(second));
+    }
+
+    @Test public void rejectedOldHistoryCanBeRepairedWithoutForcePushOrLosingFiles() throws Exception {
+        Path first = campaign("first");
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(first).connect(remote).outcome());
+        org.eclipse.jgit.lib.ObjectId published;
+        try (Git git = Git.open(first.toFile())) {
+            published = git.getRepository().resolve("HEAD");
+            ManualFilesTest.large(first.resolve("theme.mp3"), ManualFiles.MAX_GIT_BYTES + 1);
+            git.add().addFilepattern(".").call();
+            git.commit().setMessage("Old app committed a large file").call();
+        }
+
+        var blocked = repo(first).sync();
+        assertEquals(CampaignRepo.Outcome.HISTORY_REPAIR_REQUIRED, blocked.outcome());
+        assertTrue(blocked.message(), blocked.message().contains("Repair oversized history"));
+        try (Git git = Git.open(new File(java.net.URI.create(remote)))) {
+            assertEquals(published, git.getRepository().resolve("refs/heads/main"));
+        }
+        var repaired = repo(first).repairOversizedHistory();
+        assertEquals(repaired.message(), CampaignRepo.Outcome.SYNCED, repaired.outcome());
+        assertTrue(repaired.message().contains("refs/almerion/large-file-backups/"));
+        assertEquals(ManualFiles.MAX_GIT_BYTES + 1, Files.size(first.resolve("theme.mp3")));
+        Path second = cloneOf("second");
+        assertFalse(Files.exists(second.resolve("theme.mp3")));
+        assertEquals(1, ManualFiles.inspect(second).missing().size());
+        try (Git git = Git.open(second.toFile())) {
+            assertTrue(git.getRepository().getRefDatabase().getRefsByPrefix("refs/almerion/").isEmpty());
+        }
+    }
+
+    @Test
+    public void largeFilesAddedOnDifferentDevicesMergeTheirManifestsWithoutDroppingEither() throws Exception {
+        Path first = campaign("first");
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(first).connect(remote).outcome());
+        Path second = cloneOf("second");
+        ManualFilesTest.large(first.resolve("first.mp3"), ManualFiles.MAX_GIT_BYTES + 1);
+        ManualFilesTest.large(second.resolve("second.mp3"), ManualFiles.MAX_GIT_BYTES + 1);
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(first).sync().outcome());
+        var result = repo(second).sync();
+        assertEquals(result.message(), CampaignRepo.Outcome.SYNCED, result.outcome());
+        assertEquals(2, ManualFiles.read(second).size());
+        assertEquals(1, ManualFiles.inspect(second).missing().size());
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(first).sync().outcome());
+        assertEquals(ManualFiles.read(second), ManualFiles.read(first));
+        assertEquals(1, ManualFiles.inspect(first).missing().size());
+    }
+
     @Test
     public void pushWhileRemoteIsAheadIsReportedNotForced() throws Exception {
         Path first = campaign("first");
@@ -133,6 +192,24 @@ public class CampaignRepoTest {
         assertEquals(CampaignRepo.Outcome.SYNCED, repo(first).sync().outcome());
         assertEquals("[1]", read(first, "world/npcs.json"));
         assertEquals("[]", read(first, "world/places.json"));
+    }
+
+    @Test
+    public void staleLocalLargeFileCannotUndoRemoteManifestUpdate() throws Exception {
+        Path first = campaign("first");
+        ManualFilesTest.large(first.resolve("theme.mp3"), ManualFiles.MAX_GIT_BYTES + 1);
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(first).connect(remote).outcome());
+        Path second = cloneOf("second");
+        Path bundle = ManualFiles.exportFiles(first, temp.newFolder("transfer").toPath());
+        assertEquals(1, ManualFiles.importFiles(second, bundle));
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(second).sync().outcome());
+        try (var file = new java.io.RandomAccessFile(first.resolve("theme.mp3").toFile(), "rw")) { file.write(42); }
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(first).sync().outcome());
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(second).sync().outcome());
+        assertEquals(1, ManualFiles.inspect(second).missing().size());
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(second).sync().outcome());
+        assertEquals(ManualFiles.read(first), ManualFiles.read(second));
+        assertEquals(1, ManualFiles.inspect(second).missing().size());
     }
 
     @Test

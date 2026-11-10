@@ -219,15 +219,18 @@ Defaults live in `src/main/resources/cloud.properties`. A per-machine override g
 
 ### Email (`data\auth\smtp-config.json`)
 
-This is used when Firebase email isn't configured. It is created with placeholders on first run:
+This is used when Firebase email isn't configured. It is created disabled on first run,
+with `almerion.d20@gmail.com` as the default service username and no password.
+Older configurations using the previous service address are migrated without changing
+credentials or custom provider addresses. To configure SMTP:
 
 ```json
 {
   "host": "smtp.gmail.com",
   "port": 587,
-  "username": "you@gmail.com",
+  "username": "almerion.d20@gmail.com",
   "password": "an-app-password",
-  "fromAddress": "you@gmail.com",
+  "fromAddress": "almerion.d20@gmail.com",
   "useTls": true,
   "enabled": true
 }
@@ -350,6 +353,26 @@ This is used when Firebase email isn't configured. It is created with placeholde
   full sync. It does not delete the index or campaign files; a failed backup leaves the lock.
 - Sync-manager actions live in a wrapping FlowPane instead of a crowded dialog button bar,
   so translated captions remain fully visible.
+- `ManualFiles.prepare` runs before every staging pass. Files strictly larger than
+  `100 * 1024 * 1024` bytes are removed from the index (cached only) and excluded in a managed
+  `.git/info/exclude` section. Their relative paths, sizes and SHA-256 values travel in
+  `.almerion-manual-files.json`. Three-way manifest merges use paths rather than JSON lines.
+  Device-local hashes in `.git/almerion-manual-local.json` distinguish a real local edit from
+  an unchanged stale asset when another device updates the manifest. Missing entries survive.
+  Transfer-folder copies and imports verify checksums, reject traversal/link escapes and refuse
+  conflicting local files. Temporary downloads/imports (`*.part`, `*.tmp`) are excluded.
+- `LargeFileHistory` checks every unpublished commit tree before any push, including deleted
+  files and merge parents. Explicit repair fetches first, saves the old HEAD under
+  `refs/almerion/large-file-backups/<uuid>`, rebuilds only unpublished commits and updates the
+  branch/index without checking out or deleting working files. The explicit current-branch
+  push refspec does not publish backup refs and never uses force.
+- `CampaignArchive` exports a versioned ZIP with per-file checksums, sizes and modification
+  times, all campaign content (no size exclusion), and the stable `campaign-meta.json` ID.
+  It excludes `.git`, not user assets. Imports validate/extract before applying anything,
+  match existing campaigns by ID, preserve local-only/newer files and keep replaced files in
+  `data/campaign-import-backups`. This is a file merge, not a JSON/entity merge.
+  Archive and manual transfers run on `CampaignSyncService.localFiles`, serialized with sync.
+  Notifications use one app-level listener and avoid repeating unchanged reports during a run.
 - Running from source puts campaign repos (nested `.git`) under
   `src/main/resources/data/custom-campaigns`. Maven skips `.git`, but don't commit those folders
   to the app repo.

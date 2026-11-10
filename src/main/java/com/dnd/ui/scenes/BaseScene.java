@@ -240,6 +240,11 @@ public abstract class BaseScene {
     }
 
     protected static String friendlyError(Throwable error) {
+        while ((error instanceof java.util.concurrent.CompletionException
+                || error instanceof java.util.concurrent.ExecutionException
+                || error instanceof java.io.UncheckedIOException) && error.getCause() != null) {
+            error = error.getCause();
+        }
         if (error instanceof com.dnd.cloud.CloudStore.CloudException ce && ce.isOffline()) {
             return "Can't reach the online campaign directory. Check your internet connection and try again.";
         }

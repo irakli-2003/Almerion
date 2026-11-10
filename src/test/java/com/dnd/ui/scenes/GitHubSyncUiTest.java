@@ -32,6 +32,54 @@ public class GitHubSyncUiTest {
     }
 
     @Test
+    public void manualTransferActionsFitAndIgnoreClosesWithoutCopyingInBothLanguages() throws Exception {
+        CountDownLatch done = new CountDownLatch(1);
+        AtomicReference<Throwable> error = new AtomicReference<>();
+        Platform.runLater(() -> {
+            try {
+                Platform.setImplicitExit(false);
+                UiTranslator translator = UiTranslator.get();
+                if (translator == null) translator = UiTranslator.install(TranslationService.createDefault(), null);
+                String previous = translator.getLanguage().code();
+                try {
+                    for (String language : new String[] {"en", "ka"}) {
+                        translator.setLanguage(language);
+                        for (boolean missing : new boolean[] {false, true}) {
+                            var entry = new com.dnd.sync.ManualFiles.Entry("music/theme.mp3",
+                                com.dnd.sync.ManualFiles.MAX_GIT_BYTES + 1, "0".repeat(64));
+                            var report = new com.dnd.sync.ManualFiles.Report(
+                                missing ? java.util.List.of() : java.util.List.of(entry),
+                                missing ? java.util.List.of(entry) : java.util.List.of());
+                            var stage = ManualFilesUi.window(new BaseScene(null) {
+                                @Override public javafx.scene.Scene build() { throw new UnsupportedOperationException(); }
+                            }, java.nio.file.Path.of("."), report);
+                            try {
+                                stage.show();
+                                stage.getScene().getRoot().applyCss();
+                                stage.getScene().getRoot().layout();
+                                Button export = (Button) stage.getScene().lookup("#manual-files-export");
+                                assertEquals(missing, export.isDisable());
+                                FlowPane actions = (FlowPane) export.getParent();
+                                for (var node : actions.getChildren()) {
+                                    Button button = (Button) node;
+                                    assertTrue(button.getText(), button.getWidth() + 1 >= button.prefWidth(-1));
+                                    assertTrue(button.getBoundsInParent().getMaxX() <= actions.getWidth() + 1);
+                                    assertTrue(button.getBoundsInParent().getMaxY() <= actions.getHeight() + 1);
+                                }
+                                ((Button) stage.getScene().lookup("#manual-files-ignore")).fire();
+                                assertFalse(stage.isShowing());
+                            } finally { stage.close(); }
+                        }
+                    }
+                } finally { translator.setLanguage(previous); }
+            } catch (Throwable t) { error.set(t); }
+            finally { done.countDown(); }
+        });
+        assertTrue(done.await(30, TimeUnit.SECONDS));
+        if (error.get() != null) throw new AssertionError(error.get());
+    }
+
+    @Test
     public void managementActionsWrapWithoutClippingInEnglishAndGeorgian() throws Exception {
         CountDownLatch done = new CountDownLatch(1);
         AtomicReference<Throwable> error = new AtomicReference<>();
@@ -58,7 +106,7 @@ public class GitHubSyncUiTest {
                                 pane.layout();
                                 VBox content = (VBox) pane.getContent();
                                 FlowPane actions = (FlowPane) content.getChildren().getLast();
-                                assertEquals(extras ? 4 : 2, actions.getChildren().size());
+                                assertEquals(extras ? 6 : 4, actions.getChildren().size());
                                 for (var node : actions.getChildren()) {
                                     Button button = (Button) node;
                                     assertTrue("Full caption must fit: " + button.getText(),

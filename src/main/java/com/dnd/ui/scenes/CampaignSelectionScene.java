@@ -76,7 +76,7 @@ public class CampaignSelectionScene extends BaseScene {
                 uiSession.getRouter().goTo(SceneType.DM_MENU);
             };
             Runnable open = () -> GitHubSyncUi.reviewSetAsideIfAny(this, selected.local().folder(),
-                selected.local().path(), enter);
+                selected.local().path(), () -> ManualFilesUi.review(this, selected.local().path(), false, enter));
             if (!syncedFolders.contains(selected.local().folder())) {
                 open.run();
                 return;
@@ -92,7 +92,9 @@ public class CampaignSelectionScene extends BaseScene {
                             result, open);
                         return;
                     }
-                    open.run();
+                    if (result.outcome() != CampaignRepo.Outcome.SYNCED) {
+                        GitHubSyncUi.showResult(this, selected.local().folder(), selected.local().path(), result, open);
+                    } else open.run();
                 }));
         });
         mine.setOnMouseClicked(e -> {
@@ -124,8 +126,22 @@ public class CampaignSelectionScene extends BaseScene {
             () -> GitHubSyncUi.downloadCampaign(this, uiSession.getStorage(), reload));
         FlowPane githubRow = new FlowPane(12, 8, syncBtn, getBtn, GitHubSyncUi.accountBar(this, reload));
         githubRow.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        Button exportBtn = btn("Export Complete Campaign...", () -> { });
+        exportBtn.setOnAction(e -> {
+            Entry selected = mine.getSelectionModel().getSelectedItem();
+            if (selected == null) {
+                showInfo("Pick a campaign", "Select one of your campaigns in the list first.");
+                return;
+            }
+            CampaignArchiveUi.exportCampaign(this, selected.local().path(), exportBtn, status);
+        });
+        Button importBtn = btn("Import Complete Campaign...", () -> { });
+        importBtn.setOnAction(e -> CampaignArchiveUi.importCampaign(this, uiSession.getStorage(), user(),
+            importBtn, status, reload));
+        root.disableProperty().bind(exportBtn.disableProperty().or(importBtn.disableProperty()));
+        FlowPane transferRow = new FlowPane(12, 8, exportBtn, importBtn);
 
-        content.getChildren().addAll(status, mine, new HBox(12, openBtn, createBtn, deleteBtn), githubRow,
+        content.getChildren().addAll(status, mine, new HBox(12, openBtn, createBtn, deleteBtn), githubRow, transferRow,
             unclaimedBox, elsewhereBox);
         ScrollPane scroll = new ScrollPane(content);
         scroll.setFitToWidth(true);

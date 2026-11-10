@@ -21,6 +21,7 @@ public class UiSession {
         this.session = session;
         this.storage = storage;
         this.router = new SceneRouter(this, stage);
+        com.dnd.ui.scenes.ManualFilesUi.install(this, stage);
     }
 
     public CliSession getSession() { return session; }

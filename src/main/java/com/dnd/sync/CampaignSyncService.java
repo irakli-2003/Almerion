@@ -90,6 +90,18 @@ public final class CampaignSyncService {
         return submit(folder, CampaignRepo::recoverIndexLock);
     }
 
+    public CompletableFuture<CampaignRepo.Result> repairOversizedHistory(Path folder) {
+        return submit(folder, CampaignRepo::repairOversizedHistory);
+    }
+
+    /** File transfers share the sync queue, so Git cannot scan a campaign halfway through an import. */
+    public <T> CompletableFuture<T> localFiles(java.util.concurrent.Callable<T> operation) {
+        return CompletableFuture.supplyAsync(() -> {
+            try { return operation.call(); }
+            catch (Exception e) { throw new java.util.concurrent.CompletionException(e); }
+        }, executor);
+    }
+
     /** Full sync that settles files both computers changed as the GM chose (path to choice). */
     public CompletableFuture<CampaignRepo.Result> resolve(Path folder, Map<String, CampaignRepo.Choice> choices) {
         Map<String, CampaignRepo.Choice> copy = Map.copyOf(choices);
@@ -202,7 +214,7 @@ public final class CampaignSyncService {
             case CONFLICT -> new Status(State.CONFLICT, result.message());
             case REMOTE_AHEAD -> new Status(State.SYNCED, result.message());
             case OFFLINE -> new Status(State.OFFLINE, result.message());
-            case AUTH_FAILED, FAILED -> new Status(State.ERROR, result.message());
+            case AUTH_FAILED, HISTORY_REPAIR_REQUIRED, FAILED -> new Status(State.ERROR, result.message());
         };
     }
 

@@ -126,7 +126,7 @@ public final class CampaignRepo {
         Files.deleteIfExists(source);
     }
 
-    public enum Outcome { SYNCED, CONFLICT, REMOTE_AHEAD, OFFLINE, AUTH_FAILED, FAILED }
+    public enum Outcome { SYNCED, CONFLICT, REMOTE_AHEAD, OFFLINE, AUTH_FAILED, HISTORY_REPAIR_REQUIRED, FAILED }
 
     /** What to keep for a file both computers changed. */
     public enum Choice { MINE, GITHUB, BOTH }
@@ -293,6 +293,26 @@ public final class CampaignRepo {
         return sync();
     }
 
+    /** User-confirmed repair of earlier rejected uploads; published commits and working files stay intact. */
+    public Result repairOversizedHistory() {
+        try (Git git = Git.open(folder.toFile())) {
+            if (hasIndexLock(folder)) return Result.of(Outcome.FAILED,
+                "Git is locked. Close other Git operations before repairing campaign history.");
+            configure(git);
+            fetch(git); // Establish published history before deciding which commits may be rewritten.
+            ensureGitignore();
+            commitLocal(git);
+            String backup = LargeFileHistory.repair(git.getRepository());
+            Result result = mergeAndPush(git, Map.of());
+            if (backup == null) return result;
+            return new Result(result.outcome(), result.conflictCopies(), result.conflicts(),
+                "Original local history is backed up at " + backup + ". Campaign files were not deleted.\n\n"
+                    + result.message());
+        } catch (Exception e) {
+            return failure(e);
+        }
+    }
+
     /**
      * As {@link #sync()}, settling files both computers changed as {@code choices} says (path to
      * choice). If a conflicting file has no choice, nothing is merged and the conflicts are returned.
@@ -340,7 +360,8 @@ public final class CampaignRepo {
         if (!Files.exists(ignore)) Files.writeString(ignore, GITIGNORE, StandardCharsets.UTF_8);
     }
 
-    private boolean commitLocal(Git git) throws GitAPIException {
+    private boolean commitLocal(Git git) throws GitAPIException, IOException {
+        ManualFiles.prepare(folder, git);
         org.eclipse.jgit.api.Status status = git.status().call();
         if (status.isClean()) return false;
         git.add().addFilepattern(".").call();
@@ -408,25 +429,48 @@ public final class CampaignRepo {
                 update.update();
                 git.reset().setMode(org.eclipse.jgit.api.ResetCommand.ResetType.HARD).call();
             } else {
+                boolean hasManualManifest = Files.exists(folder.resolve(ManualFiles.MANIFEST))
+                    || read(repo, remote.getObjectId(), ManualFiles.MANIFEST) != null;
+                byte[] manualMerge = hasManualManifest
+                    ? mergeManualManifest(repo, head, remote.getObjectId(), choices.get(ManualFiles.MANIFEST)) : null;
                 MergeResult result = git.merge().include(remote).setStrategy(MergeStrategy.RECURSIVE)
                     .setCommit(true).setMessage("Merge campaign changes from GitHub").call();
                 switch (result.getMergeStatus()) {
                     case CONFLICTING -> {
                         Set<String> conflicts = new TreeSet<>(result.getConflicts().keySet());
-                        if (!choices.keySet().containsAll(conflicts)) {
-                            List<Conflict> described = describe(repo, head, remote.getObjectId(), conflicts);
+                        Map<String, Choice> effective = new java.util.HashMap<>(choices);
+                        if (conflicts.contains(ManualFiles.MANIFEST) && manualMerge != null) {
+                            effective.putIfAbsent(ManualFiles.MANIFEST, Choice.MINE);
+                        }
+                        if (!effective.keySet().containsAll(conflicts)) {
+                            Set<String> undecided = new TreeSet<>(conflicts);
+                            undecided.removeAll(effective.keySet());
+                            List<Conflict> described = describe(repo, head, remote.getObjectId(), undecided);
                             // Undo the half-done merge: this computer's files and commits stay as they were.
                             git.reset().setMode(org.eclipse.jgit.api.ResetCommand.ResetType.HARD)
                                 .setRef(head.name()).call();
                             return new Result(Outcome.CONFLICT, List.of(), described, conflictMessage(described.size()));
                         }
-                        merged = settle(git, head, remote.getObjectId(), conflicts, choices);
+                        merged = settle(git, head, remote.getObjectId(), conflicts, effective);
                     }
                     case FAILED, ABORTED, NOT_SUPPORTED, CHECKOUT_CONFLICT -> {
                         return Result.of(Outcome.FAILED, "Couldn't merge the changes from GitHub ("
                             + result.getMergeStatus() + "). Your files on this computer are unchanged.");
                     }
                     default -> { }
+                }
+                if (hasManualManifest) {
+                    if (manualMerge == null) {
+                        List<Conflict> described = describe(repo, head, remote.getObjectId(), Set.of(ManualFiles.MANIFEST));
+                        git.reset().setMode(org.eclipse.jgit.api.ResetCommand.ResetType.HARD).setRef(head.name()).call();
+                        return new Result(Outcome.CONFLICT, List.of(), described, conflictMessage(described.size()));
+                    }
+                    Path manifest = folder.resolve(ManualFiles.MANIFEST);
+                    if (!Files.exists(manifest) || !Arrays.equals(Files.readAllBytes(manifest), manualMerge)) {
+                        Files.write(manifest, manualMerge);
+                        git.add().addFilepattern(ManualFiles.MANIFEST).call();
+                        commit(git, "Merge manual-transfer file metadata");
+                    }
                 }
             }
         }
@@ -437,6 +481,12 @@ public final class CampaignRepo {
     static String conflictMessage(int files) {
         return "Files changed both on this computer and on GitHub since they were last in step: " + files
             + ". Nothing was overwritten: choose which version to keep.";
+    }
+
+    private byte[] mergeManualManifest(Repository repo, ObjectId ours, ObjectId theirs, Choice choice) throws IOException {
+        ObjectId base = mergeBase(repo, ours, theirs);
+        return ManualFiles.merge(folder, base == null ? null : read(repo, base, ManualFiles.MANIFEST),
+            read(repo, ours, ManualFiles.MANIFEST), read(repo, theirs, ManualFiles.MANIFEST), choice);
     }
 
     /** Writes the chosen version of each conflicting file and commits the merge. */
@@ -450,6 +500,7 @@ public final class CampaignRepo {
             byte[] remote = read(repo, theirs, path);
             Choice choice = choices.get(path);
             byte[] keep = choice == Choice.GITHUB ? remote : mine;
+            if (path.equals(ManualFiles.MANIFEST)) keep = mergeManualManifest(repo, ours, theirs, choice);
             Path file = folder.resolve(path);
             if (keep != null) {
                 Files.createDirectories(file.getParent());
@@ -459,7 +510,7 @@ public final class CampaignRepo {
                 Files.deleteIfExists(file);
                 git.rm().addFilepattern(path).call();
             }
-            if (choice == Choice.BOTH && remote != null && !Arrays.equals(mine, remote)) {
+            if (choice == Choice.BOTH && !path.equals(ManualFiles.MANIFEST) && remote != null && !Arrays.equals(mine, remote)) {
                 String copy = path + ".remote-" + stamp;
                 Path copyFile = folder.resolve(copy);
                 Files.createDirectories(copyFile.getParent());
@@ -535,6 +586,13 @@ public final class CampaignRepo {
     private Result push(Git git) throws IOException, GitAPIException {
         Repository repo = git.getRepository();
         if (repo.resolve(Constants.HEAD) == null) return Result.of(Outcome.SYNCED, "Nothing to sync yet.");
+        List<String> oversized = LargeFileHistory.oversized(repo);
+        if (!oversized.isEmpty()) {
+            String message = "Upload stopped before sending file data to GitHub: oversized files exist in"
+                + " unpublished campaign commits. Use Repair oversized history in the sync settings."
+                + " Your files are unchanged.\n\n" + String.join("\n", oversized);
+            return Result.of(Outcome.HISTORY_REPAIR_REQUIRED, message);
+        }
         String ref = Constants.R_HEADS + repo.getBranch();
         Iterable<PushResult> results = git.push().setRemote(REMOTE).setRefSpecs(new RefSpec(ref + ":" + ref))
             .setCredentialsProvider(credentials).setTimeout(TIMEOUT_SECONDS).call();

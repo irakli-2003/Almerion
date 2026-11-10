@@ -205,6 +205,10 @@ final class GitHubSyncUi {
             reviewSetAside(owner, folderName, folder, copies, changed);
         } else if (choice == RECOVER) {
             recoverIndexLock(owner, folderName, folder, changed);
+        } else if (choice == MANUAL_FILES) {
+            ManualFilesUi.review(owner, folder, true, changed);
+        } else if (choice == REPAIR_LARGE) {
+            repairOversizedHistory(owner, folderName, folder, changed);
         } else if (choice == SYNC_NOW) {
             CampaignSyncService.shared().syncNow(folder).thenAccept(result -> Platform.runLater(() ->
                 showResult(owner, folderName, folder, result, changed)));
@@ -218,6 +222,8 @@ final class GitHubSyncUi {
     private static final ButtonType STOP = new ButtonType("Stop Syncing");
     private static final ButtonType REVIEW = new ButtonType("Put-Aside Versions");
     private static final ButtonType RECOVER = new ButtonType("Review index lock...");
+    private static final ButtonType MANUAL_FILES = new ButtonType("Files Not Synced through GitHub...");
+    private static final ButtonType REPAIR_LARGE = new ButtonType("Repair oversized history...");
 
     static Alert managementDialog(BaseScene owner, String repo, String state, int copies, boolean locked) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION, "", ButtonType.CLOSE);
@@ -226,6 +232,8 @@ final class GitHubSyncUi {
         managementAction(owner, alert, actions, SYNC_NOW, SYNC_NOW.getText());
         if (copies > 0) managementAction(owner, alert, actions, REVIEW, "Put-Aside Versions (" + copies + ")");
         if (locked) managementAction(owner, alert, actions, RECOVER, RECOVER.getText());
+        managementAction(owner, alert, actions, MANUAL_FILES, MANUAL_FILES.getText());
+        managementAction(owner, alert, actions, REPAIR_LARGE, REPAIR_LARGE.getText());
         managementAction(owner, alert, actions, STOP, STOP.getText());
         Label repoLabel = UiTranslator.skip(owner.sectionLabel(repo));
         repoLabel.setWrapText(true);
@@ -246,6 +254,28 @@ final class GitHubSyncUi {
             alert.close();
         });
         actions.getChildren().add(button);
+    }
+
+    private static void repairOversizedHistory(BaseScene owner, String folderName, Path folder, Runnable changed) {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+            "Use this if earlier uploads were rejected because files were too large. Almerion will fetch GitHub's"
+                + " latest history, back up your original local commits inside this campaign's .git folder,"
+                + " and remove files larger than 100 MiB only from unpublished commits."
+                + "\n\nYour campaign files stay on this device. Published history is not rewritten or force-pushed."
+                + " Close other programs using this campaign before continuing.",
+            ButtonType.OK, ButtonType.CANCEL);
+        confirm.setHeaderText("Back up and repair unpublished oversized files?");
+        owner.styleDialog(confirm);
+        if (confirm.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) {
+            changed.run();
+            return;
+        }
+        CampaignSyncService.shared().repairOversizedHistory(folder).thenAccept(result -> Platform.runLater(() -> {
+            if (result.outcome() == CampaignRepo.Outcome.SYNCED) {
+                owner.showInfo("Campaign history repair", result.message());
+                ManualFilesUi.review(owner, folder, false, changed);
+            } else showResult(owner, folderName, folder, result, changed);
+        }));
     }
 
     private static void recoverIndexLock(BaseScene owner, String folderName, Path folder, Runnable changed) {
@@ -369,7 +399,7 @@ final class GitHubSyncUi {
                             owner.showInfo("Campaign downloaded", "\"" + name + "\" is now on this computer and"
                                 + " syncs with GitHub automatically. If it isn't in your list yet, claim it below"
                                 + " or ask its author to add you as a Game Master.");
-                            changed.run();
+                            ManualFilesUi.review(owner, storage.resolveCustomCampaignPath(name), false, changed);
                         } else {
                             status.setText(result.message());
                             download.setDisable(false);
@@ -434,7 +464,15 @@ final class GitHubSyncUi {
                 return;
             }
             default -> {
-                if (result.outcome() == CampaignRepo.Outcome.FAILED && CampaignRepo.hasIndexLock(folder)) {
+                if (result.outcome() == CampaignRepo.Outcome.HISTORY_REPAIR_REQUIRED) {
+                    Alert alert = new Alert(Alert.AlertType.WARNING, result.message(), REPAIR_LARGE, ButtonType.CLOSE);
+                    alert.setHeaderText("Oversized files in earlier campaign commits");
+                    owner.styleDialog(alert);
+                    if (alert.showAndWait().orElse(ButtonType.CLOSE) == REPAIR_LARGE) {
+                        repairOversizedHistory(owner, folderName, folder, after);
+                        return;
+                    }
+                } else if (result.outcome() == CampaignRepo.Outcome.FAILED && CampaignRepo.hasIndexLock(folder)) {
                     Alert alert = new Alert(Alert.AlertType.WARNING, result.message(), RECOVER, ButtonType.CLOSE);
                     alert.setHeaderText("Sync problem");
                     owner.styleDialog(alert);
@@ -447,7 +485,7 @@ final class GitHubSyncUi {
                 }
             }
         }
-        after.run();
+        ManualFilesUi.review(owner, folder, false, after);
     }
 
     private static final java.time.format.DateTimeFormatter WHEN =

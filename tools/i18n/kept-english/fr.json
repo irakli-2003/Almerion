@@ -5,6 +5,7 @@
  "*.eml",
  "*.tmp",
  "*.webp",
+ "*.zip",
  "+refs/heads/*:refs/remotes/{A}/*",
  "+{A} Rage",
  "10 {A} DEX",

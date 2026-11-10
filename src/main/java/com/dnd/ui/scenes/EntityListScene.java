@@ -323,9 +323,8 @@ public class EntityListScene extends BaseScene {
         if (stats == null) {
             return null;
         }
-        return "STR " + stats.getStrength() + " DEX " + stats.getDexterity()
-            + " CON " + stats.getConstitution() + " INT " + stats.getIntelligence()
-            + " WIS " + stats.getWisdom() + " CHA " + stats.getCharisma();
+        return stats.schema().getAbilities().stream().map(a -> a.abbreviation() + " " + stats.score(a.id()))
+            .collect(java.util.stream.Collectors.joining(" "));
     }
 
     private String lookupName(String id, Map<String, String> names) {

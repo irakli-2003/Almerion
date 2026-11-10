@@ -152,6 +152,8 @@ public final class EntityForm {
         this.depth = depth;
         this.ownerType = type;
         for (Prop prop : properties(type, skip)) {
+            if (type == com.dnd.model.character.SheetDetails.class
+                    && Set.of("copper", "silver", "electrum", "gold", "platinum").contains(prop.name())) continue;
             addEditor(prop, value);
         }
     }
@@ -520,19 +522,21 @@ public final class EntityForm {
         if (firstPicker != null) firstPicker.fire();
     }
 
-    private static final List<String> ABILITIES =
-        List.of("strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma");
-
     private void addCoreStatsEditor(Prop prop, Object current) {
-        Object stats = current != null ? current : instantiate(prop.type());
+        var stats = current instanceof com.dnd.model.character.stats.CoreStats existing
+            ? existing : new com.dnd.model.character.stats.CoreStats();
+        if (catalogs.containsKey("_statSchema")) {
+            stats.configure((com.dnd.model.character.stats.StatSchema) catalogs.get("_statSchema").getFirst().value());
+        }
         GridPane grid = statGrid();
         Map<String, TextField> fields = new LinkedHashMap<>();
 
-        for (int i = 0; i < ABILITIES.size(); i++) {
-            String ability = ABILITIES.get(i);
+        var definitions = stats.schema().getAbilities();
+        for (int i = 0; i < definitions.size(); i++) {
+            String ability = definitions.get(i).id();
             // A freshly constructed stat block holds zeros, which the model rejects on save
             // (scores are 1-30), so unset scores start at the standard average instead.
-            int score = intProperty(stats, ability, 10);
+            int score = stats.score(ability);
             if (score < 1) {
                 score = 10;
             }
@@ -543,7 +547,7 @@ public final class EntityForm {
             modifier.setStyle(HINT_STYLE);
             field.textProperty().addListener((obs, old, text) -> modifier.setText(modifierText(parseIntOr(text, 10))));
 
-            Label caption = new Label(ability.substring(0, 3).toUpperCase(Locale.ROOT));
+            Label caption = new Label(definitions.get(i).abbreviation());
             caption.setStyle(LABEL_STYLE);
             VBox cell = new VBox(2, caption, new HBox(6, field, modifier));
             ((HBox) cell.getChildren().get(1)).setAlignment(Pos.CENTER_LEFT);
@@ -552,7 +556,7 @@ public final class EntityForm {
         }
 
         node.getChildren().add(group(prop.name(), grid));
-        Object statsTarget = stats;
+        var statsTarget = stats;
         bindings.add(new Binding(humanize(prop.name())) {
             @Override
             void write(Object target) throws Exception {
@@ -561,13 +565,7 @@ public final class EntityForm {
                 }
                 for (Map.Entry<String, TextField> entry : fields.entrySet()) {
                     String ability = entry.getKey();
-                    Method setter = statsTarget.getClass().getMethod(
-                        "set" + Character.toUpperCase(ability.charAt(0)) + ability.substring(1), int.class);
-                    try {
-                        setter.invoke(statsTarget, parseIntOr(entry.getValue().getText(), 10));
-                    } catch (InvocationTargetException e) {
-                        throw new IllegalArgumentException(ability + ": " + rootMessage(e), e);
-                    }
+                    statsTarget.score(ability, Integer.parseInt(entry.getValue().getText().strip()));
                 }
                 prop.setter().invoke(target, statsTarget);
             }
@@ -578,20 +576,24 @@ public final class EntityForm {
     private void addSkillsEditor(Prop prop, Object current) {
         com.dnd.model.character.stats.Skills skills = current instanceof com.dnd.model.character.stats.Skills sk
             ? sk : new com.dnd.model.character.stats.Skills();
+        if (catalogs.containsKey("_statSchema")) {
+            skills.configure((com.dnd.model.character.stats.StatSchema) catalogs.get("_statSchema").getFirst().value());
+        }
         GridPane grid = statGrid();
-        Map<com.dnd.model.character.stats.Skills.Def, TextField> fields = new LinkedHashMap<>();
+        Map<com.dnd.model.character.stats.StatSchema.Skill, TextField> fields = new LinkedHashMap<>();
         int columns = 3;
-        int rowsPerColumn = (com.dnd.model.character.stats.Skills.ALL.size() + columns - 1) / columns;
-        for (int i = 0; i < com.dnd.model.character.stats.Skills.ALL.size(); i++) {
-            com.dnd.model.character.stats.Skills.Def def = com.dnd.model.character.stats.Skills.ALL.get(i);
-            int value = skills.get(def.key());
+        var definitions = skills.schema().getSkills();
+        int rowsPerColumn = Math.max(1, (definitions.size() + columns - 1) / columns);
+        for (int i = 0; i < definitions.size(); i++) {
+            var def = definitions.get(i);
+            int value = skills.get(def.id());
             TextField field = new TextField((value > 0 ? "+" : "") + value);
             field.getStyleClass().add("dnd-text-field");
             field.setPrefWidth(56);
-            Label caption = new Label(def.label());
+            Label caption = new Label(def.name());
             caption.setStyle(LABEL_STYLE);
             caption.setMinWidth(120);
-            Label ability = new Label(def.ability().substring(0, 3).toUpperCase(Locale.ROOT));
+            Label ability = new Label(skills.schema().ability(def.ability()).abbreviation());
             ability.setStyle(HINT_STYLE);
             HBox cell = new HBox(6, caption, field, ability);
             cell.setAlignment(Pos.CENTER_LEFT);
@@ -602,17 +604,17 @@ public final class EntityForm {
         bindings.add(new Binding(humanize(prop.name())) {
             @Override
             void write(Object target) throws Exception {
-                com.dnd.model.character.stats.Skills result = new com.dnd.model.character.stats.Skills();
-                for (Map.Entry<com.dnd.model.character.stats.Skills.Def, TextField> entry : fields.entrySet()) {
+                var result = skills;
+                for (Map.Entry<com.dnd.model.character.stats.StatSchema.Skill, TextField> entry : fields.entrySet()) {
                     String text = entry.getValue().getText() == null ? "" : entry.getValue().getText().trim();
                     if (text.startsWith("+")) text = text.substring(1);
                     int value;
                     try {
                         value = text.isEmpty() ? 0 : Integer.parseInt(text);
                     } catch (NumberFormatException e) {
-                        throw new IllegalArgumentException(entry.getKey().label() + ": enter a whole number like 3, 0 or -1");
+                        throw new IllegalArgumentException(entry.getKey().name() + ": enter a whole number like 3, 0 or -1");
                     }
-                    result.set(entry.getKey().key(), value);
+                    result.set(entry.getKey().id(), value);
                 }
                 prop.setter().invoke(target, result);
             }
@@ -658,10 +660,11 @@ public final class EntityForm {
         Map<String, Object> existing = current instanceof Map<?, ?> map
             ? new LinkedHashMap<>((Map<String, Object>) map) : new LinkedHashMap<>();
         if (existing.isEmpty() && valueType == Integer.class) {
-            // Ability-score style blocks read far better pre-seeded with the six abilities
-            // than as an empty box the DM has to guess the keys for.
-            for (String ability : ABILITIES) {
-                existing.put(ability, 0);
+            var schema = catalogs.containsKey("_statSchema")
+                ? (com.dnd.model.character.stats.StatSchema) catalogs.get("_statSchema").getFirst().value()
+                : new com.dnd.model.character.stats.StatSchema();
+            for (var ability : schema.getAbilities()) {
+                existing.put(ability.id(), 0);
             }
         }
 

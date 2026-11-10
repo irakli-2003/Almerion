@@ -37,5 +37,32 @@ public final class JsonMappers {
             .enable(SerializationFeature.INDENT_OUTPUT)
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     }
-}
 
+    public static ObjectMapper forCampaign(java.nio.file.Path root) {
+        ObjectMapper mapper = create();
+        var module = new com.fasterxml.jackson.databind.module.SimpleModule();
+        module.addDeserializer(com.dnd.model.character.stats.CoreStats.class,
+            new com.fasterxml.jackson.databind.JsonDeserializer<>() {
+                @Override public com.dnd.model.character.stats.CoreStats deserialize(
+                        com.fasterxml.jackson.core.JsonParser parser,
+                        com.fasterxml.jackson.databind.DeserializationContext context) throws java.io.IOException {
+                    var stats = create().treeToValue(parser.readValueAsTree(),
+                        com.dnd.model.character.stats.CoreStats.class);
+                    stats.configure(StatSchemas.load(root));
+                    return stats;
+                }
+            });
+        module.addDeserializer(com.dnd.model.character.stats.Skills.class,
+            new com.fasterxml.jackson.databind.JsonDeserializer<>() {
+                @Override public com.dnd.model.character.stats.Skills deserialize(
+                        com.fasterxml.jackson.core.JsonParser parser,
+                        com.fasterxml.jackson.databind.DeserializationContext context) throws java.io.IOException {
+                    var skills = create().treeToValue(parser.readValueAsTree(),
+                        com.dnd.model.character.stats.Skills.class);
+                    skills.configure(StatSchemas.load(root));
+                    return skills;
+                }
+            });
+        return mapper.registerModule(module);
+    }
+}

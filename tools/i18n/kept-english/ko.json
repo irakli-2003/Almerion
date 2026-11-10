@@ -5,7 +5,6 @@
  "HP:",
  "OS: {A} {B}",
  "SHA-{0}",
- "STR {A} DEX {B} CON {C} INT {D} WIS {E} CHA {F}",
  "Sense celestials, fiends and undead within {0} ft until the end of your next turn.",
  "text/plain; charset=utf-{0}",
  "⏱ TIMER",

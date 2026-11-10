@@ -203,7 +203,10 @@ public final class TokenSupport {
                 state.setDowned(false);
                 if (state.isDead()) state.setDead(false);
                 state.setDeathSaveFailures(0);
+                state.setDeathSaveSuccesses(0);
             } else if (!state.isDead()) {
+                state.setDeathSaveFailures(pc.getSheet().getDeathSaveFailures());
+                state.setDeathSaveSuccesses(pc.getSheet().getDeathSaveSuccesses());
                 state.setDowned(true);
             }
         }
@@ -227,6 +230,8 @@ public final class TokenSupport {
         if (pc == null || state == null) return;
         pc.setMaxHitPoints(state.getMaxHitPoints());
         pc.setCurrentHitPoints(state.getCurrentHitPoints());
+        pc.getSheet().setDeathSaveFailures(state.getDeathSaveFailures());
+        pc.getSheet().setDeathSaveSuccesses(state.getDeathSaveSuccesses());
         pc.setMaxMana(state.getMaxMana());
         pc.setCurrentMana(state.getCurrentMana());
         List<ActiveEffect> effects = new ArrayList<>();

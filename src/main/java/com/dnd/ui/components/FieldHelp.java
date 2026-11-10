@@ -53,7 +53,7 @@ public final class FieldHelp {
         f("PlayerCharacter.raceId", "The character's people: gives ability bonuses, speed and traits.");
         f("PlayerCharacter.level", "Overall power, 1-20. Higher level = more HP, features and spells.");
         f("PlayerCharacter.xp", "Experience points. At 100 the character can level up (campaign rule).");
-        f("PlayerCharacter.stats", "The six ability scores. 10 is average, 15 is very good, 8 is weak. Each 2 points above 10 = +1 to rolls.");
+        f("PlayerCharacter.stats", "The campaign's ability scores. 10 is average, 15 is very good, 8 is weak. Each 2 points above 10 = +1 to rolls.");
         f("PlayerCharacter.skills", "Bonus added to each skill check (e.g. +5 Stealth, -1 Animal Handling). Any whole number: positive, negative or 0. New characters start from their ability modifiers.");
         f("PlayerCharacter.maxHitPoints", "How much damage they can take before falling unconscious.");
         f("PlayerCharacter.maxMana", "Only for mana-based homebrew casters. Leave 0 for slot casters.");
@@ -77,7 +77,6 @@ public final class FieldHelp {
         f("SheetDetails.spellcastingAbility", "Leave empty to use the class's casting ability.");
         f("SheetDetails.spellSaveDc", "Blank = 8 + proficiency bonus + casting ability modifier.");
         f("SheetDetails.spellAttackBonus", "Blank = proficiency bonus + casting ability modifier.");
-        f("SheetDetails.gold", "Shared with the purse on the battle map.");
         f("SheetDetails.extraAttacks", "Extra rows for the 'Attacks & spellcasting' box, after the weapons the character carries.");
         f("SheetDetails.proficienciesAndLanguages", "Languages, tools, armor and weapon proficiencies; one per line.");
         f("SheetDetails.extraFeatures", "Features and traits not covered by the class or race; one per line.");
@@ -86,6 +85,16 @@ public final class FieldHelp {
         f("Attack.damage", "e.g. 1d8 + 3 piercing");
 
         // Spells
+        f("checks", "Attack and saving throw rules for this action. The GM can override them for each cast.");
+        f("CastChecks.attackRoll", "Require a physical caster d20 attack roll against each target's armor class.");
+        f("CastChecks.savingThrow", "The target ability used to resist this action. None means no saving throw.");
+        f("CastChecks.successfulSaveDamage", "Half halves damage before resistance. None prevents damage. A successful save also prevents conditions.");
+        f("CastChecks.attackBonus", "Blank = caster's calculated spell attack bonus. Editable during casting.");
+        f("CastChecks.saveDc", "Blank = caster's calculated spell save DC. Editable during casting.");
+        f("StatSchema.abilities", "Visible ability definitions. Keep IDs unchanged when renaming fields.");
+        f("StatSchema.skills", "Visible skill definitions. Each parent ability must use an active ability ID.");
+        f("StatSchema.abilityBindings", "Map the six standard rules roles, and any retired ability references, to active ability IDs.");
+        f("StatSchema.skillBindings", "Map perception to the active skill used for passive perception.");
         f("Spell.level", "0 = cantrip (free, unlimited). 1-9 = costs a slot or energy charge of that level or higher.");
         f("Spell.manaCost", "Mana spent by mana-based casters (and HP for blood-magic casters). Slot casters ignore it.");
         f("Spell.range", "How far away the target can be, in feet. 0 = touch or self.");

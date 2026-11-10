@@ -156,6 +156,8 @@ public class DmMenuScene extends BaseScene {
             groups.getChildren().add(group);
         }
         VBox card = card("🏰 Worldbuilding", groups);
+        card.getChildren().add(btn("Stats & Skills", () ->
+            StatDefinitionsWindow.show(this, new CampaignRepositories(uiSession.campaignRoot()))));
         groups.prefWrapLengthProperty().bind(card.widthProperty().subtract(30));
         return card;
     }
@@ -281,4 +283,3 @@ public class DmMenuScene extends BaseScene {
         };
     }
 }
-

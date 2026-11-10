@@ -5,6 +5,8 @@
  "+refs/heads/*:refs/remotes/{A}/*",
  "10 {A} DEX",
  "ABCDEFGHJKLMNPQRSTUVWXYZ{0}",
+ "Caster d{0} / target AC",
+ "Enter a whole number within each field's limits (d{0} rolls: {1}-{2}).",
  "GM",
  "GitHub:",
  "GitHub: {A}",

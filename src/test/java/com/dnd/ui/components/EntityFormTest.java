@@ -176,6 +176,45 @@ public class EntityFormTest {
         });
     }
 
+    @Test public void customSchemaAndCharacterFieldsRoundTripWithoutMoneyEditors() throws Exception {
+        onFxThread(() -> {
+            var schema = new com.dnd.model.character.stats.StatSchema();
+            schema.getAbilities().add(new com.dnd.model.character.stats.StatSchema.Ability("agility", "Agility", "AGI"));
+            schema.getSkills().add(new com.dnd.model.character.stats.StatSchema.Skill("sailing", "Sailing", "agility"));
+            var schemaForm = EntityForm.of(schema.getClass(), schema, Set.of(), Map.of());
+            var result = new com.dnd.model.character.stats.StatSchema();
+            schemaForm.writeTo(result);
+            result.validate();
+            assertEquals(7, result.getAbilities().size());
+            assertEquals(19, result.getSkills().size());
+            var pc = new PlayerCharacter();
+            pc.setStats(new CoreStats(10, 10, 10, 10, 10, 10));
+            pc.getStats().configure(result);
+            pc.getStats().score("agility", 18);
+            pc.getSkills().set("sailing", 7);
+            pc.getSheet().setGold(321);
+            var form = EntityForm.of(PlayerCharacter.class, pc, Set.of("imagePath"), Map.of(
+                "_statSchema", List.of(new EntityForm.Ref("schema", "schema", result))));
+            assertTrue(hasLabel(form.getNode(), "AGI"));
+            assertTrue(hasLabel(form.getNode(), "Sailing"));
+            for (String coin : List.of("Copper", "Silver", "Electrum", "Gold", "Platinum")) {
+                org.junit.Assert.assertFalse(hasLabel(form.getNode(), coin));
+            }
+            form.writeTo(pc);
+            assertEquals(18, pc.getStats().score("agility"));
+            assertEquals(7, pc.getSkills().get("sailing"));
+            assertEquals(Integer.valueOf(321), pc.getSheet().getGold());
+        });
+    }
+
+    private static boolean hasLabel(javafx.scene.Node root, String text) {
+        if (root instanceof javafx.scene.control.Label label && text.equals(label.getText())) return true;
+        if (root instanceof javafx.scene.Parent parent) {
+            for (var child : parent.getChildrenUnmodifiable()) if (hasLabel(child, text)) return true;
+        }
+        return false;
+    }
+
     /**
      * Opening and saving any catalogue entry must not corrupt or reject it. This walks the whole
      * shipped standard-rules dataset, which is the closest thing to a DM clicking through every
@@ -305,6 +344,4 @@ public class EntityFormTest {
         return refs;
     }
 }
-
-
 

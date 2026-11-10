@@ -122,8 +122,9 @@ public class SheetValuesTest {
             text = new PDFTextStripper().getText(doc);
         }
         for (String expected : List.of("23", "Thieves' tools", "Moonblade", "2d6 radiant", "Lucky charm",
-            "Owes the guild 40 gold", "321")) {
+            "Owes the guild 40 gold")) {
             assertTrue("missing on sheet: " + expected, text.contains(expected));
         }
+        assertFalse("Currency is represented by inventory items, not separate balances", text.contains("321"));
     }
 }

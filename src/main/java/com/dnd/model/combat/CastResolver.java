@@ -57,6 +57,8 @@ public final class CastResolver {
         private final int hpCost;
         /** Exact charge/slot level to spend; 0 = the lowest available at or above the spell level. */
         private int chargeLevel;
+        private CastChecks checks = new CastChecks();
+        public CastChecks getChecks() { return checks; }
 
         private Castable(String id, String name, String description, boolean spell, int manaCost,
                          double rangeFeet, double radiusFeet, int cooldownRounds,
@@ -112,6 +114,7 @@ public final class CastResolver {
             Castable c = new Castable(id, name, description, spell, manaCost, rangeFeet, radiusFeet, cooldownRounds,
                 effects, powers, boosted, consumables, spellLevel, hpCost);
             c.chargeLevel = Math.max(0, level);
+            c.checks = checks;
             return c;
         }
 
@@ -237,9 +240,11 @@ public final class CastResolver {
                 powers.add(spellEffect);
             }
         }
-        return new Castable(spell.getId(), spell.getName(), spell.getDescription(), true,
+        Castable action = new Castable(spell.getId(), spell.getName(), spell.getDescription(), true,
             spell.getManaCost(), spell.getRange(), spell.getRadius(), spell.getCooldownRounds(),
             resolved, powers, spell.getDamage(), spell.getRequiredConsumables(), spell.getLevel(), 0);
+        action.checks = spell.getChecks();
+        return action;
     }
 
     /**
@@ -256,9 +261,11 @@ public final class CastResolver {
                 if (effect != null) resolved.add(effect);
             }
         }
-        return new Castable(ability.getId(), ability.getName(), ability.getDescription(), false,
+        Castable action = new Castable(ability.getId(), ability.getName(), ability.getDescription(), false,
             ability.getManaCost(), ability.getRange(), ability.getRadius(), ability.getRecharge(),
             resolved, null, ability.getDamage(), List.of(), 0, ability.getHpCost());
+        action.checks = ability.getChecks();
+        return action;
     }
 
     /** What happened when a cast was attempted. */
@@ -334,8 +341,40 @@ public final class CastResolver {
      */
     public static Outcome cast(MapObject caster, Castable action, List<MapObject> targets, double distanceFeet,
                                int rolledDamage, List<Integer> rolledEffectDice) {
+        return cast(caster, action, targets, distanceFeet, rolledDamage, rolledEffectDice,
+            action.getChecks(), java.util.Map.of());
+    }
+
+    public static Outcome cast(MapObject caster, Castable action, List<MapObject> targets, double distanceFeet,
+                               int rolledDamage, List<Integer> rolledEffectDice, CastChecks checks,
+                               java.util.Map<MapObject, CastChecks.Rolls> rolls) {
         String blocked = blockedReason(caster, action);
         if (blocked != null) return Outcome.refused(blocked);
+        List<MapObject> hit = new ArrayList<>();
+        if (targets != null) {
+            for (MapObject target : targets) {
+                if (target != null && !hit.contains(target)) hit.add(target);
+            }
+        }
+        Targeting targeting = action.getTargeting();
+        if (targeting == Targeting.SELF) {
+            hit.clear();
+            hit.add(caster);
+        } else if (targeting == Targeting.AURA) {
+            hit.remove(caster);
+        }
+        if (checks.needsRolls()) {
+            for (MapObject target : hit) {
+                CastChecks.Rolls entered = rolls.get(target);
+                if (entered == null) return Outcome.refused("Enter attack and saving rolls for every target.");
+                try {
+                    entered.hit(checks);
+                    entered.saved(checks);
+                } catch (IllegalArgumentException ex) {
+                    return Outcome.refused(ex.getMessage());
+                }
+            }
+        }
 
         double range = action.getRangeFeet();
         // A range of zero means touch or self, which still has to be adjacent, not anywhere.
@@ -354,21 +393,24 @@ public final class CastResolver {
             log.add(TokenSupport.nameOf(caster) + " uses up " + consumed + ".");
         }
 
-        List<MapObject> hit = new ArrayList<>();
-        if (targets != null) {
-            for (MapObject target : targets) {
-                if (target != null && !hit.contains(target)) hit.add(target);
-            }
-        }
-        Targeting targeting = action.getTargeting();
-        if (targeting == Targeting.SELF) {
-            hit.clear();
-            hit.add(caster);
-        } else if (targeting == Targeting.AURA) {
-            hit.remove(caster);
-        }
         for (MapObject target : hit) {
-            log.addAll(applyTo(caster, target, action, rolledDamage, rolledEffectDice));
+            CastChecks.Rolls entered = rolls.get(target);
+            boolean saved = entered != null && entered.saved(checks);
+            if (entered != null && checks.isAttackRoll()) {
+                log.add(TokenSupport.nameOf(caster) + ": attack " + entered.attackDie() + " + "
+                    + entered.attackBonus() + " vs AC " + entered.armorClass() + ".");
+            }
+            if (entered != null && !entered.hit(checks)) {
+                log.add(TokenSupport.nameOf(target) + ": attack misses.");
+                continue;
+            }
+            if (saved) {
+                log.add(TokenSupport.nameOf(target) + ": saving throw succeeds.");
+                if (checks.getSuccessfulSaveDamage() == CastChecks.SavedDamage.NONE) continue;
+            } else if (entered != null && !"none".equals(checks.getSavingThrow())) {
+                log.add(TokenSupport.nameOf(target) + ": saving throw fails.");
+            }
+            log.addAll(applyTo(caster, target, action, rolledDamage, rolledEffectDice, saved));
         }
         if (!hasMechanicalEffect(action)) {
             // Nothing the board can apply by itself: leave the rules where the DM is looking
@@ -376,7 +418,8 @@ public final class CastResolver {
             if (action.getDescription() != null && !action.getDescription().isBlank()) {
                 log.add(action.getName() + ": " + action.getDescription());
             }
-            if (targeting == Targeting.SELF) {
+            if (targeting == Targeting.SELF && (!checks.needsRolls()
+                    || (rolls.get(caster).hit(checks) && !rolls.get(caster).saved(checks)))) {
                 ActiveEffect marker = new ActiveEffect(action.getId(), action.getName(), 1, 0, 0,
                     TokenSupport.nameOf(caster));
                 marker.setDescription(action.getDescription());
@@ -475,7 +518,7 @@ public final class CastResolver {
 
     /** Applies one castable's damage, healing and lasting effects to a single target. */
     private static List<String> applyTo(MapObject caster, MapObject target, Castable action, int rolledDamage,
-                                        List<Integer> rolledEffectDice) {
+                                        List<Integer> rolledEffectDice, boolean saved) {
         List<String> log = new ArrayList<>();
         CombatState state = TokenSupport.combatOf(target);
         String targetName = TokenSupport.nameOf(target);
@@ -484,6 +527,7 @@ public final class CastResolver {
         int dealtTotal = 0;
         int directDamage = action.getDamage() != null && action.getDamage().hasAmount()
             ? action.getDamage().total(Math.max(0, rolledDamage)) : 0;
+        if (saved) directDamage /= 2;
         if (directDamage > 0) {
             com.dnd.model.rules.CombatRules.Hit landed =
                 com.dnd.model.rules.CombatRules.damage(state, directDamage, action.getDamage().getTypeId());
@@ -504,6 +548,11 @@ public final class CastResolver {
                     ? null : rolledEffectDice.get(index);
                 damageAmount = power.power(rolled == null ? 0 : Math.max(0, rolled));
                 healingAmount = damageAmount;
+            }
+            if (saved) {
+                if (!effect.isDamaging()) continue;
+                damageAmount /= 2;
+                healingAmount = 0;
             }
             if (effect.isLasting()) {
                 ActiveEffect active = new ActiveEffect(

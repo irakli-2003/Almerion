@@ -7,7 +7,17 @@ import java.util.List;
  * plain whole number - positive, negative or zero - set by the GM; it is not recalculated when
  * ability scores change.
  */
+@com.fasterxml.jackson.annotation.JsonAutoDetect(
+    fieldVisibility = com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY,
+    getterVisibility = com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE,
+    isGetterVisibility = com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE,
+    setterVisibility = com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.NONE)
 public class Skills {
+    private java.util.Map<String, Integer> custom = new java.util.LinkedHashMap<>();
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private StatSchema schema = new StatSchema();
+    public StatSchema schema() { return schema; }
+    public void configure(StatSchema value) { schema = java.util.Objects.requireNonNull(value); }
     /** One skill: its property name, display label and the ability it is normally based on. */
     public record Def(String key, String label, String ability) {
     }
@@ -36,19 +46,11 @@ public class Skills {
     public static Skills fromAbilities(CoreStats stats) {
         Skills skills = new Skills();
         if (stats == null) return skills;
-        for (Def def : ALL) skills.set(def.key(), Math.floorDiv(abilityScore(stats, def.ability()) - 10, 2));
+        skills.configure(stats.schema());
+        for (var def : stats.schema().getSkills()) {
+            skills.set(def.id(), Math.floorDiv(stats.score(def.ability()) - 10, 2));
+        }
         return skills;
-    }
-
-    private static int abilityScore(CoreStats stats, String ability) {
-        return switch (ability) {
-            case "strength" -> stats.getStrength();
-            case "dexterity" -> stats.getDexterity();
-            case "constitution" -> stats.getConstitution();
-            case "intelligence" -> stats.getIntelligence();
-            case "wisdom" -> stats.getWisdom();
-            default -> stats.getCharisma();
-        };
     }
 
     public int get(String key) {
@@ -71,7 +73,7 @@ public class Skills {
             case "sleightOfHand" -> sleightOfHand;
             case "stealth" -> stealth;
             case "survival" -> survival;
-            default -> throw new IllegalArgumentException("Unknown skill: " + key);
+            default -> custom.getOrDefault(key, 0);
         };
     }
 
@@ -95,7 +97,7 @@ public class Skills {
             case "sleightOfHand" -> sleightOfHand = value;
             case "stealth" -> stealth = value;
             case "survival" -> survival = value;
-            default -> throw new IllegalArgumentException("Unknown skill: " + key);
+            default -> custom.put(key, value);
         }
     }
 
@@ -233,7 +235,7 @@ public class Skills {
     }
 
     public int getPerception() {
-        return perception;
+        return get(schema.skillFor("perception"));
     }
 
     public void setPerception(int perception) {
@@ -288,5 +290,3 @@ public class Skills {
         this.survival = survival;
     }
 }
-
-

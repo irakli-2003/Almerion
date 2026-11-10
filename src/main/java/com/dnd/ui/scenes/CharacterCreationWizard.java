@@ -80,6 +80,8 @@ public class CharacterCreationWizard extends BaseScene {
         public String subclass;
         public int level = 1;
         public int[] scores = {10, 10, 10, 10, 10, 10};
+        public com.dnd.model.character.stats.StatSchema statSchema = new com.dnd.model.character.stats.StatSchema();
+        public final java.util.Map<String, Integer> customScores = new java.util.LinkedHashMap<>();
         public final Set<String> spellIds = new LinkedHashSet<>();
         public final Set<String> itemIds = new LinkedHashSet<>();
         public String name;
@@ -190,8 +192,8 @@ public class CharacterCreationWizard extends BaseScene {
         pc.setSubclass(hasSubclasses(s.cls) ? s.subclass : null);
         pc.setLevel(s.level);
         pc.setXp(0);
-        int[] sc = finalScores(s);
-        pc.setStats(new CoreStats(sc[0], sc[1], sc[2], sc[3], sc[4], sc[5]));
+        CoreStats stats = characterStats(s);
+        pc.setStats(stats);
 
         List<PlayerCharacter.PlayerItem> items = new ArrayList<>();
         for (String id : s.itemIds) items.add(new PlayerCharacter.PlayerItem(id, new PlayerCharacter.ItemCondition(100), false));
@@ -206,11 +208,29 @@ public class CharacterCreationWizard extends BaseScene {
         pc.setDescription(blankToNull(s.description));
         pc.setImagePath(blankToNull(s.imagePath));
 
-        int hp = maxHitPoints(hitDieSides(s.cls), sc[2], s.level);
+        int hp = maxHitPoints(hitDieSides(s.cls), stats.getConstitution(), s.level);
         pc.setMaxHitPoints(hp);
         pc.setCurrentHitPoints(hp);
         Progression.ensureSlots(pc, s.cls);
         return pc;
+    }
+
+    private static CoreStats characterStats(State s) {
+        CoreStats stats = new CoreStats(10, 10, 10, 10, 10, 10);
+        stats.configure(s.statSchema);
+        for (var def : s.statSchema.getAbilities()) {
+            int index = com.dnd.model.character.stats.StatSchema.ROLES.indexOf(def.id());
+            stats.score(def.id(), index >= 0 ? s.scores[index] : s.customScores.getOrDefault(def.id(), 10));
+        }
+        if (s.race != null && s.race.getAbilityBonuses() != null) {
+            s.race.getAbilityBonuses().forEach((key, value) -> {
+                if (value == null) return;
+                String target = s.statSchema.resolveAbility(key);
+                stats.score(target, Math.max(CoreStats.MIN_SCORE,
+                    Math.min(CoreStats.MAX_SCORE, stats.score(target) + value)));
+            });
+        }
+        return stats;
     }
 
     private static final String[] BONUS_KEYS = {"strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma"};
@@ -259,6 +279,8 @@ public class CharacterCreationWizard extends BaseScene {
     private Button backBtn;
     private Button nextBtn;
     private Button createBtn;
+    private final List<Spinner<Integer>> abilityInputs = new ArrayList<>();
+    private Label abilityInputError;
 
     private List<CharacterRace> races;
     private List<CharacterClass> classes;
@@ -268,6 +290,7 @@ public class CharacterCreationWizard extends BaseScene {
     public CharacterCreationWizard(UiSession uiSession, CampaignRepositories repos) {
         super(uiSession);
         this.repos = repos;
+        state.statSchema = repos.statSchema();
     }
 
     State state() { return state; }
@@ -346,6 +369,19 @@ public class CharacterCreationWizard extends BaseScene {
     }
 
     private void goNext() {
+        if (step == Step.ABILITIES) {
+            try {
+                for (Spinner<Integer> spinner : abilityInputs) {
+                    int entered = Integer.parseInt(spinner.getEditor().getText().strip());
+                    var bounds = (SpinnerValueFactory.IntegerSpinnerValueFactory) spinner.getValueFactory();
+                    if (entered < bounds.getMin() || entered > bounds.getMax()) throw new NumberFormatException();
+                }
+                abilityInputs.forEach(Spinner::commitValue);
+            } catch (NumberFormatException ex) {
+                abilityInputError.setText("Enter a level within its limits and ability scores from 1 to 30.");
+                return;
+            }
+        }
         if (!canAdvance(step, state) || step == Step.SUMMARY) return;
         step = Step.values()[step.ordinal() + 1];
         showStep();
@@ -487,6 +523,8 @@ public class CharacterCreationWizard extends BaseScene {
 
     private void buildAbilitiesPage() {
         Spinner<Integer> levelSpinner = new Spinner<>(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, MAX_CREATION_LEVEL, state.level));
+        abilityInputs.clear();
+        abilityInputs.add(levelSpinner);
         levelSpinner.setEditable(true);
         levelSpinner.valueProperty().addListener((o, a, b) -> {
             if (b != null) state.level = b;
@@ -499,28 +537,37 @@ public class CharacterCreationWizard extends BaseScene {
         grid.setHgap(10);
         grid.setVgap(8);
         List<Spinner<Integer>> spinners = new ArrayList<>();
-        for (int i = 0; i < 6; i++) {
-            final int idx = i;
-            Spinner<Integer> sp = new Spinner<>(new SpinnerValueFactory.IntegerSpinnerValueFactory(MIN_SCORE, MAX_SCORE, state.scores[i]));
+        var definitions = state.statSchema.getAbilities();
+        for (int i = 0; i < definitions.size(); i++) {
+            var def = definitions.get(i);
+            final int idx = com.dnd.model.character.stats.StatSchema.ROLES.indexOf(def.id());
+            int score = idx >= 0 ? state.scores[idx] : state.customScores.getOrDefault(def.id(), 10);
+            Spinner<Integer> sp = new Spinner<>(new SpinnerValueFactory.IntegerSpinnerValueFactory(MIN_SCORE, MAX_SCORE, score));
             sp.setEditable(true);
             sp.setPrefWidth(90);
-            Label mod = body(modText(state.scores[i]));
+            Label mod = body(modText(score));
             sp.valueProperty().addListener((o, a, b) -> {
                 if (b != null) {
-                    state.scores[idx] = b;
+                    if (idx >= 0) state.scores[idx] = b;
+                    else state.customScores.put(def.id(), b);
                     mod.setText(modText(b));
                 }
             });
             spinners.add(sp);
-            grid.addRow(i, body(ABILITY_NAMES[i]), sp, mod, hint(ABILITY_NOTES[i]));
+            abilityInputs.add(sp);
+            grid.addRow(i, body(def.name()), sp, mod);
         }
         Button standard = btn("Standard array", () -> {
-            for (int i = 0; i < 6; i++) spinners.get(i).getValueFactory().setValue(STANDARD_ARRAY[i]);
+            for (int i = 0; i < spinners.size(); i++) {
+                spinners.get(i).getValueFactory().setValue(i < STANDARD_ARRAY.length ? STANDARD_ARRAY[i] : 10);
+            }
         });
-        page.getChildren().addAll(levelRow,
+        abilityInputError = body("");
+        abilityInputError.setWrapText(true);
+        page.getChildren().addAll(levelRow, abilityInputError,
             hint("Level 1 is a fresh adventurer; higher levels start with more hit points, features and spells."),
             sectionLabel("Ability scores"),
-            guide("Six numbers describe what the character is good at. 10 is average, 15 is excellent, 8 is weak. "
+            guide("Ability scores describe what the character is good at. 10 is average, 15 is excellent, 8 is weak. "
                 + "The number in brackets is the modifier added to dice rolls: every 2 points above 10 is +1. "
                 + "Race bonuses are added on top at the end."),
             grid, standard,
@@ -673,10 +720,10 @@ public class CharacterCreationWizard extends BaseScene {
         if (hasSubclasses(state.cls)) sb.append("Subclass: ").append(nz(state.subclass)).append("\n");
         sb.append("Level: ").append(state.level).append("\n");
         List<String> stats = new ArrayList<>();
-        int[] finalScores = finalScores(state);
-        for (int i = 0; i < 6; i++) stats.add(ABILITY_NAMES[i] + " " + finalScores[i]);
+        CoreStats configured = characterStats(state);
+        for (var def : state.statSchema.getAbilities()) stats.add(def.abbreviation() + " " + configured.score(def.id()));
         sb.append("Abilities (race bonuses included): ").append(String.join("  ", stats)).append("\n");
-        sb.append("Max HP: ").append(maxHitPoints(hitDieSides(state.cls), finalScores[2], state.level)).append("\n");
+        sb.append("Max HP: ").append(maxHitPoints(hitDieSides(state.cls), configured.getConstitution(), state.level)).append("\n");
         if (isCaster(state.cls)) {
             List<com.dnd.model.magic.SpellSlot> fresh = SpellSlots.fresh(
                 SpellSlots.maxSlots(state.cls.getSpellcasting(), state.level));

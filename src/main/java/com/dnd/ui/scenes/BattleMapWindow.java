@@ -1055,7 +1055,11 @@ public class BattleMapWindow {
             + (state.isDead() ? "  DEAD" : state.isDowned() ? "  DYING (" + state.remainingDeathSaves() + ")" : ""));
         text.getStyleClass().add("bar-label");
         bar.getChildren().addAll(back, front, text);
+        bar.setMinWidth(0);
+        bar.setPrefWidth(width);
         bar.setMaxWidth(width);
+        back.widthProperty().bind(bar.widthProperty());
+        front.widthProperty().bind(bar.widthProperty().multiply(fraction));
         return bar;
     }
 
@@ -1106,6 +1110,7 @@ public class BattleMapWindow {
         CombatState state = TokenSupport.combatOf(token);
 
         Label name = new Label(TokenSupport.nameOf(token));
+        name.setWrapText(true);
         name.getStyleClass().add("title-label");
         Label kind = new Label(TokenSupport.kindOf(token) + " · level " + TokenSupport.levelOf(token));
         kind.getStyleClass().add("subtitle-label");
@@ -1129,7 +1134,8 @@ public class BattleMapWindow {
         refreshDetailBars(state);
         panel.getChildren().add(detailBars);
         panel.getChildren().add(buildVitalsEditor(token, state));
-        panel.getChildren().add(buildDeathSaveControls(token, state));
+        deathSaveHost = new VBox(buildDeathSaveControls(token, state));
+        panel.getChildren().add(deathSaveHost);
         panel.getChildren().add(buildMagicEditor(token, state));
         panel.getChildren().add(buildRestButtons(token, state));
 
@@ -1148,9 +1154,10 @@ public class BattleMapWindow {
         panel.getChildren().addAll(new Separator(), owner.sectionLabel("Movement"));
         panel.getChildren().add(buildMovementEditor(token, state));
 
-        panel.getChildren().addAll(new Separator(), owner.sectionLabel("Purse & Stats"));
-        panel.getChildren().add(buildPurseEditor(state));
+        panel.getChildren().addAll(new Separator(), owner.sectionLabel("Stats"));
+        panel.getChildren().add(buildInitiativeEditor(state));
         panel.getChildren().add(buildStatsGrid(token));
+        panel.getChildren().add(buildSkillsList(token));
 
         if (TokenSupport.hasSettableLevel(token) || TokenSupport.xpOf(token) >= 0) {
             panel.getChildren().addAll(new Separator(), owner.sectionLabel("Level & XP"));
@@ -1182,8 +1189,10 @@ public class BattleMapWindow {
     }
 
     private Node buildVitalsEditor(MapObject token, CombatState state) {
-        Spinner<Integer> amount = new Spinner<>(1, 999, 5);
-        amount.setPrefWidth(80);
+        Spinner<Integer> amount = new Spinner<>(1, 99999, 1);
+        amount.setId("hp-change-amount");
+        amount.setPrefWidth(110);
+        amount.setMinWidth(110);
         amount.setEditable(true);
 
         Button damage = new Button("Damage");
@@ -1205,6 +1214,7 @@ public class BattleMapWindow {
             damageType.getItems().add(item);
         }
         damage.setOnAction(e -> {
+            if (!commitHpAmount(amount)) return;
             CombatRules.Hit landed = CombatRules.damage(state, amount.getValue(), vitalsDamageType);
             status(TokenSupport.nameOf(token) + " takes " + landed.dealt()
                 + (vitalsDamageType == null ? "" : " " + vitalsDamageType) + " damage" + landed.note() + ".");
@@ -1214,6 +1224,7 @@ public class BattleMapWindow {
         Button heal = new Button("Heal");
         heal.getStyleClass().add("dnd-button");
         heal.setOnAction(e -> {
+            if (!commitHpAmount(amount)) return;
             state.heal(amount.getValue());
             afterVitalsChange(token);
         });
@@ -1245,11 +1256,27 @@ public class BattleMapWindow {
         GridPane grid = new GridPane();
         grid.setHgap(6);
         grid.setVgap(6);
-        grid.addRow(0, amount, damage, heal);
-        grid.add(damageType, 0, 1, 3, 1);
-        grid.addRow(2, owner.body("Max HP:"), maxHp);
-        grid.addRow(3, owner.body("Mana:"), currentMana, maxMana);
-        return grid;
+        grid.addRow(0, owner.body("Max HP:"), maxHp);
+        grid.addRow(1, owner.body("Mana:"), currentMana);
+        grid.addRow(2, owner.body("Max mana:"), maxMana);
+        damage.setMinWidth(Region.USE_PREF_SIZE);
+        heal.setMinWidth(Region.USE_PREF_SIZE);
+        FlowPane actions = new FlowPane(6, 6, damage, heal);
+        damageType.setMaxWidth(Double.MAX_VALUE);
+        damageType.setMinWidth(0);
+        return new VBox(6, new FlowPane(6, 6, owner.body("Amount:"), amount), actions, damageType, grid);
+    }
+
+    private boolean commitHpAmount(Spinner<Integer> amount) {
+        try {
+            int entered = Integer.parseInt(amount.getEditor().getText().strip());
+            if (entered < 1 || entered > 99999) throw new NumberFormatException();
+            amount.commitValue();
+            return true;
+        } catch (NumberFormatException ex) {
+            status("Enter an HP amount from 1 to 99999.");
+            return false;
+        }
     }
 
     private static String damageTypeLabel(String typeId) {
@@ -1268,7 +1295,14 @@ public class BattleMapWindow {
         Button succeed = new Button("Made Save");
         succeed.getStyleClass().add("dnd-button");
         succeed.setOnAction(e -> {
-            state.succeedDeathSave();
+            if (state.getCurrentHitPoints() > 0 || state.isDead()) return;
+            if (state.getDeathSaveSuccesses() >= CombatState.MAX_DEATH_SAVES - 1) {
+                Integer hp = promptRevivalHp(token);
+                if (hp == null) return;
+                state.revive(hp);
+            } else {
+                state.succeedDeathSave();
+            }
             afterVitalsChange(token);
         });
 
@@ -1282,23 +1316,40 @@ public class BattleMapWindow {
         Button revive = new Button("Revive");
         revive.getStyleClass().add("dnd-button");
         revive.setOnAction(e -> {
-            state.revive();
+            Integer hp = promptRevivalHp(token);
+            if (hp == null) return;
+            state.revive(hp);
             afterVitalsChange(token);
         });
 
+        fail.setDisable(state.getCurrentHitPoints() > 0 || state.isDead());
+        succeed.setDisable(state.getCurrentHitPoints() > 0 || state.isDead());
+        for (Button button : List.of(fail, succeed, kill, revive)) button.setMinWidth(Region.USE_PREF_SIZE);
         FlowPane row = new FlowPane(6, 6, fail, succeed, kill, revive);
-        return row;
+        return new VBox(6, owner.body("Death saves: " + state.getDeathSaveSuccesses()
+            + " successes / " + state.getDeathSaveFailures() + " failures"), row);
     }
 
-    private Node buildPurseEditor(CombatState state) {
-        Spinner<Integer> gold = new Spinner<>(0, 999999, state.getGold());
-        gold.setPrefWidth(110);
-        gold.setEditable(true);
-        gold.valueProperty().addListener((obs, o, n) -> {
-            state.setGold(n);
-            dirty = true;
-        });
+    private Integer promptRevivalHp(MapObject token) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Revival HP");
+        dialog.setHeaderText(TokenSupport.nameOf(token));
+        dialog.setContentText("Roll 1d4 and enter the result (1-4):");
+        owner.styleDialog(dialog);
+        while (true) {
+            var answer = dialog.showAndWait();
+            if (answer.isEmpty()) return null;
+            try {
+                int hp = Integer.parseInt(answer.get().strip());
+                if (hp < 1 || hp > 4) throw new NumberFormatException();
+                return hp;
+            } catch (NumberFormatException ex) {
+                dialog.setContentText("Enter the 1d4 result: a whole number from 1 to 4.");
+            }
+        }
+    }
 
+    private Node buildInitiativeEditor(CombatState state) {
         Spinner<Integer> init = new Spinner<>(-20, 99, state.getInitiative());
         init.setPrefWidth(90);
         init.setEditable(true);
@@ -1312,8 +1363,7 @@ public class BattleMapWindow {
         GridPane grid = new GridPane();
         grid.setHgap(6);
         grid.setVgap(6);
-        grid.addRow(0, owner.body("Coins:"), gold);
-        grid.addRow(1, owner.body("Initiative:"), init);
+        grid.addRow(0, owner.body("Initiative:"), init);
         return grid;
     }
 
@@ -1380,20 +1430,38 @@ public class BattleMapWindow {
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(3);
-        addStat(grid, 0, "STR", stats.getStrength());
-        addStat(grid, 1, "DEX", stats.getDexterity());
-        addStat(grid, 2, "CON", stats.getConstitution());
-        addStat(grid, 3, "INT", stats.getIntelligence());
-        addStat(grid, 4, "WIS", stats.getWisdom());
-        addStat(grid, 5, "CHA", stats.getCharisma());
+        var definitions = stats.schema().getAbilities();
+        for (int i = 0; i < definitions.size(); i++) {
+            var def = definitions.get(i);
+            addStat(grid, i, def.abbreviation(), stats.score(def.id()));
+        }
         return grid;
+    }
+
+    private Node buildSkillsList(MapObject token) {
+        VBox skills = new VBox(3);
+        if (token instanceof PlayerToken player && player.getCharacter() != null) {
+            var pc = player.getCharacter();
+            var cls = pc.getClassId() == null ? null : repos.classes().getById(pc.getClassId());
+            skills.getChildren().add(owner.sectionLabel("Saving throws"));
+            for (var ability : repos.statSchema().getAbilities()) {
+                skills.getChildren().add(owner.body(ability.abbreviation() + ": "
+                    + com.dnd.model.rules.SheetValues.signed(com.dnd.model.rules.SheetValues.savingThrow(pc, cls, ability.id()))));
+            }
+            skills.getChildren().add(owner.sectionLabel("Skills"));
+            for (var skill : pc.getSkills().schema().getSkills()) {
+                skills.getChildren().add(owner.body(skill.name() + ": "
+                    + com.dnd.model.rules.SheetValues.signed(pc.getSkills().get(skill.id()))));
+            }
+        }
+        return skills;
     }
 
     private void addStat(GridPane grid, int index, String label, int value) {
         int modifier = TokenSupport.modifier(value);
         Label cell = new Label(label + " " + value + " (" + (modifier >= 0 ? "+" : "") + modifier + ")");
         cell.getStyleClass().add("body-label");
-        grid.add(cell, index % 3, index / 3);
+        grid.add(cell, index % 2, index / 2);
     }
 
     /**
@@ -2009,6 +2077,16 @@ public class BattleMapWindow {
             targets.add(target);
         }
 
+        double distanceFeet = distanceCells(caster, cx, cy) * FEET_PER_CELL;
+        if (action.needsTarget() && distanceFeet > (action.getRangeFeet() > 0 ? action.getRangeFeet() : 5) + 0.001) {
+            status("That target is outside the spell or ability's range.");
+            return;
+        }
+        CastRolls defence = promptCastChecks(caster, action, targets);
+        if (defence == null) {
+            status("Cast cancelled.");
+            return;
+        }
         int rolledDamage = 0;
         if (CastResolver.needsDamageRoll(action)) {
             Integer entered = promptRolledDamage(action);
@@ -2039,9 +2117,8 @@ public class BattleMapWindow {
             rolledEffectDice.add(entered);
         }
 
-        double distanceFeet = distanceCells(caster, cx, cy) * FEET_PER_CELL;
         CastResolver.Outcome outcome = CastResolver.cast(caster, action, targets, distanceFeet, rolledDamage,
-            rolledEffectDice);
+            rolledEffectDice, defence.rules(), defence.rolls());
         if (!outcome.isSuccess()) {
             if (!action.needsTarget()) {
                 armedCast = null;
@@ -2049,6 +2126,7 @@ public class BattleMapWindow {
                 armedCastFeature = null;
                 clearRange();
             }
+
             status(outcome.getMessage());
             return;
         }
@@ -2068,6 +2146,104 @@ public class BattleMapWindow {
         logLines(outcome.getMessage(), outcome.getLog());
     }
 
+    private record CastRolls(com.dnd.model.combat.CastChecks rules,
+                             java.util.Map<MapObject, com.dnd.model.combat.CastChecks.Rolls> rolls) { }
+
+    private CastRolls promptCastChecks(MapObject caster, CastResolver.Castable action, List<MapObject> targets) {
+        var defaults = action.getChecks();
+        if (targets.isEmpty() || (!defaults.needsRolls() && action.getDamage() == null
+                && action.getEffects().isEmpty())) {
+            return new CastRolls(defaults, java.util.Map.of());
+        }
+        CheckBox attack = new CheckBox("Caster attack roll");
+        attack.setSelected(defaults.isAttackRoll());
+        ComboBox<String> save = new ComboBox<>();
+        save.getItems().add("none");
+        repos.statSchema().getAbilities().forEach(a -> save.getItems().add(a.id()));
+        save.setValue("none".equals(defaults.getSavingThrow()) ? "none"
+            : repos.statSchema().resolveAbility(defaults.getSavingThrow()));
+        ComboBox<com.dnd.model.combat.CastChecks.SavedDamage> damage = new ComboBox<>(
+            javafx.collections.FXCollections.observableArrayList(com.dnd.model.combat.CastChecks.SavedDamage.values()));
+        damage.setValue(defaults.getSuccessfulSaveDamage());
+        int bonus = TokenSupport.modifier(TokenSupport.statsOf(caster) == null ? 10
+            : TokenSupport.statsOf(caster).getIntelligence());
+        int dcValue = 8 + bonus;
+        if (caster instanceof PlayerToken player && player.getCharacter() != null) {
+            var pc = player.getCharacter();
+            var cls = pc.getClassId() == null ? null : repos.classes().getById(pc.getClassId());
+            bonus = com.dnd.model.rules.SheetValues.spellAttackBonus(pc, cls);
+            dcValue = com.dnd.model.rules.SheetValues.spellSaveDc(pc, cls);
+        }
+        Spinner<Integer> attackBonus = new Spinner<>(-100, 1000,
+            defaults.getAttackBonus() == null ? bonus : defaults.getAttackBonus());
+        attackBonus.setId("cast-attack-bonus");
+        Spinner<Integer> dc = new Spinner<>(0, 1000, defaults.getSaveDc() == null ? dcValue : defaults.getSaveDc());
+        dc.setId("cast-save-dc");
+        VBox form = new VBox(8, owner.body("Override these rules for this cast only."), attack,
+            owner.body("Attack bonus"), attackBonus, owner.body("Target saving throw"), save,
+            owner.body("Save DC"), dc, owner.body("Damage on successful save"), damage);
+        List<Spinner<Integer>> inputs = new ArrayList<>(List.of(attackBonus, dc));
+        java.util.Map<MapObject, List<Spinner<Integer>>> fields = new java.util.LinkedHashMap<>();
+        for (MapObject target : targets) {
+            Spinner<Integer> attackDie = new Spinner<>(1, 20, 10);
+            Spinner<Integer> armor = new Spinner<>(0, 1000, armorClassOf(target).total());
+            Spinner<Integer> saveDie = new Spinner<>(1, 20, 10);
+            Spinner<Integer> saveBonus = new Spinner<>(-100, 1000, 0);
+            int index = fields.size();
+            attackDie.setId("cast-attack-die-" + index);
+            armor.setId("cast-armor-" + index);
+            saveDie.setId("cast-save-die-" + index);
+            saveBonus.setId("cast-save-bonus-" + index);
+            Runnable updateBonus = () -> {
+                String key = save.getValue();
+                int value = 0;
+                if (!"none".equals(key)) {
+                    if (target instanceof PlayerToken player && player.getCharacter() != null) {
+                        var pc = player.getCharacter();
+                        var cls = pc.getClassId() == null ? null : repos.classes().getById(pc.getClassId());
+                        value = com.dnd.model.rules.SheetValues.savingThrow(pc, cls, key);
+                    } else if (TokenSupport.statsOf(target) != null) {
+                        value = TokenSupport.modifier(TokenSupport.statsOf(target).score(key));
+                    }
+                }
+                saveBonus.getValueFactory().setValue(value);
+            };
+            updateBonus.run();
+            save.valueProperty().addListener((o, old, selected) -> updateBonus.run());
+            attackDie.disableProperty().bind(attack.selectedProperty().not());
+            armor.disableProperty().bind(attack.selectedProperty().not());
+            saveDie.disableProperty().bind(save.valueProperty().isEqualTo("none"));
+            saveBonus.disableProperty().bind(saveDie.disableProperty());
+            fields.put(target, List.of(attackDie, armor, saveDie, saveBonus));
+            inputs.addAll(fields.get(target));
+            Label name = owner.body(TokenSupport.nameOf(target));
+            name.setWrapText(true);
+            form.getChildren().addAll(new Separator(), name, owner.body("Caster d20 / target AC"),
+                new FlowPane(6, 6, attackDie, armor), owner.body("Target save d20 / save bonus"),
+                new FlowPane(6, 6, saveDie, saveBonus));
+        }
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Attack and saving throws");
+        dialog.setHeaderText(action.getName());
+        ScrollPane scroll = new ScrollPane(form);
+        scroll.setFitToWidth(true);
+        scroll.setPrefViewportWidth(500);
+        scroll.setPrefViewportHeight(500);
+        dialog.getDialogPane().setContent(scroll);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        editableNumbers(dialog, form, inputs);
+        owner.styleDialog(dialog);
+        if (dialog.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) return null;
+        var rules = new com.dnd.model.combat.CastChecks();
+        rules.setAttackRoll(attack.isSelected());
+        rules.setSavingThrow(save.getValue());
+        rules.setSuccessfulSaveDamage(damage.getValue());
+        java.util.Map<MapObject, com.dnd.model.combat.CastChecks.Rolls> rolls = new java.util.LinkedHashMap<>();
+        fields.forEach((target, values) -> rolls.put(target, new com.dnd.model.combat.CastChecks.Rolls(
+            values.get(0).getValue(), attackBonus.getValue(), values.get(1).getValue(),
+            values.get(2).getValue(), values.get(3).getValue(), dc.getValue())));
+        return new CastRolls(rules, rolls);
+    }
     /**
      * Asks the DM for the damage they actually rolled on the table for this cast (one total,
      * applied to every target caught by it - the same physical roll a real Fireball gets).
@@ -2234,12 +2410,16 @@ public class BattleMapWindow {
             javafx.event.ActionEvent.ACTION, event -> {
                 try {
                     for (Spinner<Integer> input : inputs) {
-                        Integer.parseInt(input.getEditor().getText().strip());
+                        int value = Integer.parseInt(input.getEditor().getText().strip());
+                        if (input.getValueFactory() instanceof SpinnerValueFactory.IntegerSpinnerValueFactory bounds
+                                && (value < bounds.getMin() || value > bounds.getMax())) {
+                            throw new IllegalArgumentException("Out of range");
+                        }
                         input.commitValue();
                     }
                     error.setVisible(false);
                 } catch (IllegalArgumentException ex) {
-                    error.setText("Enter a whole number in every field.");
+                    error.setText("Enter a whole number within each field's limits (d20 rolls: 1-20).");
                     error.setVisible(true);
                     event.consume();
                 }
@@ -2296,11 +2476,17 @@ public class BattleMapWindow {
         rebuildInitiative();
         if (detailToken == token && detailBars != null) {
             refreshDetailBars(TokenSupport.combatOf(token));
+            if (deathSaveHost != null) {
+                deathSaveHost.getChildren().setAll(buildDeathSaveControls(token, TokenSupport.combatOf(token)));
+            }
         } else {
             showDetail(token);
         }
+
         render();
     }
+
+    private VBox deathSaveHost;
 
     /** Linked spell id -> the carried device that grants it. */
     private java.util.Map<String, com.dnd.model.item.crafting.Device> carriedDevices(MapObject token) {

@@ -87,6 +87,7 @@ public final class SessionSnapshot {
         CampaignPaths paths = new CampaignPaths(campaignRoot);
         ObjectNode root = mapper.createObjectNode();
         root.put("campaign", campaignName);
+        root.set("statSchema", mapper.valueToTree(StatSchemas.load(campaignRoot)));
         com.dnd.cloud.CampaignMeta.idOf(campaignRoot).ifPresent(id -> root.put("campaignId", id));
 
         Map<String, JsonNode> loaded = new LinkedHashMap<>();
@@ -172,6 +173,10 @@ public final class SessionSnapshot {
                 Path file = catalog.file().apply(paths);
                 Files.createDirectories(file.getParent());
                 Files.writeString(file, mapper.writerWithDefaultPrettyPrinter().writeValueAsString(wrapper));
+            }
+            if (snapshot.has("statSchema")) {
+                StatSchemas.save(root, mapper.treeToValue(snapshot.get("statSchema"),
+                    com.dnd.model.character.stats.StatSchema.class));
             }
         } catch (IOException e) {
             throw new DataAccessException("Failed to write the joined session to " + root, e);

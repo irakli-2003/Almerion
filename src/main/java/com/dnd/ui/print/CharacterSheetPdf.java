@@ -48,7 +48,7 @@ import java.util.function.Function;
  * <p>Page one mirrors the official front sheet (abilities, saves, skills, combat block,
  * resources, attacks); the following pages flow features, spells, equipment, backstory and
  * lined notes, paginating as needed. Values that change at the table - current and temporary
- * hit points, used spell slots, feature uses, death saves, coins - are left as empty boxes and
+ * hit points, used spell slots, feature uses, death saves - are left as empty boxes and
  * circles to fill in by pencil.</p>
  *
  * <p>Pure: no JavaFX, so it can run headless (tests, CLI).</p>
@@ -69,17 +69,6 @@ public final class CharacterSheetPdf {
     private static final float[] BAND = {0.30f, 0.09f, 0.08f};
     private static final float[] SHADE = {0.94f, 0.93f, 0.91f};
     private static final float[] WHITE = {1f, 1f, 1f};
-
-    private static final String[] AB_KEYS = {"strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma"};
-    private static final String[] AB_ABBR = {"STR", "DEX", "CON", "INT", "WIS", "CHA"};
-
-    private static final String[][] SKILLS = {
-            {"Acrobatics", "dex"}, {"Animal Handling", "wis"}, {"Arcana", "int"}, {"Athletics", "str"},
-            {"Deception", "cha"}, {"History", "int"}, {"Insight", "wis"}, {"Intimidation", "cha"},
-            {"Investigation", "int"}, {"Medicine", "wis"}, {"Nature", "int"}, {"Perception", "wis"},
-            {"Performance", "cha"}, {"Persuasion", "cha"}, {"Religion", "int"}, {"Sleight of Hand", "dex"},
-            {"Stealth", "dex"}, {"Survival", "wis"}
-    };
 
     private CharacterSheetPdf() {
     }
@@ -268,14 +257,7 @@ public final class CharacterSheetPdf {
         // ── Derived values ──────────────────────────────────────────────────
 
         private int score(int i) {
-            return switch (i) {
-                case 0 -> stats.getStrength();
-                case 1 -> stats.getDexterity();
-                case 2 -> stats.getConstitution();
-                case 3 -> stats.getIntelligence();
-                case 4 -> stats.getWisdom();
-                default -> stats.getCharisma();
-            };
+            return stats.score(stats.schema().getAbilities().get(i).id());
         }
 
         private int mod(String abbr) {
@@ -283,7 +265,7 @@ public final class CharacterSheetPdf {
         }
 
         private boolean saveProficient(int i) {
-            return SheetValues.saveProficient(pc, cls, AB_KEYS[i]);
+            return SheetValues.saveProficient(pc, cls, stats.schema().getAbilities().get(i).id());
         }
 
         private List<SpellSlot> slotList() {
@@ -597,10 +579,10 @@ public final class CharacterSheetPdf {
         private void abilityColumn(float top) throws IOException {
             float x = M;
             float w = 62;
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < Math.min(6, stats.schema().getAbilities().size()); i++) {
                 float t = top + i * 72;
                 rect(x, t, w, 66, 0.9f, INK);
-                labelCenter(AB_KEYS[i], x + w / 2f, t + 10, 5.6f);
+                labelCenter(stats.schema().getAbilities().get(i).abbreviation(), x + w / 2f, t + 10, 5.6f);
                 int sc = score(i);
                 textCenter(signed(Progression.modifier(sc)), x + w / 2f, t + 37, bold, 20, INK);
                 float bw = 28;
@@ -626,39 +608,42 @@ public final class CharacterSheetPdf {
 
             t = top + 60;
             panel(x, t, w, 90, "Saving throws");
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < Math.min(6, stats.schema().getAbilities().size()); i++) {
                 float rt = t + 13 + i * 11.5f;
                 boolean p = saveProficient(i);
                 circle(x + 9, rt - 3, 3f, p);
                 int v = Progression.modifier(score(i)) + (p ? prof : 0);
                 textRight(signed(v), x + 34, rt, bold, 8, INK);
                 line(x + 16, rt + 1.5f, x + 35, rt + 1.5f, 0.3f, RULE);
-                text(cap(AB_KEYS[i]), x + 40, rt, serif, 8, INK);
+                text(stats.schema().getAbilities().get(i).abbreviation(), x + 40, rt, serif, 8, INK);
             }
 
             t = top + 156;
             float rowH = 12.6f;
-            float skH = 16 + SKILLS.length * rowH;
+            var skillDefs = pc.getSkills().schema().getSkills();
+            int visibleSkills = Math.min(18, skillDefs.size());
+            float skH = 16 + visibleSkills * rowH;
             panel(x, t, w, skH, "Skills");
-            for (int i = 0; i < SKILLS.length; i++) {
+            for (int i = 0; i < visibleSkills; i++) {
                 float rt = t + 11 + i * rowH;
                 circle(x + 9, rt - 3, 3f, false);
                 textRight(signed(skillValue(i)), x + 34, rt, bold, 7.5f, INK);
                 line(x + 16, rt + 1.5f, x + 35, rt + 1.5f, 0.3f, RULE);
-                text(SKILLS[i][0], x + 40, rt, serif, 7.5f, INK);
-                textRight("(" + cap(SKILLS[i][1]) + ")", x + w - 4, rt, serif, 6, GREY);
+                text(fit(skillDefs.get(i).name(), serif, 7.5f, w - 70), x + 40, rt, serif, 7.5f, INK);
+                textRight("(" + stats.schema().ability(skillDefs.get(i).ability()).abbreviation() + ")",
+                    x + w - 4, rt, serif, 6, GREY);
             }
 
             t = top + 156 + skH + 6;
             rect(x, t, w, 24, 0.9f, INK);
             rect(x + 4, t + 4, 22, 16, 0.8f, INK);
             textCenter(String.valueOf(SheetValues.passivePerception(pc)), x + 15, t + 16, bold, 9, INK);
-            label("Passive perception (WIS)", x + 30, t + 15, 5.8f);
+            label("Passive perception", x + 30, t + 15, 5.8f);
         }
 
-        /** The character's stored bonus for {@code SKILLS[i]} (same order as {@link com.dnd.model.character.stats.Skills#ALL}). */
+        /** The character's stored bonus in the campaign's skill order. */
         private int skillValue(int i) {
-            return pc.getSkills().get(com.dnd.model.character.stats.Skills.ALL.get(i).key());
+            return pc.getSkills().get(pc.getSkills().schema().getSkills().get(i).id());
         }
 
         private void proficienciesBox(float top, float x, float w, float h) throws IOException {
@@ -788,7 +773,7 @@ public final class CharacterSheetPdf {
             if (castAbility != null) {
                 float cw = w / 3f;
                 String[][] trio = {
-                        {castAbility.toUpperCase(Locale.ROOT), "Casting ability"},
+                        {stats.schema().ability(SheetValues.abilityId(pc, castAbility)).abbreviation(), "Casting ability"},
                         {String.valueOf(SheetValues.spellSaveDc(pc, cls)), "Spell save DC"},
                         {signed(SheetValues.spellAttackBonus(pc, cls)), "Spell attack"}
                 };
@@ -936,6 +921,16 @@ public final class CharacterSheetPdf {
 
         private void flowPages() throws IOException {
             flowPage();
+            if (stats.schema().getAbilities().size() > 6 || pc.getSkills().schema().getSkills().size() > 18) {
+                section("Stats & Skills");
+                for (var def : stats.schema().getAbilities()) {
+                    para(def.name() + ": " + stats.score(def.id()) + " ("
+                        + signed(Progression.modifier(stats.score(def.id()))) + ")", serif, 9, 0, INK);
+                }
+                for (var def : pc.getSkills().schema().getSkills()) {
+                    para(def.name() + ": " + signed(pc.getSkills().get(def.id())), serif, 9, 0, INK);
+                }
+            }
             portraitSection();
             featuresSection();
             spellsSection();
@@ -1007,7 +1002,8 @@ public final class CharacterSheetPdf {
             section("Spellcasting");
             List<String> summary = new ArrayList<>();
             if (castAbility != null) {
-                summary.add("Casting ability " + castAbility.toUpperCase(Locale.ROOT) + " (" + signed(mod(castAbility)) + ")");
+                summary.add("Casting ability " + stats.schema().ability(SheetValues.abilityId(pc, castAbility)).abbreviation()
+                    + " (" + signed(mod(castAbility)) + ")");
                 summary.add("Spell save DC " + SheetValues.spellSaveDc(pc, cls));
                 summary.add("Spell attack " + signed(SheetValues.spellAttackBonus(pc, cls)));
             }
@@ -1134,23 +1130,6 @@ public final class CharacterSheetPdf {
             textRight(num(totalWeight) + " +", colX[4] + 34, y + 2, bold, 7.8f, INK);
             label("■ = equipped", colX[5], y + 2, 5.5f);
             y += 16;
-
-            ensure(40);
-            label("Coins", M, y + 2, 6);
-            y += 6;
-            String[] coins = {"CP", "SP", "EP", "GP", "PP"};
-            com.dnd.model.character.SheetDetails sd = pc.getSheet();
-            int[] amounts = {sd.getCopper(), sd.getSilver(), sd.getElectrum(), sd.getGold() == null ? 0 : sd.getGold(), sd.getPlatinum()};
-            float cw = (CW - 4 * 8) / 5f;
-            for (int i = 0; i < 5; i++) {
-                float cx = M + i * (cw + 8);
-                fill(cx, y, 20, 22, SHADE);
-                rect(cx, y, cw, 22, 0.8f, INK);
-                line(cx + 20, y, cx + 20, y + 22, 0.8f, INK);
-                textCenter(coins[i], cx + 10, y + 14, bold, 7.5f, INK);
-                if (amounts[i] > 0) textRight(String.valueOf(amounts[i]), cx + cw - 6, y + 15, bold, 9, INK);
-            }
-            y += 34;
 
             List<String> blueprints = pc.getKnownBlueprints();
             if (blueprints != null && !blueprints.isEmpty()) {

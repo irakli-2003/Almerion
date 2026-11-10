@@ -34,6 +34,115 @@ import static org.junit.Assert.*;
 public class BattleMapWindowTest {
     @Rule public TemporaryFolder temp = new TemporaryFolder();
 
+    @Test public void hpInputIsCompactAndRevivalUsesEnteredD4WithIndependentSaves() throws Exception {
+        runBattle((battle, map, stage) -> {
+            Canvas canvas = (Canvas) field(battle, "canvas");
+            canvas.getOnMousePressed().handle(mouse(MouseButton.PRIMARY, 108, 108));
+            canvas.getOnMouseReleased().handle(mouse(MouseButton.PRIMARY, 108, 108));
+            var player = map.getCell(2, 2).getOccupants().getFirst();
+            var state = TokenSupport.combatOf(player);
+            SplitPane split = (SplitPane) stage.getScene().lookup("#battle-panel-split");
+            split.setDividerPositions(.21);
+            stage.getScene().getRoot().applyCss();
+            stage.getScene().getRoot().layout();
+            Spinner<?> amount = (Spinner<?>) stage.getScene().lookup("#hp-change-amount");
+            assertEquals(1, amount.getValue());
+            Button heal = button(stage, "Heal");
+            assertTrue(heal.getWidth() + .5 >= heal.prefWidth(-1));
+            var host = (javafx.scene.Node) field(battle, "panelHost");
+            assertTrue(heal.localToScene(heal.getBoundsInLocal()).getMaxX()
+                <= host.localToScene(host.getBoundsInLocal()).getMaxX());
+            amount.getEditor().setText("7");
+            button(stage, "Damage").fire();
+            assertEquals(13, state.getCurrentHitPoints());
+            amount.getEditor().setText("3");
+            button(stage, "Heal").fire();
+            assertEquals(16, state.getCurrentHitPoints());
+            amount.getEditor().setText("invalid");
+            button(stage, "Damage").fire();
+            assertEquals(16, state.getCurrentHitPoints());
+            amount.getEditor().setText("16");
+            button(stage, "Damage").fire();
+            button(stage, "Failed Save").fire();
+            button(stage, "Made Save").fire();
+            button(stage, "Made Save").fire();
+            assertEquals(1, state.getDeathSaveFailures());
+            assertEquals(2, state.getDeathSaveSuccesses());
+            Platform.runLater(() -> ((Button) dialogPane(stage).lookupButton(ButtonType.CANCEL)).fire());
+            button(stage, "Made Save").fire();
+            assertEquals(0, state.getCurrentHitPoints());
+            assertEquals(2, state.getDeathSaveSuccesses());
+            Platform.runLater(() -> {
+                var pane = dialogPane(stage);
+                ((TextField) pane.lookup(".text-field")).setText("2");
+                ((Button) pane.lookupButton(ButtonType.OK)).fire();
+            });
+            button(stage, "Made Save").fire();
+            assertEquals(2, state.getCurrentHitPoints());
+            assertEquals(0, state.getDeathSaveSuccesses());
+            assertEquals(0, state.getDeathSaveFailures());
+            var repos = (CampaignRepositories) field(battle, "repos");
+            assertEquals(2, repos.players().getById("player-0").getCurrentHitPoints());
+            Platform.runLater(() -> {
+                var pane = dialogPane(stage);
+                ((TextField) pane.lookup(".text-field")).setText("4");
+                ((Button) pane.lookupButton(ButtonType.OK)).fire();
+            });
+            button(stage, "Revive").fire();
+            assertEquals(4, state.getCurrentHitPoints());
+        });
+    }
+
+    @Test public void abilityCastingUsesConfiguredRollsAndCancelSpendsNothing() throws Exception {
+        runBattle((battle, map, stage) -> {
+            var caster = map.getCell(0, 0).getOccupants().getFirst();
+            var target = map.getCell(2, 2).getOccupants().getFirst();
+            Ability ability = new Ability();
+            ability.setId("flame");
+            ability.setName("Flame");
+            ability.setRange(60);
+            ability.setManaCost(2);
+            ability.getChecks().setAttackRoll(true);
+            ability.getChecks().setSavingThrow("dexterity");
+            ability.getChecks().setSaveDc(15);
+            var damage = new com.dnd.model.combat.Damage();
+            damage.setConstant(10);
+            ability.setDamage(damage);
+            TokenSupport.abilitiesOf(caster).add(ability);
+            Canvas canvas = (Canvas) field(battle, "canvas");
+            Runnable aim = () -> {
+                canvas.getOnMousePressed().handle(mouse(MouseButton.PRIMARY, 12, 12));
+                canvas.getOnMouseReleased().handle(mouse(MouseButton.PRIMARY, 12, 12));
+                stage.getScene().getRoot().applyCss();
+                stage.getScene().getRoot().layout();
+                Label action = stage.getScene().getRoot().lookupAll(".hover-row").stream()
+                    .filter(n -> n instanceof Label l && l.getText().startsWith("Flame"))
+                    .map(n -> (Label) n).findFirst().orElseThrow();
+                action.getOnMouseClicked().handle(mouse(MouseButton.PRIMARY, 0, 0));
+            };
+            aim.run();
+            AtomicReference<Throwable> nested = new AtomicReference<>();
+            Platform.runLater(() -> {
+                try {
+                    var pane = dialogPane(stage);
+                    assertTrue(((CheckBox) pane.lookup(".check-box")).isSelected());
+                    ((Spinner<?>) pane.lookup("#cast-attack-die-0")).getEditor().setText("20");
+                    ((Spinner<?>) pane.lookup("#cast-save-die-0")).getEditor().setText("15");
+                    ((Button) pane.lookupButton(ButtonType.OK)).fire();
+                } catch (Throwable t) { nested.set(t); closeDialogs(stage); }
+            });
+            canvas.getOnMousePressed().handle(mouse(MouseButton.PRIMARY, 108, 108));
+            if (nested.get() != null) throw new AssertionError(nested.get());
+            assertEquals(15, TokenSupport.combatOf(target).getCurrentHitPoints());
+            assertEquals(18, TokenSupport.combatOf(caster).getCurrentMana());
+            aim.run();
+            Platform.runLater(() -> ((Button) dialogPane(stage).lookupButton(ButtonType.CANCEL)).fire());
+            canvas.getOnMousePressed().handle(mouse(MouseButton.PRIMARY, 108, 108));
+            assertEquals(15, TokenSupport.combatOf(target).getCurrentHitPoints());
+            assertEquals(18, TokenSupport.combatOf(caster).getCurrentMana());
+        });
+    }
+
     @BeforeClass public static void toolkit() throws Exception {
         CountDownLatch ready = new CountDownLatch(1);
         try { Platform.startup(ready::countDown); }
@@ -192,6 +301,7 @@ public class BattleMapWindowTest {
             PlayerCharacter pc = new PlayerCharacter();
             pc.setId("player-" + i);
             pc.setName(i == 0 ? "Success" : "Failure");
+            pc.setStats(new com.dnd.model.character.stats.CoreStats(10, 10, 10, 10, 10, 10));
             pc.setMaxHitPoints(20);
             pc.setCurrentHitPoints(20);
             repos.players().add(pc);

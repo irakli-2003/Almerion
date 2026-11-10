@@ -40,10 +40,6 @@ import java.util.function.Supplier;
  */
 public final class LanSheet {
 
-    private static final String[] ABILITY_NAMES = {
-        "Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"
-    };
-
     private LanSheet() {
     }
 
@@ -53,6 +49,11 @@ public final class LanSheet {
      */
     public static ObjectNode build(PlayerCharacter pc, CampaignRepositories repos, String campaign,
                                    Function<String, String> tr, ObjectMapper mapper) {
+        if (pc.getStats() == null) pc.setStats(new com.dnd.model.character.stats.CoreStats(10, 10, 10, 10, 10, 10));
+        if (repos != null) {
+            pc.getStats().configure(repos.statSchema());
+            pc.getSkills().configure(repos.statSchema());
+        }
         CharacterClass cls = repos == null ? null : safe(() -> repos.classes().getById(pc.getClassId()));
         CharacterRace race = repos == null ? null : safe(() -> repos.races().getById(pc.getRaceId()));
         Map<String, Item> items = new HashMap<>();
@@ -99,29 +100,29 @@ public final class LanSheet {
         root.put("hitDice", nz(SheetValues.hitDice(pc, cls)));
 
         ArrayNode abilities = root.putArray("abilities");
-        for (int i = 0; i < SheetValues.ABILITIES.size(); i++) {
-            String key = SheetValues.ABILITIES.get(i);
+        for (var def : pc.getStats().schema().getAbilities()) {
+            String key = def.id();
             ObjectNode a = abilities.addObject();
-            a.put("key", key.toUpperCase(Locale.ROOT));
-            a.put("name", tr.apply(ABILITY_NAMES[i]));
-            a.put("score", score(pc, i));
+            a.put("key", def.abbreviation());
+            a.put("name", tr.apply(def.name()));
+            a.put("score", pc.getStats().score(key));
             a.put("mod", SheetValues.signed(SheetValues.mod(pc, key)));
             a.put("save", SheetValues.signed(SheetValues.savingThrow(pc, cls, key)));
             a.put("saveProficient", SheetValues.saveProficient(pc, cls, key));
         }
 
         ArrayNode skills = root.putArray("skills");
-        for (Skills.Def def : Skills.ALL) {
+        for (var def : pc.getSkills().schema().getSkills()) {
             ObjectNode s = skills.addObject();
-            s.put("name", tr.apply(def.label()));
-            s.put("ability", def.ability().toUpperCase(Locale.ROOT));
-            s.put("bonus", SheetValues.signed(pc.getSkills().get(def.key())));
+            s.put("name", tr.apply(def.name()));
+            s.put("ability", pc.getSkills().schema().ability(def.ability()).abbreviation());
+            s.put("bonus", SheetValues.signed(pc.getSkills().get(def.id())));
         }
 
         String castAbility = SheetValues.spellcastingAbility(pc, cls);
         if (castAbility != null) {
             ObjectNode casting = root.putObject("casting");
-            casting.put("ability", castAbility.toUpperCase(Locale.ROOT));
+            casting.put("ability", pc.getStats().schema().ability(SheetValues.abilityId(pc, castAbility)).abbreviation());
             casting.put("saveDc", SheetValues.spellSaveDc(pc, cls));
             casting.put("attack", SheetValues.signed(SheetValues.spellAttackBonus(pc, cls)));
         }
@@ -227,12 +228,6 @@ public final class LanSheet {
             }
         }
 
-        ObjectNode coins = root.putObject("coins");
-        coins.put("cp", sheet.getCopper());
-        coins.put("sp", sheet.getSilver());
-        coins.put("ep", sheet.getElectrum());
-        coins.put("gp", sheet.getGold() == null ? 0 : sheet.getGold());
-        coins.put("pp", sheet.getPlatinum());
         root.put("proficiencies", nz(sheet.getProficienciesAndLanguages()));
         root.put("features", nz(sheet.getExtraFeatures()));
         root.put("notes", nz(sheet.getNotes()));

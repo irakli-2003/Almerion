@@ -36,8 +36,21 @@ public final class SheetValues {
     }
 
     public static int mod(PlayerCharacter pc, String ability) {
+        String id = abilityId(pc, ability);
+        if (id != null) return Math.floorDiv(stats(pc).score(id) - 10, 2);
         String key = abilityKey(ability);
         return key == null ? 0 : FeatureRules.mod(stats(pc), key);
+    }
+
+    public static String abilityId(PlayerCharacter pc, String ability) {
+        if (ability == null) return null;
+        var schema = stats(pc).schema();
+        if (ABILITIES.contains(ability.toLowerCase(Locale.ROOT))) return schema.resolveAbility(ability);
+        for (var def : schema.getAbilities()) {
+            if (def.id().equalsIgnoreCase(ability) || def.abbreviation().equalsIgnoreCase(ability)) return def.id();
+        }
+        if (schema.getAbilityBindings().containsKey(ability)) return schema.resolveAbility(ability);
+        return null;
     }
 
     public static int proficiencyBonus(PlayerCharacter pc) {
@@ -87,34 +100,42 @@ public final class SheetValues {
         if (text == null) return null;
         String t = text.trim().toLowerCase(Locale.ROOT);
         if (t.length() < 3) return null;
-        String head = t.substring(0, 3);
-        return ABILITIES.contains(head) ? head : null;
+        if (ABILITIES.contains(t)) return t;
+        for (String role : com.dnd.model.character.stats.StatSchema.ROLES) {
+            if (role.equals(t)) return role.substring(0, 3);
+        }
+        return null;
     }
 
     /** Whether the character adds proficiency to this ability's saving throw. */
     public static boolean saveProficient(PlayerCharacter pc, CharacterClass cls, String ability) {
-        String key = abilityKey(ability);
+        String key = abilityId(pc, ability);
         if (key == null) return false;
         List<String> chosen = sheet(pc).getSavingThrowProficiencies();
         if (!chosen.isEmpty()) {
-            for (String c : chosen) if (key.equals(abilityKey(c))) return true;
+            for (String c : chosen) if (key.equals(abilityId(pc, c))) return true;
             return false;
         }
         if (cls == null || cls.getSavingThrowBonuses() == null) return false;
         for (Map.Entry<String, Integer> e : cls.getSavingThrowBonuses().entrySet()) {
-            if (key.equals(abilityKey(e.getKey())) && e.getValue() != null && e.getValue() > 0) return true;
+            if (key.equals(stats(pc).schema().resolveAbility(e.getKey()))
+                    && e.getValue() != null && e.getValue() > 0) return true;
         }
         return false;
     }
 
     public static int savingThrow(PlayerCharacter pc, CharacterClass cls, String ability) {
-        return mod(pc, abilityKey(ability)) + (saveProficient(pc, cls, ability) ? proficiencyBonus(pc) : 0);
+        return mod(pc, ability) + (saveProficient(pc, cls, ability) ? proficiencyBonus(pc) : 0);
     }
 
     /** The ability spells are cast with ("int", "wis", "cha"), or null for non-casters. */
     public static String spellcastingAbility(PlayerCharacter pc, CharacterClass cls) {
-        String o = abilityKey(sheet(pc).getSpellcastingAbility());
-        if (o != null) return o;
+        String text = sheet(pc).getSpellcastingAbility();
+        String resolved = abilityId(pc, text);
+        if (resolved != null) {
+            String role = abilityKey(text);
+            return role != null && stats(pc).schema().resolveAbility(role).equals(resolved) ? role : resolved;
+        }
         String id = (cls != null && cls.getId() != null ? cls.getId() : pc == null || pc.getClassId() == null ? "" : pc.getClassId())
             .toLowerCase(Locale.ROOT);
         switch (id) {
@@ -131,6 +152,9 @@ public final class SheetValues {
             for (String a : cls.getPrimaryAbilities()) {
                 String k = abilityKey(a);
                 if ("int".equals(k) || "wis".equals(k) || "cha".equals(k)) return k;
+            }
+            for (String a : cls.getPrimaryAbilities()) {
+                if (abilityKey(a) == null && abilityId(pc, a) != null) return abilityId(pc, a);
             }
         }
         return "int";

@@ -91,8 +91,6 @@ details p { margin: 6px 0 2px; color: var(--dim); white-space: pre-wrap; }
 .tag { font-size: .72rem; padding: 1px 7px; border-radius: 99px; background: var(--panel2); color: var(--dim); white-space: nowrap; }
 .tag.on { color: var(--gold); }
 .text { white-space: pre-wrap; margin: 0; }
-.coins { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; text-align: center; }
-.coins div { background: var(--panel2); border-radius: 8px; padding: 6px 2px; }
 .flash { animation: flash 1.4s ease-out; }
 @keyframes flash { 0% { box-shadow: 0 0 0 2px var(--gold); background: #4a3a1c; } 100% { box-shadow: none; } }
 .foot { text-align: center; margin-top: 16px; }
@@ -283,7 +281,7 @@ function sheetTab(d) {
   const abil = d.abilities.map(a => `<div class="ab" data-k="ab-${a.key}" title="${esc(a.name)}"><div class="k">${a.key}</div>` +
     `<div class="m">${esc(a.mod)}</div><div class="s">${a.score}</div></div>`).join("");
   const saves = d.abilities.map(a => li(`<span class="${a.saveProficient ? "prof" : "noprof"}">${esc(a.name)}</span>`, esc(a.save), "sv-" + a.key)).join("");
-  const skills = d.skills.map(s => li(`${esc(s.name)} <span class="small dim">${s.ability}</span>`, esc(s.bonus), "sk-" + s.name)).join("");
+  const skills = d.skills.map(s => li(`${esc(s.name)} <span class="small dim">${esc(s.ability)}</span>`, esc(s.bonus), "sk-" + s.name)).join("");
   const misc = li(esc(t("Proficiency")), esc(d.proficiency)) + li(esc(t("Passive perception")), d.passivePerception) +
     li(esc(t("Hit dice")), esc(d.hitDice || "—")) + li(esc(t("Inspiration")), d.inspiration ? "★" : "—", "insp") +
     li(esc(t("Death saves")), pips(d.deathSuccesses, 3) + " " + pips(d.deathFailures, 3, "bad"), "ds");
@@ -307,7 +305,7 @@ function combatTab(d) {
 
 function magicTab(d) {
   let head = "";
-  if (d.casting) head += `<ul class="list">${li(esc(t("Spellcasting")), d.casting.ability)}${li(esc(t("Spell save DC")), d.casting.saveDc)}${li(esc(t("Spell attack")), esc(d.casting.attack))}</ul>`;
+  if (d.casting) head += `<ul class="list">${li(esc(t("Spellcasting")), esc(d.casting.ability))}${li(esc(t("Spell save DC")), d.casting.saveDc)}${li(esc(t("Spell attack")), esc(d.casting.attack))}</ul>`;
   if (d.mana) head += `<ul class="list">${li(esc(t("Mana")), d.mana.current + " / " + d.mana.max, "mana")}</ul>`;
   const slots = d.slots.length ? `<ul class="list">${d.slots.map(s => li(esc(s.label) + ` <span class="small dim">${s.current}/${s.max}</span>`, pips(s.current, s.max), "sl-" + s.label)).join("")}</ul>` : "";
   const groups = {};
@@ -320,13 +318,10 @@ function magicTab(d) {
 }
 
 function gearTab(d) {
-  const c = d.coins;
-  const coins = `<div class="coins" data-k="coins">${[["cp", c.cp], ["sp", c.sp], ["ep", c.ep], ["gp", c.gp], ["pp", c.pp]]
-    .map(([k, n]) => `<div><div class="num">${n}</div><div class="small dim">${k.toUpperCase()}</div></div>`).join("")}</div>`;
   const items = d.items.length ? d.items.map(i => `<details><summary><span>${esc(i.name)}${i.quantity > 1 ? " ×" + i.quantity : ""}</span>` +
     (i.equipped ? `<span class="tag on">${esc(t("Equipped"))}</span>` : "") + `</summary>` +
     (i.description ? `<p>${esc(i.description)}</p>` : "") + `</details>`).join("") : empty();
-  return card("Coins", coins) + card("Inventory", items, "wide") + textCard("Notes", d.notes);
+  return card("Inventory", items, "wide") + textCard("Notes", d.notes);
 }
 
 // Briefly highlights whatever the GM just changed (damage, a spent slot, new XP...).

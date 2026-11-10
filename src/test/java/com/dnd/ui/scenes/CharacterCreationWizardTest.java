@@ -44,6 +44,20 @@ public class CharacterCreationWizardTest {
         return s;
     }
 
+    @Test public void customConstitutionBindingAndRetiredRaceBonusAffectCreation() {
+        State s = complete(cls("fighter", 10, SpellcastingType.NONE, List.of()));
+        s.statSchema.getAbilities().removeIf(a -> a.id().equals("constitution"));
+        s.statSchema.getAbilities().add(new com.dnd.model.character.stats.StatSchema.Ability("vitality", "Vitality", "VIT"));
+        s.statSchema.getAbilityBindings().put("constitution", "vitality");
+        s.statSchema.getAbilityBindings().put("retiredPower", "vitality");
+        s.race.setAbilityBonuses(Map.of("constitution", 2, "retiredPower", 1));
+        s.customScores.put("vitality", 15);
+        s.level = 2;
+        PlayerCharacter pc = CharacterCreationWizard.buildCharacter(s, List.of());
+        assertEquals(18, pc.getStats().score("vitality"));
+        assertEquals(24, pc.getMaxHitPoints());
+    }
+
     @Test
     public void subclassDescriptionExplainsTheSubclassAndEachFeature() {
         CharacterClass wizard = new CharacterClass();

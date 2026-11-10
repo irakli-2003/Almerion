@@ -732,7 +732,8 @@ public final class FeatureRules {
             case "con" -> stats.getConstitution();
             case "int" -> stats.getIntelligence();
             case "wis" -> stats.getWisdom();
-            default -> stats.getCharisma();
+            case "cha" -> stats.getCharisma();
+            default -> stats.score(stats.schema().resolveAbility(ability));
         };
         return Progression.modifier(score);
     }

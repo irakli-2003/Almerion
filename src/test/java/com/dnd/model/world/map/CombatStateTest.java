@@ -71,13 +71,14 @@ public class CombatStateTest {
     }
 
     @Test
-    public void aSuccessfulSaveUndoesAFailure() {
+    public void successfulSavesAreIndependentFromFailures() {
         CombatState state = withHp(10);
         state.applyDamage(10);
         state.failDeathSave();
         state.failDeathSave();
         state.succeedDeathSave();
-        assertEquals(2, state.remainingDeathSaves());
+        assertEquals(1, state.remainingDeathSaves());
+        assertEquals(1, state.getDeathSaveSuccesses());
         assertFalse(state.isDead());
     }
 
@@ -109,6 +110,22 @@ public class CombatStateTest {
         assertFalse(state.isDowned());
         assertEquals(30, state.getCurrentHitPoints());
         assertTrue(state.isActingThisRound());
+    }
+
+    @Test public void rolledRevivalClearsBothCountersAndClampsToMaximumHp() {
+        CombatState state = withHp(3);
+        state.applyDamage(3);
+        state.failDeathSave();
+        state.succeedDeathSave();
+        assertEquals(1, state.copy().getDeathSaveSuccesses());
+        state.revive(4);
+        assertEquals(3, state.getCurrentHitPoints());
+        assertEquals(0, state.getDeathSaveSuccesses());
+        assertEquals(0, state.getDeathSaveFailures());
+        assertFalse(state.isDowned());
+        assertFalse(state.isDead());
+        assertThrows(IllegalArgumentException.class, () -> state.revive(5));
+        assertThrows(IllegalArgumentException.class, () -> state.revive(0));
     }
 
     @Test

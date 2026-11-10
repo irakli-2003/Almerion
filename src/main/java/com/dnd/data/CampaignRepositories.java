@@ -57,13 +57,15 @@ public class CampaignRepositories {
 
     public CampaignRepositories(Path campaignRoot) {
         this.paths = new CampaignPaths(campaignRoot);
-        this.mapper = JsonMappers.create();
+        this.mapper = JsonMappers.forCampaign(campaignRoot);
     }
 
     /** Folder holding this campaign's data; relative image paths resolve against it. */
     public Path campaignRoot() {
         return paths.getRoot();
     }
+
+    public com.dnd.model.character.stats.StatSchema statSchema() { return StatSchemas.load(campaignRoot()); }
 
     public JsonRepository<CharacterClass, CharacterClassCatalog> classes() {
         if (classes == null) {

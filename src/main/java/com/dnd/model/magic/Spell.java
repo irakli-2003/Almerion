@@ -12,6 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Spell implements Printable {
+    private com.dnd.model.combat.CastChecks checks = new com.dnd.model.combat.CastChecks();
+    public com.dnd.model.combat.CastChecks getChecks() { return checks; }
+    public void setChecks(com.dnd.model.combat.CastChecks value) {
+        checks = value == null ? new com.dnd.model.combat.CastChecks() : value;
+    }
     public static final int MIN_LEVEL = 0;
     public static final int MAX_LEVEL = 9;
 

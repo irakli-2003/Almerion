@@ -67,5 +67,29 @@ public class SessionSnapshotTest {
                 walk.sorted(java.util.Comparator.reverseOrder()).forEach(p -> p.toFile().delete());
             }
         }
+
+    }
+
+    @Test public void liveSessionCarriesCustomStatDefinitionsAndBindings() throws Exception {
+        Path root = temp.newFolder("custom-stats").toPath();
+        var schema = new com.dnd.model.character.stats.StatSchema();
+        schema.getAbilities().add(new com.dnd.model.character.stats.StatSchema.Ability("agility", "Agility", "AGI"));
+        schema.getAbilityBindings().put("dexterity", "agility");
+        StatSchemas.save(root, schema);
+        var pc = new com.dnd.model.character.PlayerCharacter();
+        pc.setId("hero");
+        pc.setStats(new com.dnd.model.character.stats.CoreStats(10, 10, 10, 10, 10, 10));
+        pc.getStats().score("agility", 18);
+        new CampaignRepositories(root).players().add(pc);
+        Path joined = SessionSnapshot.hydrate(SessionSnapshot.capture(root, "Camp"), "test-" + System.nanoTime());
+        try {
+            var received = new CampaignRepositories(joined).players().getById("hero");
+            assertEquals(7, received.getStats().schema().getAbilities().size());
+            assertEquals(4, com.dnd.model.rules.SheetValues.initiative(received));
+        } finally {
+            try (var walk = Files.walk(joined)) {
+                walk.sorted(java.util.Comparator.reverseOrder()).forEach(p -> p.toFile().delete());
+            }
+        }
     }
 }

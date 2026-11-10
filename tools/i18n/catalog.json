@@ -73,14 +73,14 @@
   "key": "(cantrip)",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:572"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:619"
   ]
  },
  {
   "key": "(crit)",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1887"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1955"
   ]
  },
  {
@@ -88,14 +88,14 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/model/character/PlayerCharacter.java:424",
-   "src/main/java/com/dnd/ui/scenes/player/PlayerHomeScene.java:91"
+   "src/main/java/com/dnd/ui/scenes/player/PlayerHomeScene.java:90"
   ]
  },
  {
   "key": "(Level",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/magic/Spell.java:272"
+   "src/main/java/com/dnd/model/magic/Spell.java:277"
   ]
  },
  {
@@ -109,7 +109,7 @@
   "key": "(lvl {A})",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:572"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:619"
   ]
  },
  {
@@ -123,8 +123,8 @@
   "key": "(missing)",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/EntityForm.java:504",
-   "src/main/java/com/dnd/ui/components/EntityForm.java:800"
+   "src/main/java/com/dnd/ui/components/EntityForm.java:506",
+   "src/main/java/com/dnd/ui/components/EntityForm.java:803"
   ]
  },
  {
@@ -138,7 +138,7 @@
   "key": "(no subclass-specific features listed)",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:479"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:515"
   ]
  },
  {
@@ -146,7 +146,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/model/world/map/TokenSupport.java:32",
-   "src/main/java/com/dnd/ui/components/EntityForm.java:446",
+   "src/main/java/com/dnd/ui/components/EntityForm.java:448",
    "src/main/java/com/dnd/ui/components/SearchPicker.java:61"
   ]
  },
@@ -161,14 +161,14 @@
   "key": "(put your best scores here)",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:431"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:467"
   ]
  },
  {
   "key": "(Rank",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/player/PlayerHomeScene.java:104"
+   "src/main/java/com/dnd/ui/scenes/player/PlayerHomeScene.java:103"
   ]
  },
  {
@@ -182,7 +182,7 @@
   "key": "(rolled for hit points each level - bigger means tougher)",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:425"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:461"
   ]
  },
  {
@@ -324,7 +324,7 @@
   "key": "+{A} damage on Strength melee attacks",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1632"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1700"
   ]
  },
  {
@@ -345,7 +345,7 @@
   "key": "+{A} Rage",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1857"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1925"
   ]
  },
  {
@@ -366,7 +366,7 @@
   "key": "- nobody is close enough.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:394"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:437"
   ]
  },
  {
@@ -501,7 +501,7 @@
   "key": "A dash of magic from level {0}, up to {1}th-level spells (Spellblade, Spellthief).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:134"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:143"
   ]
  },
  {
@@ -557,7 +557,7 @@
   "key": "A subclass is a specialisation inside your class (a barbarian's path, a wizard's school...). It shapes how your character plays and adds its own features as you level up. Pick one to read what it is about and exactly what each feature does.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:461"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:497"
   ]
  },
  {
@@ -608,14 +608,21 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/lan/LanSessionServer.java:77",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1168"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1175"
   ]
  },
  {
   "key": "Abilities (race bonuses included):",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:678"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:725"
+  ]
+ },
+ {
+  "key": "Abilities need unique IDs, names and abbreviations.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/stats/StatSchema.java:107"
   ]
  },
  {
@@ -629,7 +636,7 @@
   "key": "Ability bonuses (added to your scores):",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:388"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:424"
   ]
  },
  {
@@ -643,14 +650,21 @@
   "key": "Ability score must be between {A} and {B} but was {C}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/character/stats/CoreStats.java:81"
+   "src/main/java/com/dnd/model/character/stats/CoreStats.java:130"
   ]
  },
  {
   "key": "Ability scores",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:522"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:569"
+  ]
+ },
+ {
+  "key": "Ability scores describe what the character is good at. {0} is average, {1} is excellent, {2} is weak. The number in brackets is the modifier added to dice rolls: every {3} points above {4} is +{5}. Race bonuses are added on top at the end.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:570"
   ]
  },
  {
@@ -664,14 +678,14 @@
   "key": "Ability: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1889"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1957"
   ]
  },
  {
   "key": "About this subclass",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:464"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:500"
   ]
  },
  {
@@ -742,7 +756,7 @@
   "key": "Acrobatics",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/stats/Skills.java:16"
+   "src/main/java/com/dnd/model/character/stats/Skills.java:26"
   ]
  },
  {
@@ -784,7 +798,7 @@
   "key": "Active Effects",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1136",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1142",
    "src/main/java/com/dnd/ui/scenes/ManagePlayersPanel.java:424",
    "src/main/java/com/dnd/ui/scenes/ManagePlayersPanel.java:680"
   ]
@@ -849,15 +863,15 @@
   "key": "Add Effect...",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1137",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2202"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1143",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2377"
   ]
  },
  {
   "key": "Add entry",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/EntityForm.java:675"
+   "src/main/java/com/dnd/ui/components/EntityForm.java:678"
   ]
  },
  {
@@ -896,6 +910,13 @@
   ]
  },
  {
+  "key": "Add or remove abilities and skills here. IDs are permanent value keys. Remap ability bindings to existing ability IDs before deleting a referenced stat. Skill ability fields use ability IDs. The perception binding controls passive perception. Scores use the modifier (score - {0}) / {1}, rounded down; skill values are independent bonuses.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/StatDefinitionsWindow.java:26"
+  ]
+ },
+ {
   "key": "Add sound",
   "kind": "exact",
   "where": [
@@ -906,14 +927,14 @@
   "key": "Add Token",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2805"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2993"
   ]
  },
  {
   "key": "Add {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/components/EntityForm.java:826"
+   "src/main/java/com/dnd/ui/components/EntityForm.java:829"
   ]
  },
  {
@@ -927,14 +948,14 @@
   "key": "Added for you: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1858"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1926"
   ]
  },
  {
   "key": "Added {A} at ({B},{C}).",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2421"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2606"
   ]
  },
  {
@@ -1019,7 +1040,7 @@
   "key": "Aiming {A} - click {B}, or press Esc to cancel.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1963"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2031"
   ]
  },
  {
@@ -1034,7 +1055,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:92",
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:277"
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:279"
   ]
  },
  {
@@ -1048,7 +1069,7 @@
   "key": "All",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2785",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2973",
    "src/main/java/com/dnd/ui/scenes/EntityListScene.java:36"
   ]
  },
@@ -1180,6 +1201,20 @@
   ]
  },
  {
+  "key": "Amount:",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1267"
+  ]
+ },
+ {
+  "key": "An ability reference is required.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/stats/StatSchema.java:90"
+  ]
+ },
+ {
   "key": "An account with that email already exists.",
   "kind": "exact",
   "where": [
@@ -1225,16 +1260,16 @@
   "key": "Animal Handling",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/stats/Skills.java:17"
+   "src/main/java/com/dnd/model/character/stats/Skills.java:27"
   ]
  },
  {
   "key": "animalHandling",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/stats/Skills.java:17",
-   "src/main/java/com/dnd/model/character/stats/Skills.java:57",
-   "src/main/java/com/dnd/model/character/stats/Skills.java:81"
+   "src/main/java/com/dnd/model/character/stats/Skills.java:27",
+   "src/main/java/com/dnd/model/character/stats/Skills.java:59",
+   "src/main/java/com/dnd/model/character/stats/Skills.java:83"
   ]
  },
  {
@@ -1290,7 +1325,7 @@
   "key": "Apply an effect manually",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1137"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1143"
   ]
  },
  {
@@ -1305,14 +1340,14 @@
   "key": "Arcana",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/stats/Skills.java:18"
+   "src/main/java/com/dnd/model/character/stats/Skills.java:28"
   ]
  },
  {
   "key": "Arcana DC: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2502"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2687"
   ]
  },
  {
@@ -1347,7 +1382,7 @@
   "key": "Area of effect in feet; {0} means a single target.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:92"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:101"
   ]
  },
  {
@@ -1389,21 +1424,21 @@
   "key": "around itself, catching {A}.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:394"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:437"
   ]
  },
  {
   "key": "Artificer charges. Work like slots, but are refilled by burning fuel in a workshop furnace, not by resting.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:139"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:148"
   ]
  },
  {
   "key": "As printed on the character sheet, as of the last save. Blank fields in the Sheet section use these.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:370"
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:375"
   ]
  },
  {
@@ -1424,7 +1459,14 @@
   "key": "at empty ground.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:395"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:438"
+  ]
+ },
+ {
+  "key": "At least one ability is required.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/stats/StatSchema.java:110"
   ]
  },
  {
@@ -1438,7 +1480,28 @@
   "key": "Athletics",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/stats/Skills.java:19"
+   "src/main/java/com/dnd/model/character/stats/Skills.java:29"
+  ]
+ },
+ {
+  "key": "Attack and saving throw rules for this action. The GM can override them for each cast.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:88"
+  ]
+ },
+ {
+  "key": "Attack and saving throws",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2226"
+  ]
+ },
+ {
+  "key": "Attack bonus",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2183"
   ]
  },
  {
@@ -1459,7 +1522,7 @@
   "key": "Attacking with {A} - click the target, or press Esc to cancel.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1770"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1838"
   ]
  },
  {
@@ -1467,7 +1530,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/lan/LanSessionServer.java:78",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1142"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1148"
   ]
  },
  {
@@ -1502,7 +1565,7 @@
   "key": "Award XP",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1439",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1507",
    "src/main/java/com/dnd/ui/scenes/ManagePlayersPanel.java:232",
    "src/main/java/com/dnd/ui/scenes/ManagePlayersPanel.java:233"
   ]
@@ -1525,21 +1588,21 @@
   "key": "Backstory",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:665"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:712"
   ]
  },
  {
   "key": "Backstory (optional)",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:634"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:681"
   ]
  },
  {
   "key": "Backstory:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:694"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:741"
   ]
  },
  {
@@ -1607,7 +1670,21 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:82",
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:267"
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:269"
+  ]
+ },
+ {
+  "key": "Blank = caster's calculated spell attack bonus. Editable during casting.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:92"
+  ]
+ },
+ {
+  "key": "Blank = caster's calculated spell save DC. Editable during casting.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:93"
   ]
  },
  {
@@ -1665,7 +1742,7 @@
   "key": "Blood magic: a spell's mana cost is paid in the caster's own hit points.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:141"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:150"
   ]
  },
  {
@@ -1722,7 +1799,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:93",
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:278"
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:280"
   ]
  },
  {
@@ -1809,7 +1886,7 @@
   "key": "Calculated values",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:368"
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:373"
   ]
  },
  {
@@ -1959,8 +2036,8 @@
   "key": "Cancel",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1870",
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:303",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1938",
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:326",
    "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:117"
   ]
  },
@@ -1975,7 +2052,7 @@
   "key": "Cancelled.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1724",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1792",
    "src/main/java/com/dnd/ui/scenes/WorldMapScene.java:229"
   ]
  },
@@ -1983,7 +2060,7 @@
   "key": "Cannot cast spells at all.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:142"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:151"
   ]
  },
  {
@@ -2001,6 +2078,13 @@
   ]
  },
  {
+  "key": "Cannot load campaign stat definitions: {A}",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/data/StatSchemas.java:18"
+  ]
+ },
+ {
   "key": "Cannot move a folder into itself or one of its own subfolders.",
   "kind": "exact",
   "where": [
@@ -2012,6 +2096,13 @@
   "kind": "pattern",
   "where": [
    "src/main/java/com/dnd/model/world/map/GameMap.java:207"
+  ]
+ },
+ {
+  "key": "Cannot save campaign stat definitions: {A}",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/data/StatSchemas.java:37"
   ]
  },
  {
@@ -2032,7 +2123,7 @@
   "key": "Cantrips are free and can be used every turn. Levelled spells cost {A} of their level or higher each cast. The class's usual spells are already ticked; tick or untick freely.{B}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:563"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:610"
   ]
  },
  {
@@ -2046,16 +2137,30 @@
   "key": "Capsule recipe: fills one energy charge of this level instead of making an item. {0} = makes the product.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:121"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:130"
   ]
  },
  {
   "key": "Cast cancelled.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1974",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2020",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2035"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2042",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2087",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2098"
+  ]
+ },
+ {
+  "key": "Caster attack roll",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2158"
+  ]
+ },
+ {
+  "key": "Caster d{0} / target AC",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2221"
   ]
  },
  {
@@ -2083,7 +2188,7 @@
   "key": "Casts with: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2593",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2781",
    "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:53"
   ]
  },
@@ -2119,7 +2224,6 @@
   "key": "CHA",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1388",
    "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:70"
   ]
  },
@@ -2170,7 +2274,7 @@
   "key": "Character choices are incomplete",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:181"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:183"
   ]
  },
  {
@@ -2184,7 +2288,7 @@
   "key": "Character level needed to understand these plans.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:115"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:124"
   ]
  },
  {
@@ -2205,7 +2309,7 @@
   "key": "Character name (required)",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:624"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:671"
   ]
  },
  {
@@ -2226,7 +2330,7 @@
   "key": "Charge type: {0} Steam-pressure, {1} Thermal, {2} Shock, {3} Force, {4} Arcane Resonance. Higher charges can stand in for lower.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:123"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:132"
   ]
  },
  {
@@ -2241,16 +2345,14 @@
   "key": "Charisma",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/lan/LanSheet.java:44",
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:322",
-   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:198"
+   "src/main/java/com/dnd/model/character/stats/StatSchema.java:54"
   ]
  },
  {
   "key": "Charisma - force of personality: persuasion, deception, bards', sorcerers' and warlocks' magic.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:106"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:108"
   ]
  },
  {
@@ -2320,6 +2422,13 @@
   ]
  },
  {
+  "key": "Choose a saving throw or none.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/combat/CastChecks.java:17"
+  ]
+ },
+ {
   "key": "Choose an audio file",
   "kind": "exact",
   "where": [
@@ -2372,7 +2481,7 @@
   "key": "Choose Portrait...",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:650"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:697"
   ]
  },
  {
@@ -2435,7 +2544,7 @@
   "key": "Class & Race Features",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1144",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1150",
    "src/main/java/com/dnd/ui/scenes/ManagePlayersPanel.java:421"
   ]
  },
@@ -2450,7 +2559,7 @@
   "key": "Class:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:672"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:719"
   ]
  },
  {
@@ -2472,14 +2581,14 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:87",
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:272"
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:274"
   ]
  },
  {
   "key": "classFeatures",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/lan/LanSheet.java:186"
+   "src/main/java/com/dnd/lan/LanSheet.java:187"
   ]
  },
  {
@@ -2549,7 +2658,7 @@
   "key": "Click an empty box on the map to place it, or press Esc to cancel.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2347"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2532"
   ]
  },
  {
@@ -2600,7 +2709,7 @@
   "key": "Click to aim, then click a target.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1547"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1615"
   ]
  },
  {
@@ -2621,21 +2730,21 @@
   "key": "Click to use it - it hits everyone around the caster.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1546"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1614"
   ]
  },
  {
   "key": "Click to use it on itself.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1545"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1613"
   ]
  },
  {
   "key": "Click, then click the target.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1746"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1814"
   ]
  },
  {
@@ -2649,7 +2758,7 @@
   "key": "Climb (ft):",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1357"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1407"
   ]
  },
  {
@@ -2659,6 +2768,13 @@
    "src/main/java/com/dnd/ui/ReportUi.java:178",
    "src/main/java/com/dnd/ui/print/CharacterSheetPrintDialog.java:170",
    "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:383"
+  ]
+ },
+ {
+  "key": "Close battle windows before changing campaign stat rules.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/StatDefinitionsWindow.java:19"
   ]
  },
  {
@@ -2693,7 +2809,6 @@
   "key": "Coins:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1315",
    "src/main/java/com/dnd/ui/scenes/StorylineEditorWindow.java:565"
   ]
  },
@@ -2757,8 +2872,8 @@
   "key": "comma separated",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/EntityForm.java:784",
-   "src/main/java/com/dnd/ui/components/EntityForm.java:786"
+   "src/main/java/com/dnd/ui/components/EntityForm.java:787",
+   "src/main/java/com/dnd/ui/components/EntityForm.java:789"
   ]
  },
  {
@@ -2779,7 +2894,6 @@
   "key": "CON",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1385",
    "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:70"
   ]
  },
@@ -2787,14 +2901,14 @@
   "key": "Concentration spells end if the caster casts another one or is badly hurt.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:109"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:118"
   ]
  },
  {
   "key": "Condition",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1127"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1132"
   ]
  },
  {
@@ -2836,16 +2950,14 @@
   "key": "Constitution",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/lan/LanSheet.java:44",
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:322",
-   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:195"
+   "src/main/java/com/dnd/model/character/stats/StatSchema.java:54"
   ]
  },
  {
   "key": "Constitution - toughness: extra hit points every level, resisting poison and exhaustion.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:103"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:105"
   ]
  },
  {
@@ -2974,7 +3086,7 @@
   "key": "Could not find that entry in the campaign.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2404"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2589"
   ]
  },
  {
@@ -3009,7 +3121,7 @@
   "key": "Could not place the token: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2410"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2595"
   ]
  },
  {
@@ -3100,7 +3212,7 @@
   "key": "Could not work out the sheet values: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:365"
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:370"
   ]
  },
  {
@@ -3234,7 +3346,7 @@
   "key": "Count a failed death save; the third one kills",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1262"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1289"
   ]
  },
  {
@@ -3262,7 +3374,7 @@
   "key": "Crafting check DC: d{0} + INT + proficiency. Fail by {1} or more and the materials are ruined. {2} = no check.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:120"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:129"
   ]
  },
  {
@@ -3276,7 +3388,7 @@
   "key": "Create",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:302"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:325"
   ]
  },
  {
@@ -3312,7 +3424,7 @@
   "key": "Create an effect in Worldbuilding first.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2183"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2358"
   ]
  },
  {
@@ -3327,8 +3439,8 @@
   "key": "Create Character",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:285",
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:197"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:308",
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:199"
   ]
  },
  {
@@ -3448,7 +3560,7 @@
   "key": "Critical hit (roll the weapon dice twice, enter the total)",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1831"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1899"
   ]
  },
  {
@@ -3463,6 +3575,20 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/MapTemplates.java:28"
+  ]
+ },
+ {
+  "key": "Custom scores cannot be null.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/stats/CoreStats.java:66"
+  ]
+ },
+ {
+  "key": "Custom scores need an ID and a value.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/stats/CoreStats.java:68"
   ]
  },
  {
@@ -3506,21 +3632,28 @@
   "key": "Damage dealt on a hit: the dice rolled plus a flat constant, and the damage type.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:107"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:116"
+  ]
+ },
+ {
+  "key": "Damage on successful save",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2184"
   ]
  },
  {
   "key": "Damage per round",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2205"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2380"
   ]
  },
  {
   "key": "Damage type: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1256"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1283"
   ]
  },
  {
@@ -3528,7 +3661,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:89",
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:274"
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:276"
   ]
  },
  {
@@ -3605,6 +3738,13 @@
   ]
  },
  {
+  "key": "Death saves: {A} successes / {B} failures",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1329"
+  ]
+ },
+ {
   "key": "deathSaveFailures",
   "kind": "exact",
   "where": [
@@ -3622,7 +3762,7 @@
   "key": "Deception",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/stats/Skills.java:20"
+   "src/main/java/com/dnd/model/character/stats/Skills.java:30"
   ]
  },
  {
@@ -3651,7 +3791,7 @@
   "key": "default spell(s) and",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:434"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:470"
   ]
  },
  {
@@ -3767,14 +3907,14 @@
   "key": "Description",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:665"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:712"
   ]
  },
  {
   "key": "Description (optional)",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:639",
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:686",
    "src/main/java/com/dnd/ui/scenes/ManagePlayersPanel.java:951"
   ]
  },
@@ -3783,7 +3923,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/ReportUi.java:137",
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:695"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:742"
   ]
  },
  {
@@ -3797,8 +3937,8 @@
   "key": "Details",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:380",
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:418"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:416",
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:454"
   ]
  },
  {
@@ -3827,8 +3967,7 @@
   "key": "DEX",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1384",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1856",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1924",
    "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:70"
   ]
  },
@@ -3843,16 +3982,14 @@
   "key": "Dexterity",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/lan/LanSheet.java:44",
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:322",
-   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:194"
+   "src/main/java/com/dnd/model/character/stats/StatSchema.java:54"
   ]
  },
  {
   "key": "Dexterity - agility and aim: ranged and finesse attacks, dodging (armor class), stealth.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:102"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:104"
   ]
  },
  {
@@ -3860,14 +3997,14 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:94",
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:279"
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:281"
   ]
  },
  {
   "key": "Dice rolled for the effect's power; the GM rolls them at the table when the spell is cast.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:106"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:115"
   ]
  },
  {
@@ -4042,14 +4179,14 @@
   "key": "e.g. +{0}",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:85"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:84"
   ]
  },
  {
   "key": "e.g. {0}d{1} + {2} piercing",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:86"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:85"
   ]
  },
  {
@@ -4128,14 +4265,14 @@
   "where": [
    "src/main/java/com/dnd/data/EntityDescriptions.java:72",
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:90",
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:275"
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:277"
   ]
  },
  {
   "key": "Effects from this campaign that the spell applies. Each one's power (constant + dice) replaces the effect's own damage/healing amount; leave it at {0} with no dice to use the effect's own amount.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:103"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:112"
   ]
  },
  {
@@ -4235,7 +4372,7 @@
   "key": "Energy charge level used per activation; {0} = runs on clockwork and costs nothing.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:129"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:138"
   ]
  },
  {
@@ -4257,14 +4394,14 @@
   "key": "Energy charges poured into the build (level {0} Steam-pressure, {1} Thermal, {2} Shock...).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:119"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:128"
   ]
  },
  {
   "key": "Energy charges:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:684"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:731"
   ]
  },
  {
@@ -4275,6 +4412,20 @@
   ]
  },
  {
+  "key": "Enter a d{0} result from {1} to {2}.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/combat/CastChecks.java:44"
+  ]
+ },
+ {
+  "key": "Enter a level within its limits and ability scores from {0} to {1}.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:381"
+  ]
+ },
+ {
   "key": "Enter a valid support email address.",
   "kind": "exact",
   "where": [
@@ -4282,25 +4433,39 @@
   ]
  },
  {
-  "key": "Enter a whole number in every field.",
+  "key": "Enter a whole number within each field's limits (d{0} rolls: {1}-{2}).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2243"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2422"
   ]
  },
  {
   "key": "Enter a whole number {0} or greater:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2109",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2680"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2285",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2868"
+  ]
+ },
+ {
+  "key": "Enter an HP amount from {0} to {1}.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1277"
+  ]
+ },
+ {
+  "key": "Enter attack and saving rolls for every target.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/combat/CastResolver.java:369"
   ]
  },
  {
   "key": "Enter each character's Arcana check total. Success keeps their current state.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2506"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2691"
   ]
  },
  {
@@ -4328,22 +4493,22 @@
   "key": "Enter the damage rolled:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2080"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2256"
   ]
  },
  {
   "key": "Enter the dice total rolled ({A} is added for you):",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2081",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2093"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2257",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2269"
   ]
  },
  {
   "key": "Enter the dice total rolled:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2092"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2268"
   ]
  },
  {
@@ -4371,7 +4536,7 @@
   "key": "Enter the rolled dice totals as whole numbers.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1879"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1947"
   ]
  },
  {
@@ -4379,6 +4544,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/VerifyEmailScene.java:32"
+  ]
+ },
+ {
+  "key": "Enter the {0}d{1} result: a whole number from {2} to {3}.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1347"
   ]
  },
  {
@@ -4490,7 +4662,7 @@
   "key": "Extra Attack: {A} attacks per Attack action",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1755"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1823"
   ]
  },
  {
@@ -4504,7 +4676,7 @@
   "key": "Extra rows for the 'Attacks & spellcasting' box, after the weapons the character carries.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:81"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:80"
   ]
  },
  {
@@ -4546,14 +4718,14 @@
   "key": "Failed Save",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1260"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1287"
   ]
  },
  {
   "key": "Failed to create character: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:727"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:774"
   ]
  },
  {
@@ -4611,7 +4783,7 @@
   "key": "Failed to read {A} while building the session snapshot",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/data/SessionSnapshot.java:103"
+   "src/main/java/com/dnd/data/SessionSnapshot.java:104"
   ]
  },
  {
@@ -4625,7 +4797,7 @@
   "key": "Failed to serialise the session snapshot",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/data/SessionSnapshot.java:139"
+   "src/main/java/com/dnd/data/SessionSnapshot.java:140"
   ]
  },
  {
@@ -4653,7 +4825,7 @@
   "key": "Failed to write the joined session to {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/data/SessionSnapshot.java:177"
+   "src/main/java/com/dnd/data/SessionSnapshot.java:182"
   ]
  },
  {
@@ -4710,7 +4882,7 @@
   "key": "Features and traits not covered by the class or race; one per line.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:83"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:82"
   ]
  },
  {
@@ -4760,7 +4932,7 @@
   "key": "Filter...",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:588",
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:635",
    "src/main/java/com/dnd/ui/scenes/StorylineEditorWindow.java:484"
   ]
  },
@@ -4846,14 +5018,14 @@
   "key": "Flat amount added to the dice, e.g. the {0} in {1}d{2} + {3}. Can be used on its own without dice.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:108"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:117"
   ]
  },
  {
   "key": "Flat part of the effect's power, added to the dice (e.g. the {0} in {1}d{2} + {3}).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:105"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:114"
   ]
  },
  {
@@ -4931,7 +5103,7 @@
   "key": "Free label to sort the blueprint book, e.g. Utility, Light combat, Medium combat.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:114"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:123"
   ]
  },
  {
@@ -4945,7 +5117,7 @@
   "key": "From {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2163"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2339"
   ]
  },
  {
@@ -4987,7 +5159,7 @@
   "key": "Full HP, mana, spell slots and feature uses; every effect and cooldown cleared",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2632"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2820"
   ]
  },
  {
@@ -5008,7 +5180,7 @@
   "key": "Furnace units per piece. A steam-pressure charge costs {0} units, thermal {1}, electric {2}, magnetic {3}, resonance {4}.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:125"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:134"
   ]
  },
  {
@@ -5022,14 +5194,14 @@
   "key": "Fury of the Small (+{A}, target is larger)",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1849"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1917"
   ]
  },
  {
   "key": "Fury of the Small: +{A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1891"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1959"
   ]
  },
  {
@@ -5117,16 +5289,16 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:126",
-   "src/main/java/com/dnd/ui/components/EntityForm.java:746",
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:394"
+   "src/main/java/com/dnd/ui/components/EntityForm.java:749",
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:399"
   ]
  },
  {
   "key": "getImagePath",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:434",
-   "src/main/java/com/dnd/ui/scenes/EntityListScene.java:390"
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:439",
+   "src/main/java/com/dnd/ui/scenes/EntityListScene.java:389"
   ]
  },
  {
@@ -5156,21 +5328,21 @@
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:124",
    "src/main/java/com/dnd/data/JsonRepository.java:65",
-   "src/main/java/com/dnd/ui/components/EntityForm.java:747"
+   "src/main/java/com/dnd/ui/components/EntityForm.java:750"
   ]
  },
  {
   "key": "Gets fewer slots starting at level {0} and tops out at {1}th-level spells; mixes magic with fighting (paladin, ranger).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:133"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:142"
   ]
  },
  {
   "key": "Gets spell slots from level {0} and reaches {1}th-level spells - the strongest magic users (wizard, cleric, druid, bard, sorcerer).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:132"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:141"
   ]
  },
  {
@@ -5198,7 +5370,7 @@
   "key": "getValue",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/EntityForm.java:488"
+   "src/main/java/com/dnd/ui/components/EntityForm.java:490"
   ]
  },
  {
@@ -5340,7 +5512,7 @@
   "key": "Give this creature its full movement back for the current turn",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1346"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1396"
   ]
  },
  {
@@ -5361,7 +5533,7 @@
   "key": "GM",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2213",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2388",
    "src/main/java/com/dnd/ui/scenes/ManagePlayersPanel.java:868"
   ]
  },
@@ -5411,7 +5583,7 @@
   "key": "Gold value of the material; {0} = trivial, a component pouch covers it.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:101"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:110"
   ]
  },
  {
@@ -5464,6 +5636,13 @@
   ]
  },
  {
+  "key": "Half halves damage before resistance. None prevents damage. A successful save also prevents conditions.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:91"
+  ]
+ },
+ {
   "key": "halved)",
   "kind": "exact",
   "where": [
@@ -5481,7 +5660,7 @@
   "key": "Heal",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1214"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1224"
   ]
  },
  {
@@ -5509,7 +5688,7 @@
   "key": "Healing per round",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2205"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2380"
   ]
  },
  {
@@ -5530,7 +5709,7 @@
   "key": "Heal…",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1601"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1669"
   ]
  },
  {
@@ -5565,14 +5744,14 @@
   "key": "History",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/stats/Skills.java:21"
+   "src/main/java/com/dnd/model/character/stats/Skills.java:31"
   ]
  },
  {
   "key": "Hit",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1868"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1936"
   ]
  },
  {
@@ -5586,14 +5765,14 @@
   "key": "Hit dice {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:350"
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:355"
   ]
  },
  {
   "key": "Hit die: d",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:424"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:460"
   ]
  },
  {
@@ -5615,14 +5794,14 @@
   "key": "Homebrew artificer. Same numbers as a half caster, but the 'slots' are energy charges: steam-pressure, thermal, electric... Rests do NOT refill them - the workshop furnace does, by burning fuel.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:136"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:145"
   ]
  },
  {
   "key": "Homebrew: every spell has a mana cost paid from a pool; half the missing mana returns on a short rest.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:140"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:149"
   ]
  },
  {
@@ -5636,7 +5815,7 @@
   "key": "How far away the target can be, in feet. {0} = touch or self.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:91"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:100"
   ]
  },
  {
@@ -5650,21 +5829,21 @@
   "key": "How many charges of that type.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:124"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:133"
   ]
  },
  {
   "key": "How many of the product one crafting makes (e.g. {0} bolts).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:113"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:122"
   ]
  },
  {
   "key": "How many of this material one crafting uses.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:122"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:131"
   ]
  },
  {
@@ -5776,7 +5955,7 @@
   "key": "In-game time the work takes, so the GM can judge whether there is time.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:116"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:125"
   ]
  },
  {
@@ -5834,14 +6013,14 @@
   "key": "Initiative {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:346"
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:351"
   ]
  },
  {
   "key": "Initiative:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1316"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1366"
   ]
  },
  {
@@ -5904,7 +6083,7 @@
   "key": "Insight",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/stats/Skills.java:22"
+   "src/main/java/com/dnd/model/character/stats/Skills.java:32"
   ]
  },
  {
@@ -5918,7 +6097,6 @@
   "key": "INT",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1386",
    "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:70"
   ]
  },
@@ -5926,16 +6104,14 @@
   "key": "Intelligence",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/lan/LanSheet.java:44",
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:322",
-   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:196"
+   "src/main/java/com/dnd/model/character/stats/StatSchema.java:54"
   ]
  },
  {
   "key": "Intelligence - learning and reasoning: wizards' and artificers' magic, investigation, lore.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:104"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:106"
   ]
  },
  {
@@ -5957,7 +6133,7 @@
   "key": "Intimidation",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/stats/Skills.java:23"
+   "src/main/java/com/dnd/model/character/stats/Skills.java:33"
   ]
  },
  {
@@ -5986,7 +6162,7 @@
   "key": "Investigation",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/stats/Skills.java:24"
+   "src/main/java/com/dnd/model/character/stats/Skills.java:34"
   ]
  },
  {
@@ -6087,7 +6263,7 @@
   "key": "item(s), pre-ticked on the next pages.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:435"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:471"
   ]
  },
  {
@@ -6095,8 +6271,8 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:83",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1174",
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:268"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1181",
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:270"
   ]
  },
  {
@@ -6110,28 +6286,28 @@
   "key": "Items that must be carried but are not used up.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:95"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:104"
   ]
  },
  {
   "key": "Items used up by crafting, with amounts.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:117"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:126"
   ]
  },
  {
   "key": "Items used up every time (e.g. ammunition). Casting fails without them.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:94"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:103"
   ]
  },
  {
   "key": "Items:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:690",
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:737",
    "src/main/java/com/dnd/ui/scenes/StorylineEditorWindow.java:565"
   ]
  },
@@ -6238,7 +6414,7 @@
   "key": "Kill",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1275"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1309"
   ]
  },
  {
@@ -6246,14 +6422,14 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:91",
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:276"
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:278"
   ]
  },
  {
   "key": "Languages, tools, armor and weapon proficiencies; one per line.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:82"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:81"
   ]
  },
  {
@@ -6318,7 +6494,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/lan/LanSessionServer.java:79",
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:495"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:533"
   ]
  },
  {
@@ -6332,7 +6508,7 @@
   "key": "Level & XP",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1156"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1163"
   ]
  },
  {
@@ -6360,7 +6536,7 @@
   "key": "Level {0} is a fresh adventurer; higher levels start with more hit points, features and spells.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:521"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:568"
   ]
  },
  {
@@ -6369,7 +6545,7 @@
   "where": [
    "src/main/java/com/dnd/data/EntityDescriptions.java:53",
    "src/main/java/com/dnd/model/magic/EnergyCharges.java:41",
-   "src/main/java/com/dnd/model/world/map/TokenSupport.java:345"
+   "src/main/java/com/dnd/model/world/map/TokenSupport.java:350"
   ]
  },
  {
@@ -6383,8 +6559,8 @@
   "key": "Level:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1422",
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:674"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1490",
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:721"
   ]
  },
  {
@@ -6492,7 +6668,7 @@
   "key": "Live Session",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/data/SessionSnapshot.java:190",
+   "src/main/java/com/dnd/data/SessionSnapshot.java:195",
    "src/main/java/com/dnd/ui/scenes/player/PlayerOnlineSessionScene.java:234"
   ]
  },
@@ -6600,8 +6776,8 @@
   "key": "Long Rest",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2630",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2700",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2818",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2888",
    "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:87"
   ]
  },
@@ -6609,7 +6785,7 @@
   "key": "Long rest: everyone is restored to full.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2697"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2885"
   ]
  },
  {
@@ -6637,7 +6813,7 @@
   "key": "Lvl {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:223",
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:225",
    "src/main/java/com/dnd/ui/scenes/ManagePlayersPanel.java:252"
   ]
  },
@@ -6645,7 +6821,7 @@
   "key": "Made Save",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1268"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1295"
   ]
  },
  {
@@ -6666,7 +6842,7 @@
   "key": "Main abilities:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:430"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:466"
   ]
  },
  {
@@ -6716,7 +6892,7 @@
   "key": "Mana spent by mana-based casters (and HP for blood-magic casters). Slot casters ignore it.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:90"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:99"
   ]
  },
  {
@@ -6737,7 +6913,7 @@
   "key": "Mana:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1251",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1260",
    "src/main/java/com/dnd/ui/scenes/ManagePlayersPanel.java:691"
   ]
  },
@@ -6808,10 +6984,24 @@
   ]
  },
  {
+  "key": "Map perception to the active skill used for passive perception.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:97"
+  ]
+ },
+ {
   "key": "Map saved.",
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:1686"
+  ]
+ },
+ {
+  "key": "Map the six standard rules roles, and any retired ability references, to active ability IDs.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:96"
   ]
  },
  {
@@ -6855,7 +7045,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:86",
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:271"
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:273"
   ]
  },
  {
@@ -6918,8 +7108,8 @@
   "key": "Max HP:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1250",
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:679"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1259",
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:726"
   ]
  },
  {
@@ -6930,10 +7120,17 @@
   ]
  },
  {
+  "key": "Max mana:",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1261"
+  ]
+ },
+ {
   "key": "Medicine",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/stats/Skills.java:25"
+   "src/main/java/com/dnd/model/character/stats/Skills.java:35"
   ]
  },
  {
@@ -6975,14 +7172,14 @@
   "key": "Miss",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1869"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1937"
   ]
  },
  {
   "key": "Missing {A}.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:311"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:318"
   ]
  },
  {
@@ -6999,7 +7196,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:81",
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:266"
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:268"
   ]
  },
  {
@@ -7069,7 +7266,7 @@
   "key": "Movement",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1148"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1154"
   ]
  },
  {
@@ -7134,7 +7331,7 @@
   "key": "Name",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:664",
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:711",
    "src/main/java/com/dnd/ui/scenes/ManagePlayersPanel.java:678",
    "src/main/java/com/dnd/ui/scenes/ManagePlayersPanel.java:873"
   ]
@@ -7179,7 +7376,7 @@
   "key": "Name:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:670",
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:717",
    "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:867",
    "src/main/java/com/dnd/ui/scenes/MusicPanel.java:945"
   ]
@@ -7188,7 +7385,7 @@
   "key": "Nature",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/stats/Skills.java:26"
+   "src/main/java/com/dnd/model/character/stats/Skills.java:36"
   ]
  },
  {
@@ -7395,7 +7592,7 @@
   "key": "Next ▶",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:301"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:324"
   ]
  },
  {
@@ -7483,7 +7680,7 @@
   "key": "No classes defined in this campaign.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:413"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:449"
   ]
  },
  {
@@ -7504,7 +7701,7 @@
   "key": "No earlier turn of {A} has been recorded yet.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2495"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2680"
   ]
  },
  {
@@ -7612,7 +7809,7 @@
   "key": "No player characters on this map.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2692"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2880"
   ]
  },
  {
@@ -7626,7 +7823,7 @@
   "key": "No player characters yet.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:177",
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:179",
    "src/main/java/com/dnd/ui/scenes/ManagePlayersPanel.java:233"
   ]
  },
@@ -7634,14 +7831,14 @@
   "key": "No portrait selected",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:648"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:695"
   ]
  },
  {
   "key": "No races defined in this campaign.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:376"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:412"
   ]
  },
  {
@@ -7683,14 +7880,14 @@
   "key": "No spell slot of level {A} left.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:431"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:474"
   ]
  },
  {
   "key": "No spell slot of level {A} or higher left.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:438"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:481"
   ]
  },
  {
@@ -7704,14 +7901,14 @@
   "key": "No spells. The class fights with weapons and its own features (barbarian, fighter, rogue, monk).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:131"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:140"
   ]
  },
  {
   "key": "No subclass options for this class.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:442"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:478"
   ]
  },
  {
@@ -7739,7 +7936,7 @@
   "key": "No {A} charge (or stronger) left - refill at the workshop furnace.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:436"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:479"
   ]
  },
  {
@@ -7754,7 +7951,7 @@
   "key": "No {A} charge left{B}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:428"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:471"
   ]
  },
  {
@@ -7776,7 +7973,8 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/model/magic/CastingResource.java:20",
-   "src/main/java/com/dnd/model/magic/SpellcastingType.java:6"
+   "src/main/java/com/dnd/model/magic/SpellcastingType.java:6",
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:330"
   ]
  },
  {
@@ -7826,7 +8024,7 @@
   "key": "Not enough mana - needs {A}, has {B}.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:441"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:484"
   ]
  },
  {
@@ -7863,7 +8061,7 @@
   "key": "Nothing available.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:607"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:654"
   ]
  },
  {
@@ -7884,7 +8082,7 @@
   "key": "Nothing is caught in the blast.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2002"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2070"
   ]
  },
  {
@@ -7907,7 +8105,7 @@
   "key": "Nothing selected.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:301",
+   "src/main/java/com/dnd/model/combat/CastResolver.java:308",
    "src/main/java/com/dnd/model/crafting/Workshop.java:103"
   ]
  },
@@ -7946,7 +8144,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:80",
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:265"
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:267"
   ]
  },
  {
@@ -8252,6 +8450,13 @@
   ]
  },
  {
+  "key": "Out of range",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2416"
+  ]
+ },
+ {
   "key": "Oval",
   "kind": "exact",
   "where": [
@@ -8266,24 +8471,31 @@
   ]
  },
  {
+  "key": "Override these rules for this cast only.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2182"
+  ]
+ },
+ {
   "key": "Owner username",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:664"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:711"
   ]
  },
  {
   "key": "Owner username (optional)",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:630"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:677"
   ]
  },
  {
   "key": "Owner username:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:692"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:739"
   ]
  },
  {
@@ -8325,7 +8537,7 @@
   "key": "Party Rest",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2696"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2884"
   ]
  },
  {
@@ -8360,7 +8572,7 @@
   "key": "Passive perception {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:349"
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:354"
   ]
  },
  {
@@ -8490,7 +8702,7 @@
   "key": "pays {A} HP",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:466"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:509"
   ]
  },
  {
@@ -8526,21 +8738,21 @@
   "key": "Perception",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/stats/Skills.java:27"
+   "src/main/java/com/dnd/model/character/stats/Skills.java:37"
   ]
  },
  {
   "key": "Performance",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/stats/Skills.java:28"
+   "src/main/java/com/dnd/model/character/stats/Skills.java:38"
   ]
  },
  {
   "key": "Persuasion",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/stats/Skills.java:29"
+   "src/main/java/com/dnd/model/character/stats/Skills.java:39"
   ]
  },
  {
@@ -8554,7 +8766,7 @@
   "key": "Pick a creature, then click empty boxes to drop it. Esc stops.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2803"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2991"
   ]
  },
  {
@@ -8589,7 +8801,7 @@
   "key": "Pick the points, then click who is healed",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1603"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1671"
   ]
  },
  {
@@ -8638,7 +8850,7 @@
   "key": "Placement cancelled.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2353"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2538"
   ]
  },
  {
@@ -8647,7 +8859,7 @@
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:85",
    "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:127",
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:270"
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:272"
   ]
  },
  {
@@ -8691,14 +8903,14 @@
   "key": "Player name",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:664"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:711"
   ]
  },
  {
   "key": "Player name (optional)",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:627"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:674"
   ]
  },
  {
@@ -8712,14 +8924,14 @@
   "key": "Player password: none (anyone can open this character as a player)",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:376"
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:381"
   ]
  },
  {
   "key": "Player password: set",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:376"
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:381"
   ]
  },
  {
@@ -8740,21 +8952,21 @@
   "key": "Player:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:691"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:738"
   ]
  },
  {
   "key": "Player: -",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:227"
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:229"
   ]
  },
  {
   "key": "Player: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:227",
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:229",
    "src/main/java/com/dnd/ui/scenes/player/PlayerHomeScene.java:40"
   ]
  },
@@ -8868,14 +9080,14 @@
   "key": "Portrait",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:665"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:712"
   ]
  },
  {
   "key": "Portrait:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:693"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:740"
   ]
  },
  {
@@ -8990,7 +9202,7 @@
   "key": "Printed on the Notes page.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:84"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:83"
   ]
  },
  {
@@ -9032,7 +9244,7 @@
   "key": "Proficiency {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:348"
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:353"
   ]
  },
  {
@@ -9071,13 +9283,6 @@
   ]
  },
  {
-  "key": "Purse & Stats",
-  "kind": "exact",
-  "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1151"
-  ]
- },
- {
   "key": "Push State Now",
   "kind": "exact",
   "where": [
@@ -9109,7 +9314,7 @@
   "key": "Rabbit's d{0} roll (+{1} sets the DC)",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2505"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2690"
   ]
  },
  {
@@ -9123,7 +9328,7 @@
   "key": "Race:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:671"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:718"
   ]
  },
  {
@@ -9138,7 +9343,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:88",
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:273"
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:275"
   ]
  },
  {
@@ -9153,7 +9358,7 @@
   "key": "Rage: +{A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1890"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1958"
   ]
  },
  {
@@ -9225,7 +9430,7 @@
   "key": "Recover the HP rolled on hit dice, pact slots, half the missing mana and short-rest features; timed effects end",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2619"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2807"
   ]
  },
  {
@@ -9295,15 +9500,50 @@
   "key": "Religion",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/stats/Skills.java:30"
+   "src/main/java/com/dnd/model/character/stats/Skills.java:40"
+  ]
+ },
+ {
+  "key": "Remap or remove the skill binding: {A}",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/model/character/stats/StatSchema.java:130"
+  ]
+ },
+ {
+  "key": "Remap passive perception before removing its skill.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/stats/StatSchema.java:126"
+  ]
+ },
+ {
+  "key": "Remap the ability reference: {A}",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/model/character/stats/StatSchema.java:115"
+  ]
+ },
+ {
+  "key": "Remap the ability rule before removing its stat: {A}",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/model/character/stats/StatSchema.java:112"
+  ]
+ },
+ {
+  "key": "Remap the referenced ability '{A}' before removing it ({B}). Add its replacement to ability bindings.",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/data/StatSchemas.java:64"
   ]
  },
  {
   "key": "Remove",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/EntityForm.java:854",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2165",
+   "src/main/java/com/dnd/ui/components/EntityForm.java:857",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2341",
    "src/main/java/com/dnd/ui/scenes/MembersWindow.java:127"
   ]
  },
@@ -9340,7 +9580,7 @@
   "key": "Remove this active effect",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2165"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2341"
   ]
  },
  {
@@ -9475,6 +9715,13 @@
   ]
  },
  {
+  "key": "Require a physical caster d{0} attack roll against each target's armor class.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:89"
+  ]
+ },
+ {
   "key": "Requires",
   "kind": "exact",
   "where": [
@@ -9520,7 +9767,7 @@
   "key": "Reset Move",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1344"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1394"
   ]
  },
  {
@@ -9597,7 +9844,7 @@
   "key": "Resisted: {A} → {B}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1892"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1960"
   ]
  },
  {
@@ -9611,7 +9858,7 @@
   "key": "Resists: {A} (damage halved)",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1626"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1694"
   ]
  },
  {
@@ -9657,17 +9904,31 @@
   ]
  },
  {
+  "key": "Revival HP",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1335"
+  ]
+ },
+ {
+  "key": "Revival requires a {0}d{1} result ({2}-{3}).",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/world/map/CombatState.java:190"
+  ]
+ },
+ {
   "key": "Revive",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1282"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1316"
   ]
  },
  {
   "key": "Rewind to the rabbit's previous turn. Enter the rabbit's d{0} roll: DC = roll + {1}. Characters whose Arcana check meets the DC keep their current state; the others rewind.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1532"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1600"
   ]
  },
  {
@@ -9699,17 +9960,24 @@
   ]
  },
  {
+  "key": "Roll {0}d{1} and enter the result ({2}-{3}):",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1337"
+  ]
+ },
+ {
   "key": "Rolled damage",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2079"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2255"
   ]
  },
  {
   "key": "Rolled effect power",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2091"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2267"
   ]
  },
  {
@@ -9723,7 +9991,7 @@
   "key": "Rolled {A}:",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1829"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1897"
   ]
  },
  {
@@ -9745,7 +10013,7 @@
   "key": "Rounds before it can be used again; {0} = no wait.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:93"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:102"
   ]
  },
  {
@@ -9753,7 +10021,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/lan/LanSessionServer.java:78",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2204"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2379"
   ]
  },
  {
@@ -9812,6 +10080,20 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:157"
+  ]
+ },
+ {
+  "key": "Save DC",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2184"
+  ]
+ },
+ {
+  "key": "Save DC must be non-negative.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/combat/CastChecks.java:26"
   ]
  },
  {
@@ -9891,14 +10173,15 @@
   "key": "Saves {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:356"
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:361"
   ]
  },
  {
   "key": "Saving throws",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/lan/LanSessionServer.java:77"
+   "src/main/java/com/dnd/lan/LanSessionServer.java:77",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1446"
   ]
  },
  {
@@ -9954,7 +10237,7 @@
   "key": "Search creatures...",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2765"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2953"
   ]
  },
  {
@@ -10062,7 +10345,7 @@
   "key": "Select Portrait",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:651",
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:698",
    "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:68"
   ]
  },
@@ -10196,14 +10479,14 @@
   "key": "Set player password",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:378"
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:383"
   ]
  },
  {
   "key": "setImagePath",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:439"
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:444"
   ]
  },
  {
@@ -10240,13 +10523,6 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/OnlineSessionScene.java:42"
-  ]
- },
- {
-  "key": "Shared with the purse on the battle map.",
-  "kind": "exact",
-  "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:80"
   ]
  },
  {
@@ -10288,8 +10564,8 @@
   "key": "Short Rest",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2617",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2699",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2805",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2887",
    "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:66"
   ]
  },
@@ -10297,7 +10573,7 @@
   "key": "Short rest",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2621",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2809",
    "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:68"
   ]
  },
@@ -10305,7 +10581,7 @@
   "key": "Short rest: enter the HP each player rolled on their hit dice.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2697"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2885"
   ]
  },
  {
@@ -10394,13 +10670,6 @@
   ]
  },
  {
-  "key": "Six numbers describe what the character is good at. {0} is average, {1} is excellent, {2} is weak. The number in brackets is the modifier added to dice rolls: every {3} points above {4} is +{5}. Race bonuses are added on top at the end.",
-  "kind": "exact",
-  "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:523"
-  ]
- },
- {
   "key": "Skill check",
   "kind": "exact",
   "where": [
@@ -10412,23 +10681,31 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/lan/LanSessionServer.java:77",
-   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:215"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1451",
+   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:209"
+  ]
+ },
+ {
+  "key": "Skills need unique IDs, names and a valid parent ability.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/stats/StatSchema.java:121"
   ]
  },
  {
   "key": "Sleight of Hand",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/stats/Skills.java:31"
+   "src/main/java/com/dnd/model/character/stats/Skills.java:41"
   ]
  },
  {
   "key": "sleightOfHand",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/stats/Skills.java:31",
-   "src/main/java/com/dnd/model/character/stats/Skills.java:71",
-   "src/main/java/com/dnd/model/character/stats/Skills.java:95"
+   "src/main/java/com/dnd/model/character/stats/Skills.java:41",
+   "src/main/java/com/dnd/model/character/stats/Skills.java:73",
+   "src/main/java/com/dnd/model/character/stats/Skills.java:97"
   ]
  },
  {
@@ -10463,14 +10740,14 @@
   "key": "Sneak Attack - rolled {A}d6:",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1838"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1906"
   ]
  },
  {
   "key": "Sneak Attack: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1888"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1956"
   ]
  },
  {
@@ -10568,14 +10845,14 @@
   "key": "Speed {A} ft",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:347"
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:352"
   ]
  },
  {
   "key": "Speed:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:386"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:422"
   ]
  },
  {
@@ -10589,28 +10866,28 @@
   "key": "Spell level must be between {A} and {B} but was {C}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/magic/Spell.java:153"
+   "src/main/java/com/dnd/model/magic/Spell.java:158"
   ]
  },
  {
   "key": "Spell mana cost must be non-negative but was {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/magic/Spell.java:172"
+   "src/main/java/com/dnd/model/magic/Spell.java:177"
   ]
  },
  {
   "key": "Spell radius must be non-negative but was {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/magic/Spell.java:194"
+   "src/main/java/com/dnd/model/magic/Spell.java:199"
   ]
  },
  {
   "key": "Spell range must be non-negative but was {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/magic/Spell.java:183"
+   "src/main/java/com/dnd/model/magic/Spell.java:188"
   ]
  },
  {
@@ -10624,7 +10901,7 @@
   "key": "Spell save DC {A}, spell attack {B} ({C})",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:359"
+   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:364"
   ]
  },
  {
@@ -10640,7 +10917,7 @@
   "key": "Spell slots:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:686"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:733"
   ]
  },
  {
@@ -10661,7 +10938,7 @@
   "key": "Spellcasting:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:426"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:462"
   ]
  },
  {
@@ -10677,7 +10954,7 @@
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:84",
    "src/main/java/com/dnd/lan/LanSessionServer.java:79",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1162"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1169"
   ]
  },
  {
@@ -10698,7 +10975,7 @@
   "key": "Spells:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:688"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:735"
   ]
  },
  {
@@ -10747,21 +11024,21 @@
   "key": "Standard array",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:517"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:560"
   ]
  },
  {
   "key": "Standard array fills in {0}, {1}, {2}, {3}, {4}, {5} - a balanced set. Rearrange them to suit the class.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:527"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:574"
   ]
  },
  {
   "key": "Standard rules: each levelled spell uses one slot of its level or higher. Slots come back on a long rest.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:138"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:147"
   ]
  },
  {
@@ -10826,7 +11103,7 @@
   "key": "Starting equipment. The class's usual kit is already ticked - add or remove anything. Blueprints ticked here are also copied into an artificer's blueprint book.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:579"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:626"
   ]
  },
  {
@@ -10840,14 +11117,36 @@
   "key": "Starts with",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:434"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:470"
+  ]
+ },
+ {
+  "key": "Stats",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1157"
+  ]
+ },
+ {
+  "key": "Stats & Skills",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:159",
+   "src/main/java/com/dnd/ui/scenes/StatDefinitionsWindow.java:39"
+  ]
+ },
+ {
+  "key": "statSchema",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/data/SessionSnapshot.java:90"
   ]
  },
  {
   "key": "Stealth",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/stats/Skills.java:32"
+   "src/main/java/com/dnd/model/character/stats/Skills.java:42"
   ]
  },
  {
@@ -10861,7 +11160,7 @@
   "key": "Step {A} of {B} – {C}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:322"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:345"
   ]
  },
  {
@@ -10940,39 +11239,22 @@
   "key": "STR",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1383",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1856",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1924",
    "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:70"
-  ]
- },
- {
-  "key": "STR {A}  DEX {B}  CON {C}  INT {D}  WIS {E}  CHA {F}",
-  "kind": "pattern",
-  "where": [
-   "src/main/java/com/dnd/ui/scenes/player/PlayerHomeScene.java:76"
-  ]
- },
- {
-  "key": "STR {A} DEX {B} CON {C} INT {D} WIS {E} CHA {F}",
-  "kind": "pattern",
-  "where": [
-   "src/main/java/com/dnd/ui/scenes/EntityListScene.java:326"
   ]
  },
  {
   "key": "Strength",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/lan/LanSheet.java:44",
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:322",
-   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:193"
+   "src/main/java/com/dnd/model/character/stats/StatSchema.java:54"
   ]
  },
  {
   "key": "Strength - lifting, pushing, melee hits with heavy weapons, carrying capacity.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:101"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:103"
   ]
  },
  {
@@ -10993,7 +11275,7 @@
   "key": "Subclass:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:673"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:720"
   ]
  },
  {
@@ -11036,14 +11318,14 @@
   "key": "Survival",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/stats/Skills.java:33"
+   "src/main/java/com/dnd/model/character/stats/Skills.java:43"
   ]
  },
  {
   "key": "Swim (ft):",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1358"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1408"
   ]
  },
  {
@@ -11154,10 +11436,24 @@
   ]
  },
  {
+  "key": "Target save d{0} / save bonus",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2222"
+  ]
+ },
+ {
+  "key": "Target saving throw",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2183"
+  ]
+ },
+ {
   "key": "Target…",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1612"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1680"
   ]
  },
  {
@@ -11284,7 +11580,7 @@
   "key": "That box isn't free - pick another one, or press Esc to cancel.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2367"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2552"
   ]
  },
  {
@@ -11320,8 +11616,8 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:657",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1991",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2362"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2059",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2547"
   ]
  },
  {
@@ -11369,6 +11665,13 @@
   ]
  },
  {
+  "key": "That target is outside the spell or ability's range.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2082"
+  ]
+ },
+ {
   "key": "That username is already taken.",
   "kind": "exact",
   "where": [
@@ -11393,7 +11696,7 @@
   "key": "The action this gadget performs on the battle map. Whoever carries it gets the action.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:127"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:136"
   ]
  },
  {
@@ -11456,7 +11759,7 @@
   "key": "The campaign effect this spell applies.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:104"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:113"
   ]
  },
  {
@@ -11464,6 +11767,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:316"
+  ]
+ },
+ {
+  "key": "The campaign's ability scores. {0} is average, {1} is very good, {2} is weak. Each {3} points above {4} = +{5} to rolls.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:56"
   ]
  },
  {
@@ -11534,7 +11844,7 @@
   "key": "The item that comes out of the workshop when this blueprint is crafted.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:112"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:121"
   ]
  },
  {
@@ -11548,7 +11858,7 @@
   "key": "The linked map no longer exists. Remove the pin in the GM page's World Map panel.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2428"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2613"
   ]
  },
  {
@@ -11583,7 +11893,7 @@
   "key": "The material the spell needs, e.g. 'a pinch of sulfur'. Only used when Material is ticked.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:100"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:109"
   ]
  },
  {
@@ -11618,14 +11928,14 @@
   "key": "The party takes a long rest.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2732"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2920"
   ]
  },
  {
   "key": "The party takes a short rest.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2732"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2920"
   ]
  },
  {
@@ -11639,7 +11949,7 @@
   "key": "The session data from the GM could not be read",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/data/SessionSnapshot.java:157"
+   "src/main/java/com/dnd/data/SessionSnapshot.java:158"
   ]
  },
  {
@@ -11647,13 +11957,6 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/lan/LanSessionServer.java:73"
-  ]
- },
- {
-  "key": "The six ability scores. {0} is average, {1} is very good, {2} is weak. Each {3} points above {4} = +{5} to rolls.",
-  "kind": "exact",
-  "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:56"
   ]
  },
  {
@@ -11668,6 +11971,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/MusicPanel.java:415"
+  ]
+ },
+ {
+  "key": "The target ability used to resist this action. None means no saving throw.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:90"
   ]
  },
  {
@@ -11794,7 +12104,7 @@
   "key": "This class doesn't cast spells.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:556"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:603"
   ]
  },
  {
@@ -11907,28 +12217,28 @@
   "key": "Tick if casting destroys the material, so it must be bought again.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:102"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:111"
   ]
  },
  {
   "key": "Tick if the spell needs a material (describe it below).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:99"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:108"
   ]
  },
  {
   "key": "Tick if the spell needs hand gestures.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:98"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:107"
   ]
  },
  {
   "key": "Tick if the spell needs spoken words.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:97"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:106"
   ]
  },
  {
@@ -11942,14 +12252,14 @@
   "key": "Ticked: a mechanical gadget that runs on this charge or any stronger one - a stronger charge adds a damage die per level. Unticked: tuned to exactly this charge type and nothing else.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:128"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:137"
   ]
  },
  {
   "key": "Time rewinds: round {A}, {B}'s turn again.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2573"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2761"
   ]
  },
  {
@@ -12012,7 +12322,7 @@
   "key": "Tool kits that must be in the pack. They are not used up.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:118"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:127"
   ]
  },
  {
@@ -12117,7 +12427,7 @@
   "key": "Type of damage dealt by the Damage button - resistances halve it",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1192"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1201"
   ]
  },
  {
@@ -12203,8 +12513,15 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:183",
-   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:228",
-   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:230"
+   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:222",
+   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:224"
+  ]
+ },
+ {
+  "key": "Unknown ability: {A}",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/model/character/stats/StatSchema.java:87"
   ]
  },
  {
@@ -12243,14 +12560,6 @@
   ]
  },
  {
-  "key": "Unknown skill: {A}",
-  "kind": "pattern",
-  "where": [
-   "src/main/java/com/dnd/model/character/stats/Skills.java:74",
-   "src/main/java/com/dnd/model/character/stats/Skills.java:98"
-  ]
- },
- {
   "key": "Unlink",
   "kind": "exact",
   "where": [
@@ -12276,6 +12585,20 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:161"
+  ]
+ },
+ {
+  "key": "Unmapped ability rule: {A}",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/model/character/stats/StatSchema.java:77"
+  ]
+ },
+ {
+  "key": "Unmapped skill rule: {A}",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/model/character/stats/StatSchema.java:82"
   ]
  },
  {
@@ -12310,7 +12633,7 @@
   "key": "Untyped",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1193"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1202"
   ]
  },
  {
@@ -12361,7 +12684,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/EntityDescriptions.java:113",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1612",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1680",
    "src/main/java/com/dnd/ui/scenes/ManagePlayersPanel.java:602"
   ]
  },
@@ -12542,7 +12865,7 @@
   "key": "Very few slots, all at the highest level they know, but they come back after a short rest (warlock).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:135"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:144"
   ]
  },
  {
@@ -12585,6 +12908,20 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/MapTemplates.java:23"
+  ]
+ },
+ {
+  "key": "Visible ability definitions. Keep IDs unchanged when renaming fields.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:94"
+  ]
+ },
+ {
+  "key": "Visible skill definitions. Each parent ability must use an active ability ID.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:95"
   ]
  },
  {
@@ -12634,7 +12971,7 @@
   "key": "Walk (ft):",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1356"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1406"
   ]
  },
  {
@@ -12733,7 +13070,7 @@
   "key": "What casting needs - tick each one that applies. A gagged or bound caster can't cast spells that need Verbal or Somatic.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:96"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:105"
   ]
  },
  {
@@ -12754,7 +13091,7 @@
   "key": "What you get, level by level:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:480"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:516"
   ]
  },
  {
@@ -12775,7 +13112,7 @@
   "key": "Who the character is. Only the name is required. The owner username links the character to a player's login so they can see their own sheet.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:662"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:709"
   ]
  },
  {
@@ -12817,7 +13154,6 @@
   "key": "WIS",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1387",
    "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:70"
   ]
  },
@@ -12825,16 +13161,14 @@
   "key": "Wisdom",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/lan/LanSheet.java:44",
-   "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:322",
-   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:197"
+   "src/main/java/com/dnd/model/character/stats/StatSchema.java:54"
   ]
  },
  {
   "key": "Wisdom - perception and willpower: clerics', druids' and rangers' magic, spotting danger.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:105"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:107"
   ]
  },
  {
@@ -12981,7 +13315,7 @@
   "key": "XP:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1448"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1516"
   ]
  },
  {
@@ -13086,7 +13420,7 @@
   "key": "Your class is your training and role in the party: who fights in front, who heals, who casts. It decides your hit points, your features and whether you use magic. Picking one also pre-selects its usual spells and starting gear - you can change those later.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:415"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:451"
   ]
  },
  {
@@ -13121,7 +13455,7 @@
   "key": "Your race is the people you were born into. It adds bonuses to some ability scores and sets how fast you move. Click a race to read about it.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:378"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:414"
   ]
  },
  {
@@ -13206,14 +13540,14 @@
   "key": "{0} = cantrip (free, unlimited). {1}-{2} = costs a slot or energy charge of that level or higher.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:89"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:98"
   ]
  },
  {
   "key": "{0} = ordinary tool. Above {1} = a workshop furnace that can make energy charges up to this level. Raise it to 'upgrade' the workshop.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:126"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:135"
   ]
  },
  {
@@ -13256,35 +13590,35 @@
   "key": "{A}  ·  automatic",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1596"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1664"
   ]
  },
  {
   "key": "{A}  ·  Click another box to place one more, Esc to stop.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2378"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2563"
   ]
  },
  {
   "key": "{A}  ·  lvl {B}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1478"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1546"
   ]
  },
  {
   "key": "{A}  ·  {B} charge only",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1491"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1559"
   ]
  },
  {
   "key": "{A}  ·  {B} to hit  ·  {C}  ·  {D}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1737"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1805"
   ]
  },
  {
@@ -13305,7 +13639,7 @@
   "key": "{A} - click who receives it, or press Esc to cancel.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1679"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1747"
   ]
  },
  {
@@ -13319,7 +13653,7 @@
   "key": "{A} - HP recovered from hit dice rolled:",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2621",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2809",
    "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:70"
   ]
  },
@@ -13348,7 +13682,7 @@
   "key": "{A} cannot drink the life it tears out - healing is blocked.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:556"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:605"
   ]
  },
  {
@@ -13398,7 +13732,7 @@
   "key": "{A} costs {B} HP but only {C} HP remain.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:421"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:464"
   ]
  },
  {
@@ -13412,7 +13746,7 @@
   "key": "{A} drains {B} HP from {C}.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:561"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:610"
   ]
  },
  {
@@ -13447,31 +13781,31 @@
   "key": "{A} ft away.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:345",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1696",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1787"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:384",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1764",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1855"
   ]
  },
  {
   "key": "{A} ft blast",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1512"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1580"
   ]
  },
  {
   "key": "{A} ft but the target is {B}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:345",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1786"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:384",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1854"
   ]
  },
  {
   "key": "{A} ft but they are {B}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1696"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1764"
   ]
  },
  {
@@ -13500,15 +13834,15 @@
   "key": "{A} is affected by {B} for {C}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:518",
-   "src/main/java/com/dnd/model/combat/CastResolver.java:547"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:567",
+   "src/main/java/com/dnd/model/combat/CastResolver.java:596"
   ]
  },
  {
   "key": "{A} is dead.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:303"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:310"
   ]
  },
  {
@@ -13547,7 +13881,7 @@
   "kind": "pattern",
   "where": [
    "src/main/java/com/dnd/model/rules/FeatureRules.java:476",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1671"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1739"
   ]
  },
  {
@@ -13568,21 +13902,21 @@
   "key": "{A} needs a creature to hit.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1781"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1849"
   ]
  },
  {
   "key": "{A} needs a creature to target.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2006"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2074"
   ]
  },
  {
   "key": "{A} needs a creature.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1690"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1758"
   ]
  },
  {
@@ -13596,35 +13930,35 @@
   "key": "{A} of {B} squares left",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1341"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1391"
   ]
  },
  {
   "key": "{A} recharges in {B}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:306"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:313"
   ]
  },
  {
   "key": "{A} refuses to fall (1 HP).",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1893"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1961"
   ]
  },
  {
   "key": "{A} takes a long rest.{B}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2638"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2826"
   ]
  },
  {
   "key": "{A} takes a short rest.{B}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2627"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2815"
   ]
  },
  {
@@ -13638,7 +13972,7 @@
   "key": "{A} uses up {B}.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/combat/CastResolver.java:354"
+   "src/main/java/com/dnd/model/combat/CastResolver.java:393"
   ]
  },
  {
@@ -13666,21 +14000,21 @@
   "key": "{A} wears off {B}.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/world/map/CombatState.java:485"
+   "src/main/java/com/dnd/model/world/map/CombatState.java:500"
   ]
  },
  {
   "key": "{A} · level {B}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1110"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1115"
   ]
  },
  {
   "key": "{A}(missing)",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/components/EntityForm.java:752"
+   "src/main/java/com/dnd/ui/components/EntityForm.java:755"
   ]
  },
  {
@@ -13694,21 +14028,35 @@
   "key": "{A}: Arcana {B} / DC {C} - rewinds.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2548"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2733"
   ]
  },
  {
   "key": "{A}: Arcana {B} / DC {C} - unchanged.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2545"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2730"
+  ]
+ },
+ {
+  "key": "{A}: attack misses.",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/model/combat/CastResolver.java:404"
+  ]
+ },
+ {
+  "key": "{A}: attack {B} + {C} vs AC {D}.",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/model/combat/CastResolver.java:400"
   ]
  },
  {
   "key": "{A}: enter a whole number like 3, 0 or -1",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/components/EntityForm.java:613"
+   "src/main/java/com/dnd/ui/components/EntityForm.java:615"
   ]
  },
  {
@@ -13722,7 +14070,21 @@
   "key": "{A}: roll d20 {B} against AC {C} - a {D} or better on the die hits (20 always does).",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1814"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1882"
+  ]
+ },
+ {
+  "key": "{A}: saving throw fails.",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/model/combat/CastResolver.java:411"
+  ]
+ },
+ {
+  "key": "{A}: saving throw succeeds.",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/model/combat/CastResolver.java:408"
   ]
  },
  {
@@ -13743,7 +14105,7 @@
   "key": "·  recharging: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1526"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1594"
   ]
  },
  {
@@ -13757,7 +14119,7 @@
   "key": "• Level",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:482"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:518"
   ]
  },
  {
@@ -13800,7 +14162,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/BaseScene.java:185",
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1095",
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1099",
    "src/main/java/com/dnd/ui/scenes/ManagePlayersPanel.java:356"
   ]
  },
@@ -13917,7 +14279,7 @@
   "key": "◀ Back",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:300"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:323"
   ]
  },
  {
@@ -13960,7 +14322,7 @@
   "key": "☻ Players",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:203"
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:205"
   ]
  },
  {

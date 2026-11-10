@@ -357,6 +357,22 @@ Click a character card, or open the player list, then **View / Edit**.
 
 ## 11. Worldbuilding
 
+**Stats & Skills** defines the campaign's ability scores and skill fields. Add, rename or remove
+entries, choose their abbreviations, and assign each skill a parent ability. IDs are permanent
+value keys: changing a label keeps values; changing an ID creates a different field. New abilities
+start at 10 and new stored skill bonuses at 0. Existing campaigns retain the standard six abilities
+and eighteen skills until you change them. Scores remain 1-30, with modifiers rounded down from
+(score - 10) / 2; skill bonuses are editable independently.
+
+Before removing a referenced ability, redirect its **Ability bindings** to a remaining ability ID.
+The six standard roles drive their existing rules (for example Dexterity controls initiative,
+dodging and ranged attacks, while Constitution controls HP calculations). Redirect **Skill bindings
+→ perception** before removing the skill used for passive perception. Skills must also have valid
+parent IDs. Removed custom abilities referenced by spells, classes, races or sheets need an alias
+in Ability bindings. Saving refuses unresolved references instead of guessing. Retired numeric
+values stay in campaign files; edit each creature's new fields as needed. Close battle windows
+before changing these rules.
+
 Each Worldbuilding button opens a catalogue list. Each entry shows a one-line summary, for example
 the challenge rating and ability scores of a monster.
 
@@ -523,7 +539,8 @@ Open it from a map link in your notes, or with **Run Battle**.
 - **Turn order:** **Roll Initiative** rolls d20 + DEX for everyone (or enter rolls yourself).
   **Next Turn** moves through the order, skips the dead and counts rounds.
 - **Tokens:** add, move and remove them. Click a token to see its sheet: portrait, stats, HP and
-  mana, coins, items, spells and abilities. Click empty space or press **Esc** to deselect.
+  mana, saving throws, detailed skill bonuses, items, spells and abilities. Money belongs in
+  inventory items, not separate denomination fields. Click empty space or press **Esc** to deselect.
   As GM, select a token and right-click any empty square to relocate it, ignoring movement
   range and terrain without spending its movement. Drag the divider beside the left panel
   to resize the turn order and character details.
@@ -536,9 +553,19 @@ Open it from a map link in your notes, or with **Run Battle**.
   character's current state and position; everyone else returns to the start of the rabbit's
   previous recorded turn. The ability's costs and cooldown remain spent. History lasts only while
   the battle window is open, so a prior rabbit turn must first have been recorded there.
-- **Damage and healing:** edit HP in place, and choose a damage type for resistances. At 0 HP a
-  creature falls unconscious. **Failed Save** counts down 3 → 2 → 1, then it dies.
-  **Made Save** or healing brings it back.
+- **Damage and healing:** type an amount in the visible field (default **1**), then click
+  **Damage** or **Heal**. Choose a damage type for resistances. At 0 HP a creature falls
+  unconscious. Successes and failures are independent: three failures kill; the third
+  **Made Save** asks for a physical **1d4** roll and revives with that many HP, capped at max HP.
+  **Revive** asks for the same roll; cancellation changes nothing. This is the campaign's custom
+  revival rule, not standard D&D stabilization. A long rest still restores full health.
+- **Casting rolls:** edit a spell or ability's **Checks** in Worldbuilding to require a caster
+  attack roll, a target ability saving throw, or both. Set successful saves to **Half** or **None**
+  damage, and optionally override the attack bonus or save DC. The GM can change these rules
+  for an individual cast. Enter physical d20 rolls before damage: attacks use the target's AC;
+  saves use the selected ability's bonus and the caster's DC. A save halves damage before
+  resistance and avoids conditions. Misses and successful saves still spend costs and cooldown;
+  cancelling the roll dialog does not. Existing actions remain automatic unless configured.
 - **Ranges:** hover a spell or ability to see its range around the token, with every creature in
   reach highlighted.
 - **Attacks:** pick a weapon or unarmed strike and click the target. The app shows d20 + bonus
@@ -647,7 +674,7 @@ Each sheet follows the standard fifth-edition character sheet layout:
   appearance, then features, spells, equipment, backstory and lined notes.
 
 Values that change during play, such as current and temporary HP, used spell slots, feature uses,
-death saves and coins, are left as empty boxes to fill in with a pencil.
+and death saves are left as empty boxes to fill in with a pencil. Money is printed with inventory.
 
 ---
 

@@ -72,10 +72,9 @@ public class PlayerHomeScene extends BaseScene {
 
         CoreStats s = pc.getStats();
         if (s != null) {
-            box.getChildren().add(body(
-                "STR " + s.getStrength() + "  DEX " + s.getDexterity() +
-                "  CON " + s.getConstitution() + "  INT " + s.getIntelligence() +
-                "  WIS " + s.getWisdom() + "  CHA " + s.getCharisma()));
+            box.getChildren().add(body(s.schema().getAbilities().stream()
+                .map(a -> a.abbreviation() + " " + s.score(a.id()))
+                .collect(java.util.stream.Collectors.joining("  "))));
         }
         return box;
     }

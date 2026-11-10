@@ -303,6 +303,22 @@ This is used when Firebase email isn't configured. It is created with placeholde
   >= GM-entered rabbit d20 + 5), restores other creatures and trims the undone history.
   Positions are preserved even when that means sharing a square with a restored token.
   The rewind's costs and cooldown remain spent; cancellation never mutates the battle.
+- Battle HP controls commit their visible, editable amount (default 1) before changing vitals.
+  Death-save successes and failures are independent. Three successes and manual Revive require
+  an entered 1d4 result through `CombatState.revive(int)`; cancelling leaves state unchanged.
+  Parameterless `revive()` is full recovery for long rests. `TokenSupport` persists both counters.
+- `CastChecks` on spells/abilities configures attack rolls, arbitrary ability-ID saves, successful
+  save damage (half/none), and optional bonus/DC overrides. The battle dialog copies defaults for
+  per-cast overrides. `CastResolver` validates all targets and entered rolls before spending;
+  misses/saves spend costs once, half damage precedes resistance, and saves suppress conditions.
+- `world/stats.json` owns ability/skill definitions and explicit rule-role bindings. `StatSchemas`
+  supplies unchanged defaults when absent and refuses unresolved catalog references on save.
+  `JsonMappers.forCampaign` attaches the campaign schema to stats/skills, including map tokens.
+  `CoreStats` preserves raw legacy fields plus custom values; engine getters use role bindings,
+  while `score(id)` reads the visible field itself. Skills remain independent stored bonuses.
+  Use the campaign definitions for forms, battle details, LAN output and PDF overflow pages.
+  `SessionSnapshot` carries the schema to joined online sessions as well as the character data.
+  Currency storage is retained only for backward compatibility; money is inventory, not UI fields.
 
 ### GitHub campaign sync
 

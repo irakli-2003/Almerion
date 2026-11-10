@@ -188,25 +188,19 @@ public class CharacterProfileScene extends BaseScene {
 
         CoreStats s = pc.getStats();
         if (s != null) {
-            box.getChildren().addAll(
-                new Separator(),
-                statRow("Strength",     s.getStrength()),
-                statRow("Dexterity",    s.getDexterity()),
-                statRow("Constitution", s.getConstitution()),
-                statRow("Intelligence", s.getIntelligence()),
-                statRow("Wisdom",       s.getWisdom()),
-                statRow("Charisma",     s.getCharisma())
-            );
+            box.getChildren().add(new Separator());
+            for (var def : s.schema().getAbilities()) box.getChildren().add(statRow(def.name(), s.score(def.id())));
         }
         com.dnd.model.character.stats.Skills skills = pc.getSkills();
         javafx.scene.layout.GridPane grid = new javafx.scene.layout.GridPane();
         grid.setHgap(18);
         grid.setVgap(2);
-        int half = (com.dnd.model.character.stats.Skills.ALL.size() + 1) / 2;
-        for (int i = 0; i < com.dnd.model.character.stats.Skills.ALL.size(); i++) {
-            com.dnd.model.character.stats.Skills.Def def = com.dnd.model.character.stats.Skills.ALL.get(i);
-            int v = skills.get(def.key());
-            Label n = body(def.label() + ":");
+        var definitions = skills.schema().getSkills();
+        int half = Math.max(1, (definitions.size() + 1) / 2);
+        for (int i = 0; i < definitions.size(); i++) {
+            var def = definitions.get(i);
+            int v = skills.get(def.id());
+            Label n = body(def.name() + ":");
             n.setMinWidth(110);
             Label value = body((v > 0 ? "+" : "") + v);
             value.setStyle("-fx-text-fill: #c9a84c; -fx-font-weight: bold;");

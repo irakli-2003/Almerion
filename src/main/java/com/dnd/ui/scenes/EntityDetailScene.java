@@ -290,6 +290,7 @@ public class EntityDetailScene extends BaseScene {
      */
     static Map<String, List<EntityForm.Ref>> catalogsFor(CampaignRepositories repos) {
         Map<String, List<EntityForm.Ref>> catalogs = new LinkedHashMap<>();
+        catalogs.put("_statSchema", List.of(new EntityForm.Ref("schema", "schema", repos.statSchema())));
         catalogs.put("classId", refs(repos.classes().list()));
         catalogs.put("raceId", refs(repos.races().list()));
         catalogs.put("mapId", refs(repos.maps().list()));
@@ -319,12 +320,16 @@ public class EntityDetailScene extends BaseScene {
                 || i instanceof com.dnd.model.item.alchemy.AlchemyItem
                 || i instanceof com.dnd.model.item.crafting.Blueprint)).toList()));
         List<EntityForm.Ref> abilities = new ArrayList<>();
-        String[] abilityNames = {"Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"};
-        for (int i = 0; i < abilityNames.length; i++) {
-            abilities.add(new EntityForm.Ref(com.dnd.model.rules.SheetValues.ABILITIES.get(i), abilityNames[i]));
+        for (var def : repos.statSchema().getAbilities()) {
+            abilities.add(new EntityForm.Ref(def.id(), def.name()));
         }
         catalogs.put("savingThrowProficiencies", abilities);
-        catalogs.put("spellcastingAbility", abilities.subList(3, 6));
+        catalogs.put("primaryAbilities", abilities);
+        catalogs.put("spellcastingAbility", abilities);
+        List<EntityForm.Ref> savingThrows = new ArrayList<>();
+        savingThrows.add(new EntityForm.Ref("none", "None"));
+        savingThrows.addAll(abilities);
+        catalogs.put("savingThrow", savingThrows);
         return catalogs;
     }
 
@@ -349,9 +354,9 @@ public class EntityDetailScene extends BaseScene {
             parts.add("Passive perception " + com.dnd.model.rules.SheetValues.passivePerception(pc));
             parts.add("Hit dice " + com.dnd.model.rules.SheetValues.hitDice(pc, cls));
             List<String> saves = new ArrayList<>();
-            for (String a : com.dnd.model.rules.SheetValues.ABILITIES) {
-                saves.add(a.toUpperCase(java.util.Locale.ROOT) + " "
-                    + com.dnd.model.rules.SheetValues.signed(com.dnd.model.rules.SheetValues.savingThrow(pc, cls, a)));
+            for (var a : repos.statSchema().getAbilities()) {
+                saves.add(a.abbreviation() + " "
+                    + com.dnd.model.rules.SheetValues.signed(com.dnd.model.rules.SheetValues.savingThrow(pc, cls, a.id())));
             }
             parts.add("Saves " + String.join(" ", saves));
             String casting = com.dnd.model.rules.SheetValues.spellcastingAbility(pc, cls);

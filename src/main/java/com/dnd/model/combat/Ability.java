@@ -4,6 +4,9 @@ import com.dnd.model.interfaces.Printable;
 import java.util.List;
 
 public class Ability implements Printable {
+    private CastChecks checks = new CastChecks();
+    public CastChecks getChecks() { return checks; }
+    public void setChecks(CastChecks value) { checks = value == null ? new CastChecks() : value; }
     private String id;
     private String name;
     private String description;

@@ -103,6 +103,7 @@ public class CombatState {
             downed = false;
             dead = false;
             deathSaveFailures = 0;
+            deathSaveSuccesses = 0;
         }
     }
 
@@ -122,6 +123,14 @@ public class CombatState {
         return deathSaveFailures;
     }
 
+    private int deathSaveSuccesses;
+
+    public int getDeathSaveSuccesses() { return deathSaveSuccesses; }
+
+    public void setDeathSaveSuccesses(int successes) {
+        deathSaveSuccesses = Math.max(0, Math.min(MAX_DEATH_SAVES, successes));
+    }
+
     public void setDeathSaveFailures(int deathSaveFailures) {
         this.deathSaveFailures = Math.max(0, Math.min(MAX_DEATH_SAVES, deathSaveFailures));
         this.dead = this.deathSaveFailures >= MAX_DEATH_SAVES;
@@ -134,10 +143,9 @@ public class CombatState {
         if (!dead) downed = true;
     }
 
-    /** Undoes a failed death save, e.g. after a misclick or a successful save. */
+    /** Successes and failures are independent; the UI requests rolled HP on the third success. */
     public void succeedDeathSave() {
-        setDeathSaveFailures(deathSaveFailures - 1);
-        if (currentHitPoints <= 0) downed = true;
+        if (currentHitPoints <= 0 && !dead) setDeathSaveSuccesses(deathSaveSuccesses + 1);
     }
 
     /**
@@ -174,7 +182,14 @@ public class CombatState {
         dead = false;
         downed = false;
         deathSaveFailures = 0;
+        deathSaveSuccesses = 0;
         currentHitPoints = maxHitPoints > 0 ? maxHitPoints : 1;
+    }
+
+    public void revive(int rolledHp) {
+        if (rolledHp < 1 || rolledHp > 4) throw new IllegalArgumentException("Revival requires a 1d4 result (1-4).");
+        revive();
+        setCurrentHitPoints(rolledHp);
     }
 
     /** A dead creature is skipped by the initiative order but stays visible on the map. */
@@ -528,6 +543,7 @@ public class CombatState {
         c.gold = gold;
         c.initiative = initiative;
         c.deathSaveFailures = deathSaveFailures;
+        c.deathSaveSuccesses = deathSaveSuccesses;
         c.downed = downed;
         c.dead = dead;
         c.conditions = new ArrayList<>(getConditions());

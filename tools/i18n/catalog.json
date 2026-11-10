@@ -275,7 +275,7 @@
   "key": "+ Add Layer",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:217"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:253"
   ]
  },
  {
@@ -793,7 +793,7 @@
   "key": "Add / remove",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:247"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:283"
   ]
  },
  {
@@ -870,14 +870,14 @@
   "key": "Add Layer",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:800"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:879"
   ]
  },
  {
   "key": "Add Map Layer",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:749"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:828"
   ]
  },
  {
@@ -1902,7 +1902,7 @@
   "key": "Can't reach GitHub. Check your internet connection and try again.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:786"
+   "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:787"
   ]
  },
  {
@@ -2279,7 +2279,15 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/WorldMaps.java:229",
+   "src/main/java/com/dnd/data/WorldMaps.java:242",
    "src/main/java/com/dnd/model/world/map/GameMap.java:137"
+  ]
+ },
+ {
+  "key": "Choose a map, then click an empty square or drag it onto the world map.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:735"
   ]
  },
  {
@@ -2328,7 +2336,7 @@
   "key": "Choose Image...",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:755"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:834"
   ]
  },
  {
@@ -2484,7 +2492,7 @@
   "key": "Click a placed token to select it (gold ring), drag it to move it. Right-click it or press Delete to remove it.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:710"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:789"
   ]
  },
  {
@@ -2498,7 +2506,7 @@
   "key": "Click a token on the map first (with the Select tool), then press this button.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:716"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:795"
   ]
  },
  {
@@ -2664,7 +2672,7 @@
   "key": "Color (if no image):",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:790"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:869"
   ]
  },
  {
@@ -2979,7 +2987,7 @@
   "key": "Could not place token: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:1262"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:1385"
   ]
  },
  {
@@ -3014,7 +3022,7 @@
   "key": "Could not rename map",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:1568"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:1711"
   ]
  },
  {
@@ -3609,7 +3617,7 @@
   "where": [
    "src/main/java/com/dnd/ui/MapRenderer.java:349",
    "src/main/java/com/dnd/ui/MapRenderer.java:448",
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:1523"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:1665"
   ]
  },
  {
@@ -3617,7 +3625,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/EntityListScene.java:161",
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:218",
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:254",
    "src/main/java/com/dnd/ui/scenes/MusicPanel.java:331"
   ]
  },
@@ -3681,7 +3689,7 @@
   "key": "Delete {A} selected map object(s)?",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:472"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:508"
   ]
  },
  {
@@ -4341,7 +4349,7 @@
   "key": "Eraser",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:537"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:573"
   ]
  },
  {
@@ -4688,7 +4696,7 @@
   "key": "Filled shape (Rect/Oval)",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:575"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:611"
   ]
  },
  {
@@ -5289,7 +5297,7 @@
   "key": "Give this location a unique name. Existing links will still work.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:1557"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:1700"
   ]
  },
  {
@@ -5359,35 +5367,35 @@
   "key": "Ground",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:610"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:646"
   ]
  },
  {
   "key": "Group",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:492"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:528"
   ]
  },
  {
   "key": "Group Objects",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:495"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:531"
   ]
  },
  {
   "key": "Group Selected",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:219"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:255"
   ]
  },
  {
   "key": "Grouping",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:251"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:287"
   ]
  },
  {
@@ -5464,7 +5472,7 @@
   "key": "Height (cells):",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:792"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:871"
   ]
  },
  {
@@ -5682,7 +5690,7 @@
   "key": "Image:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:789"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:868"
   ]
  },
  {
@@ -6209,7 +6217,7 @@
   "key": "Layer name",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:751"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:830"
   ]
  },
  {
@@ -6223,7 +6231,7 @@
   "key": "Leave color unset with no image to get a random color.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:794"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:873"
   ]
  },
  {
@@ -6325,14 +6333,14 @@
   "key": "Line",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:534"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:570"
   ]
  },
  {
   "key": "Line width:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:582"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:618"
   ]
  },
  {
@@ -6676,11 +6684,19 @@
   ]
  },
  {
+  "key": "Map",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:712",
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:713"
+  ]
+ },
+ {
   "key": "Map Editor: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:111",
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:1565"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:116",
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:1708"
   ]
  },
  {
@@ -6722,7 +6738,7 @@
   "key": "Map not found.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:100",
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:104",
    "src/main/java/com/dnd/ui/scenes/MapViewScene.java:27"
   ]
  },
@@ -6730,7 +6746,14 @@
   "key": "Map saved.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:1543"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:1686"
+  ]
+ },
+ {
+  "key": "Map tokens",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:709"
   ]
  },
  {
@@ -6753,6 +6776,13 @@
   "kind": "pattern",
   "where": [
    "src/main/java/com/dnd/ui/scenes/MapViewScene.java:36"
+  ]
+ },
+ {
+  "key": "Map::{A}",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:726"
   ]
  },
  {
@@ -7070,7 +7100,7 @@
   "key": "Name this group",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:494"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:530"
   ]
  },
  {
@@ -7085,7 +7115,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:670",
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:788",
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:867",
    "src/main/java/com/dnd/ui/scenes/MusicPanel.java:945"
   ]
  },
@@ -7444,15 +7474,15 @@
   "key": "No Image",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:766"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:845"
   ]
  },
  {
   "key": "No image selected.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:753",
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:768"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:832",
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:847"
   ]
  },
  {
@@ -8047,7 +8077,7 @@
   "key": "Opacity:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:598"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:634"
   ]
  },
  {
@@ -8167,7 +8197,7 @@
   "key": "Oval",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:536"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:572"
   ]
  },
  {
@@ -8258,7 +8288,7 @@
   "key": "Passable Toggle",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:538"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:574"
   ]
  },
  {
@@ -8424,7 +8454,7 @@
   "key": "Pen",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:533"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:569"
   ]
  },
  {
@@ -8494,7 +8524,7 @@
   "key": "Pick an entity, then click an empty cell on the map (or drag it there).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:709"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:788"
   ]
  },
  {
@@ -8529,14 +8559,14 @@
   "key": "Place new",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:726"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:805"
   ]
  },
  {
   "key": "Placed tokens",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:727"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:806"
   ]
  },
  {
@@ -8738,7 +8768,7 @@
   "key": "Please give the layer a name.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:802"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:881"
   ]
  },
  {
@@ -8773,7 +8803,7 @@
   "key": "Pointer",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:608"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:644"
   ]
  },
  {
@@ -9144,7 +9174,7 @@
   "key": "Rect",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:535"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:571"
   ]
  },
  {
@@ -9237,7 +9267,8 @@
   "key": "Remove Selected Token",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:713"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:730",
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:792"
   ]
  },
  {
@@ -9251,7 +9282,8 @@
   "key": "Remove {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:867"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:945",
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:958"
   ]
  },
  {
@@ -9259,7 +9291,8 @@
   "kind": "pattern",
   "where": [
    "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:685",
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:735"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:743",
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:814"
   ]
  },
  {
@@ -9287,14 +9320,14 @@
   "key": "Rename Map",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:1556"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:1699"
   ]
  },
  {
   "key": "Rename Map...",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:114"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:119"
   ]
  },
  {
@@ -9437,6 +9470,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/ForgotPasswordScene.java:28"
+  ]
+ },
+ {
+  "key": "Reset zoom",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:184"
   ]
  },
  {
@@ -9714,7 +9754,7 @@
   "where": [
    "src/main/java/com/dnd/ui/scenes/CampaignNotesWindow.java:98",
    "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:160",
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:1547"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:1690"
   ]
  },
  {
@@ -9728,7 +9768,7 @@
   "key": "Save Map",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:115"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:120"
   ]
  },
  {
@@ -9889,6 +9929,13 @@
   ]
  },
  {
+  "key": "Select a map token to move it. Right-click it or press Delete to remove it.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:736"
+  ]
+ },
+ {
   "key": "Select a token on the map first.",
   "kind": "exact",
   "where": [
@@ -9914,7 +9961,7 @@
   "key": "Select Layer Image",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:756"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:835"
   ]
  },
  {
@@ -9950,14 +9997,14 @@
   "key": "Select/Move",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:532"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:568"
   ]
  },
  {
   "key": "Select/Move: click tokens or objects; drag a corner handle to resize layers, shapes and groups. Eraser removes the shape under your click. Passable flips a cell between open and wall (solid black). Terrain paints the chosen ground; water and climbing cost extra movement unless a creature can swim or climb, and difficult ground always costs double.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:602"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:638"
   ]
  },
  {
@@ -10105,7 +10152,7 @@
   "key": "Shapes",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:609"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:645"
   ]
  },
  {
@@ -10140,7 +10187,7 @@
   "key": "Shift+click / Ctrl+click to select multiple objects, then Group.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:239"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:275"
   ]
  },
  {
@@ -10613,7 +10660,7 @@
   "key": "Stacking order",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:249"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:285"
   ]
  },
  {
@@ -10852,7 +10899,7 @@
   "key": "Style (new shapes / selected object)",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:611"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:647"
   ]
  },
  {
@@ -11094,7 +11141,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:748",
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:539"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:575"
   ]
  },
  {
@@ -11108,7 +11155,7 @@
   "key": "Terrain brush:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:568"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:604"
   ]
  },
  {
@@ -11218,6 +11265,13 @@
   ]
  },
  {
+  "key": "That square already has a map token.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:1355"
+  ]
+ },
+ {
   "key": "That square already leads to {A}. Choose another square.",
   "kind": "pattern",
   "where": [
@@ -11244,7 +11298,7 @@
   "key": "That world map no longer exists.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/data/WorldMaps.java:259"
+   "src/main/java/com/dnd/data/WorldMaps.java:274"
   ]
  },
  {
@@ -12067,7 +12121,7 @@
   "key": "Ungroup",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:220"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:256"
   ]
  },
  {
@@ -12203,7 +12257,7 @@
   "key": "Upload failed: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:825",
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:904",
    "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:80"
   ]
  },
@@ -12442,7 +12496,7 @@
   "key": "View Map",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:116"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:121"
   ]
  },
  {
@@ -12654,7 +12708,7 @@
   "key": "Width (cells):",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:792"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:871"
   ]
  },
  {
@@ -12804,7 +12858,7 @@
   "key": "X (cells):",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:791"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:870"
   ]
  },
  {
@@ -12860,7 +12914,7 @@
   "key": "Y (cells):",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:791"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:870"
   ]
  },
  {
@@ -13058,6 +13112,20 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:368"
+  ]
+ },
+ {
+  "key": "Zoom in",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:182"
+  ]
+ },
+ {
+  "key": "Zoom out",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:183"
   ]
  },
  {
@@ -13661,14 +13729,14 @@
   "key": "↑ Forward",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:215"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:251"
   ]
  },
  {
   "key": "↓ Back",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:216"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:252"
   ]
  },
  {
@@ -13825,7 +13893,7 @@
   "key": "♟ Tokens",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:674"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:753"
   ]
  },
  {
@@ -13932,7 +14000,7 @@
   "key": "✎ Draw & Paint",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:529"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:565"
   ]
  },
  {
@@ -14193,7 +14261,7 @@
   "key": "🖼 Map Objects (layers & drawings)",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:205"
+   "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:241"
   ]
  },
  {

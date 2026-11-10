@@ -44,6 +44,8 @@ public class MapEditorScene extends BaseScene {
     private GameMap map;
     private CampaignRepositories repos;
     private Canvas canvas;
+    private final javafx.scene.transform.Scale zoomTransform = new javafx.scene.transform.Scale(1, 1, 0, 0);
+    private final Label zoomLabel = new Label("100%");
     private TreeView<ObjNode> objectsTree;
 
     // Unified selection: null, or "layer:<id>" / "drawing:<id>" / "group:<id>".
@@ -60,6 +62,8 @@ public class MapEditorScene extends BaseScene {
     /** The placed token last clicked; "Remove Selected Token" and Delete act on it. */
     private MapObject selectedToken;
     private ContextMenu tokenMenu;
+    private MapPin selectedPin;
+    private boolean draggingPin;
 
     // Resize state, anchored on the fixed opposite corner. Applies to layers, drawings and groups.
     private boolean resizeActive = false;
@@ -105,7 +109,8 @@ public class MapEditorScene extends BaseScene {
         // created before GameMap.ensureGridSize() existed) so they can still be opened here.
         map.ensureGridSize();
 
-        HBox header = new HBox(12);
+        FlowPane header = new FlowPane(12, 8);
+        header.setMinHeight(Region.USE_PREF_SIZE);
         header.setPadding(new Insets(8, 20, 4, 20));
         header.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         Label heading = title("Map Editor: " + map.getName());
@@ -113,7 +118,11 @@ public class MapEditorScene extends BaseScene {
             heading,
             btn("Rename Map...", () -> renameMap(heading)),
             btn("Save Map", this::saveMap),
-            btn("View Map", () -> uiSession.getRouter().goTo(SceneType.MAP_VIEW))
+            btn("View Map", () -> uiSession.getRouter().goTo(map.isWorldMap() ? SceneType.WORLD_MAP : SceneType.MAP_VIEW)),
+            zoomButton("−", "map-zoom-out", () -> setZoom(zoomTransform.getX() / 1.25)),
+            zoomLabel,
+            zoomButton("+", "map-zoom-in", () -> setZoom(zoomTransform.getX() * 1.25)),
+            zoomButton("100%", "map-zoom-reset", () -> setZoom(1))
         );
         root.getChildren().add(header);
 
@@ -133,11 +142,15 @@ public class MapEditorScene extends BaseScene {
         double canvasW = map.getWidth() * CELL_SIZE;
         double canvasH = map.getHeight() * CELL_SIZE;
         canvas = new Canvas(canvasW, canvasH);
+        canvas.setId("map-editor-canvas");
+        canvas.getTransforms().add(zoomTransform);
+        zoomLabel.setId("map-zoom-label");
         setupCanvasInteraction();
         setupCanvasDragAndDrop();
         renderCanvas();
 
         ScrollPane canvasScroll = new ScrollPane(new Group(canvas));
+        canvasScroll.setId("map-editor-scroll");
         canvasScroll.setStyle("-fx-background-color: #1a1a2e;");
 
         split.getItems().addAll(leftScroll, canvasScroll);
@@ -146,15 +159,38 @@ public class MapEditorScene extends BaseScene {
         scene.setOnKeyPressed(e -> {
             if (e.getCode() == javafx.scene.input.KeyCode.ESCAPE) {
                 selectedToken = null;
+                selectedPin = null;
+                draggingPin = false;
                 deselectAll();
                 renderCanvas();
             } else if ((e.getCode() == javafx.scene.input.KeyCode.DELETE || e.getCode() == javafx.scene.input.KeyCode.BACK_SPACE)
-                    && selectedToken != null && !(e.getTarget() instanceof javafx.scene.control.TextInputControl)) {
-                removeToken(selectedToken);
+                    && (selectedToken != null || selectedPin != null)
+                    && !(e.getTarget() instanceof javafx.scene.control.TextInputControl)) {
+                if (selectedPin != null) removePin();
+                else removeToken(selectedToken);
                 e.consume();
             }
         });
         return scene;
+    }
+
+    private Button zoomButton(String text, String id, Runnable action) {
+        Button button = btn(text, action);
+        button.setId(id);
+        button.setMinWidth(Region.USE_PREF_SIZE);
+        button.setTooltip(new Tooltip(switch (id) {
+            case "map-zoom-in" -> "Zoom in";
+            case "map-zoom-out" -> "Zoom out";
+            default -> "Reset zoom";
+        }));
+        return button;
+    }
+
+    private void setZoom(double value) {
+        double zoom = Math.max(0.25, Math.min(3, value));
+        zoomTransform.setX(zoom);
+        zoomTransform.setY(zoom);
+        zoomLabel.setText(Math.round(zoom * 100) + "%");
     }
 
     /** Clears the current object-tree/canvas selection (used by Esc and by clicking empty canvas). */
@@ -172,7 +208,7 @@ public class MapEditorScene extends BaseScene {
         panel.setStyle("-fx-background-color: #12122a;");
 
         panel.getChildren().addAll(
-            card(buildPlaceTokensSection()),
+            card(map.isWorldMap() ? buildMapTokensSection() : buildPlaceTokensSection()),
             card(buildDrawToolsSection()),
             card(buildObjectsTreeSection()));
 
@@ -668,7 +704,50 @@ public class MapEditorScene extends BaseScene {
         return b;
     }
 
-    /** Place-tokens panel: pick an entity type + specific entity, then click or drag onto the map. */
+    /** World maps link to maps rather than individual combatants. */
+    private VBox buildMapTokensSection() {
+        VBox box = new VBox(6, sectionLabel("Map tokens"));
+        box.setId("world-map-tokens");
+        tokenTypeBox = new ComboBox<>();
+        tokenTypeBox.getItems().add("Map");
+        tokenTypeBox.setValue("Map");
+        tokenEntityListView = new ListView<>();
+        tokenEntityListView.getStyleClass().add("dnd-list-view");
+        tokenEntityListView.setPrefHeight(120);
+        com.dnd.ui.i18n.UiTranslator.skip(tokenEntityListView);
+        repos.maps().list().stream().filter(m -> !Objects.equals(m.getId(), map.getId()))
+            .sorted(Comparator.comparing(GameMap::getName, String.CASE_INSENSITIVE_ORDER))
+            .forEach(m -> tokenEntityListView.getItems().add(m.getId() + " | " + m.getName()));
+        tokenEntityListView.setOnDragDetected(e -> {
+            String selected = tokenEntityListView.getSelectionModel().getSelectedItem();
+            if (selected == null) return;
+            Dragboard db = tokenEntityListView.startDragAndDrop(TransferMode.COPY);
+            ClipboardContent content = new ClipboardContent();
+            content.putString("Map::" + selected);
+            db.setContent(content);
+            e.consume();
+        });
+        Button remove = dangerBtn("Remove Selected Token", this::removePin);
+        remove.setWrapText(true);
+        remove.setMinHeight(Region.USE_PREF_SIZE);
+        remove.setMaxWidth(Double.MAX_VALUE);
+        box.getChildren().addAll(tokenEntityListView,
+            hintLabel("Choose a map, then click an empty square or drag it onto the world map."),
+            remove, hintLabel("Select a map token to move it. Right-click it or press Delete to remove it."));
+        return box;
+    }
+
+    private void removePin() {
+        if (selectedPin == null) return;
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+            "Remove " + selectedPin.getName() + " from this map?", ButtonType.OK, ButtonType.CANCEL);
+        styleDialog(confirm);
+        if (confirm.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) return;
+        map.unlinkAt(selectedPin.getX(), selectedPin.getY());
+        selectedPin = null;
+        renderCanvas();
+    }
+
     private VBox buildPlaceTokensSection() {
         VBox box = new VBox(6);
         box.getChildren().add(sectionLabel("♟ Tokens"));
@@ -860,6 +939,18 @@ public class MapEditorScene extends BaseScene {
             resizeActive = false;
 
             if (e.getButton() == javafx.scene.input.MouseButton.SECONDARY) {
+                if (map.isWorldMap()) {
+                    selectedPin = map.linkAt((int) (mx / CELL_SIZE), (int) (my / CELL_SIZE));
+                    if (selectedPin != null) {
+                        MenuItem remove = new MenuItem("Remove " + selectedPin.getName());
+                        remove.setOnAction(ev -> removePin());
+                        if (tokenMenu != null) tokenMenu.hide();
+                        tokenMenu = new ContextMenu(remove);
+                        tokenMenu.show(canvas, e.getScreenX(), e.getScreenY());
+                        renderCanvas();
+                    }
+                    return;
+                }
                 MapObject token = tokenAtCell((int) (mx / CELL_SIZE), (int) (my / CELL_SIZE));
                 if (token != null) {
                     selectedToken = token;
@@ -887,6 +978,14 @@ public class MapEditorScene extends BaseScene {
                 case SELECT -> {
                     int tcx = (int) (mx / CELL_SIZE);
                     int tcy = (int) (my / CELL_SIZE);
+                    if (map.isWorldMap()) {
+                        selectedPin = map.linkAt(tcx, tcy);
+                        draggingPin = selectedPin != null;
+                        if (draggingPin) {
+                            renderCanvas();
+                            break;
+                        }
+                    }
                     MapObject tokenHere = tokenAtCell(tcx, tcy);
                     if (tokenHere != null) {
                         selectedToken = tokenHere;
@@ -920,6 +1019,7 @@ public class MapEditorScene extends BaseScene {
                 case TERRAIN -> paintTerrainAt(e.getX(), e.getY());
                 case LINE, RECT, OVAL -> { shapeCurX = e.getX(); shapeCurY = e.getY(); renderCanvas(); }
                 case SELECT -> {
+                    if (draggingPin) break;
                     if (draggingToken != null) {
                         dragHoverCx = (int) (e.getX() / CELL_SIZE);
                         dragHoverCy = (int) (e.getY() / CELL_SIZE);
@@ -951,6 +1051,17 @@ public class MapEditorScene extends BaseScene {
                 case RECT -> { commitShapeIfDrawing(Drawing.Type.RECTANGLE); refreshObjectsTree(); renderCanvas(); }
                 case OVAL -> { commitShapeIfDrawing(Drawing.Type.OVAL); refreshObjectsTree(); renderCanvas(); }
                 case SELECT -> {
+                    if (draggingPin) {
+                        draggingPin = false;
+                        int x = (int) (e.getX() / CELL_SIZE), y = (int) (e.getY() / CELL_SIZE);
+                        if (x >= 0 && y >= 0 && x < map.getWidth() && y < map.getHeight()
+                                && map.linkAt(x, y) == null) {
+                            selectedPin.setX(x);
+                            selectedPin.setY(y);
+                        }
+                        renderCanvas();
+                        break;
+                    }
                     if (draggingToken != null) {
                         finishTokenDrag((int) (e.getX() / CELL_SIZE), (int) (e.getY() / CELL_SIZE));
                         renderCanvas();
@@ -1197,6 +1308,7 @@ public class MapEditorScene extends BaseScene {
 
     /** The first creature token (player/NPC/monster/beast) occupying a grid cell, if any. */
     private MapObject tokenAtCell(int cx, int cy) {
+        if (map.isWorldMap()) return null;
         if (cx < 0 || cy < 0 || cx >= map.getWidth() || cy >= map.getHeight()) return null;
         for (MapObject obj : map.getCell(cx, cy).getOccupants()) {
             if (TokenSupport.isCreature(obj)) return obj;
@@ -1235,6 +1347,17 @@ public class MapEditorScene extends BaseScene {
         int cy = (int) (py / CELL_SIZE);
         if (cx < 0 || cy < 0 || cx >= map.getWidth() || cy >= map.getHeight()) return false;
         try {
+            if (map.isWorldMap()) {
+                if (!"Map".equals(type)) return false;
+                GameMap target = repos.maps().getById(id);
+                if (target == null || Objects.equals(target.getId(), map.getId())) return false;
+                if (map.linkAt(cx, cy) != null) {
+                    throw new IllegalArgumentException("That square already has a map token.");
+                }
+                selectedPin = map.linkMap(target.getId(), target.getName(), cx, cy);
+                renderCanvas();
+                return true;
+            }
             MapObject token = switch (type) {
                 case "Player" -> {
                     var pc = repos.players().getById(id);
@@ -1382,9 +1505,28 @@ public class MapEditorScene extends BaseScene {
                 GridCell cell = map.getCell(x, y);
                 int slot = 0;
                 for (MapObject obj : cell.getOccupants()) {
+                    if (map.isWorldMap()) continue;
                     if (obj == draggingToken) { slot++; continue; }
                     drawToken(gc, obj, x, y, slot);
                     slot++;
+                }
+            }
+        }
+
+        if (map.isWorldMap()) {
+            gc.setTextAlign(javafx.scene.text.TextAlignment.CENTER);
+            gc.setTextBaseline(javafx.geometry.VPos.CENTER);
+            gc.setFont(javafx.scene.text.Font.font(11));
+            for (MapPin pin : map.getMapLinks()) {
+                double x = pin.getX() * CELL_SIZE, y = pin.getY() * CELL_SIZE;
+                gc.setFill(Color.web("#c9a84c"));
+                gc.fillOval(x + 12, y + 4, 24, 24);
+                gc.setFill(Color.WHITE);
+                gc.fillText(pin.getName(), x + CELL_SIZE / 2, y + 38, CELL_SIZE - 4);
+                if (pin == selectedPin) {
+                    gc.setStroke(Color.web("#f0d080"));
+                    gc.setLineWidth(3);
+                    gc.strokeRect(x + 2, y + 2, CELL_SIZE - 4, CELL_SIZE - 4);
                 }
             }
         }
@@ -1539,7 +1681,8 @@ public class MapEditorScene extends BaseScene {
 
     private void saveMap() {
         try {
-            repos.maps().save(map);
+            if (map.isWorldMap()) new com.dnd.data.WorldMaps(repos).saveLayout(map);
+            else repos.maps().save(map);
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Map saved.", ButtonType.OK);
             styleDialog(alert);
             alert.showAndWait();

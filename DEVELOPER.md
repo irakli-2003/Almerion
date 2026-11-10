@@ -261,6 +261,12 @@ This is used when Firebase email isn't configured. It is created with placeholde
 
 ### Named maps and reusable layouts
 
+- `MapEditorScene` uses map-link pins instead of creature tokens for world maps. Legacy
+  occupants are preserved but not rendered or selectable there. `WorldMaps.saveLayout`
+  persists editor artwork and pins while retaining the latest party position.
+- Editor zoom transforms the canvas around its top-left corner inside a Group so the
+  ScrollPane uses scaled bounds while all drawing and drag coordinates stay canvas-local.
+
 - `data/MapTemplates` reads the bundled starter layouts as read-only templates, available
   in every campaign, and deep-copies them into independently named locations.
   `ui/scenes/MapCreationDialog` serves both the map catalogue and the session editor.

@@ -233,6 +233,21 @@ public final class WorldMaps {
         return pin;
     }
 
+    /** Saves editor terrain, artwork and location pins without changing the party's live position. */
+    public void saveLayout(GameMap edited) {
+        GameMap stored = requireWorld(edited.getId());
+        for (MapPin pin : edited.getMapLinks()) {
+            GameMap target = repos.maps().getById(pin.getMapId());
+            if (target == null || Objects.equals(target.getId(), edited.getId())) {
+                throw new IllegalArgumentException("Choose a map to link to.");
+            }
+        }
+        edited.setWorldMap(true);
+        edited.setPartyPosition(stored.getPartyPosition());
+        repos.maps().refreshPinNames(edited);
+        repos.maps().saveWorldState(edited);
+    }
+
     public boolean unlink(String worldMapId, int x, int y) {
         GameMap world = requireWorld(worldMapId);
         boolean removed = world.unlinkAt(x, y);

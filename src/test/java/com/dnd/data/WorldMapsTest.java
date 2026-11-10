@@ -18,6 +18,24 @@ public class WorldMapsTest {
     }
 
     @Test
+    public void editorLayoutSavesPinsButPreservesTheCurrentPartyPosition() {
+        CampaignRepositories repos = repos();
+        WorldMaps worlds = new WorldMaps(repos);
+        GameMap world = worlds.ensure().getFirst();
+        repos.maps().add(new GameMap("castle", "Castle", 2, 2));
+        GameMap edited = repos.maps().getById(world.getId());
+        edited.linkMap("castle", "Old name", 3, 4);
+        worlds.moveParty(world.getId(), 6, 7);
+        worlds.saveLayout(edited);
+        GameMap saved = repos.maps().getById(world.getId());
+        assertEquals("Castle", saved.linkAt(3, 4).getName());
+        assertEquals(new Position(6, 7), saved.getPartyPosition());
+        edited.unlinkAt(3, 4);
+        worlds.saveLayout(edited);
+        assertTrue(repos.maps().getById(world.getId()).getMapLinks().isEmpty());
+    }
+
+    @Test
     public void everyCampaignGetsAWorldMapWithoutTouchingOtherMaps() {
         CampaignRepositories repos = repos();
         repos.maps().add(new GameMap("castle", "World Map", 3, 3));

@@ -498,6 +498,11 @@ maps are world maps.
   and **Delete** manage them. The last world map can't be deleted.
   **🖌 Edit Map & Images** opens the normal map editor, so world maps can have background
   images (**+ Add Layer**), drawings and painted terrain just like battle maps.
+  Its token list contains only maps, not players, NPCs, monsters or beasts. Click or drag a
+  map from the list to add its pin, drag a placed pin to move it, and right-click or use
+  **Remove Selected Token** to remove it. **Save Map** saves artwork and pin changes.
+  Both editors have **−**, **+**, and **100%** zoom controls (25%–300%); zooming does not
+  change map dimensions or drawing coordinates.
 - **📍 Link Location** asks which map a square leads to (or creates a new location map), then
   you click the square. Double-click a pin to open that location in the battle map, or to switch
   to a linked world map. **✖ Remove Link** removes a pin; the destination map is kept.

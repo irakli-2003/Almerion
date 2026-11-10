@@ -91,8 +91,38 @@ public class ReportUiTest {
                 modal.initOwner(stage);
                 modal.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
                 modal.show();
-                assertNotNull(reportButton(modal.getDialogPane().getScene()));
-                modal.close();
+                try {
+                    Scene modalScene = modal.getDialogPane().getScene();
+                    assertSame("Dialog sizing requires the DialogPane to remain the scene root",
+                        modal.getDialogPane(), modalScene.getRoot());
+                    Button modalReport = reportButton(modalScene);
+                    assertSame(modal.getDialogPane().lookup(".button-bar"), modalReport.getParent().getParent());
+                    nestedFailure.set(null);
+                    Platform.runLater(() -> {
+                        try {
+                            Stage reportWindow = new ArrayList<>(Window.getWindows()).stream()
+                                .filter(w -> w instanceof Stage s && s.getOwner() == modalScene.getWindow()
+                                    && "Report a bug or suggestion".equals(s.getTitle()))
+                                .map(w -> (Stage) w).findFirst().orElseThrow();
+                            assertTrue(modal.isShowing());
+                            assertSame(modal.getDialogPane(), modalScene.getRoot());
+                            reportWindow.hide();
+                        } catch (Throwable t) {
+                            nestedFailure.set(t);
+                            new ArrayList<>(Window.getWindows()).stream()
+                                .filter(w -> w instanceof Stage s && s.getOwner() == modalScene.getWindow())
+                                .forEach(Window::hide);
+                        }
+                    });
+                    modalReport.fire();
+                    if (nestedFailure.get() != null) throw new AssertionError(nestedFailure.get());
+                    assertTrue("Reporting must not dismiss the original dialog", modal.isShowing());
+                    assertNull(modal.getResult());
+                    ((Button) modal.getDialogPane().lookupButton(ButtonType.CANCEL)).fire();
+                    assertFalse(modal.isShowing());
+                } finally {
+                    modal.close();
+                }
             } finally {
                 stage.close();
             }

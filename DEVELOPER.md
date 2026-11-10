@@ -242,7 +242,10 @@ This is used when Firebase email isn't configured. It is created with placeholde
 ### Bug and suggestion reports
 
 - `ui/ReportUi` follows Stage scenes (including modal dialogs) and adds a compact report
-  button outside the content area. It captures only the app scene, not the desktop.
+  button outside the content area. Dialogs use their existing button bar: keep the
+  `DialogPane` as the scene root to avoid automatic-sizing feedback and flashing.
+  Reporting consumes the button action so the original dialog stays open.
+  It captures only the app scene, not the desktop.
 - The report dialog previews the screenshot and permits removal before sending.
   `auth/EmailService` sends UTF-8 MIME multipart reports with an optional PNG attachment;
   the recipient defaults to the SMTP sender address, never its password.

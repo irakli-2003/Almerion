@@ -54,11 +54,20 @@ public final class ReportUi {
         if (scene == null || scene.getProperties().containsKey(REPORT)) return;
         scene.getProperties().put(REPORT, true);
         Parent content = scene.getRoot();
+        if (content instanceof DialogPane pane) {
+            // JavaFX sizes dialogs from their DialogPane; replacing the root causes resize feedback.
+            ButtonType report = new ButtonType("\uD83D\uDC1E", ButtonBar.ButtonData.LEFT);
+            pane.getButtonTypes().add(0, report);
+            Button bug = (Button) pane.lookupButton(report);
+            configureButton(bug);
+            bug.addEventFilter(javafx.event.ActionEvent.ACTION, e -> {
+                e.consume();
+                show(scene);
+            });
+            return;
+        }
         Button bug = new Button("\uD83D\uDC1E");
-        bug.setTooltip(new Tooltip("Report a bug or suggestion"));
-        bug.setAccessibleText("Report a bug or suggestion");
-        bug.getStyleClass().add("dnd-button");
-        bug.setMinSize(32, 28);
+        configureButton(bug);
         bug.setOnAction(e -> show(scene));
         HBox footer = new HBox(bug);
         footer.setAlignment(Pos.CENTER_RIGHT);
@@ -68,6 +77,13 @@ public final class ReportUi {
         BorderPane wrapper = new BorderPane(content);
         wrapper.setBottom(footer);
         scene.setRoot(wrapper);
+    }
+
+    private static void configureButton(Button bug) {
+        bug.setTooltip(new Tooltip("Report a bug or suggestion"));
+        bug.setAccessibleText("Report a bug or suggestion");
+        bug.getStyleClass().add("dnd-button");
+        bug.setMinSize(32, 28);
     }
 
     private static void show(Scene source) {

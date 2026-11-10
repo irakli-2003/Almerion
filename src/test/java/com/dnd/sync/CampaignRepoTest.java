@@ -66,6 +66,26 @@ public class CampaignRepoTest {
         return target;
     }
 
+    @Test public void rejectedUploadIncludesServerExplanationAndLocalSafetyNotice() {
+        String explanation = "remote: error: File music/theme.wav is 150 MB; exceeds the file size limit.";
+        var result = CampaignRepo.pushFailure(
+            org.eclipse.jgit.transport.RemoteRefUpdate.Status.REJECTED_OTHER_REASON,
+            "pre-receive hook declined", explanation);
+        assertEquals(CampaignRepo.Outcome.FAILED, result.outcome());
+        assertTrue(result.message().contains("pre-receive hook declined"));
+        assertTrue(result.message().contains(explanation));
+        assertTrue(result.message().contains("local commits are kept on this device"));
+        assertTrue(result.message().contains("GitHub has not accepted"));
+    }
+
+    @Test public void rejectedUploadWithoutServerExplanationDoesNotGuessTheCause() {
+        var result = CampaignRepo.pushFailure(
+            org.eclipse.jgit.transport.RemoteRefUpdate.Status.REJECTED_OTHER_REASON, null, " ");
+        assertEquals(CampaignRepo.Outcome.FAILED, result.outcome());
+        assertTrue(result.message().contains("did not provide a detailed explanation"));
+        assertFalse(result.message().contains("null"));
+    }
+
     @Test
     public void connectPushesAndCloneReceivesTheCampaign() throws Exception {
         Path first = campaign("first");

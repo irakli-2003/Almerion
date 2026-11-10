@@ -322,6 +322,9 @@ This is used when Firebase email isn't configured. It is created with placeholde
 
 ### GitHub campaign sync
 
+- Push rejection dialogs include both the ref rejection and `PushResult.getMessages()`:
+  GitHub explains file-size limits and repository rules in the latter. A rejected upload keeps
+  local commits (including chosen conflict resolutions); never suggest deleting the campaign.
 - Uses JGit (EDL-1.0) over HTTPS. Code: `com.dnd.github` (OAuth device flow, REST API, token
   store) and `com.dnd.sync` (`CampaignRepo` engine, `CampaignSyncService` background scheduler).
   UI: `ui/scenes/GitHubSyncUi`.

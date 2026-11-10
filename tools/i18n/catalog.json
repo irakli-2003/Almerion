@@ -1276,7 +1276,7 @@
   "key": "another computer",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/sync/CampaignRepo.java:613"
+   "src/main/java/com/dnd/sync/CampaignRepo.java:626"
   ]
  },
  {
@@ -5389,6 +5389,13 @@
   ]
  },
  {
+  "key": "GitHub did not provide a detailed explanation. Check this repository's rules and file-size limits; the rejection alone does not identify which restriction applied.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/sync/CampaignRepo.java:566"
+  ]
+ },
+ {
   "key": "GitHub didn't accept the saved sign-in. Link your GitHub account again.",
   "kind": "exact",
   "where": [
@@ -5407,6 +5414,13 @@
   "kind": "pattern",
   "where": [
    "src/main/java/com/dnd/github/GitHubApi.java:89"
+  ]
+ },
+ {
+  "key": "GitHub refused the upload ({A}).",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/sync/CampaignRepo.java:559"
   ]
  },
  {
@@ -5443,6 +5457,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:696"
+  ]
+ },
+ {
+  "key": "GitHub's explanation:",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/sync/CampaignRepo.java:564"
   ]
  },
  {
@@ -13407,6 +13428,13 @@
   "kind": "pattern",
   "where": [
    "src/main/java/com/dnd/cloud/CampaignDirectory.java:115"
+  ]
+ },
+ {
+  "key": "Your campaign files and local commits are kept on this device. GitHub has not accepted this upload. Do not delete or re-clone the campaign to fix this.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/sync/CampaignRepo.java:559"
   ]
  },
  {

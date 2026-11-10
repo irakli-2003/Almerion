@@ -547,13 +547,26 @@ public final class CampaignRepo {
                             + " next time this campaign is opened or closed.");
                     }
                     default -> {
-                        return Result.of(Outcome.FAILED, "GitHub refused the upload (" + update.getStatus()
-                            + (update.getMessage() == null ? "" : ": " + update.getMessage()) + ").");
+                        return pushFailure(update.getStatus(), update.getMessage(), result.getMessages());
                     }
                 }
             }
         }
         return Result.of(Outcome.SYNCED, "Synced.");
+    }
+
+    static Result pushFailure(RemoteRefUpdate.Status status, String reason, String serverMessages) {
+        String message = "GitHub refused the upload (" + status
+            + (reason == null || reason.isBlank() ? "" : ": " + reason) + ")."
+            + "\n\nYour campaign files and local commits are kept on this device. GitHub has not accepted"
+            + " this upload. Do not delete or re-clone the campaign to fix this.";
+        if (serverMessages != null && !serverMessages.isBlank()) {
+            message += "\n\nGitHub's explanation:\n" + serverMessages.strip();
+        } else {
+            message += "\n\nGitHub did not provide a detailed explanation. Check this repository's rules"
+                + " and file-size limits; the rejection alone does not identify which restriction applied.";
+        }
+        return Result.of(Outcome.FAILED, message);
     }
 
     // ---- helpers ------------------------------------------------------------------------------

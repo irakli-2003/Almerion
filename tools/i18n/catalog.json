@@ -101,7 +101,7 @@
   "key": "(equipped)",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/PlayerCharacter.java:424",
+   "src/main/java/com/dnd/model/character/PlayerCharacter.java:427",
    "src/main/java/com/dnd/ui/scenes/player/PlayerHomeScene.java:90"
   ]
  },
@@ -137,15 +137,15 @@
   "key": "(missing)",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/EntityForm.java:506",
-   "src/main/java/com/dnd/ui/components/EntityForm.java:803"
+   "src/main/java/com/dnd/ui/components/EntityForm.java:508",
+   "src/main/java/com/dnd/ui/components/EntityForm.java:805"
   ]
  },
  {
   "key": "(no new class features at this level)",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:156"
+   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:161"
   ]
  },
  {
@@ -160,7 +160,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/model/world/map/TokenSupport.java:32",
-   "src/main/java/com/dnd/ui/components/EntityForm.java:448",
+   "src/main/java/com/dnd/ui/components/EntityForm.java:450",
    "src/main/java/com/dnd/ui/components/SearchPicker.java:61"
   ]
  },
@@ -346,7 +346,7 @@
   "key": "+{0} ft walking speed while not in heavy armor (applied on the battle map).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:268"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:284"
   ]
  },
  {
@@ -360,14 +360,14 @@
   "key": "+{A} damage on Strength melee attacks, resistance to bludgeoning, piercing and slashing damage, advantage on Strength checks and saving throws. Ends early if you neither attack nor take damage for a round.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:245"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:261"
   ]
  },
  {
   "key": "+{A} ft speed without armor or shield (applied on the battle map).",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:296"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:312"
   ]
  },
  {
@@ -423,7 +423,7 @@
   "key": "10 {A} DEX",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:626"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:644"
   ]
  },
  {
@@ -537,7 +537,7 @@
   "key": "A dash of magic from level {0}, up to {1}th-level spells (Spellblade, Spellthief).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:143"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:156"
   ]
  },
  {
@@ -598,10 +598,24 @@
   ]
  },
  {
+  "key": "A node requires mutually exclusive choices: {A}",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:114"
+  ]
+ },
+ {
   "key": "A password-reset link was sent to {A}. Choose a new password there, then log in here with it. (Check the spam folder if it doesn't arrive.)",
   "kind": "pattern",
   "where": [
    "src/main/java/com/dnd/ui/scenes/ForgotPasswordScene.java:42"
+  ]
+ },
+ {
+  "key": "A step along the {A} path. The GM can replace these starter rewards.",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:41"
   ]
  },
  {
@@ -694,7 +708,7 @@
   "key": "Ability Score Improvement - +{0} to one score or +{1} to two (edit stats on the sheet)",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:144"
+   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:149"
   ]
  },
  {
@@ -722,7 +736,7 @@
   "key": "Ability scores:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:143"
+   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:148"
   ]
  },
  {
@@ -814,21 +828,21 @@
   "key": "action surge",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:281"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:297"
   ]
  },
  {
   "key": "Action Surge",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:281"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:297"
   ]
  },
  {
   "key": "Action: unfold the turret within 5 ft (AC 8, HP {A}; Mending restores 1d6). Fire it as a bonus action. Free deployment once per long rest, later ones cost a charge.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:344"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:360"
   ]
  },
  {
@@ -876,6 +890,13 @@
   ]
  },
  {
+  "key": "Add a named branch first.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:75"
+  ]
+ },
+ {
   "key": "Add a player, monster, NPC or beast to this session",
   "kind": "exact",
   "where": [
@@ -893,7 +914,7 @@
   "key": "Add a {A} to one ability check, attack roll or saving throw within the next 10 minutes.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:318"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:334"
   ]
  },
  {
@@ -911,6 +932,13 @@
   ]
  },
  {
+  "key": "Add Branch",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:41"
+  ]
+ },
+ {
   "key": "Add Effect...",
   "kind": "exact",
   "where": [
@@ -922,7 +950,7 @@
   "key": "Add entry",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/EntityForm.java:678"
+   "src/main/java/com/dnd/ui/components/EntityForm.java:680"
   ]
  },
  {
@@ -961,6 +989,14 @@
   ]
  },
  {
+  "key": "Add Node",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:74",
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:150"
+  ]
+ },
+ {
   "key": "Add or remove abilities and skills here. IDs are permanent value keys. Remap ability bindings to existing ability IDs before deleting a referenced stat. Skill ability fields use ability IDs. The perception binding controls passive perception. Scores use the modifier (score - {0}) / {1}, rounded down; skill values are independent bonuses.",
   "kind": "exact",
   "where": [
@@ -985,14 +1021,14 @@
   "key": "Add {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/components/EntityForm.java:829"
+   "src/main/java/com/dnd/ui/components/EntityForm.java:831"
   ]
  },
  {
   "key": "Add {A} damage to a hit against a creature larger than you (tick it on an attack).",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:416"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:432"
   ]
  },
  {
@@ -1000,6 +1036,13 @@
   "kind": "pattern",
   "where": [
    "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1926"
+  ]
+ },
+ {
+  "key": "Added to calculated AC or to the GM's fixed sheet AC.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:56"
   ]
  },
  {
@@ -1020,29 +1063,29 @@
   "key": "Advantage on Intelligence, Wisdom and Charisma saves against magic.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:381"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:397"
   ]
  },
  {
   "key": "Advantage on saves against being charmed; magic can't put you to sleep.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:360",
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:383"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:376",
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:399"
   ]
  },
  {
   "key": "Advantage on saving throws against being frightened.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:365"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:381"
   ]
  },
  {
   "key": "Advantage on Strength melee attacks this turn; attacks against you have advantage until your next turn.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:259"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:275"
   ]
  },
  {
@@ -1070,7 +1113,7 @@
   "key": "After a short rest, recover spell slots totalling up to half your wizard level.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:335"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:351"
   ]
  },
  {
@@ -1106,7 +1149,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:92",
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:279"
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:281"
   ]
  },
  {
@@ -1143,6 +1186,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/MusicPanel.java:64"
+  ]
+ },
+ {
+  "key": "All selected nodes must already be unlocked. Cross-branch links are allowed.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:48"
   ]
  },
  {
@@ -1249,6 +1299,21 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/RegisterScene.java:58"
+  ]
+ },
+ {
+  "key": "Already included in this character. No rewards are applied again.{A}",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:174"
+  ]
+ },
+ {
+  "key": "Already unlocked",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:205",
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeView.java:81"
   ]
  },
  {
@@ -1362,14 +1427,14 @@
   "key": "Appearance & Story",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:166"
+   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:168"
   ]
  },
  {
   "key": "Appearance, background, how you carry yourself...",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:148"
+   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:150"
   ]
  },
  {
@@ -1426,14 +1491,21 @@
   "key": "arcane recovery",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:334"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:350"
   ]
  },
  {
   "key": "Arcane Recovery",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:334"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:350"
+  ]
+ },
+ {
+  "key": "Arcane Resilience",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:26"
   ]
  },
  {
@@ -1441,6 +1513,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/model/magic/EnergyCharges.java:19"
+  ]
+ },
+ {
+  "key": "Arcane Warden",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:16"
   ]
  },
  {
@@ -1454,7 +1533,7 @@
   "key": "Area of effect in feet; {0} means a single target.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:101"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:114"
   ]
  },
  {
@@ -1468,7 +1547,7 @@
   "key": "armor 10+{A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:614"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:632"
   ]
  },
  {
@@ -1503,7 +1582,7 @@
   "key": "Artificer charges. Work like slots, but are refilled by burning fuel in a workshop furnace, not by resting.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:148"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:161"
   ]
  },
  {
@@ -1518,6 +1597,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/player/PlayerOnlineSessionScene.java:90"
+  ]
+ },
+ {
+  "key": "Ask your GM to apply this upgrade.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:215"
   ]
  },
  {
@@ -1545,7 +1631,7 @@
   "key": "at will",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:42"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:44"
   ]
  },
  {
@@ -1559,7 +1645,7 @@
   "key": "Attack and saving throw rules for this action. The GM can override them for each cast.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:88"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:101"
   ]
  },
  {
@@ -1573,14 +1659,15 @@
   "key": "Attack bonus",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2183"
+   "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2183",
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:274"
   ]
  },
  {
   "key": "Attack {A} times when you take the Attack action.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:272"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:288"
   ]
  },
  {
@@ -1627,10 +1714,25 @@
   ]
  },
  {
+  "key": "Available",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeView.java:82"
+  ]
+ },
+ {
   "key": "available on this device",
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/ManualFilesUi.java:23"
+  ]
+ },
+ {
+  "key": "Available unlocks:",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:97",
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:210"
   ]
  },
  {
@@ -1716,22 +1818,29 @@
   "key": "bardic inspiration",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:314"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:330"
   ]
  },
  {
   "key": "Bardic Inspiration",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:317"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:333"
   ]
  },
  {
   "key": "Bardic Inspiration ({A})",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:316",
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:320"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:332",
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:336"
+  ]
+ },
+ {
+  "key": "Basic attack damage",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:275"
   ]
  },
  {
@@ -1770,63 +1879,70 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:82",
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:269"
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:271"
+  ]
+ },
+ {
+  "key": "Berserker",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:15"
   ]
  },
  {
   "key": "Blank = caster's calculated spell attack bonus. Editable during casting.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:92"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:105"
   ]
  },
  {
   "key": "Blank = caster's calculated spell save DC. Editable during casting.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:93"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:106"
   ]
  },
  {
   "key": "Blank = DEX modifier. Used for initiative rolls on the battle map.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:67"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:80"
   ]
  },
  {
   "key": "Blank = from level (+{0} at level {1}).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:69"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:82"
   ]
  },
  {
   "key": "Blank = from worn armor, shield and DEX. A number here replaces it everywhere, battle map included; effects still add on top.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:66"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:79"
   ]
  },
  {
   "key": "Blank = proficiency bonus + casting ability modifier.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:79"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:92"
   ]
  },
  {
   "key": "Blank = {0} + Perception skill.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:70"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:83"
   ]
  },
  {
   "key": "Blank = {0} + proficiency bonus + casting ability modifier.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:78"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:91"
   ]
  },
  {
@@ -1842,7 +1958,7 @@
   "key": "Blood magic: a spell's mana cost is paid in the caster's own hit points.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:150"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:163"
   ]
  },
  {
@@ -1856,42 +1972,42 @@
   "key": "Blueprints copied into the artificer's book; only these can be crafted.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:63"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:76"
   ]
  },
  {
   "key": "bolt repeater",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:343"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:359"
   ]
  },
  {
   "key": "Bonus action: Emergency Patch (ally regains {0}d{1} + INT), Quick Cover (half cover until your next turn) or Special Charge (next device shot +{2}d{3}).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:338"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:354"
   ]
  },
  {
   "key": "Bonus action: regain 1d10 + {A} hit points.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:276"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:292"
   ]
  },
  {
   "key": "Bonus added to each skill check (e.g. +{0} Stealth, -{1} Animal Handling). Any whole number: positive, negative or {2}. New characters start from their ability modifiers.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:57"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:70"
   ]
  },
  {
   "key": "Bonuses added to ability scores, e.g. strength +{0}. Ability names in lowercase.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:48"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:61"
   ]
  },
  {
@@ -1899,21 +2015,36 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:93",
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:280"
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:282"
+  ]
+ },
+ {
+  "key": "Branch name",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:43",
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:58"
+  ]
+ },
+ {
+  "key": "Branches need a stable ID and a name.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:75"
   ]
  },
  {
   "key": "Brave",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:365"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:381"
   ]
  },
  {
   "key": "Breath Weapon",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:370"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:386"
   ]
  },
  {
@@ -1994,6 +2125,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/MapTemplates.java:30"
+  ]
+ },
+ {
+  "key": "Campaign ability score to increase; leave blank when ability increase is zero.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:52"
   ]
  },
  {
@@ -2251,7 +2389,7 @@
   "key": "Cannot cast spells at all.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:151"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:164"
   ]
  },
  {
@@ -2335,7 +2473,7 @@
   "key": "Capsule recipe: fills one energy charge of this level instead of making an item. {0} = makes the product.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:130"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:143"
   ]
  },
  {
@@ -2372,7 +2510,7 @@
   "key": "Casting uses per spell level (or energy charges for artificers). 'Current' goes down as they cast.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:62"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:75"
   ]
  },
  {
@@ -2387,7 +2525,7 @@
   "kind": "pattern",
   "where": [
    "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2781",
-   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:53"
+   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:54"
   ]
  },
  {
@@ -2401,7 +2539,7 @@
   "key": "Celestial Resistance",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:397"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:413"
   ]
  },
  {
@@ -2450,14 +2588,14 @@
   "key": "channel divinity",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:327"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:343"
   ]
  },
  {
   "key": "Channel Divinity",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:327"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:343"
   ]
  },
  {
@@ -2486,7 +2624,7 @@
   "key": "Character level needed to understand these plans.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:124"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:137"
   ]
  },
  {
@@ -2500,7 +2638,7 @@
   "key": "Character name",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:143"
+   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:145"
   ]
  },
  {
@@ -2528,7 +2666,7 @@
   "key": "Charge type: {0} Steam-pressure, {1} Thermal, {2} Shock, {3} Force, {4} Arcane Resonance. Higher charges can stand in for lower.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:132"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:145"
   ]
  },
  {
@@ -2536,7 +2674,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/EntityDescriptions.java:157",
-   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:52"
+   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:53"
   ]
  },
  {
@@ -2656,6 +2794,13 @@
   ]
  },
  {
+  "key": "Choose an ability for its score increase.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:93"
+  ]
+ },
+ {
   "key": "Choose an audio file",
   "kind": "exact",
   "where": [
@@ -2716,6 +2861,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/ManualFilesUi.java:126"
+  ]
+ },
+ {
+  "key": "Choose the class whose tree you want to edit.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:24"
   ]
  },
  {
@@ -2790,6 +2942,23 @@
   ]
  },
  {
+  "key": "Class Upgrade Tree",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:96",
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:204",
+   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:94"
+  ]
+ },
+ {
+  "key": "Class Upgrade Trees",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:161",
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:23"
+  ]
+ },
+ {
   "key": "Class:",
   "kind": "exact",
   "where": [
@@ -2800,7 +2969,7 @@
   "key": "Class: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:184"
+   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:186"
   ]
  },
  {
@@ -2815,7 +2984,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:87",
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:274"
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:276"
   ]
  },
  {
@@ -2823,6 +2992,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/lan/LanSheet.java:187"
+  ]
+ },
+ {
+  "key": "Clear Picture",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:149"
   ]
  },
  {
@@ -3012,6 +3188,20 @@
   ]
  },
  {
+  "key": "Close battle windows before changing upgrade trees.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:31"
+  ]
+ },
+ {
+  "key": "Close battle windows before unlocking upgrades.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:230"
+  ]
+ },
+ {
   "key": "Close the battle map",
   "kind": "exact",
   "where": [
@@ -3064,14 +3254,14 @@
   "key": "combat fabrication",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:337"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:353"
   ]
  },
  {
   "key": "Combat Fabrication",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:337"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:353"
   ]
  },
  {
@@ -3106,8 +3296,8 @@
   "key": "comma separated",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/EntityForm.java:787",
-   "src/main/java/com/dnd/ui/components/EntityForm.java:789"
+   "src/main/java/com/dnd/ui/components/EntityForm.java:789",
+   "src/main/java/com/dnd/ui/components/EntityForm.java:791"
   ]
  },
  {
@@ -3142,7 +3332,7 @@
   "key": "Concentration spells end if the caster casts another one or is badly hurt.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:118"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:131"
   ]
  },
  {
@@ -3228,7 +3418,7 @@
   "key": "Convert into spell slots or spend on Metamagic.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:333"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:349"
   ]
  },
  {
@@ -3242,7 +3432,7 @@
   "key": "Cooling down: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:54"
+   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:55"
   ]
  },
  {
@@ -3672,7 +3862,7 @@
   "key": "Crafting check DC: d{0} + INT + proficiency. Fail by {1} or more and the materials are ruined. {2} = no check.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:129"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:142"
   ]
  },
  {
@@ -3701,6 +3891,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/ManagePlayersPanel.java:957"
+  ]
+ },
+ {
+  "key": "Create a class before editing its upgrade tree.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:21"
   ]
  },
  {
@@ -3738,7 +3935,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:308",
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:199"
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:201"
   ]
  },
  {
@@ -3930,7 +4127,7 @@
   "key": "Damage dealt on a hit: the dice rolled plus a flat constant, and the damage type.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:116"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:129"
   ]
  },
  {
@@ -3959,7 +4156,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:89",
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:276"
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:278"
   ]
  },
  {
@@ -3987,9 +4184,9 @@
   "key": "Darkvision",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:357",
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:361",
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:419"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:373",
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:377",
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:435"
   ]
  },
  {
@@ -4025,7 +4222,7 @@
   "key": "Death already let go of you once: when reduced to {0} HP, drop to {1} HP instead (applied automatically).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:425"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:441"
   ]
  },
  {
@@ -4111,6 +4308,14 @@
   ]
  },
  {
+  "key": "Delete Branch",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:62",
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:66"
+  ]
+ },
+ {
   "key": "Delete campaign '{A}'? Its files and its member list are removed. This cannot be undone.",
   "kind": "pattern",
   "where": [
@@ -4136,6 +4341,13 @@
   "kind": "pattern",
   "where": [
    "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:185"
+  ]
+ },
+ {
+  "key": "Delete Node",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:151"
   ]
  },
  {
@@ -4184,7 +4396,7 @@
   "key": "Deploy Bolt Repeater",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:343"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:359"
   ]
  },
  {
@@ -4273,7 +4485,7 @@
   "key": "DEX {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:615"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:633"
   ]
  },
  {
@@ -4295,14 +4507,14 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:94",
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:281"
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:283"
   ]
  },
  {
   "key": "Dice rolled for the effect's power; the GM rolls them at the table when the spell is cast.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:115"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:128"
   ]
  },
  {
@@ -4337,7 +4549,7 @@
   "key": "Disengage or Hide as a bonus action.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:418"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:434"
   ]
  },
  {
@@ -4358,14 +4570,14 @@
   "key": "divine sense",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:299"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:315"
   ]
  },
  {
   "key": "Divine Sense",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:299"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:315"
   ]
  },
  {
@@ -4435,7 +4647,7 @@
   "key": "Draconic Resistance",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:378"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:394"
   ]
  },
  {
@@ -4453,10 +4665,31 @@
   ]
  },
  {
+  "key": "Duplicate branch ID: {A}",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:76"
+  ]
+ },
+ {
   "key": "Duplicate id: {A}",
   "kind": "pattern",
   "where": [
    "src/main/java/com/dnd/data/JsonRepository.java:93"
+  ]
+ },
+ {
+  "key": "Duplicate links on node: {A}",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:99"
+  ]
+ },
+ {
+  "key": "Duplicate node ID: {A}",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:81"
   ]
  },
  {
@@ -4484,35 +4717,42 @@
   "key": "Durability: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/character/PlayerCharacter.java:448"
+   "src/main/java/com/dnd/model/character/PlayerCharacter.java:451"
   ]
  },
  {
   "key": "Dwarven Resilience",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:356"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:372"
   ]
  },
  {
   "key": "e.g. +{0}",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:84"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:97"
   ]
  },
  {
   "key": "e.g. {0}d{1} + {2} piercing",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:85"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:98"
   ]
  },
  {
   "key": "e.g. {0}d{1}. Blank = level d class hit die.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:72"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:85"
+  ]
+ },
+ {
+  "key": "Each level-up earns one choice. All prerequisites are required; branches may mix. Exclusive links block both directions. IDs stay stable when renamed. Spell rewards can grant any GM-created ability from Worldbuilding > Spells. Description-only feats are reminders; numeric rewards and granted spells have mechanics. Saved unlocks keep their original rewards when the tree changes.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:81"
   ]
  },
  {
@@ -4534,6 +4774,21 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/MusicPanel.java:542"
+  ]
+ },
+ {
+  "key": "Edit Branch",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:51",
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:55"
+  ]
+ },
+ {
+  "key": "Edit node",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeView.java:82"
   ]
  },
  {
@@ -4584,21 +4839,21 @@
   "where": [
    "src/main/java/com/dnd/data/EntityDescriptions.java:72",
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:90",
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:277"
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:279"
   ]
  },
  {
   "key": "Effects from this campaign that the spell applies. Each one's power (constant + dice) replaces the effect's own damage/healing amount; leave it at {0} with no dice to use the effect's own amount.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:112"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:125"
   ]
  },
  {
   "key": "Effects: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:55"
+   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:56"
   ]
  },
  {
@@ -4698,7 +4953,7 @@
   "key": "Energy charge level used per activation; {0} = runs on clockwork and costs nothing.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:138"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:151"
   ]
  },
  {
@@ -4720,7 +4975,7 @@
   "key": "Energy charges poured into the build (level {0} Steam-pressure, {1} Thermal, {2} Shock...).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:128"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:141"
   ]
  },
  {
@@ -4908,6 +5163,13 @@
   ]
  },
  {
+  "key": "Escape Artist",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:20"
+  ]
+ },
+ {
   "key": "event: ended",
   "kind": "exact",
   "where": [
@@ -4960,14 +5222,28 @@
   "key": "Everything else printed on the character sheet. Number boxes left blank are worked out automatically (shown under 'Calculated values' above); type a number to override it.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:65"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:78"
   ]
  },
  {
   "key": "Exhale destructive energy in a 15 ft area: {A}d6 fire (DEX save for half).",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:371"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:387"
+  ]
+ },
+ {
+  "key": "Existing level {A} training",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:173"
+  ]
+ },
+ {
+  "key": "Existing training",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:169"
   ]
  },
  {
@@ -4981,7 +5257,7 @@
   "key": "Experience points. At {0} the character can level up (campaign rule).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:55"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:68"
   ]
  },
  {
@@ -5009,7 +5285,7 @@
   "key": "extra attack",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:270"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:286"
   ]
  },
  {
@@ -5023,14 +5299,28 @@
   "key": "Extra hit points that are lost first and don't stack.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:73"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:86"
   ]
  },
  {
   "key": "Extra rows for the 'Attacks & spellcasting' box, after the weapons the character carries.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:80"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:93"
+  ]
+ },
+ {
+  "key": "Extra Strength melee damage while the class Rage effect is active.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:55"
+  ]
+ },
+ {
+  "key": "Extra walking speed in feet.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:57"
   ]
  },
  {
@@ -5222,7 +5512,7 @@
   "key": "fast movement",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:266"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:282"
   ]
  },
  {
@@ -5236,15 +5526,22 @@
   "key": "Features and traits not covered by the class or race; one per line.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:82"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:95"
   ]
  },
  {
   "key": "Fey Ancestry",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:360",
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:382"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:376",
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:398"
+  ]
+ },
+ {
+  "key": "Field Engineer",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:22"
   ]
  },
  {
@@ -5414,35 +5711,49 @@
   "key": "flash of genius",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:340"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:356"
   ]
  },
  {
   "key": "Flash of Genius",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:340"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:356"
   ]
  },
  {
   "key": "Flat amount added to the dice, e.g. the {0} in {1}d{2} + {3}. Can be used on its own without dice.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:117"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:130"
+  ]
+ },
+ {
+  "key": "Flat damage on weapon attacks and unarmed strikes, not spell damage.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:54"
   ]
  },
  {
   "key": "Flat part of the effect's power, added to the dice (e.g. the {0} in {1}d{2} + {3}).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:114"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:127"
   ]
  },
  {
   "key": "Flurry of Blows, Patient Defense, Step of the Wind, Stunning Strike - {0} point each.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:292"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:308"
+  ]
+ },
+ {
+  "key": "Focused Training",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:28"
   ]
  },
  {
@@ -5464,7 +5775,7 @@
   "key": "font of magic",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:332"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:348"
   ]
  },
  {
@@ -5479,6 +5790,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/MapTemplates.java:27"
+  ]
+ },
+ {
+  "key": "Forest Guardian",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:17"
   ]
  },
  {
@@ -5513,7 +5831,7 @@
   "key": "Free label to sort the blueprint book, e.g. Utility, Light combat, Medium combat.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:123"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:136"
   ]
  },
  {
@@ -5541,7 +5859,7 @@
   "key": "Fuel units burning in the workshop furnace, waiting to be turned into charges.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:64"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:77"
   ]
  },
  {
@@ -5562,7 +5880,7 @@
   "key": "Full HP, mana and spell slots; every effect and cooldown cleared. Energy charges are refilled by the workshop furnace from the fuel in the pack.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:92"
+   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:93"
   ]
  },
  {
@@ -5576,7 +5894,7 @@
   "key": "fully rested (HP, mana and {A} restored{B})",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/character/Progression.java:185"
+   "src/main/java/com/dnd/model/character/Progression.java:191"
   ]
  },
  {
@@ -5590,14 +5908,14 @@
   "key": "Furnace units per piece. A steam-pressure charge costs {0} units, thermal {1}, electric {2}, magnetic {3}, resonance {4}.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:134"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:147"
   ]
  },
  {
   "key": "Fury of the Small",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:415"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:431"
   ]
  },
  {
@@ -5699,7 +6017,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:126",
-   "src/main/java/com/dnd/ui/components/EntityForm.java:749",
+   "src/main/java/com/dnd/ui/components/EntityForm.java:751",
    "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:399"
   ]
  },
@@ -5738,21 +6056,21 @@
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:124",
    "src/main/java/com/dnd/data/JsonRepository.java:65",
-   "src/main/java/com/dnd/ui/components/EntityForm.java:750"
+   "src/main/java/com/dnd/ui/components/EntityForm.java:752"
   ]
  },
  {
   "key": "Gets fewer slots starting at level {0} and tops out at {1}th-level spells; mixes magic with fighting (paladin, ranger).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:142"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:155"
   ]
  },
  {
   "key": "Gets spell slots from level {0} and reaches {1}th-level spells - the strongest magic users (wizard, cleric, druid, bard, sorcerer).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:141"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:154"
   ]
  },
  {
@@ -5780,7 +6098,7 @@
   "key": "getValue",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/EntityForm.java:490"
+   "src/main/java/com/dnd/ui/components/EntityForm.java:492"
   ]
  },
  {
@@ -5986,7 +6304,7 @@
   "key": "Gnome Cunning",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:380"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:396"
   ]
  },
  {
@@ -6014,14 +6332,21 @@
   "key": "Gold value of the material; {0} = trivial, a component pouch covers it.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:110"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:123"
+  ]
+ },
+ {
+  "key": "Grant spells or GM-created active abilities from the campaign spell catalog. Existing spells are not duplicated.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:58"
   ]
  },
  {
   "key": "Grave-touched",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:428"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:444"
   ]
  },
  {
@@ -6060,6 +6385,13 @@
   ]
  },
  {
+  "key": "Grove Keeper",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:23"
+  ]
+ },
+ {
   "key": "Half caster",
   "kind": "exact",
   "where": [
@@ -6070,7 +6402,7 @@
   "key": "Half halves damage before resistance. None prevents damage. A successful save also prevents conditions.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:91"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:104"
   ]
  },
  {
@@ -6112,7 +6444,7 @@
   "key": "Healing Hands",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:398"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:414"
   ]
  },
  {
@@ -6161,7 +6493,7 @@
   "key": "Hellish Resistance",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:393"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:409"
   ]
  },
  {
@@ -6225,14 +6557,14 @@
   "key": "Homebrew artificer. Same numbers as a half caster, but the 'slots' are energy charges: steam-pressure, thermal, electric... Rests do NOT refill them - the workshop furnace does, by burning fuel.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:145"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:158"
   ]
  },
  {
   "key": "Homebrew: every spell has a mana cost paid from a pool; half the missing mana returns on a short rest.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:149"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:162"
   ]
  },
  {
@@ -6246,42 +6578,42 @@
   "key": "How far away the target can be, in feet. {0} = touch or self.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:100"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:113"
   ]
  },
  {
   "key": "How far they walk in one turn, in feet ({0} is normal, {1} is short-legged).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:49"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:62"
   ]
  },
  {
   "key": "How many charges of that type.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:133"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:146"
   ]
  },
  {
   "key": "How many of the product one crafting makes (e.g. {0} bolts).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:122"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:135"
   ]
  },
  {
   "key": "How many of this material one crafting uses.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:131"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:144"
   ]
  },
  {
   "key": "How much damage they can take before falling unconscious.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:58"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:71"
   ]
  },
  {
@@ -6306,10 +6638,17 @@
   ]
  },
  {
+  "key": "HP and mana rewards must be between {0} and {1}.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:87"
+  ]
+ },
+ {
   "key": "HP from hit dice, pact slots back, half the missing mana, timed effects end. The workshop furnace refills each energy charge type up to half of its maximum from the fuel in the pack.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:84"
+   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:85"
   ]
  },
  {
@@ -6449,7 +6788,7 @@
   "key": "In-game time the work takes, so the GM can judge whether there is time.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:125"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:138"
   ]
  },
  {
@@ -6506,7 +6845,7 @@
   "key": "Indomitable",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:283"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:299"
   ]
  },
  {
@@ -6536,6 +6875,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1366"
+  ]
+ },
+ {
+  "key": "Inner Stillness",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:24"
   ]
  },
  {
@@ -6606,6 +6952,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/lan/LanSessionServer.java:76"
+  ]
+ },
+ {
+  "key": "Inspiring Voice",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:18"
   ]
  },
  {
@@ -6709,11 +7062,18 @@
   ]
  },
  {
+  "key": "Inventor",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:22"
+  ]
+ },
+ {
   "key": "Inventory",
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/lan/LanSessionServer.java:79",
-   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:97"
+   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:99"
   ]
  },
  {
@@ -6721,6 +7081,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/model/character/stats/Skills.java:34"
+  ]
+ },
+ {
+  "key": "Iron Fist",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:15"
   ]
  },
  {
@@ -6830,7 +7197,7 @@
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:83",
    "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1181",
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:270"
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:272"
   ]
  },
  {
@@ -6844,21 +7211,21 @@
   "key": "Items that must be carried but are not used up.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:104"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:117"
   ]
  },
  {
   "key": "Items used up by crafting, with amounts.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:126"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:139"
   ]
  },
  {
   "key": "Items used up every time (e.g. ammunition). Casting fails without them.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:103"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:116"
   ]
  },
  {
@@ -6972,7 +7339,7 @@
   "key": "Ki points",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:291"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:307"
   ]
  },
  {
@@ -6987,14 +7354,14 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:91",
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:278"
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:280"
   ]
  },
  {
   "key": "Languages, tools, armor and weapon proficiencies; one per line.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:81"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:94"
   ]
  },
  {
@@ -7009,14 +7376,14 @@
   "key": "lay on hands",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:302"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:318"
   ]
  },
  {
   "key": "Lay on Hands",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:303"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:319"
   ]
  },
  {
@@ -7044,7 +7411,7 @@
   "key": "Leave empty to use the class's casting ability.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:77"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:90"
   ]
  },
  {
@@ -7080,21 +7447,21 @@
   "key": "Level must be between {A} and {B} but was {C}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/character/PlayerCharacter.java:89"
+   "src/main/java/com/dnd/model/character/PlayerCharacter.java:92"
   ]
  },
  {
   "key": "Level Up",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:105"
+   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:110"
   ]
  },
  {
   "key": "Level Up ▲",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:60"
+   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:61"
   ]
  },
  {
@@ -7132,7 +7499,7 @@
   "key": "Level: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:186"
+   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:188"
   ]
  },
  {
@@ -7296,6 +7663,13 @@
   ]
  },
  {
+  "key": "Locked",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeView.java:82"
+  ]
+ },
+ {
   "key": "Log In",
   "kind": "exact",
   "where": [
@@ -7341,7 +7715,7 @@
   "key": "long rest",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:42"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:44"
   ]
  },
  {
@@ -7350,7 +7724,7 @@
   "where": [
    "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2818",
    "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2888",
-   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:87"
+   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:88"
   ]
  },
  {
@@ -7378,14 +7752,14 @@
   "key": "Lucky",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:364"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:380"
   ]
  },
  {
   "key": "Lvl {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:225",
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:227",
    "src/main/java/com/dnd/ui/scenes/ManagePlayersPanel.java:252"
   ]
  },
@@ -7454,6 +7828,13 @@
   ]
  },
  {
+  "key": "Mana +{A}",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:271"
+  ]
+ },
+ {
   "key": "Mana cost",
   "kind": "exact",
   "where": [
@@ -7464,7 +7845,7 @@
   "key": "Mana spent by mana-based casters (and HP for blood-magic casters). Slot casters ignore it.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:99"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:112"
   ]
  },
  {
@@ -7478,7 +7859,7 @@
   "key": "Mana {A}/{B}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:50"
+   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:51"
   ]
  },
  {
@@ -7601,7 +7982,7 @@
   "key": "Map perception to the active skill used for passive perception.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:97"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:110"
   ]
  },
  {
@@ -7615,7 +7996,7 @@
   "key": "Map the six standard rules roles, and any retired ability references, to active ability IDs.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:96"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:109"
   ]
  },
  {
@@ -7659,14 +8040,14 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:86",
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:273"
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:275"
   ]
  },
  {
   "key": "martial arts",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:286"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:302"
   ]
  },
  {
@@ -7715,7 +8096,7 @@
   "key": "Max HP gain:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:117"
+   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:122"
   ]
  },
  {
@@ -7730,7 +8111,7 @@
   "key": "Max mana gain:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:123"
+   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:128"
   ]
  },
  {
@@ -7790,6 +8171,13 @@
   ]
  },
  {
+  "key": "Minimum character level for this choice. Every node costs one earned unlock.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:46"
+  ]
+ },
+ {
   "key": "Minutes to count down from",
   "kind": "exact",
   "where": [
@@ -7838,7 +8226,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:81",
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:268"
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:270"
   ]
  },
  {
@@ -7852,7 +8240,7 @@
   "key": "Mountain Born",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:412"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:428"
   ]
  },
  {
@@ -7867,6 +8255,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/MusicPanel.java:553"
+  ]
+ },
+ {
+  "key": "Move or delete this branch's nodes first.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:69"
   ]
  },
  {
@@ -8031,6 +8426,13 @@
   ]
  },
  {
+  "key": "Narrative feat / existing training",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:279"
+  ]
+ },
+ {
   "key": "Nature",
   "kind": "exact",
   "where": [
@@ -8076,7 +8478,7 @@
   "key": "Needs {A} XP (has {B})",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:64"
+   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:65"
   ]
  },
  {
@@ -8105,6 +8507,13 @@
   "kind": "pattern",
   "where": [
    "src/main/java/com/dnd/ui/scenes/ManagePlayersPanel.java:563"
+  ]
+ },
+ {
+  "key": "Neither choice can be unlocked if the other is already selected. One link blocks both directions.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:49"
   ]
  },
  {
@@ -8248,7 +8657,7 @@
   "key": "Nimble Escape",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:418"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:434"
   ]
  },
  {
@@ -8408,7 +8817,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/ManagePlayersPanel.java:707",
-   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:115"
+   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:117"
   ]
  },
  {
@@ -8493,7 +8902,7 @@
   "key": "No player characters yet.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:179",
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:181",
    "src/main/java/com/dnd/ui/scenes/ManagePlayersPanel.java:233"
   ]
  },
@@ -8564,14 +8973,14 @@
   "key": "No spells.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:128"
+   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:130"
   ]
  },
  {
   "key": "No spells. The class fights with weapons and its own features (barbarian, fighter, rogue, monk).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:140"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:153"
   ]
  },
  {
@@ -8586,6 +8995,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/MusicPanel.java:485"
+  ]
+ },
+ {
+  "key": "No unlocks available. Gain a level to earn one.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:208"
   ]
  },
  {
@@ -8643,6 +9059,27 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/MembersWindow.java:100"
+  ]
+ },
+ {
+  "key": "Node links must reference another existing node: {A}",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:102"
+  ]
+ },
+ {
+  "key": "Node minimum level must be between {0} and {1}.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:84"
+  ]
+ },
+ {
+  "key": "Nodes need a stable ID and a name.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:80"
   ]
  },
  {
@@ -8835,7 +9272,14 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:80",
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:267"
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:269"
+  ]
+ },
+ {
+  "key": "Oathblade",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:25"
   ]
  },
  {
@@ -8870,7 +9314,7 @@
   "key": "On a melee critical hit, roll one weapon damage die an extra time.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:389"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:405"
   ]
  },
  {
@@ -8905,7 +9349,14 @@
   "key": "Once per turn +{A}d6 when you have advantage or an ally is next to the target (finesse or ranged weapon).",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:311"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:327"
+  ]
+ },
+ {
+  "key": "One choice per level-up. Existing training has already spent older levels; its abilities are not applied twice.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:211"
   ]
  },
  {
@@ -8968,7 +9419,7 @@
   "key": "Only for mana-based homebrew casters. Leave {0} for slot casters.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:59"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:72"
   ]
  },
  {
@@ -9091,6 +9542,13 @@
   ]
  },
  {
+  "key": "Open Palm",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:24"
+  ]
+ },
+ {
   "key": "Open sheet",
   "kind": "exact",
   "where": [
@@ -9200,7 +9658,7 @@
   "key": "Overall power, {0}-{1}. Higher level = more HP, features and spells.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:54"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:67"
   ]
  },
  {
@@ -9243,6 +9701,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/model/magic/SpellcastingType.java:14"
+  ]
+ },
+ {
+  "key": "Pact Weaver",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:27"
   ]
  },
  {
@@ -9496,6 +9961,27 @@
   ]
  },
  {
+  "key": "Permanent increase to maximum and current HP, applied once.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:50"
+  ]
+ },
+ {
+  "key": "Permanent increase to maximum and current mana. Does not add spell slots.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:51"
+  ]
+ },
+ {
+  "key": "Permanent score increase, applied once. Unlock is refused if the score would exceed {0}.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:53"
+  ]
+ },
+ {
   "key": "Persuasion",
   "kind": "exact",
   "where": [
@@ -9607,7 +10093,7 @@
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:85",
    "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:127",
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:272"
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:274"
   ]
  },
  {
@@ -9714,14 +10200,14 @@
   "key": "Player: -",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:229"
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:231"
   ]
  },
  {
   "key": "Player: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:229",
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:231",
    "src/main/java/com/dnd/ui/scenes/player/PlayerHomeScene.java:40"
   ]
  },
@@ -9896,6 +10382,13 @@
   ]
  },
  {
+  "key": "Prerequisites or exclusive choices block this node.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:207"
+  ]
+ },
+ {
   "key": "Present:",
   "kind": "exact",
   "where": [
@@ -9906,7 +10399,7 @@
   "key": "Preview and apply level {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:63"
+   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:64"
   ]
  },
  {
@@ -9957,7 +10450,7 @@
   "key": "Printed on the Notes page.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:83"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:96"
   ]
  },
  {
@@ -9992,7 +10485,7 @@
   "key": "Proficiency bonus:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:141"
+   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:146"
   ]
  },
  {
@@ -10020,7 +10513,7 @@
   "key": "Progression & Rest",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:43"
+   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:44"
   ]
  },
  {
@@ -10035,6 +10528,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:965"
+  ]
+ },
+ {
+  "key": "Protector",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:25"
   ]
  },
  {
@@ -10090,7 +10590,7 @@
   "key": "Race: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:185"
+   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:187"
   ]
  },
  {
@@ -10098,15 +10598,22 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/data/EntityInfoFormatter.java:88",
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:275"
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:277"
   ]
  },
  {
   "key": "Rage",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:242",
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:248"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:258",
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:264"
+  ]
+ },
+ {
+  "key": "Rage damage",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:276"
   ]
  },
  {
@@ -10128,14 +10635,14 @@
   "key": "Reaction when hit: reduce the damage by 1d12 + {A}.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:407"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:423"
   ]
  },
  {
   "key": "Reaction: add your Intelligence modifier to an ally's ability check or saving throw within {0} ft.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:341"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:357"
   ]
  },
  {
@@ -10156,22 +10663,22 @@
   "key": "Reckless",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:258"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:274"
   ]
  },
  {
   "key": "reckless attack",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:257"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:273"
   ]
  },
  {
   "key": "Reckless Attack",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:258",
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:261"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:274",
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:277"
   ]
  },
  {
@@ -10192,7 +10699,7 @@
   "key": "recovers {A} HP",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/character/Progression.java:146"
+   "src/main/java/com/dnd/model/character/Progression.java:152"
   ]
  },
  {
@@ -10220,7 +10727,7 @@
   "key": "regains pact slots",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/Progression.java:150"
+   "src/main/java/com/dnd/model/character/Progression.java:156"
   ]
  },
  {
@@ -10248,7 +10755,7 @@
   "key": "Relentless Endurance",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:386"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:402"
   ]
  },
  {
@@ -10297,7 +10804,7 @@
   "key": "Remove",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/EntityForm.java:857",
+   "src/main/java/com/dnd/ui/components/EntityForm.java:859",
    "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2341",
    "src/main/java/com/dnd/ui/scenes/MembersWindow.java:127"
   ]
@@ -10321,6 +10828,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/ManagePlayersPanel.java:665"
+  ]
+ },
+ {
+  "key": "Remove links to this node before deleting it.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:172"
   ]
  },
  {
@@ -10508,7 +11022,14 @@
   "key": "Require a physical caster d{0} attack roll against each target's armor class.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:89"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:102"
+  ]
+ },
+ {
+  "key": "Required level: {A}",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:206"
   ]
  },
  {
@@ -10522,14 +11043,14 @@
   "key": "Reroll a failed saving throw.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:284"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:300"
   ]
  },
  {
   "key": "Reroll a natural {0} on an attack, ability check or saving throw.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:364"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:380"
   ]
  },
  {
@@ -10589,45 +11110,52 @@
   ]
  },
  {
+  "key": "Resilient Training",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:28"
+  ]
+ },
+ {
   "key": "Resistance to cold damage; used to high altitude.",
-  "kind": "exact",
-  "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:412"
-  ]
- },
- {
-  "key": "Resistance to fire damage.",
-  "kind": "exact",
-  "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:393"
-  ]
- },
- {
-  "key": "Resistance to necrotic and radiant damage.",
-  "kind": "exact",
-  "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:397"
-  ]
- },
- {
-  "key": "Resistance to necrotic damage.",
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/model/rules/FeatureRules.java:428"
   ]
  },
  {
+  "key": "Resistance to fire damage.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:409"
+  ]
+ },
+ {
+  "key": "Resistance to necrotic and radiant damage.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:413"
+  ]
+ },
+ {
+  "key": "Resistance to necrotic damage.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:444"
+  ]
+ },
+ {
   "key": "Resistance to poison damage, advantage on saves against poison.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:356"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:372"
   ]
  },
  {
   "key": "Resistance to your ancestry's damage type (fire assumed).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:378"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:394"
   ]
  },
  {
@@ -10746,7 +11274,7 @@
   "key": "roll 1d{A} {B} CON (average shown)",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:118"
+   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:123"
   ]
  },
  {
@@ -10817,7 +11345,7 @@
   "key": "Rounds before it can be used again; {0} = no wait.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:102"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:115"
   ]
  },
  {
@@ -10843,10 +11371,24 @@
   ]
  },
  {
+  "key": "Sacred Flame",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:19"
+  ]
+ },
+ {
+  "key": "Sanctuary",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:19"
+  ]
+ },
+ {
   "key": "Savage Attacks",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:389"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:405"
   ]
  },
  {
@@ -10883,7 +11425,7 @@
   "key": "Save Appearance",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:157"
+   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:159"
   ]
  },
  {
@@ -10960,6 +11502,14 @@
   ]
  },
  {
+  "key": "Saved progression",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeView.java:135",
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:258"
+  ]
+ },
+ {
   "key": "Saved to",
   "kind": "exact",
   "where": [
@@ -10970,7 +11520,7 @@
   "key": "Saved to this machine.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:162"
+   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:164"
   ]
  },
  {
@@ -11006,7 +11556,7 @@
   "key": "Saving throws that add the proficiency bonus. Leave empty to use the class's saving throws.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:71"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:84"
   ]
  },
  {
@@ -11076,14 +11626,14 @@
   "key": "second wind",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:274"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:290"
   ]
  },
  {
   "key": "Second Wind",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:275"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:291"
   ]
  },
  {
@@ -11097,9 +11647,9 @@
   "key": "See in dim light within {0} ft as if bright.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:357",
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:361",
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:419"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:373",
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:377",
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:435"
   ]
  },
  {
@@ -11136,6 +11686,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/MapEditorScene.java:835"
+  ]
+ },
+ {
+  "key": "Select node picture",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:139"
   ]
  },
  {
@@ -11228,7 +11785,7 @@
   "key": "Sense celestials, fiends and undead within {0} ft until the end of your next turn.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:300"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:316"
   ]
  },
  {
@@ -11277,7 +11834,7 @@
   "key": "set on the character sheet {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:603"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:620"
   ]
  },
  {
@@ -11325,6 +11882,13 @@
   ]
  },
  {
+  "key": "Shadowblade",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:20"
+  ]
+ },
+ {
   "key": "Shapes",
   "kind": "exact",
   "where": [
@@ -11349,7 +11913,7 @@
   "key": "shield +{A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:630"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:648"
   ]
  },
  {
@@ -11370,7 +11934,7 @@
   "key": "short rest",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:42"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:44"
   ]
  },
  {
@@ -11379,7 +11943,7 @@
   "where": [
    "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2805",
    "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2887",
-   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:66"
+   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:67"
   ]
  },
  {
@@ -11387,7 +11951,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2809",
-   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:68"
+   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:69"
   ]
  },
  {
@@ -11495,7 +12059,7 @@
   "where": [
    "src/main/java/com/dnd/lan/LanSessionServer.java:77",
    "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1451",
-   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:209"
+   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:211"
   ]
  },
  {
@@ -11525,7 +12089,7 @@
   "key": "Slots",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:52"
+   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:53"
   ]
  },
  {
@@ -11546,7 +12110,7 @@
   "key": "sneak attack",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:309"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:325"
   ]
  },
  {
@@ -11602,7 +12166,7 @@
   "key": "Sorcery points",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:332"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:348"
   ]
  },
  {
@@ -11651,7 +12215,15 @@
   "key": "Speed",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/lan/LanSessionServer.java:75"
+   "src/main/java/com/dnd/lan/LanSessionServer.java:75",
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:277"
+  ]
+ },
+ {
+  "key": "Speed reward must be between {0} and {1}.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:92"
   ]
  },
  {
@@ -11701,6 +12273,13 @@
   "kind": "pattern",
   "where": [
    "src/main/java/com/dnd/model/magic/Spell.java:188"
+  ]
+ },
+ {
+  "key": "Spell rewards need unique IDs.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:95"
   ]
  },
  {
@@ -11771,10 +12350,17 @@
   ]
  },
  {
+  "key": "Spells / abilities",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:278"
+  ]
+ },
+ {
   "key": "Spells / Abilities",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:118"
+   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:120"
   ]
  },
  {
@@ -11796,6 +12382,20 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/model/character/SheetDetails.java:20"
+  ]
+ },
+ {
+  "key": "Spellshaper",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:26"
+  ]
+ },
+ {
+  "key": "Spellweaver",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:16"
   ]
  },
  {
@@ -11851,7 +12451,7 @@
   "key": "Standard rules: each levelled spell uses one slot of its level or higher. Slots come back on a long rest.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:147"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:160"
   ]
  },
  {
@@ -11980,7 +12580,7 @@
   "key": "Stone's Endurance",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:406"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:422"
   ]
  },
  {
@@ -12238,7 +12838,7 @@
   "key": "Take one additional action on this turn.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:282"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:298"
   ]
  },
  {
@@ -12509,7 +13109,7 @@
   "key": "The action this gadget performs on the battle map. Whoever carries it gets the action.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:136"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:149"
   ]
  },
  {
@@ -12572,7 +13172,7 @@
   "key": "The campaign effect this spell applies.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:113"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:126"
   ]
  },
  {
@@ -12586,7 +13186,7 @@
   "key": "The campaign's ability scores. {0} is average, {1} is very good, {2} is weak. Each {3} points above {4} = +{5} to rolls.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:56"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:69"
   ]
  },
  {
@@ -12600,14 +13200,14 @@
   "key": "The character's class: their training and role in the party.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:52"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:65"
   ]
  },
  {
   "key": "The character's people: gives ability bonuses, speed and traits.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:53"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:66"
   ]
  },
  {
@@ -12654,10 +13254,17 @@
   ]
  },
  {
+  "key": "The GM can add branches and nodes in Worldbuilding > Class Upgrade Trees.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:260"
+  ]
+ },
+ {
   "key": "The item that comes out of the workshop when this blueprint is crafted.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:121"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:134"
   ]
  },
  {
@@ -12706,7 +13313,7 @@
   "key": "The material the spell needs, e.g. 'a pinch of sulfur'. Only used when Material is ticked.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:109"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:122"
   ]
  },
  {
@@ -12714,6 +13321,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/components/FieldHelp.java:24"
+  ]
+ },
+ {
+  "key": "The named direction this node belongs to. Branches may be mixed.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:47"
   ]
  },
  {
@@ -12759,6 +13373,13 @@
   ]
  },
  {
+  "key": "The selected file is not a supported image.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:143"
+  ]
+ },
+ {
   "key": "The session data from the GM could not be read",
   "kind": "exact",
   "where": [
@@ -12790,7 +13411,7 @@
   "key": "The target ability used to resist this action. None means no saving throw.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:90"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:103"
   ]
  },
  {
@@ -12818,7 +13439,7 @@
   "key": "Their specialisation within the class.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:60"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:73"
   ]
  },
  {
@@ -12914,10 +13535,33 @@
   ]
  },
  {
+  "key": "This character needs an existing class.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:199"
+  ]
+ },
+ {
+  "key": "This character or class changed. Reopen the upgrade tree before saving.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:214",
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:98",
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:237"
+  ]
+ },
+ {
   "key": "This class doesn't cast spells.",
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:603"
+  ]
+ },
+ {
+  "key": "This class no longer exists.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:96"
   ]
  },
  {
@@ -12964,6 +13608,20 @@
   ]
  },
  {
+  "key": "This level-up also earns one choice in your class upgrade tree.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:167"
+  ]
+ },
+ {
+  "key": "This level-up plan is no longer valid.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/Progression.java:106"
+  ]
+ },
+ {
   "key": "This map no longer has its own music.",
   "kind": "exact",
   "where": [
@@ -12976,6 +13634,13 @@
   "where": [
    "src/main/java/com/dnd/cloud/CampaignAccess.java:91",
    "src/main/java/com/dnd/ui/scenes/CampaignSelectionScene.java:209"
+  ]
+ },
+ {
+  "key": "This path needs more unlocks than a character can earn.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:111"
   ]
  },
  {
@@ -12997,6 +13662,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/GitHubSyncUi.java:363"
+  ]
+ },
+ {
+  "key": "This reward would raise an ability score above {0}.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:240"
   ]
  },
  {
@@ -13052,42 +13724,42 @@
   "key": "Tick if casting destroys the material, so it must be bought again.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:111"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:124"
   ]
  },
  {
   "key": "Tick if the spell needs a material (describe it below).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:108"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:121"
   ]
  },
  {
   "key": "Tick if the spell needs hand gestures.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:107"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:120"
   ]
  },
  {
   "key": "Tick if the spell needs spoken words.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:106"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:119"
   ]
  },
  {
   "key": "Ticked when the GM has awarded inspiration.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:76"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:89"
   ]
  },
  {
   "key": "Ticked: a mechanical gadget that runs on this charge or any stronger one - a stronger charge adds a damage die per level. Unticked: tuned to exactly this charge type and nothing else.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:137"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:150"
   ]
  },
  {
@@ -13157,7 +13829,7 @@
   "key": "Tool kits that must be in the pack. They are not used up.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:127"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:140"
   ]
  },
  {
@@ -13171,14 +13843,14 @@
   "key": "Touch a creature and restore hit points from a pool of {A}.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:304"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:320"
   ]
  },
  {
   "key": "Touch a creature and restore up to {A} hit points.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:399"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:415"
   ]
  },
  {
@@ -13234,7 +13906,7 @@
   "key": "Turn into a beast you have seen.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:331"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:347"
   ]
  },
  {
@@ -13276,7 +13948,7 @@
   "key": "Turn Undead or your domain's Channel Divinity option.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:328"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:344"
   ]
  },
  {
@@ -13311,50 +13983,50 @@
   "key": "Unarmed strike",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:689",
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:692"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:711",
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:714"
   ]
  },
  {
   "key": "Unarmed strikes deal {A} and may use Dexterity; one bonus-action unarmed strike after attacking.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:288"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:304"
   ]
  },
  {
   "key": "unarmored defense",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:253"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:269"
   ]
  },
  {
   "key": "Unarmored Defense 10 {A} DEX {B} CON",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:619"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:637"
   ]
  },
  {
   "key": "Unarmored Defense 10 {A} DEX {B} WIS",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:623"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:641"
   ]
  },
  {
   "key": "unarmored movement",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:294"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:310"
   ]
  },
  {
   "key": "Undying",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:424"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:440"
   ]
  },
  {
@@ -13375,9 +14047,17 @@
   "key": "Unknown",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:183",
-   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:222",
-   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:224"
+   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:185",
+   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:224",
+   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:226"
+  ]
+ },
+ {
+  "key": "Unknown ability score: {A}",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:238",
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:188"
   ]
  },
  {
@@ -13385,6 +14065,13 @@
   "kind": "pattern",
   "where": [
    "src/main/java/com/dnd/model/character/stats/StatSchema.java:87"
+  ]
+ },
+ {
+  "key": "Unknown branch for node: {A}",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:82"
   ]
  },
  {
@@ -13423,6 +14110,21 @@
   ]
  },
  {
+  "key": "Unknown spell or ability: {A}",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:225",
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:184"
+  ]
+ },
+ {
+  "key": "Unknown upgrade node: {A}",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:218"
+  ]
+ },
+ {
   "key": "Unlink",
   "kind": "exact",
   "where": [
@@ -13444,10 +14146,17 @@
   ]
  },
  {
+  "key": "Unlocked",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeView.java:82"
+  ]
+ },
+ {
   "key": "Unlocked:",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:161"
+   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:166"
   ]
  },
  {
@@ -13521,6 +14230,20 @@
   ]
  },
  {
+  "key": "Upgrade bonuses must be between {0} and {1}.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:90"
+  ]
+ },
+ {
+  "key": "Upgrade prerequisites contain a cycle.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:123"
+  ]
+ },
+ {
   "key": "Upload failed: {A}",
   "kind": "pattern",
   "where": [
@@ -13533,6 +14256,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/EntityDetailScene.java:66"
+  ]
+ },
+ {
+  "key": "Upload Node Picture",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:138"
   ]
  },
  {
@@ -13697,6 +14427,20 @@
   ]
  },
  {
+  "key": "Vanguard",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:21"
+  ]
+ },
+ {
+  "key": "Veiled Guardian",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:27"
+  ]
+ },
+ {
   "key": "verification code",
   "kind": "exact",
   "where": [
@@ -13749,7 +14493,7 @@
   "key": "Very few slots, all at the highest level they know, but they come back after a short rest (warlock).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:144"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:157"
   ]
  },
  {
@@ -13795,17 +14539,24 @@
   ]
  },
  {
+  "key": "Virtuoso",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:18"
+  ]
+ },
+ {
   "key": "Visible ability definitions. Keep IDs unchanged when renaming fields.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:94"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:107"
   ]
  },
  {
   "key": "Visible skill definitions. Each parent ability must use an active ability ID.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:95"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:108"
   ]
  },
  {
@@ -13862,7 +14613,7 @@
   "key": "Walking speed in feet. Blank = race speed plus movement features.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:68"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:81"
   ]
  },
  {
@@ -13930,6 +14681,13 @@
   ]
  },
  {
+  "key": "Weapon Master",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:21"
+  ]
+ },
+ {
   "key": "Weight in kilograms; matters for how much someone can carry.",
   "kind": "exact",
   "where": [
@@ -13954,7 +14712,7 @@
   "key": "What casting needs - tick each one that applies. A gagged or bound caster can't cast spells that need Verbal or Somatic.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:105"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:118"
   ]
  },
  {
@@ -13968,7 +14726,7 @@
   "key": "What they pay to cast. Leave empty to use the class default.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:61"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:74"
   ]
  },
  {
@@ -13982,7 +14740,7 @@
   "key": "When reduced to {0} HP, drop to {1} HP instead (applied automatically).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:387"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:403"
   ]
  },
  {
@@ -14017,14 +14775,28 @@
   "key": "wild shape",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:330"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:346"
   ]
  },
  {
   "key": "Wild Shape",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:330"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:346"
+  ]
+ },
+ {
+  "key": "Wild Stalker",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:17"
+  ]
+ },
+ {
+  "key": "Wildspeaker",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:23"
   ]
  },
  {
@@ -14101,7 +14873,7 @@
   "key": "worn pieces +{A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:634"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:652"
   ]
  },
  {
@@ -14178,7 +14950,7 @@
   "key": "XP cannot be negative but was {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/character/PlayerCharacter.java:100"
+   "src/main/java/com/dnd/model/character/PlayerCharacter.java:103"
   ]
  },
  {
@@ -14192,7 +14964,7 @@
   "key": "XP resets to {0}. Current HP and mana grow by the same amount as the maximum.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:162"
+   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:168"
   ]
  },
  {
@@ -14389,7 +15161,7 @@
   "key": "Yours to change. Stats, level, items and spells are set by your GM.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:167"
+   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:169"
   ]
  },
  {
@@ -14438,14 +15210,14 @@
   "key": "{0} = cantrip (free, unlimited). {1}-{2} = costs a slot or energy charge of that level or higher.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:98"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:111"
   ]
  },
  {
   "key": "{0} = ordinary tool. Above {1} = a workshop furnace that can make energy charges up to this level. Raise it to 'upgrade' the workshop.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:135"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:148"
   ]
  },
  {
@@ -14473,8 +15245,8 @@
   "key": "{0}-{1}, filled in on the sheet.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:74",
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:75"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:87",
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:88"
   ]
  },
  {
@@ -14531,7 +15303,7 @@
   "key": "{A} (Rank {B}){C}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/character/PlayerCharacter.java:492"
+   "src/main/java/com/dnd/model/character/PlayerCharacter.java:495"
   ]
  },
  {
@@ -14560,7 +15332,7 @@
   "kind": "pattern",
   "where": [
    "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2809",
-   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:70"
+   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:71"
   ]
  },
  {
@@ -14659,7 +15431,7 @@
   "key": "{A} effect{B} wear off",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/character/Progression.java:160"
+   "src/main/java/com/dnd/model/character/Progression.java:166"
   ]
  },
  {
@@ -14733,7 +15505,7 @@
   "key": "{A} has no points left.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:501"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:517"
   ]
  },
  {
@@ -14786,7 +15558,7 @@
   "key": "{A} is spent until a {B}.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:476",
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:492",
    "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:1739"
   ]
  },
@@ -14794,7 +15566,7 @@
   "key": "{A} is spent.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:510"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:526"
   ]
  },
  {
@@ -14829,7 +15601,7 @@
   "key": "{A} needs a target.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:474"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:490"
   ]
  },
  {
@@ -14875,6 +15647,13 @@
   ]
  },
  {
+  "key": "{A} Upgrade damage +{B}.",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:237"
+  ]
+ },
+ {
   "key": "{A} uses up {B}.",
   "kind": "pattern",
   "where": [
@@ -14885,14 +15664,14 @@
   "key": "{A} uses {B} and regains {C} HP ({D} rolled {E} + {F}).",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:488"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:504"
   ]
  },
  {
   "key": "{A} uses {B}: {C} regains {D} HP.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/rules/FeatureRules.java:504"
+   "src/main/java/com/dnd/model/rules/FeatureRules.java:520"
   ]
  },
  {
@@ -14920,7 +15699,7 @@
   "key": "{A}(missing)",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/components/EntityForm.java:755"
+   "src/main/java/com/dnd/ui/components/EntityForm.java:757"
   ]
  },
  {
@@ -14962,14 +15741,14 @@
   "key": "{A}: enter a whole number like 3, 0 or -1",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/components/EntityForm.java:615"
+   "src/main/java/com/dnd/ui/components/EntityForm.java:617"
   ]
  },
  {
   "key": "{A}: level {B} → {C}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:106"
+   "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:111"
   ]
  },
  {
@@ -15053,7 +15832,7 @@
   "key": "• {A} (Rank {B})",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:123"
+   "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:125"
   ]
  },
  {
@@ -15221,7 +16000,7 @@
   "key": "☻ Players",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:205"
+   "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:207"
   ]
  },
  {

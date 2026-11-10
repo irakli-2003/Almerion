@@ -1,4 +1,5 @@
 [
+ "Already included in this character. No rewards are applied again.{A}",
  "Bonus added to each skill check (e.g. +{0} Stealth, -{1} Animal Handling). Any whole number: positive, negative or {2}. New characters start from their ability modifiers.",
  "🔥 Furnace makes charges up to {A} · fuel burning: {B} units"
 ]

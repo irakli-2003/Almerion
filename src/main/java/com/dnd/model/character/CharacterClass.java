@@ -102,6 +102,13 @@ public class CharacterClass implements Printable {
 
     /** Everything the class unlocks, level by level. */
     private List<ClassFeature> features = new java.util.ArrayList<>();
+    private UpgradeTree upgradeTree;
+
+    public UpgradeTree getUpgradeTree() {
+        if (upgradeTree == null) upgradeTree = UpgradeRules.starter(this);
+        return upgradeTree;
+    }
+    public void setUpgradeTree(UpgradeTree value) { upgradeTree = value == null ? new UpgradeTree() : value; }
 
     public com.dnd.model.magic.SpellcastingType getSpellcasting() {
         return spellcasting;

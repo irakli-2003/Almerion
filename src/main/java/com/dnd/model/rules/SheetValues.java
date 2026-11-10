@@ -66,7 +66,8 @@ public final class SheetValues {
     /** Walking speed in feet: race speed plus Fast/Unarmored Movement, unless overridden. */
     public static int speed(PlayerCharacter pc, CharacterRace race, FeatureRules.Kit kit, Function<String, Item> items) {
         Integer o = sheet(pc).getSpeed();
-        if (o != null) return o;
+        if (o != null) return o + com.dnd.model.character.UpgradeRules.bonus(pc,
+            com.dnd.model.character.UpgradeTree.Reward::getSpeed);
         int base = race != null && race.getSpeed() > 0 ? race.getSpeed() : DEFAULT_SPEED;
         if (kit == null) return base;
         FeatureRules.Worn worn;

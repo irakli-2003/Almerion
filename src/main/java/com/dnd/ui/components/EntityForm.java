@@ -152,6 +152,8 @@ public final class EntityForm {
         this.depth = depth;
         this.ownerType = type;
         for (Prop prop : properties(type, skip)) {
+            if (type == com.dnd.model.character.PlayerCharacter.class && prop.name().equals("upgrades")) continue;
+            if (type == com.dnd.model.character.CharacterClass.class && prop.name().equals("upgradeTree")) continue;
             if (type == com.dnd.model.character.SheetDetails.class
                     && Set.of("copper", "silver", "electrum", "gold", "platinum").contains(prop.name())) continue;
             addEditor(prop, value);

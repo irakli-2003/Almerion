@@ -43,6 +43,19 @@ public final class FieldHelp {
         f("CharacterClass.defaultItems", "Starting equipment pre-ticked when a new character picks this class. Still changeable.");
         f("ClassFeature.level", "Character level at which the feature is gained.");
         f("ClassFeature.subclass", "Only members of this subclass get it; blank means everyone in the class.");
+        f("Node.minimumLevel", "Minimum character level for this choice. Every node costs one earned unlock.");
+        f("Node.branchId", "The named direction this node belongs to. Branches may be mixed.");
+        f("Node.prerequisites", "All selected nodes must already be unlocked. Cross-branch links are allowed.");
+        f("Node.exclusiveWith", "Neither choice can be unlocked if the other is already selected. One link blocks both directions.");
+        f("Reward.hitPoints", "Permanent increase to maximum and current HP, applied once.");
+        f("Reward.mana", "Permanent increase to maximum and current mana. Does not add spell slots.");
+        f("Reward.abilityId", "Campaign ability score to increase; leave blank when ability increase is zero.");
+        f("Reward.abilityIncrease", "Permanent score increase, applied once. Unlock is refused if the score would exceed 30.");
+        f("Reward.basicAttackDamage", "Flat damage on weapon attacks and unarmed strikes, not spell damage.");
+        f("Reward.rageDamage", "Extra Strength melee damage while the class Rage effect is active.");
+        f("Reward.armorClass", "Added to calculated AC or to the GM's fixed sheet AC.");
+        f("Reward.speed", "Extra walking speed in feet.");
+        f("Reward.spellIds", "Grant spells or GM-created active abilities from the campaign spell catalog. Existing spells are not duplicated.");
 
         // Races
         f("CharacterRace.abilityBonuses", "Bonuses added to ability scores, e.g. strength +2. Ability names in lowercase.");

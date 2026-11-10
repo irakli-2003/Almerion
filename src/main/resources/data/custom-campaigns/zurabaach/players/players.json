@@ -246,6 +246,14 @@
       "spellId" : "lesser-restoration",
       "rank" : 2,
       "active" : false
+    }, {
+      "spellId" : "beast-whisper",
+      "rank" : 1,
+      "active" : true
+    }, {
+      "spellId" : "rootstride",
+      "rank" : 2,
+      "active" : true
     } ],
     "passwordHash" : null,
     "passwordSalt" : null,
@@ -1541,15 +1549,15 @@
     } ],
     "spells" : [ {
       "spellId" : "fire-bolt",
-      "rank" : 1,
+      "rank" : 0,
       "active" : true
     }, {
       "spellId" : "mage-hand",
-      "rank" : 1,
+      "rank" : 0,
       "active" : true
     }, {
       "spellId" : "light",
-      "rank" : 1,
+      "rank" : 0,
       "active" : true
     }, {
       "spellId" : "magic-missile",
@@ -1570,6 +1578,54 @@
     }, {
       "spellId" : "detect-magic",
       "rank" : 1,
+      "active" : true
+    }, {
+      "spellId" : "minor-illusion",
+      "rank" : 0,
+      "active" : true
+    }, {
+      "spellId" : "prestidigitation",
+      "rank" : 0,
+      "active" : true
+    }, {
+      "spellId" : "ray-of-frost",
+      "rank" : 0,
+      "active" : true
+    }, {
+      "spellId" : "burning-hands",
+      "rank" : 1,
+      "active" : true
+    }, {
+      "spellId" : "disguise-self",
+      "rank" : 1,
+      "active" : true
+    }, {
+      "spellId" : "silent-image",
+      "rank" : 1,
+      "active" : true
+    }, {
+      "spellId" : "misty-step",
+      "rank" : 2,
+      "active" : true
+    }, {
+      "spellId" : "web",
+      "rank" : 2,
+      "active" : true
+    }, {
+      "spellId" : "invisibility",
+      "rank" : 2,
+      "active" : true
+    }, {
+      "spellId" : "scorching-ray",
+      "rank" : 2,
+      "active" : true
+    }, {
+      "spellId" : "fireball",
+      "rank" : 3,
+      "active" : true
+    }, {
+      "spellId" : "counterspell",
+      "rank" : 3,
       "active" : true
     } ],
     "passwordHash" : null,

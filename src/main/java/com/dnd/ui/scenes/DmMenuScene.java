@@ -158,6 +158,8 @@ public class DmMenuScene extends BaseScene {
         VBox card = card("🏰 Worldbuilding", groups);
         card.getChildren().add(btn("Stats & Skills", () ->
             StatDefinitionsWindow.show(this, new CampaignRepositories(uiSession.campaignRoot()))));
+        card.getChildren().add(btn("Class Upgrade Trees", () ->
+            UpgradeTreeWindow.showEditor(this, new CampaignRepositories(uiSession.campaignRoot()))));
         groups.prefWrapLengthProperty().bind(card.widthProperty().subtract(30));
         return card;
     }

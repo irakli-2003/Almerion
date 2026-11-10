@@ -378,6 +378,30 @@ credentials or custom provider addresses. To configure SMTP:
   to the app repo.
 - JGit logs a harmless "No SLF4J providers" warning.
 
+### Class upgrade progression
+
+- `CharacterClass.upgradeTree` contains stable-ID branches and a DAG of `UpgradeTree.Node`
+  choices. Classes without that property get editable starter paths; an explicitly empty
+  tree stays empty. This is independent of legacy `ClassFeature`/subclass auto-grants.
+- `UpgradeRules` validates graphs, all-prerequisite links and symmetric exclusivity
+  (including contradictory ancestor sets), migrates existing training, and spends choices.
+  `Progression.apply` awards one point only for a valid, non-stale next-level plan.
+  Old sheets consume `level - 1` choices without granting rewards: known matching nodes are
+  marked historical and unmatched levels remain a visible historical ledger. No free
+  retroactive points, numeric double application, or guessed mechanics from feat prose.
+- `PlayerCharacter.upgrades` stores the earned budget and original reward snapshots.
+  HP/mana/ability increases and spell grants apply once. `FeatureRules` reads saved AC,
+  weapon/unarmed hit/damage, Rage and speed bonuses; later definition edits never change
+  earned rewards. Normal JSON repositories, online snapshots, LAN sheets and PDF rules
+  retain these changes. Never recompute earned points from the character's current level.
+- `UpgradeTreeWindow` is the GM editor and shared character viewer; `UpgradeTreeView`
+  lays out fixed 48-pixel icons in named columns with cross-branch prerequisite curves.
+  Uploaded pictures use campaign-relative `images/upgrades` paths. The generic entity form
+  intentionally hides tree definitions and earned ledgers to avoid bypassing validation.
+  Player profiles are read-only; mechanical selection remains GM-controlled.
+- Targeted tests: `UpgradeRulesTest`, `UpgradeTreeViewTest`, `BundledCampaignDataTest`,
+  `RulesTest`, `FeatureRulesTest`, `SheetValuesTest`, `SessionSnapshotTest`.
+
 ### Hosting sessions
 
 - **📡 Host Session** (`ui/scenes/OnlineSessionScene`) has a local-network card and an

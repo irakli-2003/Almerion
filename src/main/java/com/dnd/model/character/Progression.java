@@ -101,7 +101,13 @@ public final class Progression {
      * (current values grow by the same amount), new slot maxima.
      */
     public static void apply(PlayerCharacter pc, LevelUpPlan plan) {
+        if (plan.fromLevel != pc.getLevel() || plan.toLevel != pc.getLevel() + 1
+                || plan.toLevel > PlayerCharacter.MAX_LEVEL) {
+            throw new IllegalArgumentException("This level-up plan is no longer valid.");
+        }
+        UpgradeRules.initialize(pc, null);
         pc.setLevel(plan.toLevel);
+        pc.getUpgrades().setEarned(pc.getUpgrades().getEarned() + 1);
         pc.setXp(0);
         if (plan.hitPointGain != 0) {
             int max = Math.max(0, pc.getMaxHitPoints() + plan.hitPointGain);

@@ -5,6 +5,8 @@ import com.dnd.model.character.CharacterRace;
 import com.dnd.model.character.ClassFeature;
 import com.dnd.model.character.PlayerCharacter;
 import com.dnd.model.character.Progression;
+import com.dnd.model.character.UpgradeRules;
+import com.dnd.model.character.UpgradeTree;
 import com.dnd.model.character.stats.CoreStats;
 import com.dnd.model.combat.Ability;
 import com.dnd.model.combat.Damage;
@@ -163,6 +165,7 @@ public final class FeatureRules {
         private String martialArtsDie;
         private String enduranceFeature;
         private int proficiency = 2;
+        private int upgradeSpeed;
 
         public List<Action> getActions() { return actions; }
         public List<Passive> getPassives() { return new ArrayList<>(passives.values()); }
@@ -181,7 +184,7 @@ public final class FeatureRules {
 
         /** Walking speed added by Fast Movement / Unarmored Movement given what is worn. */
         public int speedBonus(boolean wearingArmor, boolean heavyArmor) {
-            int bonus = 0;
+            int bonus = upgradeSpeed;
             if (fastMovement && !heavyArmor) bonus += 10;
             if (!wearingArmor) bonus += unarmoredSpeedBonus;
             return bonus;
@@ -220,6 +223,19 @@ public final class FeatureRules {
             }
         }
         applyRace(kit, raceKey(race != null ? race.getId() : pc.getRaceId()), level, stats);
+        kit.upgradeSpeed = UpgradeRules.bonus(pc, UpgradeTree.Reward::getSpeed);
+        if (pc.getUpgrades() != null) {
+            for (var unlock : pc.getUpgrades().getUnlocks()) {
+                if (!unlock.isHistorical()) kit.passives.put("upgrade:" + unlock.getClassId() + ":" + unlock.getNodeId(),
+                    new Passive(unlock.getName(), unlock.getDescription() == null ? "" : unlock.getDescription()));
+            }
+        }
+        int rageBonus = UpgradeRules.bonus(pc, UpgradeTree.Reward::getRageDamage);
+        Action rage = kit.action(RAGE);
+        if (rage != null && rageBonus != 0) {
+            rage.effect.setMeleeDamageBonus(rage.effect.getMeleeDamageBonus() + rageBonus);
+            rage.effect.setDescription(rage.effect.getDescription() + " Upgrade damage +" + rageBonus + ".");
+        }
         kit.actions.removeIf(a -> hasOwnAction(pc, a.id));
         return kit;
     }
@@ -597,10 +613,12 @@ public final class FeatureRules {
     }
 
     public static ArmorClass armorClass(PlayerCharacter pc, Kit kit, Function<String, Item> items, int effectBonus) {
+        int upgradeBonus = UpgradeRules.bonus(pc, UpgradeTree.Reward::getArmorClass);
         Integer fixed = pc == null ? null : pc.getSheet().getArmorClass();
         if (fixed != null) {
-            int total = fixed + effectBonus;
+            int total = fixed + effectBonus + upgradeBonus;
             return new ArmorClass(total, "set on the character sheet " + fixed
+                + (upgradeBonus != 0 ? ", upgrades " + signed(upgradeBonus) : "")
                 + (effectBonus != 0 ? ", effects " + signed(effectBonus) : ""));
         }
         Worn worn = worn(pc, items);
@@ -636,6 +654,10 @@ public final class FeatureRules {
         if (effectBonus != 0) {
             ac += effectBonus;
             parts.add("effects " + signed(effectBonus));
+        }
+        if (upgradeBonus != 0) {
+            ac += upgradeBonus;
+            parts.add("upgrades " + signed(upgradeBonus));
         }
         return new ArmorClass(ac, String.join(", ", parts));
     }
@@ -691,6 +713,12 @@ public final class FeatureRules {
         } else {
             out.add(new Attack("unarmed", "Unarmed strike", null, "bludgeoning", true, true, false,
                 prof + str, Math.max(1, 1 + str), 5));
+        }
+        int hit = UpgradeRules.bonus(pc, UpgradeTree.Reward::getAttackBonus);
+        int damage = UpgradeRules.bonus(pc, UpgradeTree.Reward::getBasicAttackDamage);
+        if (hit != 0 || damage != 0) {
+            out.replaceAll(a -> new Attack(a.id(), a.name(), a.dice(), a.damageType(), a.melee(),
+                a.strengthBased(), a.finesseOrRanged(), a.toHit() + hit, a.damageBonus() + damage, a.reachFeet()));
         }
         return out;
     }

@@ -37,6 +37,7 @@ final class ProgressionPanel {
     static Node build(BaseScene owner, CampaignRepositories repos, PlayerCharacter pc, Runnable onChanged) {
         CharacterClass cls = pc.getClassId() == null ? null : repos.classes().getById(pc.getClassId());
         if (Progression.ensureSlots(pc, cls)) repos.players().save(pc);
+        if (com.dnd.model.character.UpgradeRules.initialize(pc, cls)) repos.players().save(pc);
 
         VBox box = new VBox(8);
         box.setPadding(new Insets(8, 0, 8, 0));
@@ -92,7 +93,10 @@ final class ProgressionPanel {
         longRest.setTooltip(new Tooltip("Full HP, mana and spell slots; every effect and cooldown cleared."
             + " Energy charges are refilled by the workshop furnace from the fuel in the pack."));
 
-        box.getChildren().add(new FlowPane(8, 8, levelUp, shortRest, longRest));
+        Button upgrades = owner.btn("Class Upgrade Tree", () -> UpgradeTreeWindow.showCharacter(owner, repos, pc, onChanged));
+        upgrades.setTooltip(new Tooltip(com.dnd.ui.i18n.UiTranslator.text("Available unlocks:") + " "
+            + com.dnd.model.character.UpgradeRules.available(pc)));
+        box.getChildren().add(new FlowPane(8, 8, levelUp, upgrades, shortRest, longRest));
         return box;
     }
 
@@ -100,6 +104,7 @@ final class ProgressionPanel {
     static void openLevelUpDialog(BaseScene owner, CampaignRepositories repos, PlayerCharacter pc,
                                   CharacterClass cls, Runnable onChanged) {
         Progression.LevelUpPlan plan = Progression.plan(pc, cls);
+        com.dnd.model.character.UpgradeRules.initialize(pc, cls);
 
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Level Up");
@@ -159,6 +164,7 @@ final class ProgressionPanel {
         features.setEditable(false);
 
         VBox content = new VBox(10, grid, new Label("Unlocked:"), features,
+            owner.body("This level-up also earns one choice in your class upgrade tree."),
             new Label("XP resets to 0. Current HP and mana grow by the same amount as the maximum."));
         content.setPrefWidth(560);
         dialog.getDialogPane().setContent(content);

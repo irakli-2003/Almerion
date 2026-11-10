@@ -17,6 +17,40 @@ public class SessionSnapshotTest {
 
     @Rule public TemporaryFolder temp = new TemporaryFolder();
 
+    @Test public void upgradeDefinitionsAndEarnedRewardsReachJoinedSheets() throws Exception {
+        Path root = temp.newFolder("upgrades").toPath();
+        var repos = new CampaignRepositories(root);
+        var cls = new com.dnd.model.character.CharacterClass();
+        cls.setId("barbarian");
+        cls.getUpgradeTree().getNodes().getFirst().getReward().getSpellIds().add("upgrade-ability");
+        repos.classes().save(cls);
+        var spell = new com.dnd.model.magic.Spell();
+        spell.setId("upgrade-ability"); spell.setLevel(1);
+        repos.spells().save(spell);
+        var pc = new com.dnd.model.character.PlayerCharacter();
+        pc.setId("hero"); pc.setClassId("barbarian"); pc.setLevel(1);
+        pc.setMaxHitPoints(10); pc.setCurrentHitPoints(10);
+        com.dnd.model.character.UpgradeRules.initialize(pc, cls);
+        com.dnd.model.character.Progression.apply(pc, com.dnd.model.character.Progression.plan(pc, cls));
+        com.dnd.model.character.UpgradeRules.unlock(pc, cls, "potency-1", repos.spells()::getById);
+        repos.players().save(pc);
+        Path joined = SessionSnapshot.hydrate(SessionSnapshot.capture(root, "Camp"), "test-upgrades-" + System.nanoTime());
+        try {
+            var received = new CampaignRepositories(joined);
+            var hero = received.players().getById("hero");
+            assertEquals(1, hero.getUpgrades().getEarned());
+            assertEquals(0, com.dnd.model.character.UpgradeRules.available(hero));
+            assertEquals(1, com.dnd.model.character.UpgradeRules.bonus(hero,
+                com.dnd.model.character.UpgradeTree.Reward::getRageDamage));
+            assertEquals(8, received.classes().getById("barbarian").getUpgradeTree().getNodes().size());
+            assertEquals("upgrade-ability", received.spells().getById("upgrade-ability").getId());
+        } finally {
+            try (var walk = Files.walk(joined)) {
+                walk.sorted(java.util.Comparator.reverseOrder()).forEach(p -> p.toFile().delete());
+            }
+        }
+    }
+
     private static void write(Path file, String json) throws Exception {
         Files.createDirectories(file.getParent());
         Files.writeString(file, json);

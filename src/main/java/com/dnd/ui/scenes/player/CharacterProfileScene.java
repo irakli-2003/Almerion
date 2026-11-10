@@ -91,6 +91,8 @@ public class CharacterProfileScene extends BaseScene {
         HBox topSection = new HBox(30, portraitBox, statsBox);
         topSection.setAlignment(Pos.TOP_LEFT);
         content.getChildren().add(topSection);
+        content.getChildren().add(btn("Class Upgrade Tree", () ->
+            com.dnd.ui.scenes.UpgradeTreeWindow.showCharacter(this, repos, pc, () -> {}, false)));
 
         content.getChildren().add(buildAppearanceEditor(pc, profiles));
 

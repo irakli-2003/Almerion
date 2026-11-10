@@ -115,4 +115,34 @@ public class BundledCampaignDataTest {
         assertEquals(13, toren.getKnownBlueprints().size());
         assertTrue(com.dnd.model.crafting.Workshop.furnaceTier(toren, zurabaach.items()::getById) >= 2);
     }
+
+    @Test public void classTreesAndZurabaachSpellChoicesAreValid() {
+        CampaignRepositories repos = new CampaignRepositories(CAMPAIGNS.resolve("zurabaach"));
+        for (var cls : repos.classes().list()) {
+            com.dnd.model.character.UpgradeRules.validate(cls.getUpgradeTree());
+            assertFalse(cls.getId(), cls.getUpgradeTree().getBranches().isEmpty());
+            assertFalse(cls.getId(), cls.getUpgradeTree().getNodes().isEmpty());
+            for (var n : cls.getUpgradeTree().getNodes()) for (String id : n.getReward().getSpellIds()) {
+                assertNotNull(id, repos.spells().getById(id));
+            }
+        }
+        var elros = repos.players().getById("player-elros");
+        var tasha = repos.players().getById("player-tasha");
+        assertTrue(elros.getSpells().size() >= tasha.getSpells().size());
+        assertEquals(20, elros.getSpells().size());
+        assertEquals(20, tasha.getSpells().size());
+        assertEquals(java.util.List.of(4, 3, 2), elros.getSpellSlots().stream().map(s -> s.getMax()).toList());
+        for (var spell : elros.getSpells()) {
+            var definition = repos.spells().getById(spell.getSpellId());
+            assertNotNull(spell.getSpellId(), definition);
+            assertEquals(definition.getLevel(), spell.getRank());
+            assertTrue(definition.getLevel() <= 3);
+        }
+        var silvan = repos.players().getById("player-silvan");
+        for (String id : java.util.List.of("beast-whisper", "rootstride")) {
+            assertTrue(silvan.getSpells().stream().anyMatch(s -> id.equals(s.getSpellId())));
+            assertTrue(repos.spells().getById(id).getLevel() > 0);
+            assertNull(repos.spells().getById(id).getDamage());
+        }
+    }
 }

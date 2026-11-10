@@ -21,6 +21,9 @@ public class PlayerCharacter implements Printable {
     // invalid state that would fail validation again on the next load.
     private int level = MIN_LEVEL;
     private int xp;
+    private UpgradeProgress upgrades;
+    public UpgradeProgress getUpgrades() { return upgrades; }
+    public void setUpgrades(UpgradeProgress value) { upgrades = value; }
     private CoreStats stats;
     private List<PlayerItem> items;
     private List<PlayerSpell> spells;
@@ -493,4 +496,3 @@ public class PlayerCharacter implements Printable {
         }
     }
 }
-

@@ -167,6 +167,8 @@ public class BattleMapWindow {
         CombatState state = TokenSupport.combatOf(token);
         int speedBefore = state.getWalkSpeed();
         FeatureRules.seed(state, kit, FeatureRules.worn(player.getCharacter(), repos.items()::getById));
+        Integer fixedSpeed = player.getCharacter().getSheet().getSpeed();
+        if (fixedSpeed != null) state.setWalkSpeed(fixedSpeed);
         if (state.getWalkSpeed() != speedBefore) dirty = true;
     }
 

@@ -90,7 +90,8 @@ public final class EntityForm {
     /** Nesting limit, so a self-referencing model can never build an infinite form. */
     private static final int MAX_DEPTH = 3;
     private static final List<String> LEADING = List.of("id", "name", "description");
-    private static final Set<String> LONG_TEXT = Set.of("description", "overview", "backstory", "notes");
+    private static final Set<String> LONG_TEXT = Set.of("description", "overview", "backstory", "notes",
+        "proficienciesAndLanguages", "extraFeatures");
     /** Fields that usually hold several paragraphs get a tall editor; other long text a medium one. */
     private static final Set<String> TALL_TEXT = Set.of("description", "overview", "backstory");
     private static final String LABEL_STYLE = "-fx-text-fill: #a89060; -fx-font-size: 12px;";
@@ -286,7 +287,7 @@ public final class EntityForm {
 
     private static boolean isScalar(Class<?> type) {
         return type == String.class || type == int.class || type == long.class
-            || type == double.class || type == boolean.class;
+            || type == double.class || type == boolean.class || type == Integer.class;
     }
 
     private static boolean isModelObject(Class<?> type) {
@@ -396,6 +397,8 @@ public final class EntityForm {
             TextField field = new TextField(text);
             field.setMaxWidth(type == String.class ? 500 : 160);
             if (compact) field.setPrefWidth(type == String.class ? 150 : 56);
+            // A nullable number (a character-sheet override) left blank means "work it out".
+            if (type == Integer.class) field.setPromptText("auto");
             field.getStyleClass().add("dnd-text-field");
             editor = field;
         }
@@ -410,6 +413,10 @@ public final class EntityForm {
             // write instead leaves the field at whatever sane default the model already has.
             if (numeric && (raw == null || raw.trim().isEmpty())) {
                 return SKIP;
+            }
+            if (type == Integer.class) {
+                String t = raw == null ? "" : raw.trim();
+                return t.isEmpty() ? null : Integer.valueOf(t.startsWith("+") ? t.substring(1) : t);
             }
             return parseScalar(type, raw);
         });

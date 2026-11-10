@@ -63,8 +63,21 @@ public final class SessionSnapshot {
     private SessionSnapshot() {
     }
 
+    /** Catalogs players get in full: nothing in them gives the story away. */
+    private static final java.util.Set<String> SHARED = java.util.Set.of(
+        "players", "classes", "races", "damageTypes", "languages", "dice");
     /**
-     * Reads a campaign off disk into the JSON the DM pushes to players.
+     * Catalogs players only get the entries of that their characters (or classes and races)
+     * refer to, so an unfound artifact or a villain's signature spell stays secret.
+     */
+    private static final java.util.Set<String> REFERENCED = java.util.Set.of("items", "spells", "effects");
+
+    /**
+     * Reads a campaign off disk into the JSON the GM pushes to players.
+     *
+     * <p>Only what players need is carried: characters, classes, races and the reference
+     * lists in full, and items, spells and effects that something they hold refers to. NPCs,
+     * monsters, beasts, maps, places, books and ingredients stay on the GM's machine.</p>
      *
      * <p>Files are copied through verbatim rather than round-tripped through the model
      * classes, so a field this build doesn't know about still reaches the players.</p>
@@ -76,17 +89,49 @@ public final class SessionSnapshot {
         root.put("campaign", campaignName);
         com.dnd.cloud.CampaignMeta.idOf(campaignRoot).ifPresent(id -> root.put("campaignId", id));
 
+        Map<String, JsonNode> loaded = new LinkedHashMap<>();
         for (Map.Entry<String, Catalog> entry : CATALOGS.entrySet()) {
+            if (!SHARED.contains(entry.getKey()) && !REFERENCED.contains(entry.getKey())) continue;
             Catalog catalog = entry.getValue();
             Path file = catalog.file().apply(paths);
             if (!Files.exists(file)) continue;
             try {
                 JsonNode wrapper = mapper.readTree(Files.readString(file));
                 JsonNode array = wrapper.get(catalog.property());
-                if (array != null && array.isArray()) root.set(entry.getKey(), stripSecrets(array));
+                if (array != null && array.isArray()) loaded.put(entry.getKey(), stripSecrets(array));
             } catch (IOException e) {
                 throw new DataAccessException("Failed to read " + file + " while building the session snapshot", e);
             }
+        }
+
+        // Everything the shared catalogs mention, then whatever those entries mention in turn
+        // (a sword that casts a spell that applies an effect), until nothing new turns up.
+        java.util.Set<String> mentioned = new java.util.HashSet<>();
+        for (String key : SHARED) {
+            if (loaded.containsKey(key)) collectStrings(loaded.get(key), mentioned);
+        }
+        Map<String, com.fasterxml.jackson.databind.node.ArrayNode> kept = new LinkedHashMap<>();
+        for (String key : REFERENCED) kept.put(key, mapper.createArrayNode());
+        java.util.Set<JsonNode> taken = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
+        boolean grew = true;
+        while (grew) {
+            grew = false;
+            for (String key : REFERENCED) {
+                JsonNode array = loaded.get(key);
+                if (array == null) continue;
+                for (JsonNode element : array) {
+                    JsonNode id = element.get("id");
+                    if (id == null || taken.contains(element) || !mentioned.contains(id.asText())) continue;
+                    taken.add(element);
+                    kept.get(key).add(element);
+                    collectStrings(element, mentioned);
+                    grew = true;
+                }
+            }
+        }
+        for (String key : CATALOGS.keySet()) {
+            if (SHARED.contains(key) && loaded.containsKey(key)) root.set(key, loaded.get(key));
+            else if (kept.containsKey(key) && loaded.containsKey(key)) root.set(key, kept.get(key));
         }
         try {
             return mapper.writeValueAsString(root);
@@ -134,7 +179,8 @@ public final class SessionSnapshot {
         return root;
     }
 
-    /** Campaign name carried in a snapshot, or a neutral fallback. */    public static String campaignNameOf(String json) {
+    /** Campaign name carried in a snapshot, or a neutral fallback. */
+    public static String campaignNameOf(String json) {
         try {
             JsonNode node = JsonMappers.create().readTree(json).get("campaign");
             if (node != null && !node.asText().isBlank()) return node.asText();
@@ -170,7 +216,17 @@ public final class SessionSnapshot {
         return array;
     }
 
-    private static void deleteRecursively(Path path) throws IOException {        if (!Files.exists(path)) return;
+    private static void collectStrings(JsonNode node, java.util.Set<String> out) {
+        if (node == null) return;
+        if (node.isTextual()) {
+            out.add(node.asText());
+        } else if (node.isContainerNode()) {
+            for (JsonNode child : node) collectStrings(child, out);
+        }
+    }
+
+    private static void deleteRecursively(Path path) throws IOException {
+        if (!Files.exists(path)) return;
         try (var walk = Files.walk(path)) {
             for (Path entry : walk.sorted(java.util.Comparator.reverseOrder()).toList()) {
                 Files.deleteIfExists(entry);

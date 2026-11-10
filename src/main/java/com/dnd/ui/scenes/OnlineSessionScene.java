@@ -1,14 +1,28 @@
 package com.dnd.ui.scenes;
 
+import com.dnd.data.CampaignRepositories;
 import com.dnd.data.SessionSnapshot;
+import com.dnd.lan.LanSessionServer;
+import com.dnd.model.character.PlayerCharacter;
 import com.dnd.security.FirebaseSessionSync;
 import com.dnd.ui.SceneType;
 import com.dnd.ui.UiSession;
+import com.dnd.ui.i18n.UiTranslator;
+import javafx.geometry.Pos;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
+import java.io.IOException;
+import java.util.List;
+
+/**
+ * "Host Session": shares the campaign with the players, on the local network (browser
+ * character sheets, see {@link LanSessionServer}) and/or over the internet (Firebase).
+ */
 public class OnlineSessionScene extends BaseScene {
 
     private static final String FIREBASE_URL =
@@ -24,23 +38,124 @@ public class OnlineSessionScene extends BaseScene {
 
         VBox content = new VBox(16);
         content.setPadding(new Insets(20, 60, 40, 60));
+        content.getChildren().addAll(title("Host Session"),
+            body("Share the campaign with your players while you run the game. Both ways can run at the same time."));
 
+        VBox lan = section("📶 Local network");
+        buildLocalView(lan);
+        VBox internet = section("🌐 Over the internet");
         if (uiSession.getSession().isOnline()) {
-            buildActiveView(content);
+            buildActiveView(internet);
         } else {
-            buildStartView(content);
+            buildStartView(internet);
         }
+        content.getChildren().addAll(lan, internet);
 
-        root.getChildren().add(content);
+        ScrollPane scroll = new ScrollPane(content);
+        scroll.setFitToWidth(true);
+        VBox.setVgrow(scroll, Priority.ALWAYS);
+        root.getChildren().add(scroll);
         return wrapInScene(root);
     }
+
+    private VBox section(String heading) {
+        VBox box = new VBox(10);
+        box.getStyleClass().add("dm-card");
+        box.setMaxWidth(820);
+        box.getChildren().add(sectionLabel(heading));
+        return box;
+    }
+
+    // ── Local network ───────────────────────────────────────────────────────
+
+    private void buildLocalView(VBox content) {
+        var context = uiSession.getSession().getCampaignContext();
+        LanSessionServer server = LanSessionServer.current();
+        boolean running = server != null && server.isOpen() && context != null
+            && server.campaignRoot().equals(context.getPath());
+        Label error = body("");
+        error.setStyle("-fx-text-fill: #e07070;");
+
+        if (!running) {
+            content.getChildren().addAll(
+                body("Players on the same Wi-Fi or network open their character sheet in a browser, on a computer,"
+                    + " tablet or phone. The sheet is view only and updates by itself when a character takes damage,"
+                    + " spends a slot, gains XP or anything else changes."),
+                error,
+                btn("Start local session", () -> {
+                    if (context == null) { error.setText("No campaign selected."); return; }
+                    try {
+                        LanSessionServer.startShared(context.getPath(), context.getName(), UiTranslator::text);
+                    } catch (IOException e) {
+                        error.setText("Could not start the local session: " + e.getMessage());
+                        return;
+                    }
+                    uiSession.getRouter().goTo(SceneType.DM_ONLINE_SESSION);
+                }));
+        } else {
+            Label live = body("● Running. Players open one of these addresses in their browser:");
+            live.setStyle("-fx-text-fill: #80ff80;");
+            VBox addresses = new VBox(6);
+            for (String url : server.addresses()) {
+                TextField field = new TextField(url);
+                field.setEditable(false);
+                field.getStyleClass().add("dnd-text-field");
+                field.setPrefColumnCount(28);
+                Button copy = btn("Copy", () -> {
+                    ClipboardContent clip = new ClipboardContent();
+                    clip.putString(url);
+                    Clipboard.getSystemClipboard().setContent(clip);
+                });
+                HBox row = new HBox(8, UiTranslator.skip(field), copy);
+                row.setAlignment(Pos.CENTER_LEFT);
+                addresses.getChildren().add(row);
+            }
+            content.getChildren().addAll(live, addresses,
+                body("If Windows asks, allow Almerion on private networks, or players won't be able to connect."),
+                sectionLabel("Character passwords"),
+                body("Each player picks their character and types its password. A character without a password can't be opened."));
+            CampaignRepositories repos = new CampaignRepositories(context.getPath());
+            VBox list = new VBox(6);
+            fillPasswords(list, repos);
+            content.getChildren().addAll(list, error, dangerBtn("Stop local session", () -> {
+                LanSessionServer.stopShared();
+                uiSession.getRouter().goTo(SceneType.DM_ONLINE_SESSION);
+            }));
+        }
+    }
+
+    private void fillPasswords(VBox list, CampaignRepositories repos) {
+        list.getChildren().clear();
+        List<PlayerCharacter> players;
+        try {
+            players = repos.players().list();
+        } catch (RuntimeException e) {
+            players = List.of();
+        }
+        if (players.isEmpty()) list.getChildren().add(body("This campaign has no characters yet."));
+        for (PlayerCharacter pc : players) {
+            Label name = UiTranslator.skip(body(pc.getName() == null ? pc.getId() : pc.getName()));
+            name.setMinWidth(220);
+            Label state = body(pc.hasPassword() ? "✔ password set" : "✖ no password");
+            state.setStyle(pc.hasPassword() ? "-fx-text-fill: #80ff80;" : "-fx-text-fill: #e0a070;");
+            state.setMinWidth(160);
+            Button set = btn(pc.hasPassword() ? "Change password" : "Set password", () -> {
+                if (askPlayerPassword(pc, repos)) fillPasswords(list, repos);
+            });
+            HBox row = new HBox(12, name, state, set);
+            row.setAlignment(Pos.CENTER_LEFT);
+            list.getChildren().add(row);
+        }
+    }
+
+    // ── Over the internet ───────────────────────────────────────────────────
 
     private void buildStartView(VBox content) {
         PasswordField passphraseField = passwordField("Session passphrase (share with players)");
         Label error = body("");
         error.setStyle("-fx-text-fill: #e07070;");
 
-        Button startBtn = btn("Start Online Session", () -> {
+        Button startBtn = btn("Start internet session", () -> {
             String passphrase = passphraseField.getText().trim();
             if (passphrase.isEmpty()) { error.setText("Passphrase cannot be empty."); return; }
             if (uiSession.getSession().getCampaignContext() == null) {
@@ -66,8 +181,8 @@ public class OnlineSessionScene extends BaseScene {
         });
 
         content.getChildren().addAll(
-            title("Start Online Session"),
-            body("Players will connect using the generated token. All data is AES-256 encrypted."),
+            body("Players anywhere join from Player → My Campaigns, or with a token. All data is AES-256 encrypted,"
+                + " and players only receive their characters and what those characters use, never your notes, NPCs or maps."),
             sectionLabel("Passphrase"),
             passphraseField,
             error,
@@ -88,7 +203,7 @@ public class OnlineSessionScene extends BaseScene {
         tokenArea.getStyleClass().add("dnd-text-field");
         tokenArea.setMaxWidth(700);
 
-        Button stopBtn = dangerBtn("Stop Session", () -> {
+        Button stopBtn = dangerBtn("Stop internet session", () -> {
             try { uiSession.getSession().getFirebaseSync().delete(); } catch (Exception ignored) {}
             uiSession.getSession().setFirebaseSync(null);
             uiSession.setSessionToken(null);
@@ -103,7 +218,6 @@ public class OnlineSessionScene extends BaseScene {
         });
 
         content.getChildren().addAll(
-            title("Online Session  ● LIVE"),
             body("Campaign state is pushed automatically when you navigate back to the GM Menu."),
             statusLabel,
             sectionLabel("Player Token"),
@@ -128,8 +242,7 @@ public class OnlineSessionScene extends BaseScene {
     }
 
     private String buildSnapshot() {
-        // The whole campaign travels, not just a summary: a player who joins is dropped
-        // straight into it, so anything their character sheet references has to be there.
+        // Players get their characters and whatever those use, never the GM's secrets.
         var context = uiSession.getSession().getCampaignContext();
         try {
             return SessionSnapshot.capture(context.getPath(), context.getName());

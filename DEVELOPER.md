@@ -91,6 +91,7 @@ src/main/java/com/dnd/
 ├── auth/       Accounts, verification and reset codes, SMTP
 ├── cloud/      Firebase directory: accounts, memberships, join codes; CloudConfig
 ├── security/   Encryption for online sessions
+├── lan/        Local-network session: LanSessionServer (JDK HttpServer + SSE), LanSheet (browser sheet JSON)
 ├── music/      MusicLibrary, cues, AudioSource/AudioFiles (import, download cache), Attribution
 ├── ui/music/   MusicPlayer: JavaFX Media engine (crossfading music deck, ambience, effects)
 ├── ui/i18n/    UiTranslator, TranslationService, LanguagePicker
@@ -100,6 +101,7 @@ src/main/resources/
 ├── data/       default-campaign, custom-campaigns, srd, campaign-modes
 ├── i18n/       shipped UI dictionaries, one <code>.json per language
 ├── music/      starter-library.json (starter-pack URLs and attribution)
+├── lan/        sheet.html: the responsive, view-only player sheet served on the LAN
 └── cloud.properties
 tools/i18n/     extract_strings.py (catalogue of UI strings), translate.py (build-time translator)
 packaging/      build-windows-installer.ps1, installer resources
@@ -307,6 +309,26 @@ This is used when Firebase email isn't configured. It is created with placeholde
   `src/main/resources/data/custom-campaigns`. Maven skips `.git`, but don't commit those folders
   to the app repo.
 - JGit logs a harmless "No SLF4J providers" warning.
+
+### Hosting sessions
+
+- **📡 Host Session** (`ui/scenes/OnlineSessionScene`) has a local-network card and an
+  internet (Firebase) card.
+- Everything sent to players goes through `SessionSnapshot.capture`, which drops GM-only
+  catalogues (NPCs, monsters, beasts, maps, places, books, ingredients). It sends items, spells
+  and effects only when a character references them, and it strips password hashes.
+- `com.dnd.lan.LanSessionServer` uses the JDK's `jdk.httpserver`, so it adds no new library.
+  - It listens on port 8765, or the next free port.
+  - A 1-second watcher fingerprints the campaign's player and world JSON files and pushes the
+    new sheet over Server-Sent Events. Send SSE and JSON with a non-indenting writer.
+  - Only characters with a password can sign in. Five wrong passwords lock that IP out for
+    60 s. Session tokens live in memory and are cleared on stop.
+  - The server is stopped when the app closes or the campaign changes
+    (`CliSession.setCampaignContext`).
+- Browser strings live in `LanSessionServer.LABELS`, a Java array, so `extract_strings.py`
+  catalogues them. They are translated on the server with `UiTranslator.text` and served by
+  `/api/info`. Keep visible text out of `sheet.html` and add it to `LABELS` instead.
+- Tests: `LanSessionServerTest`, `SessionSnapshotTest`.
 
 ---
 

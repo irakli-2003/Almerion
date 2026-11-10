@@ -93,6 +93,7 @@ public class EntityDetailScene extends BaseScene {
         if (uiSession.isDm() && entity instanceof com.dnd.model.character.PlayerCharacter pc) {
             content.getChildren().add(ProgressionPanel.build(this, repos, pc,
                 () -> uiSession.getRouter().goTo(SceneType.ENTITY_DETAIL)));
+            content.getChildren().add(sheetSummary(repos, pc));
         }
 
         Map<String, List<EntityForm.Ref>> catalogs = catalogsFor(repos);
@@ -317,7 +318,74 @@ public class EntityDetailScene extends BaseScene {
                 || i instanceof com.dnd.model.item.crafting.Fuel
                 || i instanceof com.dnd.model.item.alchemy.AlchemyItem
                 || i instanceof com.dnd.model.item.crafting.Blueprint)).toList()));
+        List<EntityForm.Ref> abilities = new ArrayList<>();
+        String[] abilityNames = {"Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"};
+        for (int i = 0; i < abilityNames.length; i++) {
+            abilities.add(new EntityForm.Ref(com.dnd.model.rules.SheetValues.ABILITIES.get(i), abilityNames[i]));
+        }
+        catalogs.put("savingThrowProficiencies", abilities);
+        catalogs.put("spellcastingAbility", abilities.subList(3, 6));
         return catalogs;
+    }
+
+    /**
+     * The sheet numbers the app works out (or the GM's overrides), so blank "auto" fields in
+     * the Sheet section below can be read at a glance, plus the player-access password.
+     */
+    private javafx.scene.Node sheetSummary(CampaignRepositories repos, com.dnd.model.character.PlayerCharacter pc) {
+        CharacterClass cls = pc.getClassId() == null ? null : repos.classes().getById(pc.getClassId());
+        CharacterRace race = pc.getRaceId() == null ? null : repos.races().getById(pc.getRaceId());
+        Label values = body("");
+        values.setWrapText(true);
+        try {
+            com.dnd.model.rules.FeatureRules.Kit kit = com.dnd.model.rules.FeatureRules.kit(pc, cls, race);
+            java.util.function.Function<String, com.dnd.model.item.Item> items = repos.items()::getById;
+            var ac = com.dnd.model.rules.SheetValues.armorClass(pc, kit, items);
+            List<String> parts = new ArrayList<>();
+            parts.add("AC " + ac.total() + " (" + ac.breakdown() + ")");
+            parts.add("Initiative " + com.dnd.model.rules.SheetValues.signed(com.dnd.model.rules.SheetValues.initiative(pc)));
+            parts.add("Speed " + com.dnd.model.rules.SheetValues.speed(pc, race, kit, items) + " ft");
+            parts.add("Proficiency " + com.dnd.model.rules.SheetValues.signed(com.dnd.model.rules.SheetValues.proficiencyBonus(pc)));
+            parts.add("Passive perception " + com.dnd.model.rules.SheetValues.passivePerception(pc));
+            parts.add("Hit dice " + com.dnd.model.rules.SheetValues.hitDice(pc, cls));
+            List<String> saves = new ArrayList<>();
+            for (String a : com.dnd.model.rules.SheetValues.ABILITIES) {
+                saves.add(a.toUpperCase(java.util.Locale.ROOT) + " "
+                    + com.dnd.model.rules.SheetValues.signed(com.dnd.model.rules.SheetValues.savingThrow(pc, cls, a)));
+            }
+            parts.add("Saves " + String.join(" ", saves));
+            String casting = com.dnd.model.rules.SheetValues.spellcastingAbility(pc, cls);
+            if (casting != null) {
+                parts.add("Spell save DC " + com.dnd.model.rules.SheetValues.spellSaveDc(pc, cls)
+                    + ", spell attack " + com.dnd.model.rules.SheetValues.signed(com.dnd.model.rules.SheetValues.spellAttackBonus(pc, cls))
+                    + " (" + casting.toUpperCase(java.util.Locale.ROOT) + ")");
+            }
+            values.setText(String.join("  ·  ", parts));
+        } catch (RuntimeException e) {
+            values.setText("Could not work out the sheet values: " + e.getMessage());
+        }
+        com.dnd.ui.i18n.UiTranslator.skip(values);
+        Label title = new Label("Calculated values");
+        title.getStyleClass().add("section-label");
+        Label hint = body("As printed on the character sheet, as of the last save. Blank fields in the Sheet section use these.");
+        hint.setWrapText(true);
+        hint.setStyle(EntityForm.HINT_STYLE);
+
+        Label passwordState = body("");
+        Runnable showPassword = () -> passwordState.setText(pc.hasPassword()
+            ? "Player password: set" : "Player password: none (anyone can open this character as a player)");
+        showPassword.run();
+        Button setPassword = btn("Set player password", () -> {
+            if (askPlayerPassword(pc, repos)) showPassword.run();
+        });
+        HBox passwordRow = new HBox(12, passwordState, setPassword);
+        passwordRow.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+
+        VBox box = new VBox(6, title, values, hint, passwordRow);
+        box.setPadding(new Insets(10));
+        box.setMaxWidth(920);
+        box.setStyle("-fx-border-color: #4a3c1c; -fx-border-width: 1px; -fx-background-color: #14142a;");
+        return box;
     }
 
     private static List<EntityForm.Ref> refs(List<?> entities) {

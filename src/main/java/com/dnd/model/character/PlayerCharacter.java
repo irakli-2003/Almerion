@@ -346,6 +346,16 @@ public class PlayerCharacter implements Printable {
         this.skills = skills;
     }
 
+    /** Character-sheet overrides, bookkeeping and free text; never null once read. */
+    private SheetDetails sheet;
+    public SheetDetails getSheet() {
+        if (sheet == null) sheet = new SheetDetails();
+        return sheet;
+    }
+    public void setSheet(SheetDetails sheet) {
+        this.sheet = sheet != null ? sheet : new SheetDetails();
+    }
+
     private java.util.Map<String, Integer> featureUses = new java.util.LinkedHashMap<>();
     public java.util.Map<String, Integer> getFeatureUses() {
         if (featureUses == null) featureUses = new java.util.LinkedHashMap<>();

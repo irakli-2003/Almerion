@@ -25,7 +25,7 @@ character sheets. Players follow along from their own computers.
 12. [Storyline and session notes](#12-storyline-and-session-notes)
 13. [Maps and battles](#13-maps-and-battles)
 14. [Music and sound](#14-music-and-sound)
-15. [Online sessions](#15-online-sessions)
+15. [Hosting a session](#15-hosting-a-session)
 16. [Printing character sheets](#16-printing-character-sheets)
 17. [Rules reference: class features and the Artificer](#17-rules-reference-class-features-and-the-artificer)
 18. [Keyboard shortcuts](#18-keyboard-shortcuts)
@@ -139,6 +139,11 @@ fight.
    **My Profile** to upload a portrait and write your appearance, and return to the
    **Online Session**.
 
+**Playing at the same table?** If your GM hosts a *local network* session you don't need the
+app at all: open the address your GM gives you (for example `http://192.168.1.20:8765`) in any
+browser on a phone, tablet or computer on the same Wi-Fi. Pick your character and enter its
+password; your sheet then updates live as the GM changes it.
+
 Your GM controls stats, level, items and spells. Your portrait, name and appearance text are
 kept on your own computer.
 
@@ -157,7 +162,8 @@ kept on your own computer.
 | **Storyline** | Your session notes: text files organised in folders, shown as a story-arc timeline. |
 | **Battle map** | A grid map where encounters are fought with tokens. |
 | **Token** | A character, NPC, monster or beast placed on a battle map. |
-| **Online session** | A live, encrypted connection that shares the campaign state with players' computers. |
+| **Online session** | A live, encrypted connection that shares the campaign state with players' computers over the internet. |
+| **Local session** | A small web page served from the GM's computer so players on the same network can follow their character sheet in a browser. |
 
 ---
 
@@ -304,7 +310,7 @@ The GM menu is the home screen of an open campaign. Its header reads
 
 | Section | What's in it |
 |---|---|
-| **▶ Run the Session** | **📜 Open Storyline** (session notes), **👥 Members**, **🖨 Print Character Sheets**, **🌐 Online Session** (shows ● while live) |
+| **▶ Run the Session** | **📜 Open Storyline** (session notes), **👥 Members**, **🖨 Print Character Sheets**, **📡 Host Session** (shows ● while a local or internet session is running) |
 | **🎵 Music** | Play, pause, skip and stop controls, plus **Music Panel** |
 | **☻ Players** | A card per character with name, level, player and HP. Scroll with ◀ / ▶. Click a card to open the character. **Create Character** starts the wizard. |
 | **🏰 Worldbuilding** | Every catalogue, grouped: *Creatures* (NPCs, Monsters, Beasts), *Places* (Places, Maps), *Items & Lore* (Items, Books, Alchemy Ingredients), *Magic & Rules* (Spells, Effects, Damage Types, Dice), *Peoples* (Classes, Races, Languages) |
@@ -561,20 +567,49 @@ editor.
 
 ---
 
-## 15. Online sessions
+## 15. Hosting a session
 
-An online session shares the campaign with players' computers while you play. The data is
-AES-256 encrypted.
+Click **📡 Host Session** in the GM menu. There are two ways to share the game; you can use
+either or both at once.
+
+Players only ever receive what belongs to them: their character, the party, and the items,
+spells and effects they actually have. Monsters, NPCs, maps, places, books, other GMs' notes
+and passwords are never sent.
+
+### Local network (players use a browser)
+
+Best when everyone sits at the same table. Players need no account and no app.
+
+1. Give each character a password. The Host Session screen lists every character with a
+   **Set password** / **Change password** button. Characters without a password can't be
+   opened.
+2. Click **Start local session**. The screen shows one or more addresses such as
+   `http://192.168.1.20:8765`. Use **Copy** and send one to your players.
+3. Players open the address on any phone, tablet or computer on the **same network**, choose
+   their character and enter its password.
+4. The sheet is view only. Whenever you change something in the app (damage, spell slots, XP,
+   items...) every open sheet updates within a second or two.
+5. Click **Stop local session** when you're done. Closing the app or switching campaigns stops
+   it as well.
+
+If players can't connect, allow Almerion through the Windows firewall for **private networks**
+(Windows asks the first time you start a local session), and make sure everyone is on the same
+Wi-Fi rather than a guest network. After five wrong passwords a device is locked out for a
+minute.
+
+### Over the internet (players use the app)
+
+The data is AES-256 encrypted.
 
 **GM:**
 
-1. Click **🌐 Online Session** in the GM menu.
-2. Enter a **session passphrase** and click **Start Online Session**.
-3. Members can now click **Join Live Session**. You can also give the **Player Token** to
+1. Under **Over the internet**, enter a **session passphrase** and click
+   **Start internet session**.
+2. Members can now click **Join Live Session**. You can also give the **Player Token** to
    someone who needs to join by token.
-4. The campaign is pushed automatically each time you return to the GM menu. **Push State Now**
+3. The campaign is pushed automatically each time you return to the GM menu. **Push State Now**
    sends it immediately.
-5. Click **Stop Session** when you're done.
+4. Click **Stop internet session** when you're done.
 
 **Player:** in **My Campaigns**, click **Join Live Session**. Or open
 *Join with a session token instead*, paste the token and click **Join Session**.

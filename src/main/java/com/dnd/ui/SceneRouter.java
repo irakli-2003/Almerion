@@ -1,15 +1,11 @@
 package com.dnd.ui;
 
 import com.dnd.cli.core.CliSession;
-import com.dnd.data.CampaignRepositories;
-import com.dnd.data.JsonMappers;
 import com.dnd.ui.scenes.*;
 import com.dnd.ui.scenes.player.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class SceneRouter {
@@ -96,16 +92,13 @@ public class SceneRouter {
     private void autoPush() {
         CliSession session = uiSession.getSession();
         if (!session.isOnline() || session.getCampaignContext() == null) return;
+        // Same full snapshot as "Push State Now": a partial one would drop catalogs on players'
+        // machines and lose the campaign id that membership checks need.
+        var context = session.getCampaignContext();
         try {
-            ObjectMapper mapper = JsonMappers.create();
-            CampaignRepositories repos = new CampaignRepositories(session.getCampaignContext().getPath());
-            Map<String, Object> snapshot = new LinkedHashMap<>();
-            snapshot.put("campaign", session.getCampaignContext().getName());
-            snapshot.put("players", repos.players().list());
-            snapshot.put("maps", repos.maps().list());
-            snapshot.put("npcs", repos.npcs().list());
-            snapshot.put("monsters", repos.monsters().list());
-            session.getFirebaseSync().push(mapper.writeValueAsString(snapshot));
-        } catch (Exception ignored) {}
+            session.getFirebaseSync().push(com.dnd.data.SessionSnapshot.capture(context.getPath(), context.getName()));
+        } catch (Exception e) {
+            System.err.println("Online session push failed: " + e.getMessage());
+        }
     }
 }

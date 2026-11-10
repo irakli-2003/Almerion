@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14110d">
+<title>Almerion</title>
+<style>
+:root {
+  --bg: #14110d; --panel: #1f1a14; --panel2: #2a231b; --line: #3d3326;
+  --ink: #efe6d4; --dim: #a99a80; --gold: #d9b45a; --red: #d0564b; --green: #6fbf73; --blue: #6aa5d8;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink);
+  font: 15px/1.4 "Segoe UI", system-ui, -apple-system, "Noto Sans Georgian", "Noto Sans", sans-serif; }
+button { font: inherit; color: inherit; cursor: pointer; }
+.wrap { max-width: 1200px; margin: 0 auto; padding: 12px 12px calc(24px + env(safe-area-inset-bottom)); }
+.hidden { display: none !important; }
+h1 { font-size: 1.5rem; margin: 0; font-family: Georgia, "Noto Serif Georgian", serif; }
+h2 { font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); margin: 0 0 8px; }
+.dim { color: var(--dim); }
+.small { font-size: .82rem; }
+
+/* sign in */
+.login { max-width: 460px; margin: 6vh auto 0; }
+.brand { text-align: center; margin-bottom: 18px; }
+.brand .camp { color: var(--gold); font-family: Georgia, serif; font-size: 1.6rem; }
+.chars { display: grid; gap: 8px; }
+.char { display: flex; justify-content: space-between; align-items: center; width: 100%; text-align: left;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+.char:hover, .char:focus { border-color: var(--gold); outline: none; }
+.char.locked { opacity: .55; }
+input[type=password] { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--line);
+  background: #0f0d0a; color: var(--ink); font-size: 1rem; }
+.btn { background: var(--gold); color: #1b150c; border: 0; border-radius: 8px; padding: 11px 16px; font-weight: 600; }
+.btn.ghost { background: transparent; color: var(--dim); border: 1px solid var(--line); }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.msg { color: var(--red); min-height: 1.4em; margin: 8px 0; }
+
+/* sheet header */
+.top { position: sticky; top: 0; z-index: 5; background: linear-gradient(var(--bg) 85%, transparent);
+  padding: 8px 0 10px; }
+.ident { display: flex; gap: 12px; align-items: center; }
+.portrait { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 2px solid var(--gold); flex: none; }
+.ident .meta { flex: 1; min-width: 0; }
+.ident .sub { color: var(--dim); font-size: .9rem; }
+.status { font-size: .75rem; padding: 3px 8px; border-radius: 99px; border: 1px solid var(--line); white-space: nowrap; }
+.status.live { color: var(--green); border-color: #355a37; }
+.status.off { color: var(--red); }
+.vitals { display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+.stat { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 8px; text-align: center; }
+.stat .v { font-size: 1.45rem; font-weight: 700; white-space: nowrap; }
+.stat .l { font-size: .68rem; color: var(--dim); text-transform: uppercase; letter-spacing: .05em; }
+@media (max-width: 420px) { .vitals { gap: 6px; } .stat { padding: 8px 4px; } .stat .v { font-size: 1.25rem; } .stat .v .small { font-size: .7rem; } }
+.hpbar { height: 8px; background: #0f0d0a; border-radius: 99px; overflow: hidden; margin-top: 6px; }
+.hpbar > div { height: 100%; background: var(--green); transition: width .4s, background .4s; }
+.temp { color: var(--blue); font-size: .85rem; }
+
+/* tabs */
+.tabs { display: flex; gap: 6px; margin-top: 10px; overflow-x: auto; }
+.tab { flex: 1; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; white-space: nowrap; }
+.tab.on { border-color: var(--gold); color: var(--gold); }
+
+.grid { display: grid; gap: 10px; grid-template-columns: 1fr; margin-top: 6px; }
+@media (min-width: 720px) { .grid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1080px) { .grid { grid-template-columns: 1fr 1fr 1fr; } .vitals { grid-template-columns: 2fr repeat(6, 1fr); } }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
+.card.wide { grid-column: 1 / -1; }
+
+.abil { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+@media (min-width: 480px) { .abil { grid-template-columns: repeat(6, 1fr); } }
+.ab { background: var(--panel2); border-radius: 10px; text-align: center; padding: 8px 4px; }
+.ab .k { font-size: .7rem; color: var(--dim); }
+.ab .m { font-size: 1.4rem; font-weight: 700; }
+.ab .s { font-size: .8rem; color: var(--dim); }
+.list { margin: 0; padding: 0; list-style: none; }
+.list li { display: flex; justify-content: space-between; gap: 8px; padding: 5px 0; border-bottom: 1px solid var(--line); }
+.list li:last-child { border-bottom: 0; }
+.prof::before { content: "●"; color: var(--gold); margin-right: 6px; font-size: .7em; vertical-align: middle; }
+.noprof::before { content: "○"; color: var(--dim); margin-right: 6px; font-size: .7em; vertical-align: middle; }
+.num { font-weight: 600; font-variant-numeric: tabular-nums; }
+details { border-bottom: 1px solid var(--line); padding: 6px 0; }
+details:last-child { border-bottom: 0; }
+summary { cursor: pointer; display: flex; justify-content: space-between; gap: 8px; list-style: none; }
+summary::-webkit-details-marker { display: none; }
+details p { margin: 6px 0 2px; color: var(--dim); white-space: pre-wrap; }
+.pips { display: inline-flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+.pip { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--gold); }
+.pip.full { background: var(--gold); }
+.pip.bad { border-color: var(--red); } .pip.bad.full { background: var(--red); }
+.tag { font-size: .72rem; padding: 1px 7px; border-radius: 99px; background: var(--panel2); color: var(--dim); white-space: nowrap; }
+.tag.on { color: var(--gold); }
+.text { white-space: pre-wrap; margin: 0; }
+.coins { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; text-align: center; }
+.coins div { background: var(--panel2); border-radius: 8px; padding: 6px 2px; }
+.flash { animation: flash 1.4s ease-out; }
+@keyframes flash { 0% { box-shadow: 0 0 0 2px var(--gold); background: #4a3a1c; } 100% { box-shadow: none; } }
+.foot { text-align: center; margin-top: 16px; }
+.banner { background: #3a1f1c; border: 1px solid var(--red); border-radius: 10px; padding: 10px; margin-top: 10px; text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section id="login" class="login hidden">
+    <div class="brand"><div class="camp" id="camp"></div><div class="dim" data-t="Choose your character"></div></div>
+    <div id="charList" class="chars"></div>
+    <div id="pwBox" class="hidden">
+      <h1 id="pwName" style="margin:14px 0 10px"></h1>
+      <input id="pw" type="password" autocomplete="current-password">
+      <div class="msg" id="loginMsg"></div>
+      <div class="row"><button class="btn" id="signIn" data-t="Open sheet"></button>
+        <button class="btn ghost" id="back" data-t="Back"></button></div>
+    </div>
+  </section>
+
+  <section id="sheet" class="hidden">
+    <div class="top">
+      <div class="ident">
+        <img id="portrait" class="portrait hidden" alt="">
+        <div class="meta"><h1 id="name"></h1><div class="sub" id="sub"></div></div>
+        <span id="status" class="status"></span>
+      </div>
+      <div class="vitals" id="vitals"></div>
+      <div id="ended" class="banner hidden" data-t="The session has ended."></div>
+      <div class="tabs" id="tabs"></div>
+    </div>
+    <div id="body"></div>
+    <div class="foot small dim"><span data-t="View only: your GM keeps this sheet up to date."></span>
+      <br><button class="btn ghost" id="logout" style="margin-top:10px" data-t="Log out"></button></div>
+  </section>
+</div>
+<script>
+"use strict";
+let L = {}, token = null, es = null, data = null, prev = {}, tab = "Sheet", campaign = "";
+const $ = id => document.getElementById(id);
+const t = s => L[s] || s;
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const storeKey = () => "almerion.token." + campaign;
+
+async function boot() {
+  try {
+    const info = await (await fetch("api/info")).json();
+    L = info.labels || {}; campaign = info.campaign || "";
+  } catch (e) { /* labels stay English */ }
+  document.title = campaign ? campaign + " · Almerion" : "Almerion";
+  document.querySelectorAll("[data-t]").forEach(n => n.textContent = t(n.dataset.t));
+  $("pw").placeholder = t("Password");
+  $("camp").textContent = campaign;
+  token = localStorage.getItem(storeKey());
+  if (token && await openSheet()) return;
+  showLogin();
+}
+
+async function showLogin() {
+  stopStream(); token = null; localStorage.removeItem(storeKey());
+  $("sheet").classList.add("hidden"); $("login").classList.remove("hidden");
+  $("pwBox").classList.add("hidden"); $("charList").classList.remove("hidden");
+  const list = await (await fetch("api/characters")).json();
+  $("charList").innerHTML = list.length ? "" : `<div class="dim">${esc(t("Nothing here yet."))}</div>`;
+  list.forEach(c => {
+    const b = document.createElement("button");
+    b.className = "char" + (c.hasPassword ? "" : " locked");
+    b.innerHTML = `<span><b>${esc(c.name)}</b><br><span class="small dim">${esc(c.playerName)}</span></span>
+      <span class="tag">${esc(t("Level"))} ${c.level}</span>`;
+    b.onclick = () => pick(c);
+    $("charList").appendChild(b);
+  });
+}
+
+function pick(c) {
+  $("charList").classList.add("hidden"); $("pwBox").classList.remove("hidden");
+  $("pwName").textContent = c.name; $("pw").value = "";
+  $("loginMsg").textContent = c.hasPassword ? "" : t("No password yet. Ask your GM to set one for this character.");
+  $("pw").disabled = $("signIn").disabled = !c.hasPassword;
+  if (c.hasPassword) $("pw").focus();
+  $("signIn").onclick = () => signIn(c.id);
+  $("pw").onkeydown = e => { if (e.key === "Enter") signIn(c.id); };
+}
+
+async function signIn(id) {
+  const r = await fetch("api/login", {method: "POST", headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({id, password: $("pw").value})});
+  const j = await r.json().catch(() => ({}));
+  if (j.token) { token = j.token; localStorage.setItem(storeKey(), token); if (await openSheet()) return; }
+  $("loginMsg").textContent = j.result === "locked" ? t("Too many attempts. Wait a minute and try again.")
+    : j.result === "no-password" ? t("No password yet. Ask your GM to set one for this character.") : t("Wrong password.");
+}
+
+async function openSheet() {
+  let r;
+  try { r = await fetch("api/sheet?token=" + encodeURIComponent(token)); } catch (e) { return false; }
+  if (!r.ok) return false;
+  data = await r.json(); prev = {};
+  $("login").classList.add("hidden"); $("sheet").classList.remove("hidden"); $("ended").classList.add("hidden");
+  render(); startStream();
+  return true;
+}
+
+function startStream() {
+  stopStream();
+  es = new EventSource("api/events?token=" + encodeURIComponent(token));
+  es.onopen = () => setStatus(true);
+  es.onmessage = e => { data = JSON.parse(e.data); render(); setStatus(true); };
+  es.addEventListener("gone", () => showLogin());
+  es.addEventListener("ended", () => { stopStream(); setStatus(false); $("ended").classList.remove("hidden"); });
+  es.onerror = () => {
+    setStatus(false);
+    if (es && es.readyState === EventSource.CLOSED) setTimeout(recover, 3000);
+  };
+}
+async function recover() {
+  try {
+    const r = await fetch("api/sheet?token=" + encodeURIComponent(token));
+    if (r.status === 401) return showLogin();
+    if (r.ok) { data = await r.json(); render(); startStream(); return; }
+  } catch (e) { /* host unreachable, keep trying */ }
+  setTimeout(recover, 3000);
+}
+function stopStream() { if (es) { es.close(); es = null; } }
+function setStatus(live) {
+  const s = $("status");
+  s.textContent = live ? "● " + t("Live") : t("Reconnecting…");
+  s.className = "status " + (live ? "live" : "off");
+}
+
+// ── rendering ──────────────────────────────────────────────
+const TABS = ["Sheet", "Combat", "Magic", "Gear"];
+function render() {
+  const d = data;
+  $("name").textContent = d.name;
+  $("sub").textContent = [d.race, d.className + (d.subclass ? " (" + d.subclass + ")" : ""),
+    t("Level") + " " + d.level, t("XP") + " " + d.xp].filter(Boolean).join(" · ");
+  const img = $("portrait");
+  if (d.portrait) {
+    if (!img.dataset.loaded) { img.src = "portrait?token=" + encodeURIComponent(token) + "&v=" + Date.now(); img.dataset.loaded = "1"; }
+    img.classList.remove("hidden");
+  } else img.classList.add("hidden");
+
+  const hpPct = d.hp.max > 0 ? Math.max(0, Math.min(100, 100 * d.hp.current / d.hp.max)) : 0;
+  const hpCol = hpPct > 50 ? "var(--green)" : hpPct > 20 ? "var(--gold)" : "var(--red)";
+  const v = [
+    stat("hp", t("Hit points"), `${d.hp.current} / ${d.hp.max}` +
+      (d.hp.temp ? ` <span class="temp">+${d.hp.temp}</span>` : ""),
+      `<div class="hpbar"><div style="width:${hpPct}%;background:${hpCol}"></div></div>`),
+    stat("ac", t("Armor class"), d.armorClass),
+    stat("init", t("Initiative"), d.initiative),
+    stat("speed", t("Speed"), d.speed + " <span class='small dim'>" + esc(t("ft.")) + "</span>")
+  ];
+  if (window.matchMedia("(min-width: 1080px)").matches) {
+    v.push(stat("prof", t("Proficiency"), d.proficiency), stat("pp", t("Passive perception"), d.passivePerception),
+      stat("insp", t("Inspiration"), d.inspiration ? "★" : "—"));
+  }
+  $("vitals").innerHTML = v.join("");
+
+  $("tabs").innerHTML = TABS.map(n => `<button class="tab${n === tab ? " on" : ""}" data-tab="${n}">${esc(t(n))}</button>`).join("");
+  $("tabs").querySelectorAll(".tab").forEach(b => b.onclick = () => { tab = b.dataset.tab; render(); });
+
+  $("body").innerHTML = `<div class="grid">${({Sheet: sheetTab, Combat: combatTab, Magic: magicTab, Gear: gearTab})[tab](d)}</div>`;
+  flashChanges();
+}
+
+function stat(key, label, value, extra) {
+  return `<div class="stat" data-k="${key}"><div class="v">${value}</div><div class="l">${esc(label)}</div>${extra || ""}</div>`;
+}
+function card(title, inner, cls) {
+  return `<div class="card ${cls || ""}"><h2>${esc(t(title))}</h2>${inner}</div>`;
+}
+function empty() { return `<div class="dim small">${esc(t("Nothing here yet."))}</div>`; }
+function li(left, right, key) { return `<li${key ? ` data-k="${esc(key)}"` : ""}><span>${left}</span><span class="num">${right}</span></li>`; }
+function pips(cur, max, cls) {
+  let s = "";
+  for (let i = 0; i < max; i++) s += `<span class="pip ${cls || ""} ${i < cur ? "full" : ""}"></span>`;
+  return `<span class="pips">${s}</span>`;
+}
+function entries(list, right) {
+  if (!list.length) return empty();
+  return list.map(x => { const r = right ? right(x) : ""; return `<details><summary><span>${esc(x.name)}</span>${r ? `<span class="tag">${esc(r)}</span>` : ""}</summary>` +
+    (x.description ? `<p>${esc(x.description)}</p>` : "") + `</details>`; }).join("");
+}
+function textCard(title, text) { return text && text.trim() ? card(title, `<p class="text">${esc(text)}</p>`) : ""; }
+
+function sheetTab(d) {
+  const abil = d.abilities.map(a => `<div class="ab" data-k="ab-${a.key}" title="${esc(a.name)}"><div class="k">${a.key}</div>` +
+    `<div class="m">${esc(a.mod)}</div><div class="s">${a.score}</div></div>`).join("");
+  const saves = d.abilities.map(a => li(`<span class="${a.saveProficient ? "prof" : "noprof"}">${esc(a.name)}</span>`, esc(a.save), "sv-" + a.key)).join("");
+  const skills = d.skills.map(s => li(`${esc(s.name)} <span class="small dim">${s.ability}</span>`, esc(s.bonus), "sk-" + s.name)).join("");
+  const misc = li(esc(t("Proficiency")), esc(d.proficiency)) + li(esc(t("Passive perception")), d.passivePerception) +
+    li(esc(t("Hit dice")), esc(d.hitDice || "—")) + li(esc(t("Inspiration")), d.inspiration ? "★" : "—", "insp") +
+    li(esc(t("Death saves")), pips(d.deathSuccesses, 3) + " " + pips(d.deathFailures, 3, "bad"), "ds");
+  return card("Abilities", `<div class="abil">${abil}</div>`, "wide") +
+    card("Saving throws", `<ul class="list">${saves}</ul>`) +
+    card("Skills", `<ul class="list">${skills}</ul>`) +
+    card("Sheet", `<ul class="list">${misc}</ul>`) +
+    (d.effects.length ? card("Active effects", entries(d.effects, e => e.rounds > 0 ? e.rounds + " " + t("Rounds left") : "")) : "") +
+    textCard("Proficiencies & languages", d.proficiencies);
+}
+
+function combatTab(d) {
+  const atk = d.attacks.length ? `<ul class="list">${d.attacks.map(a => li(`<b>${esc(a.name)}</b><br><span class="small dim">${esc(a.damage)}</span>`, esc(a.toHit))).join("")}</ul>` : empty();
+  return card("Attacks", atk) +
+    card("Actions", entries(d.actions, a => a.uses)) +
+    (d.effects.length ? card("Active effects", entries(d.effects, e => e.rounds > 0 ? e.rounds + " " + t("Rounds left") : "")) : "") +
+    card("Traits", entries(d.passives)) +
+    card("Class features", entries(d.classFeatures, f => t("Level") + " " + f.level)) +
+    textCard("Features & traits", d.features);
+}
+
+function magicTab(d) {
+  let head = "";
+  if (d.casting) head += `<ul class="list">${li(esc(t("Spellcasting")), d.casting.ability)}${li(esc(t("Spell save DC")), d.casting.saveDc)}${li(esc(t("Spell attack")), esc(d.casting.attack))}</ul>`;
+  if (d.mana) head += `<ul class="list">${li(esc(t("Mana")), d.mana.current + " / " + d.mana.max, "mana")}</ul>`;
+  const slots = d.slots.length ? `<ul class="list">${d.slots.map(s => li(esc(s.label) + ` <span class="small dim">${s.current}/${s.max}</span>`, pips(s.current, s.max), "sl-" + s.label)).join("")}</ul>` : "";
+  const groups = {};
+  d.spells.forEach(s => (groups[s.level] = groups[s.level] || []).push(s));
+  const spells = Object.keys(groups).sort((a, b) => a - b).map(l =>
+    `<h2 style="margin-top:10px">${esc(l === "0" ? t("Cantrips") : t("Level") + " " + l)}</h2>` +
+    entries(groups[l], s => s.manaCost ? s.manaCost + " " + t("Mana") : "")).join("");
+  return (head ? card("Spellcasting", head) : "") + (slots ? card("Spell slots", slots) : "") +
+    card("Spells", spells || empty(), "wide");
+}
+
+function gearTab(d) {
+  const c = d.coins;
+  const coins = `<div class="coins" data-k="coins">${[["cp", c.cp], ["sp", c.sp], ["ep", c.ep], ["gp", c.gp], ["pp", c.pp]]
+    .map(([k, n]) => `<div><div class="num">${n}</div><div class="small dim">${k.toUpperCase()}</div></div>`).join("")}</div>`;
+  const items = d.items.length ? d.items.map(i => `<details><summary><span>${esc(i.name)}${i.quantity > 1 ? " ×" + i.quantity : ""}</span>` +
+    (i.equipped ? `<span class="tag on">${esc(t("Equipped"))}</span>` : "") + `</summary>` +
+    (i.description ? `<p>${esc(i.description)}</p>` : "") + `</details>`).join("") : empty();
+  return card("Coins", coins) + card("Inventory", items, "wide") + textCard("Notes", d.notes);
+}
+
+// Briefly highlights whatever the GM just changed (damage, a spent slot, new XP...).
+function flashChanges() {
+  const now = {};
+  document.querySelectorAll("[data-k]").forEach(n => now[n.dataset.k] = n.textContent + n.innerHTML.length);
+  now.sub = $("sub").textContent;
+  if (Object.keys(prev).length) {
+    document.querySelectorAll("[data-k]").forEach(n => {
+      const k = n.dataset.k;
+      if (k in prev && prev[k] !== now[k]) { n.classList.remove("flash"); void n.offsetWidth; n.classList.add("flash"); }
+    });
+    if (prev.sub !== now.sub) $("sub").classList.add("flash");
+  }
+  prev = Object.assign(prev, now);
+}
+
+$("back").onclick = () => { $("pwBox").classList.add("hidden"); $("charList").classList.remove("hidden"); };
+$("logout").onclick = () => showLogin();
+window.addEventListener("resize", () => { if (data && !$("sheet").classList.contains("hidden")) render(); });
+boot();
+</script>
+</body>
+</html>

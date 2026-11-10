@@ -13,5 +13,8 @@
  "SHA-{0}",
  "XP:",
  "[CHECK] <skill> DC <n>",
+ "application/json; charset=utf-{0}",
+ "text/event-stream; charset=utf-{0}",
+ "text/html; charset=utf-{0}",
  "{A} (Rank {B}){C}"
 ]

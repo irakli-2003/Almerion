@@ -6,10 +6,8 @@ import com.dnd.cli.core.CommandSpec;
 import com.dnd.cli.core.ConsoleIO;
 import com.dnd.cli.core.Page;
 import com.dnd.cli.pages.DmMenuPage;
-import com.dnd.data.CampaignRepositories;
 import com.dnd.data.DataAccessException;
 import com.dnd.security.FirebaseSessionSync;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
@@ -110,17 +108,8 @@ public class CliApp {
             return;
         }
         try {
-            ObjectMapper mapper = com.dnd.data.JsonMappers.create();
-            CampaignRepositories repos = new CampaignRepositories(session.getCampaignContext().getPath());
-
-            java.util.Map<String, Object> snapshot = new java.util.LinkedHashMap<>();
-            snapshot.put("campaign", session.getCampaignContext().getName());
-            snapshot.put("players", repos.players().list());
-            snapshot.put("maps", repos.maps().list());
-            snapshot.put("npcs", repos.npcs().list());
-            snapshot.put("monsters", repos.monsters().list());
-
-            String json = mapper.writeValueAsString(snapshot);
+            String json = com.dnd.data.SessionSnapshot.capture(session.getCampaignContext().getPath(),
+                session.getCampaignContext().getName());
             session.getFirebaseSync().push(json);
             console.println("[SYNC] Session state pushed to players.");
         } catch (FirebaseSessionSync.SyncException e) {

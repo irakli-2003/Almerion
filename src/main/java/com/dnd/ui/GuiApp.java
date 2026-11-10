@@ -47,6 +47,7 @@ public class GuiApp extends Application {
         // Upload the open campaign's last changes to GitHub (bounded, so quitting never hangs).
         com.dnd.sync.CampaignSyncService.shared().shutdown(20_000);
         com.dnd.ui.music.MusicPlayer.get().shutdown();
+        com.dnd.lan.LanSessionServer.stopShared();
     }
 
     public static void launch(String[] args) {

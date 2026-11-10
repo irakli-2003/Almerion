@@ -108,7 +108,7 @@ public class DmMenuScene extends BaseScene {
                 com.dnd.ui.print.CharacterSheetPrintDialog.show(
                     com.dnd.ui.WindowOrder.current(), new CampaignRepositories(uiSession.campaignRoot()), ctx != null ? ctx.getName() : null);
             }),
-            btn("🌐 Online Session" + (uiSession.getSession().isOnline() ? "  ●" : ""),
+            btn("📡 Host Session" + (uiSession.getSession().isOnline() || com.dnd.lan.LanSessionServer.current() != null ? "  ●" : ""),
                 () -> uiSession.getRouter().goTo(SceneType.DM_ONLINE_SESSION)));
         return card("▶ Run the Session", row);
     }

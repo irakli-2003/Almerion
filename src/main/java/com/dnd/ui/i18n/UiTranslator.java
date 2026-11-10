@@ -93,6 +93,12 @@ public final class UiTranslator {
         return instance;
     }
 
+    /** {@code text} in the current UI language, for text shown outside JavaFX (e.g. the local-network sheet). */
+    public static String text(String text) {
+        UiTranslator t = instance;
+        return t == null || text == null ? text : t.service.lookup(text);
+    }
+
     /** Keeps {@code node} and everything inside it in the original language (for user-authored text). */
     public static <T extends Node> T skip(T node) {
         node.getProperties().put(SKIP_KEY, Boolean.TRUE);

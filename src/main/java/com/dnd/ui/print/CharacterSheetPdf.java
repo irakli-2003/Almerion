@@ -16,6 +16,7 @@ import com.dnd.model.magic.SpellSlot;
 import com.dnd.model.magic.SpellSlots;
 import com.dnd.model.magic.SpellcastingType;
 import com.dnd.model.rules.FeatureRules;
+import com.dnd.model.rules.SheetValues;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -225,12 +226,12 @@ public final class CharacterSheetPdf {
             this.campaign = campaign;
             this.stats = pc.getStats() != null ? pc.getStats() : new CoreStats();
             this.level = Math.max(1, pc.getLevel());
-            this.prof = Progression.proficiencyBonus(level);
+            this.prof = SheetValues.proficiencyBonus(pc);
             CastingResource r = safe(() -> Progression.resourceOf(pc, cls));
             this.resource = r == null ? CastingResource.NONE : r;
             FeatureRules.Kit k = safe(() -> FeatureRules.kit(pc, cls, race));
             this.kit = k == null ? new FeatureRules.Kit() : k;
-            this.castAbility = castingAbility();
+            this.castAbility = SheetValues.spellcastingAbility(pc, cls);
             this.slots = slotList();
             List<ClassFeature> f = cls == null ? null : safe(() -> cls.featuresUpTo(level, pc.getSubclass()));
             this.features = f == null ? List.of() : f;
@@ -282,35 +283,7 @@ public final class CharacterSheetPdf {
         }
 
         private boolean saveProficient(int i) {
-            if (cls == null || cls.getSavingThrowBonuses() == null) return false;
-            for (Map.Entry<String, Integer> e : cls.getSavingThrowBonuses().entrySet()) {
-                String k = e.getKey() == null ? "" : e.getKey().toLowerCase(Locale.ROOT);
-                if ((k.equals(AB_KEYS[i]) || k.equals(AB_ABBR[i].toLowerCase(Locale.ROOT)))
-                        && e.getValue() != null && e.getValue() > 0) return true;
-            }
-            return false;
-        }
-
-        private String castingAbility() {
-            String id = nz(cls != null && cls.getId() != null ? cls.getId() : pc.getClassId()).toLowerCase(Locale.ROOT);
-            switch (id) {
-                case "bard", "paladin", "sorcerer", "warlock" -> { return "cha"; }
-                case "cleric", "druid", "ranger" -> { return "wis"; }
-                case "wizard", "artificer" -> { return "int"; }
-                default -> { }
-            }
-            boolean caster = (cls != null && cls.getSpellcasting() != SpellcastingType.NONE)
-                    || pc.getMaxMana() > 0 || (pc.getSpells() != null && !pc.getSpells().isEmpty());
-            if (!caster) return null;
-            if (cls != null && cls.getPrimaryAbilities() != null) {
-                for (String a : cls.getPrimaryAbilities()) {
-                    String k = nz(a).toLowerCase(Locale.ROOT);
-                    if (k.startsWith("int")) return "int";
-                    if (k.startsWith("wis")) return "wis";
-                    if (k.startsWith("cha")) return "cha";
-                }
-            }
-            return "int";
+            return SheetValues.saveProficient(pc, cls, AB_KEYS[i]);
         }
 
         private List<SpellSlot> slotList() {
@@ -337,10 +310,8 @@ public final class CharacterSheetPdf {
         }
 
         private int speed() {
-            int base = race != null && race.getSpeed() > 0 ? race.getSpeed() : 30;
-            FeatureRules.Worn worn = safe(() -> FeatureRules.worn(pc, items));
-            if (worn == null) return base;
-            return base + kit.speedBonus(worn.wearingArmor(), worn.heavy());
+            Integer v = safe(() -> SheetValues.speed(pc, race, kit, items));
+            return v == null ? SheetValues.DEFAULT_SPEED : v;
         }
 
         private String className() {
@@ -644,6 +615,7 @@ public final class CharacterSheetPdf {
 
             rect(x, top, w, 24, 0.9f, INK);
             rect(x + 4, top + 4, 16, 16, 0.8f, INK);
+            if (pc.getSheet().isInspiration()) circle(x + 12, top + 12, 4.5f, true);
             label("Inspiration", x + 26, top + 15, 6.5f);
 
             float t = top + 30;
@@ -680,7 +652,7 @@ public final class CharacterSheetPdf {
             t = top + 156 + skH + 6;
             rect(x, t, w, 24, 0.9f, INK);
             rect(x + 4, t + 4, 22, 16, 0.8f, INK);
-            textCenter(String.valueOf(10 + mod("wis")), x + 15, t + 16, bold, 9, INK);
+            textCenter(String.valueOf(SheetValues.passivePerception(pc)), x + 15, t + 16, bold, 9, INK);
             label("Passive perception (WIS)", x + 30, t + 15, 5.8f);
         }
 
@@ -693,12 +665,17 @@ public final class CharacterSheetPdf {
             panel(x, top, w, h, "Other proficiencies & languages");
             float lt = top + 12;
             List<String> printed = new ArrayList<>();
+            String own = pc.getSheet().getProficienciesAndLanguages();
+            if (!blank(own)) {
+                for (String l : own.split("\\R")) if (!l.isBlank()) printed.add(l.trim());
+            }
+            int ownLines = printed.size();
             if (!kit.getResistances().isEmpty()) printed.add("Resistant: " + String.join(", ", kit.getResistances()));
             printed.add("Skill values above are the character's skill bonuses (proficiency bonus " + signed(prof) + ").");
-            for (String p : printed) {
-                for (String l : wrap(p, serif, 7, w - 10)) {
+            for (int pi = 0; pi < printed.size(); pi++) {
+                for (String l : wrap(printed.get(pi), serif, 7, w - 10)) {
                     if (lt > top + h - 14) break;
-                    text(l, x + 5, lt, serif, 7, GREY);
+                    text(l, x + 5, lt, serif, 7, pi < ownLines ? INK : GREY);
                     lt += 9;
                 }
             }
@@ -712,7 +689,7 @@ public final class CharacterSheetPdf {
             float bw = (w - 8) / 3f;
             String[][] trio = {
                     {String.valueOf(armorClass()), "Armor class"},
-                    {signed(mod("dex")), "Initiative"},
+                    {signed(SheetValues.initiative(pc)), "Initiative"},
                     {speed() + " ft", "Speed"}
             };
             for (int i = 0; i < 3; i++) {
@@ -733,13 +710,16 @@ public final class CharacterSheetPdf {
 
             t += 82;
             panel(x, t, w, 40, "Temporary hit points");
+            if (pc.getSheet().getTemporaryHitPoints() > 0) {
+                textCenter(String.valueOf(pc.getSheet().getTemporaryHitPoints()), x + w / 2f, t + 30, bold, 14, INK);
+            }
 
             t += 46;
             float hw = (w - 6) / 2f;
             panel(x, t, hw, 52, "Hit dice");
-            int sides = cls != null && cls.getHitDie() != null && cls.getHitDie().getSides() > 0 ? cls.getHitDie().getSides() : 8;
             label("Total", x + 5, t + 11, 5.8f);
-            text(level + "d" + sides, x + 30, t + 11.5f, bold, 8.5f, INK);
+            String hd = SheetValues.hitDice(pc, cls);
+            text(fit(hd, bold, 8.5f, hw - 36), x + 30, t + 11.5f, bold, 8.5f, INK);
             line(x + 5, t + 15, x + hw - 5, t + 15, 0.4f, RULE);
 
             float dx = x + hw + 6;
@@ -747,8 +727,8 @@ public final class CharacterSheetPdf {
             label("Successes", dx + 5, t + 17, 5.5f);
             label("Failures", dx + 5, t + 32, 5.5f);
             for (int i = 0; i < 3; i++) {
-                circle(dx + hw - 9 - i * 9, t + 15, 3f, false);
-                circle(dx + hw - 9 - i * 9, t + 30, 3f, false);
+                circle(dx + hw - 9 - i * 9, t + 15, 3f, i < pc.getSheet().getDeathSaveSuccesses());
+                circle(dx + hw - 9 - i * 9, t + 30, 3f, i < pc.getSheet().getDeathSaveFailures());
             }
 
             t += 58;
@@ -772,8 +752,12 @@ public final class CharacterSheetPdf {
             if (attacks != null) {
                 for (FeatureRules.Attack a : attacks) rows.add(new String[]{nz(a.name()), signed(a.toHit()), a.damageLabel()});
             }
+            for (com.dnd.model.character.SheetDetails.Attack a : pc.getSheet().getExtraAttacks()) {
+                if (a == null || blank(a.getName())) continue;
+                rows.add(new String[]{a.getName().trim(), nz(a.getAttackBonus()).trim(), nz(a.getDamage()).trim()});
+            }
             if (castAbility != null) {
-                rows.add(new String[]{"Spell attack", signed(prof + mod(castAbility)), "save DC " + (8 + prof + mod(castAbility))});
+                rows.add(new String[]{"Spell attack", signed(SheetValues.spellAttackBonus(pc, cls)), "save DC " + SheetValues.spellSaveDc(pc, cls)});
             }
             float rt = t + 11;
             for (String[] r : rows) {
@@ -805,8 +789,8 @@ public final class CharacterSheetPdf {
                 float cw = w / 3f;
                 String[][] trio = {
                         {castAbility.toUpperCase(Locale.ROOT), "Casting ability"},
-                        {String.valueOf(8 + prof + mod(castAbility)), "Spell save DC"},
-                        {signed(prof + mod(castAbility)), "Spell attack"}
+                        {String.valueOf(SheetValues.spellSaveDc(pc, cls)), "Spell save DC"},
+                        {signed(SheetValues.spellAttackBonus(pc, cls)), "Spell attack"}
                 };
                 for (int i = 0; i < 3; i++) {
                     panel(x + i * cw, t, cw, 34, null);
@@ -886,6 +870,13 @@ public final class CharacterSheetPdf {
                 if (p.name() == null) continue;
                 if (seen.add(p.name().toLowerCase(Locale.ROOT))) lines.add(new String[]{"Trait", p.name()});
             }
+            String extraFeatures = pc.getSheet().getExtraFeatures();
+            if (!blank(extraFeatures)) {
+                int at = 0;
+                for (String l : extraFeatures.split("\\R")) {
+                    if (!l.isBlank()) lines.add(at++, new String[]{"", l.strip()});
+                }
+            }
             boolean truncated = false;
             for (String[] l : lines) {
                 if (rt > t + h - 26) {
@@ -954,8 +945,14 @@ public final class CharacterSheetPdf {
         }
 
         private void featuresSection() throws IOException {
-            if (features.isEmpty() && race == null && kit.getPassives().isEmpty()) return;
+            String extra = pc.getSheet().getExtraFeatures();
+            if (features.isEmpty() && race == null && kit.getPassives().isEmpty() && blank(extra)) return;
             section("Features & traits");
+            if (!blank(extra)) {
+                subhead("Other features & traits");
+                para(extra.strip(), serif, 8, 0, INK);
+                y += 3;
+            }
             if (!features.isEmpty()) {
                 subhead(className() + (blank(pc.getSubclass()) ? "" : " · " + pc.getSubclass()));
                 Map<String, FeatureRules.Action> actions = new HashMap<>();
@@ -1011,8 +1008,8 @@ public final class CharacterSheetPdf {
             List<String> summary = new ArrayList<>();
             if (castAbility != null) {
                 summary.add("Casting ability " + castAbility.toUpperCase(Locale.ROOT) + " (" + signed(mod(castAbility)) + ")");
-                summary.add("Spell save DC " + (8 + prof + mod(castAbility)));
-                summary.add("Spell attack " + signed(prof + mod(castAbility)));
+                summary.add("Spell save DC " + SheetValues.spellSaveDc(pc, cls));
+                summary.add("Spell attack " + signed(SheetValues.spellAttackBonus(pc, cls)));
             }
             if (resource != CastingResource.NONE) summary.add("Pays with: " + resource);
             if (pc.getMaxMana() > 0) summary.add("Mana max " + pc.getMaxMana());
@@ -1139,9 +1136,11 @@ public final class CharacterSheetPdf {
             y += 16;
 
             ensure(40);
-            label("Coins (write in)", M, y + 2, 6);
+            label("Coins", M, y + 2, 6);
             y += 6;
             String[] coins = {"CP", "SP", "EP", "GP", "PP"};
+            com.dnd.model.character.SheetDetails sd = pc.getSheet();
+            int[] amounts = {sd.getCopper(), sd.getSilver(), sd.getElectrum(), sd.getGold() == null ? 0 : sd.getGold(), sd.getPlatinum()};
             float cw = (CW - 4 * 8) / 5f;
             for (int i = 0; i < 5; i++) {
                 float cx = M + i * (cw + 8);
@@ -1149,6 +1148,7 @@ public final class CharacterSheetPdf {
                 rect(cx, y, cw, 22, 0.8f, INK);
                 line(cx + 20, y, cx + 20, y + 22, 0.8f, INK);
                 textCenter(coins[i], cx + 10, y + 14, bold, 7.5f, INK);
+                if (amounts[i] > 0) textRight(String.valueOf(amounts[i]), cx + cw - 6, y + 15, bold, 9, INK);
             }
             y += 34;
 
@@ -1238,6 +1238,11 @@ public final class CharacterSheetPdf {
         private void notesSection() throws IOException {
             if (BOTTOM - y < 46 + 6 * 15) flowPage();
             section("Notes");
+            String notes = pc.getSheet().getNotes();
+            if (!blank(notes)) {
+                para(notes.strip(), serif, 8.2f, 0, INK);
+                y += 4;
+            }
             while (y + 15 <= BOTTOM) {
                 y += 15;
                 line(M, y, M + CW, y, 0.35f, RULE);

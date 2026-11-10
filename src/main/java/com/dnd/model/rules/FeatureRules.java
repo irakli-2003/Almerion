@@ -597,6 +597,12 @@ public final class FeatureRules {
     }
 
     public static ArmorClass armorClass(PlayerCharacter pc, Kit kit, Function<String, Item> items, int effectBonus) {
+        Integer fixed = pc == null ? null : pc.getSheet().getArmorClass();
+        if (fixed != null) {
+            int total = fixed + effectBonus;
+            return new ArmorClass(total, "set on the character sheet " + fixed
+                + (effectBonus != 0 ? ", effects " + signed(effectBonus) : ""));
+        }
         Worn worn = worn(pc, items);
         CoreStats stats = pc == null ? null : pc.getStats();
         int dex = mod(stats, "dex");

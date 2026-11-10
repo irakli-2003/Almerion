@@ -53,6 +53,7 @@
  "SHA-{0}",
  "STR {A} DEX {B} CON {C} INT {D} WIS {E} CHA {F}",
  "Sneak Attack: {A}",
+ "Spellcasting",
  "Spellcasting:",
  "Spells / Abilities",
  "Stealth",
@@ -63,6 +64,7 @@
  "WIS",
  "X (cells):",
  "X-Unsent",
+ "XP",
  "XP:",
  "Y (cells):",
  "[/READ ALOUD]",
@@ -74,5 +76,6 @@
  "• {A} (Rank {B})",
  "▶ Play",
  "★ XP",
- "⟲ Time rewinds... it is round {A}, {B}'s turn again."
+ "⟲ Time rewinds... it is round {A}, {B}'s turn again.",
+ "📡 Host Session{A}"
 ]

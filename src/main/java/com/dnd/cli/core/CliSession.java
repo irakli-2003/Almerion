@@ -39,6 +39,8 @@ public class CliSession {
 
     public void setCampaignContext(CampaignContext campaignContext) {
         this.campaignContext = campaignContext;
+        // A local-network session only ever shows the campaign it was started for.
+        com.dnd.lan.LanSessionServer.stopUnlessFor(campaignContext == null ? null : campaignContext.getPath());
     }
 
     public String getActivePlayerCharacterId() {

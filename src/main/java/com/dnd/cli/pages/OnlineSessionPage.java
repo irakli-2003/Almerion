@@ -3,9 +3,7 @@ package com.dnd.cli.pages;
 import com.dnd.cli.core.CliSession;
 import com.dnd.cli.core.CommandSpec;
 import com.dnd.cli.core.Page;
-import com.dnd.data.CampaignRepositories;
 import com.dnd.security.FirebaseSessionSync;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
@@ -137,22 +135,12 @@ public class OnlineSessionPage implements Page {
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     /**
-     * Serialises the current campaign's players and maps to a compact JSON snapshot.
+     * Serialises what players need from the current campaign (see SessionSnapshot#capture).
      * This is the payload that players receive when they pull from Firebase.
      */
     private String buildSnapshot(CliSession s) {
         try {
-            ObjectMapper mapper = com.dnd.data.JsonMappers.create();
-            CampaignRepositories repos = new CampaignRepositories(s.getCampaignContext().getPath());
-
-            java.util.Map<String, Object> snapshot = new java.util.LinkedHashMap<>();
-            snapshot.put("campaign", s.getCampaignContext().getName());
-            snapshot.put("players", repos.players().list());
-            snapshot.put("maps", repos.maps().list());
-            snapshot.put("npcs", repos.npcs().list());
-            snapshot.put("monsters", repos.monsters().list());
-
-            return mapper.writeValueAsString(snapshot);
+            return com.dnd.data.SessionSnapshot.capture(s.getCampaignContext().getPath(), s.getCampaignContext().getName());
         } catch (Exception e) {
             // Fallback: push minimal metadata rather than failing the whole command
             return "{\"campaign\":\"" + s.getCampaignContext().getName() + "\"}";

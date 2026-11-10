@@ -62,6 +62,28 @@ public final class FieldHelp {
         f("PlayerCharacter.spellSlots", "Casting uses per spell level (or energy charges for artificers). 'Current' goes down as they cast.");
         f("PlayerCharacter.knownBlueprints", "Blueprints copied into the artificer's book; only these can be crafted.");
         f("PlayerCharacter.furnaceFuel", "Fuel units burning in the workshop furnace, waiting to be turned into charges.");
+        f("PlayerCharacter.sheet", "Everything else printed on the character sheet. Number boxes left blank are worked out automatically (shown under 'Calculated values' above); type a number to override it.");
+        f("SheetDetails.armorClass", "Blank = from worn armor, shield and DEX. A number here replaces it everywhere, battle map included; effects still add on top.");
+        f("SheetDetails.initiative", "Blank = DEX modifier. Used for initiative rolls on the battle map.");
+        f("SheetDetails.speed", "Walking speed in feet. Blank = race speed plus movement features.");
+        f("SheetDetails.proficiencyBonus", "Blank = from level (+2 at level 1).");
+        f("SheetDetails.passivePerception", "Blank = 10 + Perception skill.");
+        f("SheetDetails.savingThrowProficiencies", "Saving throws that add the proficiency bonus. Leave empty to use the class's saving throws.");
+        f("SheetDetails.hitDice", "e.g. 3d10. Blank = level d class hit die.");
+        f("SheetDetails.temporaryHitPoints", "Extra hit points that are lost first and don't stack.");
+        f("SheetDetails.deathSaveSuccesses", "0-3, filled in on the sheet.");
+        f("SheetDetails.deathSaveFailures", "0-3, filled in on the sheet.");
+        f("SheetDetails.inspiration", "Ticked when the GM has awarded inspiration.");
+        f("SheetDetails.spellcastingAbility", "Leave empty to use the class's casting ability.");
+        f("SheetDetails.spellSaveDc", "Blank = 8 + proficiency bonus + casting ability modifier.");
+        f("SheetDetails.spellAttackBonus", "Blank = proficiency bonus + casting ability modifier.");
+        f("SheetDetails.gold", "Shared with the purse on the battle map.");
+        f("SheetDetails.extraAttacks", "Extra rows for the 'Attacks & spellcasting' box, after the weapons the character carries.");
+        f("SheetDetails.proficienciesAndLanguages", "Languages, tools, armor and weapon proficiencies; one per line.");
+        f("SheetDetails.extraFeatures", "Features and traits not covered by the class or race; one per line.");
+        f("SheetDetails.notes", "Printed on the Notes page.");
+        f("Attack.attackBonus", "e.g. +5");
+        f("Attack.damage", "e.g. 1d8 + 3 piercing");
 
         // Spells
         f("Spell.level", "0 = cantrip (free, unlimited). 1-9 = costs a slot or energy charge of that level or higher.");

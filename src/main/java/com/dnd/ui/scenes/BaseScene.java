@@ -41,6 +41,31 @@ public abstract class BaseScene {
      * does NOT inherit stylesheets from the scene that spawned them, so without this they
      * render with JavaFX's default white/light-gray look.
      */
+    /**
+     * Asks for the password a player types to open {@code pc} (in player mode or in the browser
+     * during a local-network session) and saves it; empty removes it.
+     *
+     * @return true when the password was changed
+     */
+    protected boolean askPlayerPassword(com.dnd.model.character.PlayerCharacter pc, com.dnd.data.CampaignRepositories repos) {
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Player password");
+        dialog.setHeaderText("Password a player types to open " + pc.getName() + " in player mode or in the browser."
+            + " Leave empty to remove it.");
+        PasswordField field = new PasswordField();
+        dialog.getDialogPane().setContent(field);
+        dialog.getDialogPane().getButtonTypes().addAll(javafx.scene.control.ButtonType.OK, javafx.scene.control.ButtonType.CANCEL);
+        dialog.setResultConverter(b -> b == javafx.scene.control.ButtonType.OK ? field.getText() : null);
+        styleDialog(dialog);
+        javafx.application.Platform.runLater(field::requestFocus);
+        var answer = dialog.showAndWait();
+        if (answer.isEmpty()) return false;
+        String text = answer.get();
+        pc.setPassword(text == null || text.isBlank() ? null : text);
+        repos.players().save(pc);
+        return true;
+    }
+
     protected void styleDialog(Dialog<?> dialog) {
         com.dnd.ui.WindowOrder.adopt(dialog);
         dialog.getDialogPane().getStylesheets().add(getClass().getResource(CSS_PATH).toExternalForm());

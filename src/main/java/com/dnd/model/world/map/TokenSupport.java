@@ -218,6 +218,8 @@ public final class TokenSupport {
         state.setFeatureUses(new java.util.LinkedHashMap<>(pc.getFeatureUses()));
         state.setSpellSlots(com.dnd.model.magic.SpellSlots.copy(pc.getSpellSlots()));
         state.setCastingResource(pc.getCastingResource());
+        Integer gold = pc.getSheet().getGold();
+        if (gold != null) state.setGold(gold);
     }
 
     /** Writes a token's live combat numbers back onto its persistent character sheet. */
@@ -233,6 +235,7 @@ public final class TokenSupport {
         pc.setCooldowns(new java.util.LinkedHashMap<>(state.getCooldowns()));
         pc.setFeatureUses(new java.util.LinkedHashMap<>(state.getFeatureUses()));
         pc.setSpellSlots(com.dnd.model.magic.SpellSlots.copy(state.getSpellSlots()));
+        pc.getSheet().setGold(state.getGold());
     }
 
     /**
@@ -318,8 +321,11 @@ public final class TokenSupport {
         return Math.floorDiv(abilityScore - 10, 2);
     }
 
-    /** Rolls d20 + dexterity modifier, the usual initiative roll. */
+    /** Rolls d20 + initiative bonus (a player's character-sheet override, else dexterity modifier). */
     public static int rollInitiative(MapObject token) {
+        if (token instanceof PlayerToken t && t.getCharacter() != null) {
+            return RANDOM.nextInt(20) + 1 + com.dnd.model.rules.SheetValues.initiative(t.getCharacter());
+        }
         CoreStats stats = statsOf(token);
         int dexMod = modifier(stats == null ? 10 : stats.getDexterity());
         return RANDOM.nextInt(20) + 1 + dexMod;

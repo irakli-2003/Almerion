@@ -1766,6 +1766,15 @@ public class BattleMapWindow {
         }
         CombatState userState = TokenSupport.combatOf(user);
         CombatState targetState = TokenSupport.combatOf(target);
+        if (FeatureRules.ENCORE.equals(action.getId()) || FeatureRules.BODYGUARD.equals(action.getId())) {
+            String blocked = FeatureRules.allyFeatureBlockedReason(action, userState, TokenSupport.nameOf(user), targetState);
+            if (blocked != null) { status(blocked); return; }
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, action.getDescription(), ButtonType.OK, ButtonType.CANCEL);
+            confirm.setTitle(action.getName());
+            confirm.setHeaderText(TokenSupport.nameOf(user) + " → " + TokenSupport.nameOf(target));
+            owner.styleDialog(confirm);
+            if (confirm.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) return;
+        }
         String message = action.getKind() == FeatureRules.Kind.HEAL_POOL
             ? FeatureRules.useHealPool(action, userState, TokenSupport.nameOf(user), targetState,
                 TokenSupport.nameOf(target), armedFeaturePoints)

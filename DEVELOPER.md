@@ -402,6 +402,19 @@ credentials or custom provider addresses. To configure SMTP:
 - Targeted tests: `UpgradeRulesTest`, `UpgradeTreeViewTest`, `BundledCampaignDataTest`,
   `RulesTest`, `FeatureRulesTest`, `SheetValuesTest`, `SessionSnapshotTest`.
 
+### Personal features
+
+Character-specific features live in `PlayerCharacter.personalFeatures`, not the class or
+spell list. `FeatureRules.features` combines eligible class and personal features for
+combat, PDF and LAN consumers. Recognised names use existing mechanical hooks; other
+names remain passives. Historical upgrade migration also recognises personal training.
+`support-encore` and `pit-guardian` recharge on short rests; map confirmation delegates
+unmodelled reaction/ally/success conditions to the GM. Inspiration effects record their
+giver in `source`; a fresh grant replaces the old marker rather than stacking dice.
+Encore consumes only its giver's marker, requires conscious participants and missing HP,
+and heals proficiency without refunding Inspiration. Throws are manual counters, not
+automated attacks or movement. Targeted coverage: `PersonalFeaturesTest`.
+
 ### Hosting sessions
 
 - **📡 Host Session** (`ui/scenes/OnlineSessionScene`) has a local-network card and an

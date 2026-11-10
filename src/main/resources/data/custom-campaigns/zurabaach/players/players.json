@@ -1,6 +1,11 @@
 {
   "players" : [ {
     "id" : "player-balthazar",
+    "personalFeatures" : [ {
+      "level" : 5,
+      "name" : "Encore",
+      "description" : "Nonmagical reaction immediately after another conscious ally within 60 ft spends Balthazar's Bardic Inspiration die and succeeds on the roll. The ally regains HP equal to Balthazar's proficiency bonus (3 at level 5). Once per short rest. The ally must hear him. Remove his Inspiration marker when resolving this; the GM confirms the successful roll and reaction. Cannot revive a downed ally. No spell slots, extra actions or Inspiration uses are refunded."
+    } ],
     "name" : "Balthazar Boombard",
     "classId" : "bard",
     "raceId" : "human",
@@ -1081,6 +1086,15 @@
     }
   }, {
     "id" : "darius",
+    "personalFeatures" : [ {
+      "level" : 5,
+      "name" : "Brawler's Throw",
+      "description" : "Pit Guardian training. Nonmagical; replaces one attack, never grants an extra attack. Choose a creature Darius already grapples within 5 ft, no more than one size larger. Contest Athletics against its Athletics or Acrobatics. On success, release it, move it up to 5 ft into a clear supported space, and knock it prone. On failure it stays grappled. No damage, collision damage or forced ledge drop. The GM rolls the contest, moves the token and marks prone."
+    }, {
+      "level" : 5,
+      "name" : "Pit Guardian",
+      "description" : "Nonmagical reaction before an attack roll against another conscious ally within 5 ft: that ally gains +2 AC until the start of their next turn. Darius must be conscious. Once per short rest. No extra attack or damage. The GM confirms ally status and reaction availability; the app applies the AC effect and tracks the use."
+    } ],
     "name" : "Darius",
     "classId" : "barbarian",
     "raceId" : "human",

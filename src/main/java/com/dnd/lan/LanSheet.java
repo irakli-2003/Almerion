@@ -185,8 +185,7 @@ public final class LanSheet {
             n.put("description", nz(p.description()));
         }
         ArrayNode features = root.putArray("classFeatures");
-        List<ClassFeature> featureList = cls == null ? null
-            : safe(() -> cls.featuresUpTo(Math.max(1, pc.getLevel()), pc.getSubclass()));
+        List<ClassFeature> featureList = safe(() -> FeatureRules.features(pc, cls));
         if (featureList != null) {
             for (ClassFeature f : featureList) {
                 if (f == null || blank(f.getName())) continue;

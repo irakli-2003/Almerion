@@ -222,7 +222,7 @@ public final class CharacterSheetPdf {
             this.kit = k == null ? new FeatureRules.Kit() : k;
             this.castAbility = SheetValues.spellcastingAbility(pc, cls);
             this.slots = slotList();
-            List<ClassFeature> f = cls == null ? null : safe(() -> cls.featuresUpTo(level, pc.getSubclass()));
+            List<ClassFeature> f = safe(() -> FeatureRules.features(pc, cls));
             this.features = f == null ? List.of() : f;
         }
 

@@ -205,6 +205,8 @@ public final class FeatureRules {
     }
 
     public static final String RAGE = "rage";
+    public static final String ENCORE = "support-encore";
+    public static final String BODYGUARD = "pit-guardian";
     public static final String FURY_OF_THE_SMALL = "fury-of-the-small";
     public static final List<String> PHYSICAL = List.of("bludgeoning", "piercing", "slashing");
 
@@ -217,10 +219,8 @@ public final class FeatureRules {
         kit.proficiency = Progression.proficiencyBonus(level);
         CoreStats stats = pc.getStats();
         String classId = cls != null && cls.getId() != null ? cls.getId() : pc.getClassId();
-        if (cls != null) {
-            for (ClassFeature feature : cls.featuresUpTo(level, pc.getSubclass())) {
-                applyClassFeature(kit, classId, feature, level, stats);
-            }
+        for (ClassFeature feature : features(pc, cls)) {
+            applyClassFeature(kit, classId, feature, level, stats);
         }
         applyRace(kit, raceKey(race != null ? race.getId() : pc.getRaceId()), level, stats);
         kit.upgradeSpeed = UpgradeRules.bonus(pc, UpgradeTree.Reward::getSpeed);
@@ -240,6 +240,16 @@ public final class FeatureRules {
         return kit;
     }
 
+    public static List<ClassFeature> features(PlayerCharacter pc, CharacterClass cls) {
+        List<ClassFeature> result = new ArrayList<>();
+        if (pc == null) return result;
+        if (cls != null) result.addAll(cls.featuresUpTo(pc.getLevel(), pc.getSubclass()));
+        for (ClassFeature f : pc.getPersonalFeatures()) {
+            if (f != null && f.getLevel() <= pc.getLevel() && f.appliesTo(pc.getSubclass())) result.add(f);
+        }
+        return result;
+    }
+
     private static boolean hasOwnAction(PlayerCharacter pc, String id) {
         if (pc.getSpells() == null) return false;
         for (PlayerCharacter.PlayerSpell spell : pc.getSpells()) {
@@ -253,6 +263,40 @@ public final class FeatureRules {
         String name = baseName(raw).toLowerCase(Locale.ROOT);
         String desc = feature.getDescription();
         switch (name) {
+            case "brawler's throw" -> kit.add(new Action("brawlers-throw", "Brawler's Throw",
+                "Nonmagical. Replace one attack in your Attack action, not an extra attack."
+                    + " Choose a creature you already grapple, within 5 ft and no more than one size larger."
+                    + " Roll Athletics against its Athletics or Acrobatics. On success, release it and move it"
+                    + " up to 5 ft into a clear, supported space, then knock it prone. On failure it stays grappled."
+                    + " No damage, collision damage, forced ledge drop or extra movement."
+                    + " The GM resolves the contest and moves the token; this button records the attempt.",
+                Kind.COUNTER, 0, Recharge.AT_WILL));
+            case "pit guardian" -> {
+                Action guard = new Action(BODYGUARD, "Pit Guardian",
+                    "Nonmagical reaction before an attack roll against another conscious ally within 5 ft:"
+                        + " give that ally +2 AC until the start of their next turn. You must be conscious."
+                        + " Once per short rest. Uses your reaction; no attack or damage is granted."
+                        + " The GM confirms ally status and reaction availability.",
+                    Kind.ALLY_EFFECT, 1, Recharge.SHORT_REST);
+                guard.rangeFeet = 5;
+                guard.effect = new ActiveEffect(BODYGUARD, "Pit Guardian", 1, 0, 0, "Pit Guardian");
+                guard.effect.setAcBonus(2);
+                guard.effect.setDescription(guard.description);
+                kit.add(guard);
+            }
+            case "encore" -> {
+                Action encore = new Action(ENCORE, "Encore",
+                    "Nonmagical reaction immediately after another conscious ally within 60 ft spends your"
+                        + " Bardic Inspiration die and succeeds on the roll. They regain " + kit.proficiency
+                        + " HP. Once per short rest. The app removes your Inspiration marker and applies the healing;"
+                        + " the GM confirms that the die was actually spent, the roll succeeded, the ally can hear you,"
+                        + " and your reaction is available. Cannot revive a downed ally or trigger on your own roll."
+                        + " No spell slot, extra action or Inspiration use is refunded.",
+                    Kind.ALLY_EFFECT, 1, Recharge.SHORT_REST);
+                encore.rangeFeet = 60;
+                encore.healFlat = kit.proficiency;
+                kit.add(encore);
+            }
             case "rage" -> {
                 int bonus = rageDamageBonus(level);
                 ActiveEffect effect = new ActiveEffect(RAGE, "Rage", 10, 0, 0, "Rage");
@@ -488,6 +532,9 @@ public final class FeatureRules {
      */
     public static String useOnSelf(Action action, CombatState self, String selfName, Random rng) {
         if (action.needsTarget()) return action.getName() + " needs a target.";
+        if ("brawlers-throw".equals(action.getId()) && (self.getCurrentHitPoints() <= 0 || self.isDead())) {
+            return "You must be conscious to attempt a throw.";
+        }
         if (action.usesLeft(self.getFeatureUses()) <= 0) {
             return action.getName() + " is spent until a " + action.getRecharge().label() + ".";
         }
@@ -523,16 +570,46 @@ public final class FeatureRules {
     /** Puts an ally-buff feature's effect on {@code target} (Bardic Inspiration). */
     public static String useOnAlly(Action action, CombatState user, String userName,
                                    CombatState target, String targetName) {
+        String blocked = allyFeatureBlockedReason(action, user, userName, target);
+        if (blocked != null) return blocked;
         if (!spend(user.getFeatureUses(), action, 1)) return action.getName() + " is spent.";
-        target.addEffect(action.getEffect().copy());
+        if (ENCORE.equals(action.getId())) {
+            target.getActiveEffects().removeIf(e -> "bardic-inspiration".equals(e.getEffectId())
+                && userName.equals(e.getSource()));
+            int before = target.getCurrentHitPoints();
+            target.heal(action.healFlat);
+            return userName + " uses Encore: " + targetName + " regains "
+                + (target.getCurrentHitPoints() - before) + " HP.";
+        }
+        ActiveEffect effect = action.getEffect().copy();
+        effect.setSource(userName);
+        if ("bardic-inspiration".equals(action.getId())) {
+            target.getActiveEffects().removeIf(e -> "bardic-inspiration".equals(e.getEffectId()));
+        }
+        target.addEffect(effect);
         return userName + " gives " + targetName + " " + action.getName() + ".";
+    }
+
+    /** Roll success, ally relationship and reaction availability still require the GM's confirmation. */
+    public static String allyFeatureBlockedReason(Action action, CombatState user, String userName, CombatState target) {
+        if (!ENCORE.equals(action.getId()) && !BODYGUARD.equals(action.getId())) return null;
+        if (user == target) return "Choose another ally, not yourself.";
+        if (user.getCurrentHitPoints() <= 0 || target.getCurrentHitPoints() <= 0
+                || user.isDead() || target.isDead()) return "Both characters must be conscious.";
+        if (ENCORE.equals(action.getId())) {
+            boolean inspired = target.getActiveEffects().stream().anyMatch(e ->
+                "bardic-inspiration".equals(e.getEffectId()) && !e.isExpired() && userName.equals(e.getSource()));
+            if (!inspired) return "This ally needs your active Bardic Inspiration marker before resolving Encore.";
+            if (target.getCurrentHitPoints() >= target.getMaxHitPoints()) return "This ally is already at full HP.";
+        }
+        return null;
     }
 
     /** Whether a feature's uses come back on a short rest for a character of {@code level}. */
     public static boolean rechargesOnShortRest(String id, int level) {
         if (id == null) return false;
         return switch (id) {
-            case "second-wind", "action-surge", "ki", "channel-divinity", "wild-shape", "breath-weapon",
+            case ENCORE, BODYGUARD, "second-wind", "action-surge", "ki", "channel-divinity", "wild-shape", "breath-weapon",
                  "stones-endurance", FURY_OF_THE_SMALL -> true;
             case "bardic-inspiration" -> level >= 5;
             default -> false;

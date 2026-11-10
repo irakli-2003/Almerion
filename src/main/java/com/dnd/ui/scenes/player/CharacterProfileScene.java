@@ -95,6 +95,16 @@ public class CharacterProfileScene extends BaseScene {
             com.dnd.ui.scenes.UpgradeTreeWindow.showCharacter(this, repos, pc, () -> {}, false)));
 
         content.getChildren().add(buildAppearanceEditor(pc, profiles));
+        if (!pc.getPersonalFeatures().isEmpty()) {
+            content.getChildren().add(sectionLabel("Personal Features"));
+            for (var feature : pc.getPersonalFeatures()) {
+                if (feature == null || feature.getLevel() > pc.getLevel() || !feature.appliesTo(pc.getSubclass())) continue;
+                Label label = body(feature.getName() + "\n" + java.util.Objects.toString(feature.getDescription(), ""));
+                label.setWrapText(true);
+                com.dnd.ui.i18n.UiTranslator.skip(label);
+                content.getChildren().add(label);
+            }
+        }
 
         content.getChildren().add(sectionLabel("Inventory"));
         if (pc.getItems() != null && !pc.getItems().isEmpty()) {

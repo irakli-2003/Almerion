@@ -71,6 +71,7 @@ public final class FieldHelp {
         f("PlayerCharacter.maxHitPoints", "How much damage they can take before falling unconscious.");
         f("PlayerCharacter.maxMana", "Only for mana-based homebrew casters. Leave 0 for slot casters.");
         f("PlayerCharacter.subclass", "Their specialisation within the class.");
+        f("PlayerCharacter.personalFeatures", "Character-specific training, with its unlock level. These appear beside class features in combat and shared sheets. Named mechanical hooks use the same rules as class features; other descriptions are GM reminders.");
         f("PlayerCharacter.castingResource", "What they pay to cast. Leave empty to use the class default.");
         f("PlayerCharacter.spellSlots", "Casting uses per spell level (or energy charges for artificers). 'Current' goes down as they cast.");
         f("PlayerCharacter.knownBlueprints", "Blueprints copied into the artificer's book; only these can be crafted.");

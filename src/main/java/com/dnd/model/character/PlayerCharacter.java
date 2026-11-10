@@ -27,6 +27,11 @@ public class PlayerCharacter implements Printable {
     private CoreStats stats;
     private List<PlayerItem> items;
     private List<PlayerSpell> spells;
+    private List<ClassFeature> personalFeatures = new ArrayList<>();
+    public List<ClassFeature> getPersonalFeatures() { return personalFeatures; }
+    public void setPersonalFeatures(List<ClassFeature> value) {
+        personalFeatures = value == null ? new ArrayList<>() : new ArrayList<>(value);
+    }
     /**
      * Salted hash of this character's player-mode access password (never the
      * plaintext password itself - see {@link PasswordHasher}). {@code null}

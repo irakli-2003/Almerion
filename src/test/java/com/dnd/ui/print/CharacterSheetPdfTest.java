@@ -63,6 +63,15 @@ public class CharacterSheetPdfTest {
         assertTrue(text.contains("Cleric"));
     }
 
+    @Test public void signatureTrainingAppearsOnPrintedSheets() throws Exception {
+        String darius = render(repos.players().getById("darius"), OUT.resolve("darius-training.pdf"), 1);
+        assertTrue(darius.contains("Brawler's Throw"));
+        assertTrue(darius.contains("Pit Guardian"));
+        String bard = render(repos.players().getById("player-balthazar"), OUT.resolve("balthazar-training.pdf"), 1);
+        assertTrue(bard.contains("Encore"));
+        assertTrue(bard.contains("Inspiration"));
+    }
+
     @Test
     public void everyCampaignPlayerRenders() throws Exception {
         for (PlayerCharacter pc : repos.players().list()) {

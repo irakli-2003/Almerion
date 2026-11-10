@@ -137,7 +137,9 @@ public final class UpgradeRules {
         UpgradeProgress progress = new UpgradeProgress();
         int spent = Math.max(0, pc.getLevel() - 1);
         progress.setEarned(spent);
-        List<ClassFeature> features = cls == null ? List.of() : cls.featuresUpTo(pc.getLevel(), pc.getSubclass());
+        List<ClassFeature> features = new ArrayList<>(cls == null ? List.of() : cls.featuresUpTo(pc.getLevel(), pc.getSubclass()));
+        pc.getPersonalFeatures().stream().filter(f -> f != null && f.getLevel() <= pc.getLevel()
+            && f.appliesTo(pc.getSubclass())).forEach(features::add);
         Set<String> names = features.stream().map(f -> normal(f.getName())).collect(Collectors.toSet());
         Set<String> spells = pc.getSpells() == null ? Set.of() : pc.getSpells().stream()
             .map(PlayerCharacter.PlayerSpell::getSpellId).collect(Collectors.toSet());

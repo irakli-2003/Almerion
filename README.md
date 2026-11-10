@@ -779,6 +779,18 @@ their race's traits. These work in battle, not just on paper, and you'll find th
   **Long rests** restore everything.
 - New characters get their race's ability bonuses added automatically.
 
+GMs can also edit **Personal Features** on an individual character without changing
+everyone in their class. These use the same level/subclass filters and appear in combat,
+player profiles, LAN sheets and PDFs. Unrecognised feature names remain descriptive reminders.
+Zurabaach gives Darius **Brawler's Throw** (replace an attack with a GM-resolved grapple
+throw; no damage) and **Pit Guardian** (reaction, +2 ally AC until their next turn,
+once per short rest). Balthazar gets **Encore**: after an ally successfully spends his
+Inspiration, a reaction heals proficiency-bonus HP, once per short rest. The map tracks
+uses and effects; the GM confirms reaction availability, ally status and roll success.
+Encore requires his active Inspiration marker and cannot revive a downed ally.
+Update every device before syncing campaigns with personal features: older app versions
+do not preserve this new field when saving characters.
+
 ### Spell components
 
 Every spell lists its components: **V** (verbal), **S** (somatic) and **M** (material). Material

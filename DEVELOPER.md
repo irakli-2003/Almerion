@@ -249,6 +249,9 @@ This is used when Firebase email isn't configured. It is created with placeholde
   Reporting consumes the button action so the original dialog stays open.
   It captures only the app scene, not the desktop.
 - The report dialog previews the screenshot and permits removal before sending.
+  Successful sends are confirmed in the same form with an enabled Close button, not a
+  second modal popup. Its action buttons keep their full preferred widths without
+  uniform sizing, and the dialog cannot shrink below its preferred content width.
   `auth/EmailService` sends UTF-8 MIME multipart reports with an optional PNG attachment;
   the recipient defaults to the SMTP sender address, never its password.
 - Without usable SMTP, the user can export a complete `.eml` draft with the same optional

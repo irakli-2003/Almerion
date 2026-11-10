@@ -87,6 +87,10 @@ public final class ReportUi {
     }
 
     private static void show(Scene source) {
+        show(source, new EmailService());
+    }
+
+    static void show(Scene source, EmailService email) {
         Image capture = null;
         String captureError = null;
         try {
@@ -94,12 +98,12 @@ public final class ReportUi {
         } catch (RuntimeException e) {
             captureError = e.getMessage();
         }
-        EmailService email = new EmailService();
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("Report a bug or suggestion");
         dialog.initOwner(source.getWindow());
         dialog.setResizable(true);
         DialogPane pane = dialog.getDialogPane();
+        pane.setMinWidth(Region.USE_PREF_SIZE);
         pane.getStylesheets().add(ReportUi.class.getResource(CSS).toExternalForm());
         pane.getScene().getProperties().put(REPORT, true);
 
@@ -143,7 +147,10 @@ public final class ReportUi {
         Button send = (Button) pane.lookupButton(sendType);
         Button draft = (Button) pane.lookupButton(draftType);
         Button cancel = (Button) pane.lookupButton(ButtonType.CANCEL);
-        for (Button button : new Button[]{send, draft, cancel}) button.setMinWidth(Region.USE_PREF_SIZE);
+        for (Button button : new Button[]{send, draft, cancel}) {
+            button.setMinWidth(Region.USE_PREF_SIZE);
+            ButtonBar.setButtonUniformSize(button, false);
+        }
         Image screenshot = capture;
         send.addEventFilter(javafx.event.ActionEvent.ACTION, e -> {
             e.consume();
@@ -167,10 +174,14 @@ public final class ReportUi {
                 }
             };
             task.setOnSucceeded(done -> {
-                dialog.close();
-                Alert sent = new Alert(Alert.AlertType.INFORMATION, "Your report was sent. Thank you!");
-                sent.initOwner(source.getWindow());
-                sent.showAndWait();
+                status.setText("Your report was sent. Thank you!");
+                cancel.setText("Close");
+                cancel.setDisable(false);
+                recipient.setDisable(true);
+                description.setDisable(true);
+                bug.setDisable(true);
+                suggestion.setDisable(true);
+                include.setDisable(true);
             });
             task.setOnFailed(failed -> {
                 send.setDisable(false);

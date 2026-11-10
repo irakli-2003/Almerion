@@ -1,5 +1,10 @@
 package com.dnd.ui;
 
+import com.dnd.auth.EmailService;
+import com.dnd.ui.i18n.TranslationService;
+import com.dnd.ui.i18n.UiTranslator;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -8,6 +13,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import javafx.util.Duration;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -16,6 +22,7 @@ import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.*;
@@ -41,6 +48,146 @@ public class ReportUiTest {
             assertEquals(3, png.getWidth());
             assertEquals(2, png.getHeight());
             assertEquals(0xffc90000, png.getRGB(1, 0));
+        });
+    }
+
+    @Test
+    public void successfulReportStaysReadableAndCanBeClosedInEnglishAndGeorgian() throws Exception {
+        verifyReportCompletion("en", false);
+        verifyReportCompletion("ka", false);
+    }
+
+    @Test
+    public void failedReportCanBeRetriedAndThenClosed() throws Exception {
+        verifyReportCompletion("en", true);
+    }
+
+    private static void verifyReportCompletion(String language, boolean failFirst) throws Exception {
+        onFx(() -> {
+            Platform.setImplicitExit(false);
+            UiTranslator translator = UiTranslator.get();
+            if (translator == null) translator = UiTranslator.install(TranslationService.createDefault(), null);
+            String previousLanguage = translator.getLanguage().code();
+            translator.setLanguage(language);
+            ReportUi.install();
+            AtomicInteger sends = new AtomicInteger();
+            EmailService email = new EmailService(null) {
+                @Override public boolean isConfigured() { return true; }
+                @Override public String reportRecipient() { return "support@example.com"; }
+                @Override public void send(String to, String subject, String body, byte[] screenshot) {
+                    if (sends.incrementAndGet() == 1 && failFirst) throw new IllegalStateException("Test failure");
+                }
+            };
+            Stage stage = new Stage();
+            stage.setScene(new Scene(new VBox(new Label("Original screen")), 500, 300));
+            stage.show();
+            AtomicReference<Throwable> failure = new AtomicReference<>();
+            AtomicInteger step = new AtomicInteger();
+            AtomicInteger ticks = new AtomicInteger();
+            Timeline poll = new Timeline();
+            poll.getKeyFrames().add(new KeyFrame(Duration.millis(50), event -> {
+                try {
+                    assertTrue("Report completion timed out", ticks.incrementAndGet() < 200);
+                    Stage reportWindow = new ArrayList<>(Window.getWindows()).stream()
+                        .filter(w -> w instanceof Stage s && s.getOwner() == stage)
+                        .map(w -> (Stage) w).findFirst().orElseThrow();
+                    assertEquals("Sending must not open another popup", 1,
+                        new ArrayList<>(Window.getWindows()).stream()
+                            .filter(w -> w instanceof Stage s && s != stage).count());
+                    DialogPane pane = (DialogPane) reportWindow.getScene().getRoot();
+                    ScrollPane scroll = (ScrollPane) pane.getContent();
+                    VBox form = (VBox) scroll.getContent();
+                    Label status = (Label) form.getChildren().getLast();
+                    TextArea description = (TextArea) form.lookup(".text-area");
+                    Button send = (Button) pane.lookupButton(pane.getButtonTypes().get(0));
+                    Button draft = (Button) pane.lookupButton(pane.getButtonTypes().get(1));
+                    Button cancel = (Button) pane.lookupButton(ButtonType.CANCEL);
+                    if (step.get() == 0) {
+                        pane.applyCss();
+                        pane.layout();
+                        for (Button button : new Button[] {send, draft, cancel}) {
+                            assertTrue("Full button text must fit: " + button.getText(),
+                                button.getWidth() + 1 >= button.prefWidth(-1));
+                            assertTrue("Button must fit inside the dialog",
+                                button.localToScene(button.getBoundsInLocal()).getMaxX() <= pane.getWidth() + 1);
+                        }
+                        description.setText("Report completion regression");
+                        ((CheckBox) form.lookup(".check-box")).setSelected(false);
+                        step.incrementAndGet();
+                        send.fire();
+                    } else if (failFirst && step.get() == 1 && status.getText().contains("Test failure")) {
+                        assertFalse(send.isDisabled());
+                        assertFalse(draft.isDisabled());
+                        assertFalse(cancel.isDisabled());
+                        assertEquals("Report completion regression", description.getText());
+                        step.incrementAndGet();
+                        send.fire();
+                    } else if (status.getText().equals(UiTranslator.text("Your report was sent. Thank you!"))) {
+                        assertTrue(reportWindow.isShowing());
+                        assertTrue(send.isDisabled());
+                        assertTrue(draft.isDisabled());
+                        assertFalse(cancel.isDisabled());
+                        assertEquals(UiTranslator.text("Close"), cancel.getText());
+                        assertEquals(failFirst ? 2 : 1, sends.get());
+                        poll.stop();
+                        cancel.fire();
+                        assertFalse(reportWindow.isShowing());
+                        step.set(3);
+                    }
+                } catch (Throwable t) {
+                    failure.set(t);
+                    poll.stop();
+                    new ArrayList<>(Window.getWindows()).stream()
+                        .filter(w -> w instanceof Stage s && s.getOwner() == stage).forEach(Window::hide);
+                }
+            }));
+            poll.setCycleCount(Timeline.INDEFINITE);
+            try {
+                poll.play();
+                ReportUi.show(stage.getScene(), email);
+                if (failure.get() != null) throw new AssertionError(failure.get());
+                assertEquals("Success must leave an operable Close button", 3, step.get());
+            } finally {
+                poll.stop();
+                stage.close();
+                translator.setLanguage(previousLanguage);
+            }
+        });
+    }
+
+    @Test
+    public void updateAlertKeepsItsRootAndSeparatesReportFromUpdateButtons() throws Exception {
+        onFx(() -> {
+            Platform.setImplicitExit(false);
+            ReportUi.install();
+            ButtonType download = new ButtonType("Download update", ButtonBar.ButtonData.OK_DONE);
+            ButtonType later = new ButtonType("Later", ButtonBar.ButtonData.CANCEL_CLOSE);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION,
+                "The update downloads in the background and is used the next time the app starts.",
+                download, later);
+            alert.setHeaderText("Update available: version 1.2.5");
+            alert.getDialogPane().getStylesheets().add(ReportUiTest.class
+                .getResource("/com/dnd/ui/styles/dnd-theme.css").toExternalForm());
+            try {
+                alert.show();
+                DialogPane pane = alert.getDialogPane();
+                Scene scene = pane.getScene();
+                assertSame(pane, scene.getRoot());
+                pane.applyCss();
+                pane.layout();
+                Button report = reportButton(scene);
+                var bounds = report.localToScene(report.getBoundsInLocal());
+                for (ButtonType type : new ButtonType[] { download, later }) {
+                    var button = pane.lookupButton(type);
+                    assertFalse("Report must not overlap " + type.getText(),
+                        bounds.intersects(button.localToScene(button.getBoundsInLocal())));
+                }
+                ((Button) pane.lookupButton(later)).fire();
+                assertFalse(alert.isShowing());
+                assertSame(later, alert.getResult());
+            } finally {
+                alert.close();
+            }
         });
     }
 

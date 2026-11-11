@@ -105,7 +105,9 @@ public class CharacterClass implements Printable {
     private UpgradeTree upgradeTree;
 
     public UpgradeTree getUpgradeTree() {
-        if (upgradeTree == null || UpgradeRules.isLegacyStarter(this, upgradeTree)) upgradeTree = UpgradeRules.starter(this);
+        if (upgradeTree == null || UpgradeRules.isLegacyStarter(this, upgradeTree)
+                || UpgradeRules.isPreviousStarter(this, upgradeTree)) upgradeTree = UpgradeRules.starter(this);
+        UpgradeRules.migrateConnections(upgradeTree);
         return upgradeTree;
     }
     public void setUpgradeTree(UpgradeTree value) { upgradeTree = value == null ? new UpgradeTree() : value; }

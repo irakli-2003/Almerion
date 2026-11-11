@@ -409,22 +409,43 @@ Click a character card, or open the player list, then **View / Edit**.
 Open **Worldbuilding > Class Upgrade Trees**, choose a class, and edit its visual tree.
 Each class starts with a four-tier tree: an always-unlocked class foundation, two named
 training paths, four middle nodes and eight leaf nodes. Every non-leaf starter node has at
-least two children. Leaves require two prerequisites across paths. Add or rename branches, click a
-node to edit it, and select any number of prerequisite nodes (all must be unlocked).
+least two children. Ordinary paths let a character specialize; selected stronger leaves
+also require training from the other path. Named vertical sections show branch membership,
+so branch names are not repeated on node cards. Add or rename branches and click a node to
+edit its **Parent Id**, unlimited **Children**, and additional **Prerequisites**.
+The parent is always required; every additional prerequisite must also be unlocked.
+Changing either end updates the reciprocal child/parent links. Removing a child reconnects
+it to the foundation; edit that child's parent to move it elsewhere.
 Prerequisites can cross branches. Branches may mix unless the GM links specific nodes as
 **Exclusive With**; a single link prevents taking both choices in either order. Cycles,
 missing links and mutually exclusive prerequisites cannot be saved.
 
-Nodes have a name, feat description, minimum level and an optional uploaded picture shown
+Required character level is the node's tier in its parent hierarchy: foundation 1,
+then 2, 3, 4 and so on. Additional prerequisites do not move a node into a later tier,
+but can require spending more choices before it can be unlocked. Minimum levels update
+automatically when parents change; an ordinary starter path can reach a leaf at level 4.
+Nodes have a name, feat description and an optional uploaded picture shown
 in a standard 48-pixel frame. Configure permanent HP, mana or ability-score increases,
 AC, weapon/unarmed attack bonuses, basic attack damage, Rage damage and walking speed.
 To grant an active ability, first create it in **Spells**, then select it under the node's
 **Spell Ids** reward. It uses that spell's existing casting costs, effects and cooldowns.
 Every node must also grant a named feat under **Features** or an ability under **Spell Ids**.
+Any class can receive spell rewards. Only caster starter trees include them by default:
+cantrips near the foundation, rank-1 spells next, then rank-2 leaf rewards for full/pact
+casters. Half/third casters and energy-based artificers keep rank-1 leaf spells.
+Under **Spell Alternatives**, select a primary spell from **Spell Ids** and predefine its
+same-spell-level replacement list. A character who already knows the primary chooses an
+unlearned spell from that list, never an arbitrary spell. If no unlearned options remain,
+a warning allows continuing with the feat and other bonuses without learning a new spell.
+Cancelling leaves the unlock unspent. Saved rewards record the spell actually learned.
+Spell grants do not add free spell slots, refill resources, or change casting rules; the GM
+can configure a non-caster's casting resources separately.
 Feats can specify **Uses Per Rest** and **Short Rest Recharge** to get combat use counters.
 Recognized class feats retain their built-in mechanics; other feats give explicit GM-resolved
 effects, action costs and limits. Numeric bonuses alone are not sufficient to save a node.
-Use the zoom slider and drag the graph to explore the spreading branches.
+Yellow routed lines show both parent and additional prerequisite links, with generous
+space between tiers. Use the zoom slider, **Ctrl+ / Ctrl-** (including numpad keys),
+and drag the graph to explore the branches. Zoom is retained when the view refreshes.
 Whole-tree saves require at least four tiers, eight leaves, two children per non-leaf
 and a multi-prerequisite choice. Intermediate edits can be incomplete while you build.
 

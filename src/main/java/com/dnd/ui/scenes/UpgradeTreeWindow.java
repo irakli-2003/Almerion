@@ -3,17 +3,21 @@ package com.dnd.ui.scenes;
 import com.dnd.data.CampaignRepositories;
 import com.dnd.data.JsonMappers;
 import com.dnd.model.character.*;
+import com.dnd.model.magic.Spell;
 import com.dnd.ui.ImageStore;
 import com.dnd.ui.components.EntityForm;
 import com.dnd.ui.components.ImageFolders;
 import com.dnd.ui.i18n.UiTranslator;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Window;
 import java.util.*;
 
 public final class UpgradeTreeWindow {
+    private static final String ZOOM = "almerion.upgrade-zoom", ZOOM_HANDLER = "almerion.upgrade-zoom-handler";
     private UpgradeTreeWindow() { }
 
     public static void showEditor(BaseScene owner, CampaignRepositories repos) {
@@ -37,7 +41,7 @@ public final class UpgradeTreeWindow {
         BorderPane graph = new BorderPane();
         Label message = owner.body("");
         message.setWrapText(true);
-        Runnable refresh = () -> refreshGraph(graph, owner, repos, draft);
+        Runnable refresh = () -> refreshGraph(graph, dialog.getDialogPane(), owner, repos, draft);
         Button branch = owner.btn("Add Branch", () -> {
             TextInputDialog ask = new TextInputDialog();
             ask.setTitle("Branch name");
@@ -76,16 +80,19 @@ public final class UpgradeTreeWindow {
             var n = new UpgradeTree.Node();
             n.setId("node-" + UUID.randomUUID());
             n.setBranchId(draft.getUpgradeTree().getBranches().getFirst().getId());
+            n.setParentId(UpgradeRules.ROOT);
             if (editNode(owner, repos, draft, n, true)) refresh.run();
         });
-        Label hint = owner.body("Each level-up earns one choice. All prerequisites are required; branches may mix."
+        Label hint = owner.body("Each level-up earns one choice. The parent and all additional prerequisites are required; branches may mix."
+            + " Minimum level follows the node's tier: foundation 1, then 2, 3, 4 and so on."
             + " Exclusive links block both directions. IDs stay stable when renamed."
             + " Spell rewards can grant any GM-created ability from Worldbuilding > Spells."
             + " Every node grants a named feat or ability as well as any numeric rewards."
             + " GM-resolved feats state their action, limits and effect; granted spells use the spell system."
             + " Saved unlocks keep their original rewards when the tree changes.");
         hint.setWrapText(true);
-        VBox content = new VBox(10, hint, new FlowPane(8, 8, branch, editBranch, deleteBranch, add), graph, message);
+        Label controls = owner.body("Branches are vertical sections. Ctrl+ / Ctrl- zoom; drag to pan.");
+        VBox content = new VBox(10, hint, controls, new FlowPane(8, 8, branch, editBranch, deleteBranch, add), graph, message);
         VBox.setVgrow(graph, Priority.ALWAYS);
         content.setPrefSize(1000, 680);
         dialog.getDialogPane().setContent(content);
@@ -112,30 +119,34 @@ public final class UpgradeTreeWindow {
         dialog.showAndWait();
     }
 
-    private static void refreshGraph(BorderPane graph, BaseScene owner, CampaignRepositories repos, CharacterClass cls) {
+    private static void refreshGraph(BorderPane graph, DialogPane dialogPane, BaseScene owner, CampaignRepositories repos, CharacterClass cls) {
         graph.setCenter(graphPanel(new UpgradeTreeView(repos.campaignRoot(), cls, null, n -> {
             if (UpgradeRules.ROOT.equals(n.getId())) { owner.showInfo(n.getName(), n.getDescription()); return; }
-            if (editNode(owner, repos, cls, n, false)) refreshGraph(graph, owner, repos, cls);
-        })));
+            if (editNode(owner, repos, cls, n, false)) refreshGraph(graph, dialogPane, owner, repos, cls);
+        }), dialogPane));
     }
 
     private static boolean editNode(BaseScene owner, CampaignRepositories repos, CharacterClass cls,
                                      UpgradeTree.Node original, boolean isNew) {
-        var draft = JsonMappers.forCampaign(repos.campaignRoot()).convertValue(original, UpgradeTree.Node.class);
+        var mapper = JsonMappers.forCampaign(repos.campaignRoot());
+        var draft = mapper.convertValue(original, UpgradeTree.Node.class);
         var tree = cls.getUpgradeTree();
         var catalogs = new LinkedHashMap<>(EntityDetailScene.catalogsFor(repos));
         catalogs.put("branchId", tree.getBranches().stream().map(b -> new EntityForm.Ref(b.getId(), b.getName())).toList());
         var links = tree.getNodes().stream().filter(n -> !n.getId().equals(draft.getId()))
             .map(n -> new EntityForm.Ref(n.getId(), n.getName())).toList();
-        var prerequisites = new ArrayList<>(links);
-        prerequisites.addFirst(new EntityForm.Ref(UpgradeRules.ROOT, UpgradeRules.foundation(cls, null).getName()));
-        catalogs.put("prerequisites", prerequisites); catalogs.put("exclusiveWith", links);
-        catalogs.put("spellIds", repos.spells().list().stream().map(s -> new EntityForm.Ref(s.getId(), s.getName())).toList());
+        var parents = new ArrayList<>(links);
+        parents.addFirst(new EntityForm.Ref(UpgradeRules.ROOT, UpgradeRules.foundation(cls, null).getName()));
+        catalogs.put("parentId", parents); catalogs.put("children", links);
+        catalogs.put("prerequisites", links); catalogs.put("exclusiveWith", links);
+        var spellRefs = repos.spells().list().stream().map(s -> new EntityForm.Ref(s.getId(), s.getName())).toList();
+        catalogs.put("spellIds", spellRefs); catalogs.put("spellId", spellRefs);
+        catalogs.put("alternativeSpellIds", spellRefs);
         List<EntityForm.Ref> abilities = new ArrayList<>();
         abilities.add(new EntityForm.Ref("", "(none)"));
         repos.statSchema().getAbilities().forEach(a -> abilities.add(new EntityForm.Ref(a.id(), a.name())));
         catalogs.put("abilityId", abilities);
-        EntityForm form = EntityForm.of(UpgradeTree.Node.class, draft, Set.of("id", "imagePath"), catalogs);
+        EntityForm form = EntityForm.of(UpgradeTree.Node.class, draft, Set.of("id", "imagePath", "minimumLevel"), catalogs);
         Label message = owner.body("");
         message.setWrapText(true);
         Label picture = owner.body(Objects.toString(draft.getImagePath(), ""));
@@ -154,47 +165,50 @@ public final class UpgradeTreeWindow {
         Dialog<ButtonType> dialog = dialog(owner, isNew ? "Add Node" : original.getName());
         ButtonType delete = new ButtonType("Delete Node", ButtonBar.ButtonData.OTHER);
         if (!isNew) dialog.getDialogPane().getButtonTypes().add(0, delete);
-        VBox content = new VBox(10, new FlowPane(8, 8, image, clear), picture, form.getNode(), message);
+        Label tier = owner.body("Minimum level follows the parent hierarchy. Changing a parent automatically updates the node and its descendants.");
+        tier.setWrapText(true);
+        VBox content = new VBox(10, tier, new FlowPane(8, 8, image, clear), picture, form.getNode(), message);
         ScrollPane scroll = scroll(content); scroll.setFitToWidth(true);
         scroll.setPrefViewportWidth(850); scroll.setPrefViewportHeight(600);
         dialog.getDialogPane().setContent(scroll);
         boolean[] saved = {false};
         dialog.getDialogPane().lookupButton(ButtonType.OK).addEventFilter(ActionEvent.ACTION, event -> {
-            List<UpgradeTree.Node> before = new ArrayList<>(tree.getNodes());
             try {
                 form.writeTo(draft);
-                tree.getNodes().removeIf(n -> n.getId().equals(original.getId()));
-                tree.getNodes().add(draft);
-                UpgradeRules.validate(tree);
-                validateReward(repos, draft);
+                var candidate = mapper.convertValue(tree, UpgradeTree.class);
+                UpgradeRules.editConnections(candidate, mapper.convertValue(draft, UpgradeTree.Node.class));
+                validateReward(repos, draft, spellCatalog(repos));
+                cls.setUpgradeTree(candidate);
                 saved[0] = true;
-            } catch (RuntimeException ex) { tree.setNodes(before); message.setText(ex.getMessage()); event.consume(); }
+            } catch (RuntimeException ex) { message.setText(ex.getMessage()); event.consume(); }
         });
         if (!isNew) dialog.getDialogPane().lookupButton(delete).addEventFilter(ActionEvent.ACTION, event -> {
-            if (tree.getNodes().stream().anyMatch(n -> n.getPrerequisites().contains(original.getId())
+            if (tree.getNodes().stream().anyMatch(n -> UpgradeRules.requiredNodes(n).contains(original.getId())
                     || n.getExclusiveWith().contains(original.getId()))) {
                 message.setText(UiTranslator.text("Remove links to this node before deleting it."));
                 event.consume(); return;
             }
-            tree.getNodes().remove(original); saved[0] = true;
+            var candidate = mapper.convertValue(tree, UpgradeTree.class);
+            candidate.getNodes().removeIf(n -> n.getId().equals(original.getId()));
+            UpgradeRules.validate(candidate);
+            cls.setUpgradeTree(candidate); saved[0] = true;
         });
         dialog.showAndWait();
         return saved[0];
     }
 
     private static void validateRewards(CampaignRepositories repos, UpgradeTree tree) {
+        var spells = spellCatalog(repos);
         for (var n : tree.getNodes()) {
-            validateReward(repos, n);
+            validateReward(repos, n, spells);
         }
     }
 
-    private static void validateReward(CampaignRepositories repos, UpgradeTree.Node n) {
+    private static void validateReward(CampaignRepositories repos, UpgradeTree.Node n, Map<String, Spell> spells) {
         if (n.getReward().getFeatures().isEmpty() && n.getReward().getSpellIds().isEmpty()) {
             throw new IllegalArgumentException("Every upgrade node must grant a named feat or ability: " + n.getName());
         }
-        for (String id : n.getReward().getSpellIds()) {
-            if (repos.spells().getById(id) == null) throw new IllegalArgumentException("Unknown spell or ability: " + id);
-        }
+        UpgradeRules.validateSpells(n.getReward(), spells::get);
         var r = n.getReward();
         if (r.getAbilityIncrease() > 0 && repos.statSchema().getAbilities().stream().noneMatch(a -> a.id().equals(r.getAbilityId()))) {
             throw new IllegalArgumentException("Unknown ability score: " + r.getAbilityId());
@@ -238,6 +252,8 @@ public final class UpgradeTreeWindow {
                 owner.styleDialog(ask);
                 if (ask.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) return;
                 try {
+                    var selections = chooseSpellRewards(owner, pc, n.getReward(), spellCatalog(repos));
+                    if (selections.isEmpty()) return;
                     if (Window.getWindows().stream().anyMatch(w -> w.getProperties().containsKey("almerion.map"))) {
                         throw new IllegalArgumentException("Close battle windows before unlocking upgrades.");
                     }
@@ -248,7 +264,7 @@ public final class UpgradeTreeWindow {
                             || !mapper.valueToTree(cls.getUpgradeTree()).equals(mapper.valueToTree(liveClass.getUpgradeTree()))) {
                         throw new IllegalArgumentException("This character or class changed. Reopen the upgrade tree before saving.");
                     }
-                    UpgradeRules.unlock(draft, liveClass, n.getId(), repos.spells()::getById);
+                    UpgradeRules.unlock(draft, liveClass, n.getId(), spellCatalog(repos)::get, selections.get());
                     repos.players().save(draft);
                     pc.setUpgrades(draft.getUpgrades()); pc.setStats(draft.getStats()); pc.setSpells(draft.getSpells());
                     pc.setMaxHitPoints(draft.getMaxHitPoints()); pc.setCurrentHitPoints(draft.getCurrentHitPoints());
@@ -256,7 +272,7 @@ public final class UpgradeTreeWindow {
                     refresh[0].run(); changed.run();
                 } catch (RuntimeException ex) { error(owner, ex.getMessage()); }
             });
-            VBox graphPanel = graphPanel(graph);
+            VBox graphPanel = graphPanel(graph, dialog.getDialogPane());
             VBox.setVgrow(graphPanel, Priority.ALWAYS);
             content.getChildren().setAll(budget, note, graphPanel);
             if (cls.getUpgradeTree().getNodes().isEmpty()) {
@@ -266,6 +282,41 @@ public final class UpgradeTreeWindow {
         refresh[0].run();
         dialog.getDialogPane().setContent(content);
         dialog.showAndWait();
+    }
+
+    private static Map<String, Spell> spellCatalog(CampaignRepositories repos) {
+        Map<String, Spell> spells = new LinkedHashMap<>();
+        repos.spells().list().forEach(s -> spells.put(s.getId(), s));
+        return spells;
+    }
+
+    static Optional<Map<String, String>> chooseSpellRewards(BaseScene owner, PlayerCharacter pc,
+            UpgradeTree.Reward reward, Map<String, Spell> spells) {
+        Map<String, String> selected = new LinkedHashMap<>();
+        for (var choice : UpgradeRules.spellChoices(pc, reward, spells::get)) {
+            if (choice.alternatives().isEmpty()) {
+                Alert warning = new Alert(Alert.AlertType.WARNING,
+                    "No unlearned predefined alternatives are available. No new spell will be learned; this unlock still grants its feat and other bonuses. Continue?",
+                    ButtonType.OK, ButtonType.CANCEL);
+                warning.setTitle("Known Spell Reward"); warning.setHeaderText(choice.primary().getName());
+                owner.styleDialog(warning);
+                if (warning.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) return Optional.empty();
+                selected.put(choice.primary().getId(), choice.primary().getId());
+            } else {
+                var options = choice.alternatives().stream().filter(s -> !selected.containsValue(s.getId()))
+                    .map(s -> new EntityForm.Ref(s.getId(), s.getName())).toList();
+                if (options.isEmpty()) throw new IllegalArgumentException("The selected rewards overlap. Choose different predefined alternatives.");
+                ChoiceDialog<EntityForm.Ref> pick = new ChoiceDialog<>(options.getFirst(), options);
+                pick.setTitle("Alternative Spell Reward");
+                pick.setHeaderText(choice.primary().getName());
+                pick.setContentText("Choose one predefined spell of the same spell level.");
+                owner.styleDialog(pick);
+                var picked = pick.showAndWait();
+                if (picked.isEmpty()) return Optional.empty();
+                selected.put(choice.primary().getId(), picked.get().id());
+            }
+        }
+        return Optional.of(selected);
     }
 
     static String rewardText(UpgradeTree.Reward r) {
@@ -279,6 +330,8 @@ public final class UpgradeTreeWindow {
         if (r.getRageDamage() != 0) parts.add(UiTranslator.text("Rage damage") + " +" + r.getRageDamage());
         if (r.getSpeed() != 0) parts.add(UiTranslator.text("Speed") + " +" + r.getSpeed());
         if (!r.getSpellIds().isEmpty()) parts.add(UiTranslator.text("Spells / abilities") + ": " + String.join(", ", r.getSpellIds()));
+        for (var alternatives : r.getSpellAlternatives()) parts.add(UiTranslator.text("Predefined same-level alternatives")
+            + " (" + alternatives.getSpellId() + "): " + String.join(", ", alternatives.getAlternativeSpellIds()));
         for (var feature : r.getFeatures()) parts.add(feature.getName() + ": " + feature.getDescription());
         return parts.isEmpty() ? UiTranslator.text("Narrative feat / existing training") : String.join("\n", parts);
     }
@@ -290,8 +343,24 @@ public final class UpgradeTreeWindow {
         owner.styleDialog(dialog); return dialog;
     }
     private static ScrollPane scroll(javafx.scene.Node node) { return new ScrollPane(node); }
-    private static VBox graphPanel(UpgradeTreeView graph) {
-        Slider zoom = new Slider(0.35, 1.25, Math.min(1, 900 / graph.getPrefWidth()));
+    static VBox graphPanel(UpgradeTreeView graph, DialogPane dialogPane) {
+        double initial = dialogPane.getProperties().get(ZOOM) instanceof Slider previous
+            ? previous.getValue() : Math.max(0.35, Math.min(1, 900 / graph.getPrefWidth()));
+        Slider zoom = new Slider(0.35, 1.25, initial);
+        zoom.setId("upgrade-tree-zoom");
+        dialogPane.getProperties().put(ZOOM, zoom);
+        if (dialogPane.getProperties().putIfAbsent(ZOOM_HANDLER, true) == null) {
+            dialogPane.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+                if (!event.isControlDown() || event.isAltDown()) return;
+                KeyCode code = event.getCode();
+                boolean increase = code == KeyCode.PLUS || code == KeyCode.EQUALS || code == KeyCode.ADD;
+                boolean decrease = code == KeyCode.MINUS || code == KeyCode.SUBTRACT;
+                if (!increase && !decrease) return;
+                Slider active = (Slider)dialogPane.getProperties().get(ZOOM);
+                active.setValue(Math.max(active.getMin(), Math.min(active.getMax(), active.getValue() + (increase ? 0.1 : -0.1))));
+                event.consume();
+            });
+        }
         graph.scaleXProperty().bind(zoom.valueProperty());
         graph.scaleYProperty().bind(zoom.valueProperty());
         ScrollPane scroll = new ScrollPane(new javafx.scene.Group(graph));

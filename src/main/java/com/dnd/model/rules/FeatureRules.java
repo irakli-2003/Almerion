@@ -253,7 +253,7 @@ public final class FeatureRules {
             for (var unlock : pc.getUpgrades().getUnlocks()) {
                 if (unlock.isHistorical()) continue;
                 for (ClassFeature f : unlock.getReward().getFeatures()) {
-                    if (f.getLevel() > pc.getLevel() || !f.appliesTo(pc.getSubclass())) continue;
+                    if (!f.appliesTo(pc.getSubclass())) continue;
                     if (result.stream().noneMatch(existing -> Objects.equals(existing.getName(), f.getName()))) result.add(f);
                 }
             }

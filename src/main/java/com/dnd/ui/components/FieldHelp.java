@@ -45,9 +45,11 @@ public final class FieldHelp {
         f("ClassFeature.usesPerRest", "For GM-resolved feats, a positive number adds a combat use counter. Zero keeps a passive reminder. Recognized class features retain their built-in mechanics.");
         f("ClassFeature.shortRestRecharge", "Restore this GM-resolved feat's uses on a short rest as well as a long rest.");
         f("ClassFeature.subclass", "Only members of this subclass get it; blank means everyone in the class.");
-        f("Node.minimumLevel", "Minimum character level for this choice. Every node costs one earned unlock.");
+        f("Node.minimumLevel", "Required character level equals the node's tier in its parent hierarchy. The foundation is tier 1. Every other node costs one earned unlock.");
         f("Node.branchId", "The named direction this node belongs to. Branches may be mixed.");
-        f("Node.prerequisites", "All selected nodes must already be unlocked. Cross-branch links are allowed.");
+        f("Node.parentId", "One mandatory parent, already unlocked before this node can be chosen. Use the class foundation for tier 2. Changing the parent updates the tier and reciprocal child lists.");
+        f("Node.children", "Any number of child nodes. Selecting a child makes this node its parent. Removing a child reconnects it to the class foundation; choose another parent on that child to move it elsewhere.");
+        f("Node.prerequisites", "Additional nodes that must already be unlocked, besides the mandatory parent. Leave the parent out of this list. Cross-branch links are allowed and do not change the tier.");
         f("Node.exclusiveWith", "Neither choice can be unlocked if the other is already selected. One link blocks both directions.");
         f("Reward.hitPoints", "Permanent increase to maximum and current HP, applied once.");
         f("Reward.mana", "Permanent increase to maximum and current mana. Does not add spell slots.");
@@ -58,6 +60,9 @@ public final class FieldHelp {
         f("Reward.armorClass", "Added to calculated AC or to the GM's fixed sheet AC.");
         f("Reward.speed", "Extra walking speed in feet.");
         f("Reward.spellIds", "Grant spells or GM-created active abilities from the campaign spell catalog. Existing spells are not duplicated.");
+        f("Reward.spellAlternatives", "For any class, define same-spell-level alternatives for primary spell rewards. Players choose only from these lists when they already know the primary spell.");
+        f("SpellAlternatives.spellId", "The primary spell under this node's Spell Ids reward. Define at most one alternative list for each primary spell.");
+        f("SpellAlternatives.alternativeSpellIds", "Predefined replacement spells, all at the primary spell's level. Known spells are excluded. If every option is known, a warning allows unlocking the feat and other bonuses without learning a new spell.");
         f("Reward.features", "Named feats granted by this node. Give each feat an effect, action cost and limits. GM-resolved feats can track uses per rest; recognized feature names use their built-in mechanics.");
         f("Node.existingTraining", "Existing class-feature names that count as equivalent prior training for this node. Historical levels can mark it unlocked without granting rewards again.");
 

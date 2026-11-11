@@ -10,6 +10,10 @@ public final class UpgradeRules {
     private UpgradeRules() { }
 
     public static UpgradeTree starter(CharacterClass cls) {
+        return starter(cls, false);
+    }
+
+    private static UpgradeTree starter(CharacterClass cls, boolean previousVersion) {
         UpgradeTree tree = new UpgradeTree();
         String key = Objects.toString(cls.getId(), "");
         String[] names = switch (key) {
@@ -46,14 +50,18 @@ public final class UpgradeRules {
                     ? new String[]{"Opening", "Precision", "Momentum", "Masterstroke", "Breakthrough", "Counterplay", "Crescendo"}
                     : new String[]{"Vigil", "Shelter", "Footwork", "Sanctuary", "Last Stand", "Safe Passage", "Rally"};
                 n.setName(names[branch] + ": " + titles[index - 1]);
-                n.setMinimumLevel(new int[]{2, 4, 8}[tier]);
+                n.setMinimumLevel(previousVersion ? new int[]{2, 4, 8}[tier] : tier + 2);
                 int trainingIndex = (index - 1) * 2 + branch;
                 if (index <= 2 && trainingIndex < earlyTraining.size()) {
                     n.getExistingTraining().add(earlyTraining.get(trainingIndex).getName());
                 }
-                n.getPrerequisites().add(index == 1 ? ROOT : b.getId() + "-" + (index / 2));
-                if (index >= 4) n.getPrerequisites().add((branch == 0 ? "resilience" : "potency")
+                String parent = index == 1 ? ROOT : b.getId() + "-" + (index / 2);
+                if (previousVersion) n.getPrerequisites().add(parent);
+                else n.setParentId(parent);
+                if (index >= 4 && (previousVersion || index == 4 || index == 7)) {
+                    n.getPrerequisites().add((branch == 0 ? "resilience" : "potency")
                     + "-" + (index <= 5 ? 2 : 3));
+                }
                 String[] feats = branch == 0
                     ? new String[]{
                         "Once per short rest, after observing an enemy for a full turn, ask the GM which of its visible defenses is weakest. This reveals no hidden statistics.",
@@ -82,10 +90,11 @@ public final class UpgradeRules {
                 if (!n.getExistingTraining().isEmpty()) {
                     var existing = earlyTraining.get(trainingIndex);
                     n.setName(existing.getName());
-                    n.setMinimumLevel(Math.max(n.getMinimumLevel(), existing.getLevel()));
+                    if (previousVersion) n.setMinimumLevel(Math.max(n.getMinimumLevel(), existing.getLevel()));
                     n.setDescription(Objects.toString(existing.getDescription(), "")
                         + "\nClass training. If already known, this feat is not granted a second time.");
                     var learned = existing.copy();
+                    if (!previousVersion) learned.setLevel(n.getMinimumLevel());
                     learned.setDescription(n.getDescription());
                     r.setFeatures(List.of(learned));
                 }
@@ -111,10 +120,69 @@ public final class UpgradeRules {
                 if ("barbarian".equals(key) && branch == 1 && tier == 0) {
                     r.setHitPoints(0); r.setBasicAttackDamage(1);
                 }
+                if (!previousVersion && caster) starterSpellReward(cls, r, branch, index);
                 tree.getNodes().add(n);
             }
         }
+        if (!previousVersion) synchronizeChildren(tree);
         return tree;
+    }
+
+    private static void starterSpellReward(CharacterClass cls, UpgradeTree.Reward reward, int branch, int index) {
+        List<List<String>> pools = switch (Objects.toString(cls.getId(), "")) {
+            case "bard" -> List.of(
+                List.of("mage-hand", "light", "minor-illusion", "prestidigitation"),
+                List.of("sleep", "detect-magic", "thunderwave", "faerie-fire", "charm-person", "cure-wounds", "healing-word"),
+                List.of("invisibility", "hold-person", "lesser-restoration"));
+            case "cleric" -> List.of(
+                List.of("light", "sacred-flame", "guidance", "thaumaturgy"),
+                List.of("detect-magic", "bless", "cure-wounds", "healing-word"),
+                List.of("spiritual-weapon", "hold-person", "lesser-restoration"));
+            case "druid" -> List.of(
+                List.of("light", "guidance", "poison-spray"),
+                List.of("thunderwave", "detect-magic", "healing-word", "entangle", "faerie-fire", "cure-wounds"),
+                List.of("moonbeam", "hold-person", "lesser-restoration"));
+            case "paladin" -> List.of(
+                List.of("sacred-flame", "light", "guidance", "thaumaturgy"),
+                List.of("detect-magic", "bless", "cure-wounds"),
+                List.of("lesser-restoration", "hold-person"));
+            case "ranger" -> List.of(
+                List.of("guidance", "poison-spray", "light"),
+                List.of("detect-magic", "entangle", "hunters-mark", "cure-wounds"),
+                List.of("lesser-restoration", "hold-person"));
+            case "warlock" -> List.of(
+                List.of("poison-spray", "prestidigitation", "chill-touch", "mage-hand", "minor-illusion"),
+                List.of("burning-hands", "sleep", "charm-person", "faerie-fire"),
+                List.of("darkness", "invisibility", "misty-step", "hold-person", "scorching-ray"));
+            case "artificer" -> List.of(
+                List.of("acid-splash", "shocking-grasp", "ray-of-frost", "fire-bolt", "light", "mage-hand", "prestidigitation"),
+                List.of("shield-spell", "detect-magic", "faerie-fire", "cure-wounds"),
+                List.of("blur", "invisibility", "web", "lesser-restoration"));
+            default -> List.of(
+                List.of("shocking-grasp", "minor-illusion", "ray-of-frost", "acid-splash", "chill-touch", "prestidigitation", "fire-bolt", "mage-hand", "light"),
+                List.of("burning-hands", "charm-person", "sleep", "thunderwave", "magic-missile", "shield-spell", "mage-armor", "detect-magic"),
+                List.of("scorching-ray", "web", "misty-step", "blur", "invisibility", "hold-person", "darkness"));
+        };
+        int desiredLevel = index == 1 ? 0 : index <= 3 ? 1 : 2;
+        int[] slots = com.dnd.model.magic.SpellSlots.maxSlots(cls.getSpellcasting(), desiredLevel + 2);
+        int availableLevel = 0;
+        for (int i = 0; i < slots.length; i++) if (slots[i] > 0) availableLevel = i + 1;
+        int spellLevel = Math.min(desiredLevel, availableLevel);
+        List<String> pool = pools.get(spellLevel);
+        int offset = (index == 1 ? 0 : index <= 3 ? index - 2 : index - 4) * 2 + branch;
+        String primary = pool.get(offset % pool.size());
+        reward.setSpellIds(List.of(primary));
+        var alternatives = new UpgradeTree.SpellAlternatives();
+        alternatives.setSpellId(primary);
+        alternatives.setAlternativeSpellIds(pool.stream().filter(id -> !id.equals(primary)).toList());
+        reward.setSpellAlternatives(List.of(alternatives));
+    }
+
+    /** Only replace the exact unedited 1.3.1 starter, including its feat/reward definitions. */
+    public static boolean isPreviousStarter(CharacterClass cls, UpgradeTree tree) {
+        if (tree.getNodes().size() != 14 || tree.getNodes().stream().anyMatch(n -> n == null || n.getParentId() != null)) return false;
+        var mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+        return mapper.valueToTree(tree).equals(mapper.valueToTree(starter(cls, true)));
     }
 
     /** Upgrade only untouched 1.3.0 starter definitions, never GM-authored trees. */
@@ -133,6 +201,7 @@ public final class UpgradeRules {
                 if (!Objects.equals(n.getBranchId(), b.getId()) || !Objects.equals(n.getName(), b.getName() + " " + (tier + 1))
                         || !Objects.equals(n.getDescription(), "A step along the " + b.getName() + " path. The GM can replace these starter rewards.")
                         || n.getImagePath() != null || !n.getExclusiveWith().isEmpty() || !n.getExistingTraining().isEmpty()
+                        || n.getParentId() != null || !n.getChildren().isEmpty() || !n.getReward().getSpellAlternatives().isEmpty()
                         || n.getMinimumLevel() != new int[]{2, 6, 10, 14}[tier]
                         || !n.getPrerequisites().equals(tier == 0 ? List.of() : List.of(b.getId() + "-" + tier))) return false;
                 var r = n.getReward();
@@ -159,6 +228,8 @@ public final class UpgradeRules {
         var root = new UpgradeTree.Node();
         root.setId(ROOT); root.setName(Objects.toString(cls.getName(), cls.getId()) + " Foundation");
         root.setMinimumLevel(1);
+        root.setChildren(cls.getUpgradeTree().getNodes().stream().filter(n -> ROOT.equals(n.getParentId()))
+            .map(UpgradeTree.Node::getId).toList());
         String subclass = pc == null ? null : pc.getSubclass();
         String basics = cls.featuresUpTo(1, subclass).stream()
             .map(f -> f.getName() + ": " + Objects.toString(f.getDescription(), "")).collect(Collectors.joining("\n"));
@@ -170,6 +241,7 @@ public final class UpgradeRules {
     }
 
     public static void validate(UpgradeTree tree) {
+        migrateConnections(tree);
         Set<String> branches = new HashSet<>();
         for (var b : tree.getBranches()) {
             require(b != null && id(b.getId()) && text(b.getName()), "Branches need a stable ID and a name.");
@@ -181,8 +253,10 @@ public final class UpgradeRules {
             require(!ROOT.equals(n.getId()), "The class foundation is built in and cannot be edited.");
             require(nodes.putIfAbsent(n.getId(), n) == null, "Duplicate node ID: " + n.getId());
             require(branches.contains(n.getBranchId()), "Unknown branch for node: " + n.getName());
-            require(n.getMinimumLevel() >= 2 && n.getMinimumLevel() <= PlayerCharacter.MAX_LEVEL,
-                "Node minimum level must be between 2 and 30.");
+            require(text(n.getParentId()) && (ROOT.equals(n.getParentId())
+                    || tree.getNodes().stream().anyMatch(parent -> parent != null && Objects.equals(parent.getId(), n.getParentId())))
+                    && !n.getId().equals(n.getParentId()),
+                "Every node needs an existing parent or the class foundation.");
             var r = n.getReward();
             require(r.getHitPoints() >= 0 && r.getHitPoints() <= 200 && r.getMana() >= 0 && r.getMana() <= 200,
                 "HP and mana rewards must be between 0 and 200.");
@@ -194,20 +268,30 @@ public final class UpgradeRules {
             require(r.getAbilityIncrease() == 0 || text(r.getAbilityId()), "Choose an ability for its score increase.");
             require(r.getSpellIds().stream().allMatch(UpgradeRules::text)
                 && new HashSet<>(r.getSpellIds()).size() == r.getSpellIds().size(), "Spell rewards need unique IDs.");
+            Set<String> alternativeSources = new HashSet<>();
+            for (var alternatives : r.getSpellAlternatives()) {
+                require(alternatives != null && r.getSpellIds().contains(alternatives.getSpellId())
+                        && alternativeSources.add(alternatives.getSpellId()),
+                    "Each alternative list must name a different primary spell reward.");
+                var ids = alternatives.getAlternativeSpellIds();
+                require(!ids.isEmpty() && ids.stream().allMatch(UpgradeRules::text)
+                        && new HashSet<>(ids).size() == ids.size() && !ids.contains(alternatives.getSpellId()),
+                    "Predefined alternatives need unique spell IDs, excluding the primary spell.");
+            }
             require(r.getFeatures().stream().allMatch(f -> f != null && text(f.getName()) && text(f.getDescription())
                     && f.getUsesPerRest() >= 0 && f.getUsesPerRest() <= 100),
                 "Granted feats need a name and a description.");
         }
         for (var n : nodes.values()) {
-            for (var edges : List.of(n.getPrerequisites(), n.getExclusiveWith())) {
+            var required = requiredNodes(n);
+            for (var edges : List.of(required, n.getExclusiveWith())) {
                 require(new HashSet<>(edges).size() == edges.size(), "Duplicate links on node: " + n.getName());
                 for (String target : edges) {
-                    if (edges == n.getPrerequisites() && ROOT.equals(target)) continue;
+                    if (edges == required && ROOT.equals(target)) continue;
                     require(nodes.containsKey(target) && !n.getId().equals(target),
                         "Node links must reference another existing node: " + n.getName());
                 }
             }
-
         }
         Map<String, Set<String>> closures = new HashMap<>();
         for (var n : nodes.values()) ancestors(n.getId(), nodes, closures, new HashSet<>());
@@ -221,6 +305,82 @@ public final class UpgradeRules {
                 }
             }
         }
+        var tiers = tiers(tree);
+        for (var n : nodes.values()) n.setMinimumLevel(tiers.get(n.getId()));
+        synchronizeChildren(tree);
+    }
+
+    /** Old prerequisite lists put the primary parent first; remaining entries stay mandatory. */
+    public static void migrateConnections(UpgradeTree tree) {
+        boolean changed = false;
+        for (var n : tree.getNodes()) {
+            if (n == null || n.getParentId() != null) continue;
+            n.setParentId(n.getPrerequisites().isEmpty() ? ROOT : n.getPrerequisites().removeFirst());
+            changed = true;
+        }
+        if (changed) synchronizeChildren(tree);
+    }
+
+    public static List<String> requiredNodes(UpgradeTree.Node node) {
+        List<String> required = new ArrayList<>();
+        required.add(node.getParentId());
+        required.addAll(node.getPrerequisites());
+        return required;
+    }
+
+    /** Parent links own the hierarchy; children are its persisted reciprocal index. */
+    public static void synchronizeChildren(UpgradeTree tree) {
+        Map<String, UpgradeTree.Node> nodes = new LinkedHashMap<>();
+        for (var n : tree.getNodes()) if (n != null) {
+            nodes.put(n.getId(), n);
+            n.setChildren(List.of());
+        }
+        for (var n : tree.getNodes()) if (n != null && nodes.containsKey(n.getParentId())) {
+            nodes.get(n.getParentId()).getChildren().add(n.getId());
+        }
+    }
+
+    public static Map<String, Integer> tiers(UpgradeTree tree) {
+        Map<String, UpgradeTree.Node> nodes = new LinkedHashMap<>();
+        tree.getNodes().forEach(n -> nodes.put(n.getId(), n));
+        Map<String, Integer> tiers = new LinkedHashMap<>();
+        tiers.put(ROOT, 1);
+        for (var n : tree.getNodes()) parentTier(n.getId(), nodes, tiers, new HashSet<>());
+        return tiers;
+    }
+
+    private static int parentTier(String id, Map<String, UpgradeTree.Node> nodes, Map<String, Integer> tiers, Set<String> path) {
+        if (tiers.containsKey(id)) return tiers.get(id);
+        require(path.add(id), "Upgrade parents contain a cycle.");
+        var node = nodes.get(id);
+        require(node != null && text(node.getParentId()), "Every node needs an existing parent or the class foundation.");
+        int tier = parentTier(node.getParentId(), nodes, tiers, path) + 1;
+        require(tier <= PlayerCharacter.MAX_LEVEL, "A tree cannot have more tiers than character levels.");
+        tiers.put(id, tier);
+        path.remove(id);
+        return tier;
+    }
+
+    /** Apply this to a candidate tree so a failed edit cannot affect the live draft. */
+    public static void editConnections(UpgradeTree tree, UpgradeTree.Node edited) {
+        require(text(edited.getParentId()), "Every node needs an existing parent or the class foundation.");
+        require(new HashSet<>(edited.getChildren()).size() == edited.getChildren().size(), "Child links must be unique.");
+        var previous = tree.getNodes().stream().filter(n -> Objects.equals(n.getId(), edited.getId())).findFirst();
+        Set<String> oldChildren = new HashSet<>(previous.map(UpgradeTree.Node::getChildren).orElse(List.of()));
+        for (String childId : edited.getChildren()) {
+            require(!Objects.equals(childId, edited.getId()), "A node cannot be its own child.");
+            var child = tree.getNodes().stream().filter(n -> Objects.equals(n.getId(), childId)).findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Unknown child node: " + childId));
+            child.setParentId(edited.getId());
+            child.getPrerequisites().remove(edited.getId());
+        }
+        for (String childId : oldChildren) if (!edited.getChildren().contains(childId)) {
+            tree.getNodes().stream().filter(n -> Objects.equals(n.getId(), childId)).findFirst().orElseThrow().setParentId(ROOT);
+        }
+        int index = previous.map(tree.getNodes()::indexOf).orElse(tree.getNodes().size());
+        tree.getNodes().removeIf(n -> Objects.equals(n.getId(), edited.getId()));
+        tree.getNodes().add(index, edited);
+        validate(tree);
     }
 
     /** Enforced on whole-tree GM saves, not intermediate edits or legacy reads. */
@@ -228,27 +388,16 @@ public final class UpgradeRules {
         validate(tree);
         if (tree.getNodes().isEmpty()) return;
         Map<String, Integer> children = new HashMap<>();
-        Map<String, Integer> depths = new HashMap<>();
-        depths.put(ROOT, 0);
         for (var n : tree.getNodes()) {
-            var parents = n.getPrerequisites().isEmpty() ? List.of(ROOT) : n.getPrerequisites();
-            for (String parent : parents) children.merge(parent, 1, Integer::sum);
+            children.merge(n.getParentId(), 1, Integer::sum);
         }
         require(children.values().stream().allMatch(count -> count >= 2),
             "Every non-leaf node, including the class foundation, needs at least two children.");
         require(tree.getNodes().stream().filter(n -> !children.containsKey(n.getId())).count() >= 8,
             "A class tree needs at least eight leaf nodes.");
-        while (depths.size() <= tree.getNodes().size()) {
-            for (var n : tree.getNodes()) {
-                var parents = n.getPrerequisites().isEmpty() ? List.of(ROOT) : n.getPrerequisites();
-                if (!depths.containsKey(n.getId()) && parents.stream().allMatch(depths::containsKey)) {
-                    depths.put(n.getId(), 1 + parents.stream().mapToInt(depths::get).max().orElseThrow());
-                }
-            }
-        }
-        require(depths.values().stream().mapToInt(Integer::intValue).max().orElse(0) >= 3,
+        require(tiers(tree).values().stream().mapToInt(Integer::intValue).max().orElse(1) >= 4,
             "A class tree needs at least four tiers including its foundation.");
-        require(tree.getNodes().stream().anyMatch(n -> n.getPrerequisites().size() > 1),
+        require(tree.getNodes().stream().anyMatch(n -> !n.getPrerequisites().isEmpty()),
             "Include a stronger node that requires training from more than one prerequisite.");
     }
 
@@ -257,7 +406,7 @@ public final class UpgradeRules {
         if (done.containsKey(id)) return done.get(id);
         require(path.add(id), "Upgrade prerequisites contain a cycle.");
         Set<String> result = new LinkedHashSet<>();
-        for (String parent : nodes.get(id).getPrerequisites()) {
+        for (String parent : requiredNodes(nodes.get(id))) {
             if (ROOT.equals(parent)) continue;
             result.add(parent);
             result.addAll(ancestors(parent, nodes, done, path));
@@ -378,7 +527,7 @@ public final class UpgradeRules {
     }
 
     private static boolean linksSatisfied(UpgradeProgress p, CharacterClass cls, UpgradeTree.Node n) {
-        if (!n.getPrerequisites().stream().allMatch(id -> selected(p, cls.getId(), id))) return false;
+        if (!requiredNodes(n).stream().allMatch(id -> selected(p, cls.getId(), id))) return false;
         for (var u : p.getUnlocks()) {
             if (!Objects.equals(u.getClassId(), cls.getId())) continue;
             if (n.getExclusiveWith().contains(u.getNodeId()) || u.getExclusiveWith().contains(n.getId())) return false;
@@ -391,13 +540,49 @@ public final class UpgradeRules {
     public static String blockedReason(PlayerCharacter pc, CharacterClass cls, UpgradeTree.Node n) {
         if (ROOT.equals(n.getId())) return "Always unlocked class foundation";
         if (selected(pc.getUpgrades(), cls.getId(), n.getId())) return "Already unlocked";
-        if (pc.getLevel() < n.getMinimumLevel()) return "Required level: " + n.getMinimumLevel();
+        int requiredLevel = tiers(cls.getUpgradeTree()).get(n.getId());
+        if (pc.getLevel() < requiredLevel) return "Required level: " + requiredLevel;
         if (pc.getUpgrades() == null || !linksSatisfied(pc.getUpgrades(), cls, n)) return "Prerequisites or exclusive choices block this node.";
         if (available(pc) == 0) return "No unlocks available. Gain a level to earn one.";
         return "";
     }
 
+    public record SpellChoice(Spell primary, List<Spell> alternatives) { }
+
+    public static void validateSpells(UpgradeTree.Reward reward, Function<String, Spell> spells) {
+        for (String id : reward.getSpellIds()) require(spells.apply(id) != null, "Unknown spell or ability: " + id);
+        for (var alternatives : reward.getSpellAlternatives()) {
+            Spell primary = spells.apply(alternatives.getSpellId());
+            require(primary != null, "Unknown spell or ability: " + alternatives.getSpellId());
+            for (String id : alternatives.getAlternativeSpellIds()) {
+                Spell alternative = spells.apply(id);
+                require(alternative != null, "Unknown spell or ability: " + id);
+                require(alternative.getLevel() == primary.getLevel(), "Predefined alternatives must have the same spell level as their primary reward.");
+            }
+        }
+    }
+
+    public static List<SpellChoice> spellChoices(PlayerCharacter pc, UpgradeTree.Reward reward, Function<String, Spell> spells) {
+        validateSpells(reward, spells);
+        Set<String> known = pc.getSpells() == null ? Set.of() : pc.getSpells().stream()
+            .map(PlayerCharacter.PlayerSpell::getSpellId).collect(Collectors.toSet());
+        List<SpellChoice> choices = new ArrayList<>();
+        for (String id : reward.getSpellIds()) if (known.contains(id)) {
+            var predefined = reward.getSpellAlternatives().stream().filter(a -> id.equals(a.getSpellId())).findFirst();
+            List<Spell> alternatives = predefined.map(a -> a.getAlternativeSpellIds().stream()
+                .filter(option -> !known.contains(option) && !reward.getSpellIds().contains(option)).map(spells).toList())
+                .orElse(List.of());
+            choices.add(new SpellChoice(spells.apply(id), alternatives));
+        }
+        return choices;
+    }
+
     public static void unlock(PlayerCharacter pc, CharacterClass cls, String nodeId, Function<String, Spell> spells) {
+        unlock(pc, cls, nodeId, spells, Map.of());
+    }
+
+    public static void unlock(PlayerCharacter pc, CharacterClass cls, String nodeId, Function<String, Spell> spells,
+                              Map<String, String> spellSelections) {
         require(pc != null && cls != null && text(cls.getId()) && Objects.equals(pc.getClassId(), cls.getId()),
             "This character or class changed. Reopen the upgrade tree before saving.");
         validate(cls.getUpgradeTree());
@@ -407,14 +592,30 @@ public final class UpgradeRules {
         String blocked = blockedReason(pc, cls, node);
         require(blocked.isBlank(), blocked);
         var reward = node.getReward();
+        var choices = spellChoices(pc, reward, spells);
+        require(spellSelections.keySet().equals(choices.stream().map(c -> c.primary().getId()).collect(Collectors.toSet())),
+            "Choose a predefined alternative for each known spell, or acknowledge that no new spell can be learned.");
+        Set<String> resolved = new LinkedHashSet<>();
+        List<String> noNewSpell = new ArrayList<>();
+        for (var choice : choices) {
+            String selected = spellSelections.get(choice.primary().getId());
+            if (choice.alternatives().isEmpty()) {
+                require(choice.primary().getId().equals(selected), "No unlearned predefined alternatives are available for this spell.");
+                noNewSpell.add(choice.primary().getName());
+            } else {
+                require(choice.alternatives().stream().anyMatch(s -> s.getId().equals(selected)),
+                    "Choose only an unlearned predefined alternative of the same spell level.");
+            }
+        }
         List<PlayerCharacter.PlayerSpell> grants = new ArrayList<>();
         for (String id : reward.getSpellIds()) {
-            Spell spell = spells.apply(id);
-            require(spell != null, "Unknown spell or ability: " + id);
-            boolean known = pc.getSpells() != null && pc.getSpells().stream().anyMatch(s -> id.equals(s.getSpellId()));
+            String selected = spellSelections.getOrDefault(id, id);
+            Spell spell = spells.apply(selected);
+            boolean known = pc.getSpells() != null && pc.getSpells().stream().anyMatch(s -> selected.equals(s.getSpellId()));
             if (!known) {
+                require(resolved.add(selected), "Choose a different alternative for each spell reward.");
                 var grant = new PlayerCharacter.PlayerSpell();
-                grant.setSpellId(id);
+                grant.setSpellId(selected);
                 grant.setRank(spell.getLevel());
                 grant.setActive(true);
                 grants.add(grant);
@@ -428,6 +629,10 @@ public final class UpgradeRules {
             require(newScore <= 30, "This reward would raise an ability score above 30.");
         }
         var saved = snapshot(cls, node, pc.getLevel());
+        saved.getReward().setSpellIds(new ArrayList<>(resolved));
+        saved.getReward().setSpellAlternatives(List.of());
+        if (!noNewSpell.isEmpty()) saved.setDescription(Objects.toString(saved.getDescription(), "")
+            + "\nNo new spell learned; no unlearned predefined alternatives: " + String.join(", ", noNewSpell));
         int maxHp = Math.addExact(pc.getMaxHitPoints(), reward.getHitPoints());
         int currentHp = Math.addExact(pc.getCurrentHitPoints(), reward.getHitPoints());
         int maxMana = Math.addExact(pc.getMaxMana(), reward.getMana());
@@ -465,6 +670,11 @@ public final class UpgradeRules {
         c.setArmorClass(r.getArmorClass()); c.setAttackBonus(r.getAttackBonus());
         c.setBasicAttackDamage(r.getBasicAttackDamage()); c.setRageDamage(r.getRageDamage());
         c.setSpeed(r.getSpeed()); c.setSpellIds(new ArrayList<>(r.getSpellIds()));
+        c.setSpellAlternatives(r.getSpellAlternatives().stream().map(a -> {
+            var copy = new UpgradeTree.SpellAlternatives();
+            copy.setSpellId(a.getSpellId()); copy.setAlternativeSpellIds(a.getAlternativeSpellIds());
+            return copy;
+        }).toList());
         c.setFeatures(r.getFeatures().stream().map(ClassFeature::copy).toList());
         return c;
     }

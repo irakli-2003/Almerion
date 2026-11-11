@@ -382,11 +382,16 @@ credentials or custom provider addresses. To configure SMTP:
 
 - `CharacterClass.upgradeTree` contains stable-ID branches and a DAG of `UpgradeTree.Node`
   choices. Classes without that property get editable starter paths; an explicitly empty
-  tree stays empty. Untouched eight-node 1.3.0 starters are recognized conservatively
+  tree stays empty. Untouched eight-node 1.3.0 and fourteen-node 1.3.1 starters are recognized conservatively
   (including rewards and links) and expanded; customized definitions are never replaced.
   Starters have 14 selectable nodes in a 2/4/8 topology under virtual `class-foundation`.
   The root is always selected, immutable, level one and never consumes a budget entry.
-  Leaf prerequisites cross the two branches. This is independent of legacy class auto-grants.
+  Each node has a mandatory `parentId`, a reciprocal unlimited `children` index and
+  optional additional `prerequisites`. Parent-only depth defines the required level
+  (root 1, then 2/3/4); extra prerequisites affect eligibility, never layout tier.
+  Old lists migrate their first prerequisite to the parent, retaining all other requirements.
+  Only selected stronger starter leaves cross branches, leaving ordinary level-4 paths.
+  This is independent of legacy class auto-grants.
   `validateBranching` enforces four tiers, eight leaves, two children per non-leaf and
   multi-prerequisite training on whole-tree GM saves; intermediate edits and legacy reads
   use the basic graph validator so an older custom design can be repaired incrementally.
@@ -401,11 +406,27 @@ credentials or custom provider addresses. To configure SMTP:
 - `PlayerCharacter.upgrades` stores the earned budget and original reward snapshots.
   HP/mana/ability increases and spell grants apply once. `FeatureRules` reads saved AC,
   weapon/unarmed hit/damage, Rage and speed bonuses; later definition edits never change
-  earned rewards. Normal JSON repositories, online snapshots, LAN sheets and PDF rules
+  earned rewards. Earned feats are available upon unlock without a second feature-level
+  gate; normal class/personal feature progression retains its own level checks.
+  Normal JSON repositories, online snapshots, LAN sheets and PDF rules
   retain these changes. Never recompute earned points from the character's current level.
+- Spell rewards are class-agnostic. Only caster starters add primary spells and
+  `Reward.spellAlternatives` by default. Alternatives are GM-defined per primary and
+  must resolve to the same catalog spell level. `spellChoices` offers only unknown
+  alternatives, excluding other primary rewards. Unlock revalidates the submitted map,
+  rejects duplicate/unknown selections before applying rewards and requires explicit
+  acknowledgment for exhausted lists. The UI warns before that acknowledgment, and
+  snapshots record only spells actually learned, with no pending alternative lists.
+  Existing spell ranks/activation states and casting resources are preserved.
 - `UpgradeTreeWindow` is the GM editor and shared character viewer; `UpgradeTreeView`
-  lays out fixed 48-pixel icons in centered, spreading rows with prerequisite curves,
-  per-node branch labels and a zoomable/pannable viewport. No separate history branch.
+  lays out fixed 48-pixel icons in adaptive vertical branch bands. Headers replace
+  per-node branch names. All links use yellow orthogonal channels; same-row, backwards
+  and skipped-tier dependencies route through outer gutters without crossing cards.
+  Tier gaps and section widths grow with link/child counts. Parent/children edits use
+  a cloned candidate graph, validated before replacing the draft. Minimum levels are
+  derived, not independently editable. Ctrl+/Ctrl- work anywhere in either tree dialog,
+  including numpad keys; one dialog-level handler follows the active slider on refresh.
+  No separate history branch.
   Uploaded pictures use campaign-relative `images/upgrades` paths. The generic entity form
   intentionally hides tree definitions and earned ledgers to avoid bypassing validation.
   Player profiles are read-only; mechanical selection remains GM-controlled.

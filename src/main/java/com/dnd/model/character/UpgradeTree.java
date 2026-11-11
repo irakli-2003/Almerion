@@ -30,6 +30,8 @@ public class UpgradeTree {
         private String description;
         private String imagePath;
         private int minimumLevel = 2;
+        private String parentId;
+        private List<String> children = new ArrayList<>();
         private List<String> prerequisites = new ArrayList<>();
         private List<String> exclusiveWith = new ArrayList<>();
         private List<String> existingTraining = new ArrayList<>();
@@ -47,6 +49,10 @@ public class UpgradeTree {
         public void setImagePath(String value) { imagePath = value; }
         public int getMinimumLevel() { return minimumLevel; }
         public void setMinimumLevel(int value) { minimumLevel = value; }
+        public String getParentId() { return parentId; }
+        public void setParentId(String value) { parentId = value; }
+        public List<String> getChildren() { return children; }
+        public void setChildren(List<String> value) { children = value == null ? new ArrayList<>() : new ArrayList<>(value); }
         public List<String> getPrerequisites() { return prerequisites; }
         public void setPrerequisites(List<String> value) { prerequisites = value == null ? new ArrayList<>() : value; }
         public List<String> getExclusiveWith() { return exclusiveWith; }
@@ -56,6 +62,17 @@ public class UpgradeTree {
         public Reward getReward() { return reward; }
         public void setReward(Reward value) { reward = value == null ? new Reward() : value; }
         @Override public String toString() { return name == null ? "" : name; }
+    }
+
+    public static class SpellAlternatives {
+        private String spellId;
+        private List<String> alternativeSpellIds = new ArrayList<>();
+        public String getSpellId() { return spellId; }
+        public void setSpellId(String value) { spellId = value; }
+        public List<String> getAlternativeSpellIds() { return alternativeSpellIds; }
+        public void setAlternativeSpellIds(List<String> value) {
+            alternativeSpellIds = value == null ? new ArrayList<>() : new ArrayList<>(value);
+        }
     }
 
     /** Numeric rewards are applied once; combat modifiers are read from the saved unlock. */
@@ -70,8 +87,13 @@ public class UpgradeTree {
         private int rageDamage;
         private int speed;
         private List<String> spellIds = new ArrayList<>();
+        private List<SpellAlternatives> spellAlternatives = new ArrayList<>();
         private List<ClassFeature> features = new ArrayList<>();
 
+        public List<SpellAlternatives> getSpellAlternatives() { return spellAlternatives; }
+        public void setSpellAlternatives(List<SpellAlternatives> value) {
+            spellAlternatives = value == null ? new ArrayList<>() : new ArrayList<>(value);
+        }
         public List<ClassFeature> getFeatures() { return features; }
         public void setFeatures(List<ClassFeature> value) { features = value == null ? new ArrayList<>() : value; }
 

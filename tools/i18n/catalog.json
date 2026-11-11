@@ -523,14 +523,14 @@
   "key": "A class tree needs at least eight leaf nodes.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:240"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:397"
   ]
  },
  {
   "key": "A class tree needs at least four tiers including its foundation.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:250"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:399"
   ]
  },
  {
@@ -551,7 +551,7 @@
   "key": "A dash of magic from level {0}, up to {1}th-level spells (Spellblade, Spellthief).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:161"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:166"
   ]
  },
  {
@@ -612,10 +612,17 @@
   ]
  },
  {
+  "key": "A node cannot be its own child.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:371"
+  ]
+ },
+ {
   "key": "A node requires mutually exclusive choices: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:220"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:304"
   ]
  },
  {
@@ -629,7 +636,7 @@
   "key": "A step along the {A} path. The GM can replace these starter rewards.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:336"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:485"
   ]
  },
  {
@@ -651,6 +658,13 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/music/MusicPlayer.java:50"
+  ]
+ },
+ {
+  "key": "A tree cannot have more tiers than character levels.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:358"
   ]
  },
  {
@@ -907,7 +921,7 @@
   "key": "Add a named branch first.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:75"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:79"
   ]
  },
  {
@@ -949,7 +963,7 @@
   "key": "Add Branch",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:41"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:45"
   ]
  },
  {
@@ -1006,8 +1020,8 @@
   "key": "Add Node",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:74",
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:154"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:78",
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:165"
   ]
  },
  {
@@ -1056,7 +1070,7 @@
   "key": "Added to calculated AC or to the GM's fixed sheet AC.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:58"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:60"
   ]
  },
  {
@@ -1064,6 +1078,13 @@
   "kind": "pattern",
   "where": [
    "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2615"
+  ]
+ },
+ {
+  "key": "Additional nodes that must already be unlocked, besides the mandatory parent. Leave the parent out of this list. Cross-branch links are allowed and do not change the tier.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:52"
   ]
  },
  {
@@ -1203,13 +1224,6 @@
   ]
  },
  {
-  "key": "All selected nodes must already be unlocked. Cross-branch links are allowed.",
-  "kind": "exact",
-  "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:50"
-  ]
- },
- {
   "key": "Almerion",
   "kind": "exact",
   "where": [
@@ -1319,36 +1333,43 @@
   "key": "Already included in this character. No rewards are applied again.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:362"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:511"
   ]
  },
  {
   "key": "Already included in this character. No rewards are applied again.{A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:313"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:462"
   ]
  },
  {
   "key": "Already unlocked",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:393",
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeView.java:74"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:542",
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeView.java:163"
+  ]
+ },
+ {
+  "key": "Alternative Spell Reward",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:310"
   ]
  },
  {
   "key": "Always unlocked class foundation",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:392"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:541"
   ]
  },
  {
   "key": "Always unlocked. Starting class abilities and bonuses are already provided by the class; no rewards are applied twice.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:165"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:236"
   ]
  },
  {
@@ -1452,6 +1473,13 @@
   ]
  },
  {
+  "key": "Any number of child nodes. Selecting a child makes this node its parent. Removing a child reconnects it to the class foundation; choose another parent on that child to move it elsewhere.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:51"
+  ]
+ },
+ {
   "key": "apiKey",
   "kind": "exact",
   "where": [
@@ -1540,7 +1568,7 @@
   "key": "Arcane Resilience",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:27"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:31"
   ]
  },
  {
@@ -1554,7 +1582,7 @@
   "key": "Arcane Warden",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:17"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:21"
   ]
  },
  {
@@ -1568,7 +1596,7 @@
   "key": "Area of effect in feet; {0} means a single target.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:119"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:124"
   ]
  },
  {
@@ -1617,7 +1645,7 @@
   "key": "Artificer charges. Work like slots, but are refilled by burning fuel in a workshop furnace, not by resting.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:166"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:171"
   ]
  },
  {
@@ -1638,7 +1666,7 @@
   "key": "Ask your GM to apply this upgrade.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:227"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:241"
   ]
  },
  {
@@ -1680,7 +1708,7 @@
   "key": "Attack and saving throw rules for this action. The GM can override them for each cast.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:106"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:111"
   ]
  },
  {
@@ -1695,7 +1723,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/BattleMapWindow.java:2192",
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:277"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:328"
   ]
  },
  {
@@ -1752,7 +1780,7 @@
   "key": "Available",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeView.java:75"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeView.java:164"
   ]
  },
  {
@@ -1767,7 +1795,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:97",
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:221"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:235"
   ]
  },
  {
@@ -1875,7 +1903,7 @@
   "key": "Basic attack damage",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:278"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:329"
   ]
  },
  {
@@ -1921,63 +1949,63 @@
   "key": "Berserker",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:16"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:20"
   ]
  },
  {
   "key": "Blank = caster's calculated spell attack bonus. Editable during casting.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:110"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:115"
   ]
  },
  {
   "key": "Blank = caster's calculated spell save DC. Editable during casting.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:111"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:116"
   ]
  },
  {
   "key": "Blank = DEX modifier. Used for initiative rolls on the battle map.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:85"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:90"
   ]
  },
  {
   "key": "Blank = from level (+{0} at level {1}).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:87"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:92"
   ]
  },
  {
   "key": "Blank = from worn armor, shield and DEX. A number here replaces it everywhere, battle map included; effects still add on top.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:84"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:89"
   ]
  },
  {
   "key": "Blank = proficiency bonus + casting ability modifier.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:97"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:102"
   ]
  },
  {
   "key": "Blank = {0} + Perception skill.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:88"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:93"
   ]
  },
  {
   "key": "Blank = {0} + proficiency bonus + casting ability modifier.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:96"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:101"
   ]
  },
  {
@@ -1993,7 +2021,7 @@
   "key": "Blood magic: a spell's mana cost is paid in the caster's own hit points.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:168"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:173"
   ]
  },
  {
@@ -2007,7 +2035,7 @@
   "key": "Blueprints copied into the artificer's book; only these can be crafted.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:81"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:86"
   ]
  },
  {
@@ -2035,14 +2063,14 @@
   "key": "Bonus added to each skill check (e.g. +{0} Stealth, -{1} Animal Handling). Any whole number: positive, negative or {2}. New characters start from their ability modifiers.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:74"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:79"
   ]
  },
  {
   "key": "Bonuses added to ability scores, e.g. strength +{0}. Ability names in lowercase.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:65"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:70"
   ]
  },
  {
@@ -2064,15 +2092,22 @@
   "key": "Branch name",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:43",
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:58"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:47",
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:62"
+  ]
+ },
+ {
+  "key": "Branches are vertical sections. Ctrl+ / Ctrl- zoom; drag to pan.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:94"
   ]
  },
  {
   "key": "Branches need a stable ID and a name.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:175"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:247"
   ]
  },
  {
@@ -2100,7 +2135,7 @@
   "key": "Breakthrough",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:46"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:50"
   ]
  },
  {
@@ -2194,7 +2229,7 @@
   "key": "Campaign ability score to increase; leave blank when ability increase is zero.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:54"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:56"
   ]
  },
  {
@@ -2452,7 +2487,7 @@
   "key": "Cannot cast spells at all.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:169"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:174"
   ]
  },
  {
@@ -2536,7 +2571,7 @@
   "key": "Capsule recipe: fills one energy charge of this level instead of making an item. {0} = makes the product.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:148"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:153"
   ]
  },
  {
@@ -2573,7 +2608,7 @@
   "key": "Casting uses per spell level (or energy charges for artificers). 'Current' goes down as they cast.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:80"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:85"
   ]
  },
  {
@@ -2687,7 +2722,7 @@
   "key": "Character level needed to understand these plans.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:142"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:147"
   ]
  },
  {
@@ -2729,14 +2764,14 @@
   "key": "Character-specific training, with its unlock level. These appear beside class features in combat and shared sheets. Named mechanical hooks use the same rules as class features; other descriptions are GM reminders.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:78"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:83"
   ]
  },
  {
   "key": "Charge type: {0} Steam-pressure, {1} Thermal, {2} Shock, {3} Force, {4} Arcane Resonance. Higher charges can stand in for lower.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:150"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:155"
   ]
  },
  {
@@ -2798,6 +2833,13 @@
   ]
  },
  {
+  "key": "Child links must be unique.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:367"
+  ]
+ },
+ {
   "key": "Choose a combat playlist in the music panel first.",
   "kind": "exact",
   "where": [
@@ -2810,6 +2852,13 @@
   "where": [
    "src/main/java/com/dnd/sync/ManualFiles.java:215",
    "src/main/java/com/dnd/sync/ManualFiles.java:236"
+  ]
+ },
+ {
+  "key": "Choose a different alternative for each spell reward.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:616"
   ]
  },
  {
@@ -2850,6 +2899,13 @@
   ]
  },
  {
+  "key": "Choose a predefined alternative for each known spell, or acknowledge that no new spell can be learned.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:597"
+  ]
+ },
+ {
   "key": "Choose a saving throw or none.",
   "kind": "exact",
   "where": [
@@ -2867,7 +2923,7 @@
   "key": "Choose an ability for its score increase.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:194"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:268"
   ]
  },
  {
@@ -2927,6 +2983,20 @@
   ]
  },
  {
+  "key": "Choose one predefined spell of the same spell level.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:312"
+  ]
+ },
+ {
+  "key": "Choose only an unlearned predefined alternative of the same spell level.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:607"
+  ]
+ },
+ {
   "key": "Choose Portrait...",
   "kind": "exact",
   "where": [
@@ -2944,7 +3014,7 @@
   "key": "Choose the class whose tree you want to edit.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:24"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:28"
   ]
  },
  {
@@ -3022,7 +3092,7 @@
   "key": "Class training. If already known, this feat is not granted a second time.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:87"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:95"
   ]
  },
  {
@@ -3030,7 +3100,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/ProgressionPanel.java:96",
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:215",
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:229",
    "src/main/java/com/dnd/ui/scenes/player/CharacterProfileScene.java:94"
   ]
  },
@@ -3039,7 +3109,7 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/ui/scenes/DmMenuScene.java:161",
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:23"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:27"
   ]
  },
  {
@@ -3082,7 +3152,7 @@
   "key": "Clear Picture",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:153"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:164"
   ]
  },
  {
@@ -3275,14 +3345,14 @@
   "key": "Close battle windows before changing upgrade trees.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:31"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:35"
   ]
  },
  {
   "key": "Close battle windows before unlocking upgrades.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:242"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:258"
   ]
  },
  {
@@ -3416,7 +3486,7 @@
   "key": "Concentration spells end if the caster casts another one or is badly hurt.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:136"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:141"
   ]
  },
  {
@@ -3946,14 +4016,14 @@
   "key": "Counterplay",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:46"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:50"
   ]
  },
  {
   "key": "Crafting check DC: d{0} + INT + proficiency. Fail by {1} or more and the materials are ruined. {2} = no check.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:147"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:152"
   ]
  },
  {
@@ -3988,7 +4058,7 @@
   "key": "Create a class before editing its upgrade tree.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:21"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:25"
   ]
  },
  {
@@ -4146,7 +4216,7 @@
   "key": "Crescendo",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:46"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:50"
   ]
  },
  {
@@ -4225,7 +4295,7 @@
   "key": "Damage dealt on a hit: the dice rolled plus a flat constant, and the damage type.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:134"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:139"
   ]
  },
  {
@@ -4409,8 +4479,8 @@
   "key": "Delete Branch",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:62",
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:66"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:66",
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:70"
   ]
  },
  {
@@ -4445,7 +4515,7 @@
   "key": "Delete Node",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:155"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:166"
   ]
  },
  {
@@ -4612,7 +4682,7 @@
   "key": "Dice rolled for the effect's power; the GM rolls them at the table when the spell is cast.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:133"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:138"
   ]
  },
  {
@@ -4766,7 +4836,7 @@
   "key": "Duplicate branch ID: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:176"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:248"
   ]
  },
  {
@@ -4780,14 +4850,14 @@
   "key": "Duplicate links on node: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:203"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:288"
   ]
  },
  {
   "key": "Duplicate node ID: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:182"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:254"
   ]
  },
  {
@@ -4829,28 +4899,35 @@
   "key": "e.g. +{0}",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:102"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:107"
   ]
  },
  {
   "key": "e.g. {0}d{1} + {2} piercing",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:103"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:108"
   ]
  },
  {
   "key": "e.g. {0}d{1}. Blank = level d class hit die.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:90"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:95"
   ]
  },
  {
-  "key": "Each level-up earns one choice. All prerequisites are required; branches may mix. Exclusive links block both directions. IDs stay stable when renamed. Spell rewards can grant any GM-created ability from Worldbuilding > Spells. Every node grants a named feat or ability as well as any numeric rewards. GM-resolved feats state their action, limits and effect; granted spells use the spell system. Saved unlocks keep their original rewards when the tree changes.",
+  "key": "Each alternative list must name a different primary spell reward.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:81"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:275"
+  ]
+ },
+ {
+  "key": "Each level-up earns one choice. The parent and all additional prerequisites are required; branches may mix. Minimum level follows the node's tier: foundation {0}, then {1}, {2}, {3} and so on. Exclusive links block both directions. IDs stay stable when renamed. Spell rewards can grant any GM-created ability from Worldbuilding > Spells. Every node grants a named feat or ability as well as any numeric rewards. GM-resolved feats state their action, limits and effect; granted spells use the spell system. Saved unlocks keep their original rewards when the tree changes.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:86"
   ]
  },
  {
@@ -4878,15 +4955,15 @@
   "key": "Edit Branch",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:51",
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:55"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:55",
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:59"
   ]
  },
  {
   "key": "Edit node",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeView.java:75"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeView.java:164"
   ]
  },
  {
@@ -4944,7 +5021,7 @@
   "key": "Effects from this campaign that the spell applies. Each one's power (constant + dice) replaces the effect's own damage/healing amount; leave it at {0} with no dice to use the effect's own amount.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:130"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:135"
   ]
  },
  {
@@ -5058,7 +5135,7 @@
   "key": "Energy charge level used per activation; {0} = runs on clockwork and costs nothing.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:156"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:161"
   ]
  },
  {
@@ -5080,7 +5157,7 @@
   "key": "Energy charges poured into the build (level {0} Steam-pressure, {1} Thermal, {2} Shock...).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:146"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:151"
   ]
  },
  {
@@ -5271,7 +5348,7 @@
   "key": "Escape Artist",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:21"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:25"
   ]
  },
  {
@@ -5310,17 +5387,26 @@
   ]
  },
  {
+  "key": "Every node needs an existing parent or the class foundation.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:259",
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:356",
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:366"
+  ]
+ },
+ {
   "key": "Every non-leaf node, including the class foundation, needs at least two children.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:238"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:395"
   ]
  },
  {
   "key": "Every upgrade node must grant a named feat or ability: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:193"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:209"
   ]
  },
  {
@@ -5341,7 +5427,7 @@
   "key": "Everything else printed on the character sheet. Number boxes left blank are worked out automatically (shown under 'Calculated values' above); type a number to override it.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:83"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:88"
   ]
  },
  {
@@ -5355,21 +5441,21 @@
   "key": "Existing class-feature names that count as equivalent prior training for this node. Historical levels can mark it unlocked without granting rewards again.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:62"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:67"
   ]
  },
  {
   "key": "Existing level {A} training",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:312"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:461"
   ]
  },
  {
   "key": "Existing training",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:308"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:457"
   ]
  },
  {
@@ -5383,7 +5469,7 @@
   "key": "Experience points. At {0} the character can level up (campaign rule).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:72"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:77"
   ]
  },
  {
@@ -5425,28 +5511,28 @@
   "key": "Extra hit points that are lost first and don't stack.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:91"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:96"
   ]
  },
  {
   "key": "Extra rows for the 'Attacks & spellcasting' box, after the weapons the character carries.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:98"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:103"
   ]
  },
  {
   "key": "Extra Strength melee damage while the class Rage effect is active.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:57"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:59"
   ]
  },
  {
   "key": "Extra walking speed in feet.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:59"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:61"
   ]
  },
  {
@@ -5652,7 +5738,7 @@
   "key": "Features and traits not covered by the class or race; one per line.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:100"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:105"
   ]
  },
  {
@@ -5667,7 +5753,7 @@
   "key": "Field Engineer",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:23"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:27"
   ]
  },
  {
@@ -5851,21 +5937,21 @@
   "key": "Flat amount added to the dice, e.g. the {0} in {1}d{2} + {3}. Can be used on its own without dice.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:135"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:140"
   ]
  },
  {
   "key": "Flat damage on weapon attacks and unarmed strikes, not spell damage.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:56"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:58"
   ]
  },
  {
   "key": "Flat part of the effect's power, added to the dice (e.g. the {0} in {1}d{2} + {3}).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:132"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:137"
   ]
  },
  {
@@ -5879,7 +5965,7 @@
   "key": "Focused Training",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:29"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:33"
   ]
  },
  {
@@ -5908,7 +5994,14 @@
   "key": "Footwork",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:47"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:51"
+  ]
+ },
+ {
+  "key": "For any class, define same-spell-level alternatives for primary spell rewards. Players choose only from these lists when they already know the primary spell.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:63"
   ]
  },
  {
@@ -5936,7 +6029,7 @@
   "key": "Forest Guardian",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:18"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:22"
   ]
  },
  {
@@ -5971,7 +6064,7 @@
   "key": "Free label to sort the blueprint book, e.g. Utility, Light combat, Medium combat.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:141"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:146"
   ]
  },
  {
@@ -5999,7 +6092,7 @@
   "key": "Fuel units burning in the workshop furnace, waiting to be turned into charges.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:82"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:87"
   ]
  },
  {
@@ -6048,7 +6141,7 @@
   "key": "Furnace units per piece. A steam-pressure charge costs {0} units, thermal {1}, electric {2}, magnetic {3}, resonance {4}.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:152"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:157"
   ]
  },
  {
@@ -6203,14 +6296,14 @@
   "key": "Gets fewer slots starting at level {0} and tops out at {1}th-level spells; mixes magic with fighting (paladin, ranger).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:160"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:165"
   ]
  },
  {
   "key": "Gets spell slots from level {0} and reaches {1}th-level spells - the strongest magic users (wizard, cleric, druid, bard, sorcerer).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:159"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:164"
   ]
  },
  {
@@ -6472,21 +6565,21 @@
   "key": "Gold value of the material; {0} = trivial, a component pouch covers it.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:128"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:133"
   ]
  },
  {
   "key": "Grant spells or GM-created active abilities from the campaign spell catalog. Existing spells are not duplicated.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:60"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:62"
   ]
  },
  {
   "key": "Granted feats need a name and a description.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:199"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:283"
   ]
  },
  {
@@ -6535,7 +6628,7 @@
   "key": "Grove Keeper",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:24"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:28"
   ]
  },
  {
@@ -6549,7 +6642,7 @@
   "key": "Half halves damage before resistance. None prevents damage. A successful save also prevents conditions.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:109"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:114"
   ]
  },
  {
@@ -6689,7 +6782,7 @@
   "key": "Hit die: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:165"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:236"
   ]
  },
  {
@@ -6711,14 +6804,14 @@
   "key": "Homebrew artificer. Same numbers as a half caster, but the 'slots' are energy charges: steam-pressure, thermal, electric... Rests do NOT refill them - the workshop furnace does, by burning fuel.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:163"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:168"
   ]
  },
  {
   "key": "Homebrew: every spell has a mana cost paid from a pool; half the missing mana returns on a short rest.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:167"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:172"
   ]
  },
  {
@@ -6732,42 +6825,42 @@
   "key": "How far away the target can be, in feet. {0} = touch or self.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:118"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:123"
   ]
  },
  {
   "key": "How far they walk in one turn, in feet ({0} is normal, {1} is short-legged).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:66"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:71"
   ]
  },
  {
   "key": "How many charges of that type.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:151"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:156"
   ]
  },
  {
   "key": "How many of the product one crafting makes (e.g. {0} bolts).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:140"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:145"
   ]
  },
  {
   "key": "How many of this material one crafting uses.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:149"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:154"
   ]
  },
  {
   "key": "How much damage they can take before falling unconscious.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:75"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:80"
   ]
  },
  {
@@ -6795,7 +6888,7 @@
   "key": "HP and mana rewards must be between {0} and {1}.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:188"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:262"
   ]
  },
  {
@@ -6942,14 +7035,14 @@
   "key": "In-game time the work takes, so the GM can judge whether there is time.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:143"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:148"
   ]
  },
  {
   "key": "Include a stronger node that requires training from more than one prerequisite.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:252"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:401"
   ]
  },
  {
@@ -7042,7 +7135,7 @@
   "key": "Inner Stillness",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:25"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:29"
   ]
  },
  {
@@ -7119,7 +7212,7 @@
   "key": "Inspiring Voice",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:19"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:23"
   ]
  },
  {
@@ -7226,7 +7319,7 @@
   "key": "Inventor",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:23"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:27"
   ]
  },
  {
@@ -7248,7 +7341,7 @@
   "key": "Iron Fist",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:16"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:20"
   ]
  },
  {
@@ -7372,21 +7465,21 @@
   "key": "Items that must be carried but are not used up.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:122"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:127"
   ]
  },
  {
   "key": "Items used up by crafting, with amounts.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:144"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:149"
   ]
  },
  {
   "key": "Items used up every time (e.g. ammunition). Casting fails without them.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:121"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:126"
   ]
  },
  {
@@ -7511,6 +7604,13 @@
   ]
  },
  {
+  "key": "Known Spell Reward",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:301"
+  ]
+ },
+ {
   "key": "Languages",
   "kind": "exact",
   "where": [
@@ -7522,14 +7622,14 @@
   "key": "Languages, tools, armor and weapon proficiencies; one per line.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:99"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:104"
   ]
  },
  {
   "key": "Last Stand",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:47"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:51"
   ]
  },
  {
@@ -7579,7 +7679,7 @@
   "key": "Leave empty to use the class's casting ability.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:95"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:100"
   ]
  },
  {
@@ -7594,7 +7694,8 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/lan/LanSessionServer.java:79",
-   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:533"
+   "src/main/java/com/dnd/ui/scenes/CharacterCreationWizard.java:533",
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeView.java:187"
   ]
  },
  {
@@ -7834,7 +7935,7 @@
   "key": "Locked",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeView.java:75"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeView.java:164"
   ]
  },
  {
@@ -7999,7 +8100,7 @@
   "key": "Mana +{A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:274"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:325"
   ]
  },
  {
@@ -8013,7 +8114,7 @@
   "key": "Mana spent by mana-based casters (and HP for blood-magic casters). Slot casters ignore it.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:117"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:122"
   ]
  },
  {
@@ -8150,7 +8251,7 @@
   "key": "Map perception to the active skill used for passive perception.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:115"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:120"
   ]
  },
  {
@@ -8164,7 +8265,7 @@
   "key": "Map the six standard rules roles, and any retired ability references, to active ability IDs.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:114"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:119"
   ]
  },
  {
@@ -8222,7 +8323,7 @@
   "key": "Masterstroke",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:46"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:50"
   ]
  },
  {
@@ -8346,10 +8447,10 @@
   ]
  },
  {
-  "key": "Minimum character level for this choice. Every node costs one earned unlock.",
+  "key": "Minimum level follows the parent hierarchy. Changing a parent automatically updates the node and its descendants.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:48"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:168"
   ]
  },
  {
@@ -8391,7 +8492,7 @@
   "key": "Momentum",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:46"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:50"
   ]
  },
  {
@@ -8443,7 +8544,7 @@
   "key": "Move or delete this branch's nodes first.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:69"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:73"
   ]
  },
  {
@@ -8611,14 +8712,14 @@
   "key": "Named feats granted by this node. Give each feat an effect, action cost and limits. GM-resolved feats can track uses per rest; recognized feature names use their built-in mechanics.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:61"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:66"
   ]
  },
  {
   "key": "Narrative feat / existing training",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:283"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:336"
   ]
  },
  {
@@ -8702,7 +8803,7 @@
   "key": "Neither choice can be unlocked if the other is already selected. One link blocks both directions.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:51"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:53"
   ]
  },
  {
@@ -9046,6 +9147,13 @@
   ]
  },
  {
+  "key": "No new spell learned; no unlearned predefined alternatives: {A}",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:635"
+  ]
+ },
+ {
   "key": "No non-player combatants to roll for.",
   "kind": "exact",
   "where": [
@@ -9169,7 +9277,7 @@
   "key": "No spells. The class fights with weapons and its own features (barbarian, fighter, rogue, monk).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:158"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:163"
   ]
  },
  {
@@ -9187,10 +9295,24 @@
   ]
  },
  {
+  "key": "No unlearned predefined alternatives are available for this spell.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:603"
+  ]
+ },
+ {
+  "key": "No unlearned predefined alternatives are available. No new spell will be learned; this unlock still grants its feat and other bonuses. Continue?",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:299"
+  ]
+ },
+ {
   "key": "No unlocks available. Gain a level to earn one.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:396"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:546"
   ]
  },
  {
@@ -9254,21 +9376,14 @@
   "key": "Node links must reference another existing node: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:207"
-  ]
- },
- {
-  "key": "Node minimum level must be between {0} and {1}.",
-  "kind": "exact",
-  "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:185"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:292"
   ]
  },
  {
   "key": "Nodes need a stable ID and a name.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:180"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:252"
   ]
  },
  {
@@ -9489,7 +9604,7 @@
   "key": "Oathblade",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:26"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:30"
   ]
  },
  {
@@ -9559,112 +9674,112 @@
   "key": "Once per long rest, after missing an attack, reveal one observed weakness to an ally who can hear you. Their next attack against that target before your next turn gains +{0} to hit. No stacking.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:63"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:71"
   ]
  },
  {
   "key": "Once per long rest, spend an action and touch a conscious ally. For one minute they have advantage on their next save against fear. Does not remove existing fear or grant immunity.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:72"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:80"
   ]
  },
  {
   "key": "Once per long rest, spend your action directing two allies who can hear you within {0} ft. Each may use their reaction to move {1} ft to clear ground without provoking. No attacks or extra actions.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:67"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:75"
   ]
  },
  {
   "key": "Once per long rest, spend your action rallying a conscious ally within {0} ft who can hear you. They may immediately repeat one save against fear, using their reaction. No healing or extra actions.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:75"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:83"
   ]
  },
  {
   "key": "Once per long rest, use your reaction when you fail a save against being knocked prone to reroll it. You must keep the new result.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:73"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:81"
   ]
  },
  {
   "key": "Once per short rest, after helping an ally succeed on a check, let that ally move {0} ft to clear supported ground without provoking from the creature you distracted. Uses your reaction.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:62"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:70"
   ]
  },
  {
   "key": "Once per short rest, after observing an enemy for a full turn, ask the GM which of its visible defenses is weakest. This reveals no hidden statistics.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:59"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:67"
   ]
  },
  {
   "key": "Once per short rest, create a harmless palm-sized magical signal visible to an ally within {0} ft for one minute. It cannot blind, damage or imitate a spell.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:60"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:68"
   ]
  },
  {
   "key": "Once per short rest, replace one attack with a contested Athletics check against a creature within reach, at most one size larger. On success push it {0} ft to clear supported ground, never off a ledge. No damage.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:64"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:72"
   ]
  },
  {
   "key": "Once per short rest, replace one attack with a feint: contest Athletics or Acrobatics against a nearby enemy's Insight. On success, the next ally's attack against it before your next turn has advantage.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:61"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:69"
   ]
  },
  {
   "key": "Once per short rest, spend a bonus action to ignore nonmagical difficult terrain for your next {0} ft of movement this turn. Does not add movement or permit unsafe ground.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:71"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:79"
   ]
  },
  {
   "key": "Once per short rest, spend an action helping an adjacent ally cross an obstacle. They have advantage on their next Athletics or Acrobatics check to cross it before your next turn. No extra movement.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:74"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:82"
   ]
  },
  {
   "key": "Once per short rest, spend your action watching a passage for one minute. The GM grants advantage on your next Perception check to notice a creature crossing it, not to detect hidden magic.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:69"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:77"
   ]
  },
  {
   "key": "Once per short rest, use your reaction before a visible attack roll against an adjacent ally to grant +{0} AC against that attack only. You must be conscious. Does not stack with other guardian training.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:70"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:78"
   ]
  },
  {
   "key": "Once per short rest, use your reaction when a visible enemy begins casting within {0} ft to identify its visible target or area with an Arcana check set by the GM. This does not interrupt the spell.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:65"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:73"
   ]
  },
  {
   "key": "Once per short rest, when an enemy misses you in melee, use your reaction to move {0} ft to clear supported ground without provoking from that enemy. No attack is granted.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:66"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:74"
   ]
  },
  {
@@ -9678,7 +9793,14 @@
   "key": "One choice per level-up. Existing training has already spent older levels; its abilities are not applied twice.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:222"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:236"
+  ]
+ },
+ {
+  "key": "One mandatory parent, already unlocked before this node can be chosen. Use the class foundation for tier {0}. Changing the parent updates the tier and reciprocal child lists.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:50"
   ]
  },
  {
@@ -9741,7 +9863,7 @@
   "key": "Only for mana-based homebrew casters. Leave {0} for slot casters.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:76"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:81"
   ]
  },
  {
@@ -9867,7 +9989,7 @@
   "key": "Open Palm",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:25"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:29"
   ]
  },
  {
@@ -9917,7 +10039,7 @@
   "key": "Opening",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:46"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:50"
   ]
  },
  {
@@ -9987,7 +10109,7 @@
   "key": "Overall power, {0}-{1}. Higher level = more HP, features and spells.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:71"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:76"
   ]
  },
  {
@@ -10036,7 +10158,7 @@
   "key": "Pact Weaver",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:28"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:32"
   ]
  },
  {
@@ -10293,21 +10415,21 @@
   "key": "Permanent increase to maximum and current HP, applied once.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:52"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:54"
   ]
  },
  {
   "key": "Permanent increase to maximum and current mana. Does not add spell slots.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:53"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:55"
   ]
  },
  {
   "key": "Permanent score increase, applied once. Unlock is refused if the score would exceed {0}.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:55"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:57"
   ]
  },
  {
@@ -10736,14 +10858,42 @@
   "key": "Precision",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:46"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:50"
+  ]
+ },
+ {
+  "key": "Predefined alternatives must have the same spell level as their primary reward.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:560"
+  ]
+ },
+ {
+  "key": "Predefined alternatives need unique spell IDs, excluding the primary spell.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:279"
+  ]
+ },
+ {
+  "key": "Predefined replacement spells, all at the primary spell's level. Known spells are excluded. If every option is known, a warning allows unlocking the feat and other bonuses without learning a new spell.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:65"
+  ]
+ },
+ {
+  "key": "Predefined same-level alternatives",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:333"
   ]
  },
  {
   "key": "Prerequisites or exclusive choices block this node.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:395"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:545"
   ]
  },
  {
@@ -10808,7 +10958,7 @@
   "key": "Printed on the Notes page.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:101"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:106"
   ]
  },
  {
@@ -10892,7 +11042,7 @@
   "key": "Protector",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:26"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:30"
   ]
  },
  {
@@ -10971,7 +11121,7 @@
   "key": "Rage damage",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:279"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:330"
   ]
  },
  {
@@ -10985,7 +11135,7 @@
   "key": "Rally",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:47"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:51"
   ]
  },
  {
@@ -11199,7 +11349,7 @@
   "key": "Remove links to this node before deleting it.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:176"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:188"
   ]
  },
  {
@@ -11387,14 +11537,21 @@
   "key": "Require a physical caster d{0} attack roll against each target's armor class.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:107"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:112"
+  ]
+ },
+ {
+  "key": "Required character level equals the node's tier in its parent hierarchy. The foundation is tier {0}. Every other node costs one earned unlock.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:48"
   ]
  },
  {
   "key": "Required level: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:394"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:544"
   ]
  },
  {
@@ -11478,7 +11635,7 @@
   "key": "Resilient Training",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:29"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:33"
   ]
  },
  {
@@ -11717,7 +11874,7 @@
   "key": "Rounds before it can be used again; {0} = no wait.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:120"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:125"
   ]
  },
  {
@@ -11746,22 +11903,22 @@
   "key": "Sacred Flame",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:20"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:24"
   ]
  },
  {
   "key": "Safe Passage",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:47"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:51"
   ]
  },
  {
   "key": "Sanctuary",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:20",
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:47"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:24",
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:51"
   ]
  },
  {
@@ -11928,14 +12085,14 @@
   "key": "Saving throws that add the proficiency bonus. Leave empty to use the class's saving throws.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:89"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:94"
   ]
  },
  {
   "key": "Saving throws: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:165"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:236"
   ]
  },
  {
@@ -12071,7 +12228,7 @@
   "key": "Select node picture",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:143"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:154"
   ]
  },
  {
@@ -12264,7 +12421,7 @@
   "key": "Shadowblade",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:21"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:25"
   ]
  },
  {
@@ -12292,7 +12449,7 @@
   "key": "Shelter",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:47"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:51"
   ]
  },
  {
@@ -12602,14 +12759,14 @@
   "kind": "exact",
   "where": [
    "src/main/java/com/dnd/lan/LanSessionServer.java:75",
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:280"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:331"
   ]
  },
  {
   "key": "Speed reward must be between {0} and {1}.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:193"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:267"
   ]
  },
  {
@@ -12665,7 +12822,7 @@
   "key": "Spell rewards need unique IDs.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:196"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:270"
   ]
  },
  {
@@ -12739,7 +12896,7 @@
   "key": "Spells / abilities",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:281"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:332"
   ]
  },
  {
@@ -12774,14 +12931,14 @@
   "key": "Spellshaper",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:27"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:31"
   ]
  },
  {
   "key": "Spellweaver",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:17"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:21"
   ]
  },
  {
@@ -12837,7 +12994,7 @@
   "key": "Standard rules: each levelled spell uses one slot of its level or higher. Slots come back on a long rest.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:165"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:170"
   ]
  },
  {
@@ -12916,7 +13073,7 @@
   "key": "Starting spells / abilities: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:165"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:236"
   ]
  },
  {
@@ -13502,7 +13659,7 @@
   "key": "The action this gadget performs on the battle map. Whoever carries it gets the action.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:154"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:159"
   ]
  },
  {
@@ -13565,7 +13722,7 @@
   "key": "The campaign effect this spell applies.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:131"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:136"
   ]
  },
  {
@@ -13579,7 +13736,7 @@
   "key": "The campaign's ability scores. {0} is average, {1} is very good, {2} is weak. Each {3} points above {4} = +{5} to rolls.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:73"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:78"
   ]
  },
  {
@@ -13593,21 +13750,21 @@
   "key": "The character's class: their training and role in the party.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:69"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:74"
   ]
  },
  {
   "key": "The character's people: gives ability bonuses, speed and traits.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:70"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:75"
   ]
  },
  {
   "key": "The class foundation is built in and cannot be edited.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:181"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:253"
   ]
  },
  {
@@ -13657,14 +13814,14 @@
   "key": "The GM can add branches and nodes in Worldbuilding > Class Upgrade Trees.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:263"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:279"
   ]
  },
  {
   "key": "The item that comes out of the workshop when this blueprint is crafted.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:139"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:144"
   ]
  },
  {
@@ -13713,7 +13870,7 @@
   "key": "The material the spell needs, e.g. 'a pinch of sulfur'. Only used when Material is ticked.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:127"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:132"
   ]
  },
  {
@@ -13773,10 +13930,24 @@
   ]
  },
  {
+  "key": "The primary spell under this node's Spell Ids reward. Define at most one alternative list for each primary spell.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:64"
+  ]
+ },
+ {
   "key": "The selected file is not a supported image.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:147"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:158"
+  ]
+ },
+ {
+  "key": "The selected rewards overlap. Choose different predefined alternatives.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:308"
   ]
  },
  {
@@ -13811,7 +13982,7 @@
   "key": "The target ability used to resist this action. None means no saving throw.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:108"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:113"
   ]
  },
  {
@@ -13839,7 +14010,7 @@
   "key": "Their specialisation within the class.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:77"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:82"
   ]
  },
  {
@@ -13952,16 +14123,16 @@
   "key": "This character needs an existing class.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:210"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:224"
   ]
  },
  {
   "key": "This character or class changed. Reopen the upgrade tree before saving.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:402",
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:99",
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:249"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:587",
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:106",
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:265"
   ]
  },
  {
@@ -13975,7 +14146,7 @@
   "key": "This class no longer exists.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:97"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:104"
   ]
  },
  {
@@ -14054,7 +14225,7 @@
   "key": "This path needs more unlocks than a character can earn.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:217"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:301"
   ]
  },
  {
@@ -14082,7 +14253,7 @@
   "key": "This reward would raise an ability score above {0}.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:428"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:629"
   ]
  },
  {
@@ -14138,42 +14309,42 @@
   "key": "Tick if casting destroys the material, so it must be bought again.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:129"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:134"
   ]
  },
  {
   "key": "Tick if the spell needs a material (describe it below).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:126"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:131"
   ]
  },
  {
   "key": "Tick if the spell needs hand gestures.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:125"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:130"
   ]
  },
  {
   "key": "Tick if the spell needs spoken words.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:124"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:129"
   ]
  },
  {
   "key": "Ticked when the GM has awarded inspiration.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:94"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:99"
   ]
  },
  {
   "key": "Ticked: a mechanical gadget that runs on this charge or any stronger one - a stronger charge adds a damage die per level. Unticked: tuned to exactly this charge type and nothing else.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:155"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:160"
   ]
  },
  {
@@ -14243,7 +14414,7 @@
   "key": "Tool kits that must be in the pack. They are not used up.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:145"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:150"
   ]
  },
  {
@@ -14470,8 +14641,8 @@
   "key": "Unknown ability score: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:426",
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:200"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:627",
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:214"
   ]
  },
  {
@@ -14485,7 +14656,7 @@
   "key": "Unknown branch for node: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:183"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:255"
   ]
  },
  {
@@ -14500,6 +14671,13 @@
   "kind": "pattern",
   "where": [
    "src/main/java/com/dnd/model/creature/ChallengeRating.java:72"
+  ]
+ },
+ {
+  "key": "Unknown child node: {A}",
+  "kind": "pattern",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:373"
   ]
  },
  {
@@ -14527,15 +14705,16 @@
   "key": "Unknown spell or ability: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:413",
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:196"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:553",
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:556",
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:559"
   ]
  },
  {
   "key": "Unknown upgrade node: {A}",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:406"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:591"
   ]
  },
  {
@@ -14563,7 +14742,7 @@
   "key": "Unlocked",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeView.java:75"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeView.java:164"
   ]
  },
  {
@@ -14647,14 +14826,21 @@
   "key": "Upgrade bonuses must be between {0} and {1}.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:191"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:265"
+  ]
+ },
+ {
+  "key": "Upgrade parents contain a cycle.",
+  "kind": "exact",
+  "where": [
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:354"
   ]
  },
  {
   "key": "Upgrade prerequisites contain a cycle.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:258"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:407"
   ]
  },
  {
@@ -14676,7 +14862,7 @@
   "key": "Upload Node Picture",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:142"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:153"
   ]
  },
  {
@@ -14844,14 +15030,14 @@
   "key": "Vanguard",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:22"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:26"
   ]
  },
  {
   "key": "Veiled Guardian",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:28"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:32"
   ]
  },
  {
@@ -14907,7 +15093,7 @@
   "key": "Very few slots, all at the highest level they know, but they come back after a short rest (warlock).",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:162"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:167"
   ]
  },
  {
@@ -14949,7 +15135,7 @@
   "key": "Vigil",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:47"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:51"
   ]
  },
  {
@@ -14963,21 +15149,21 @@
   "key": "Virtuoso",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:19"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:23"
   ]
  },
  {
   "key": "Visible ability definitions. Keep IDs unchanged when renaming fields.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:112"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:117"
   ]
  },
  {
   "key": "Visible skill definitions. Each parent ability must use an active ability ID.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:113"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:118"
   ]
  },
  {
@@ -15034,7 +15220,7 @@
   "key": "Walking speed in feet. Blank = race speed plus movement features.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:86"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:91"
   ]
  },
  {
@@ -15105,7 +15291,7 @@
   "key": "Weapon Master",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:22"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:26"
   ]
  },
  {
@@ -15133,7 +15319,7 @@
   "key": "What casting needs - tick each one that applies. A gagged or bound caster can't cast spells that need Verbal or Somatic.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:123"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:128"
   ]
  },
  {
@@ -15147,7 +15333,7 @@
   "key": "What they pay to cast. Leave empty to use the class default.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:79"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:84"
   ]
  },
  {
@@ -15210,14 +15396,14 @@
   "key": "Wild Stalker",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:18"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:22"
   ]
  },
  {
   "key": "Wildspeaker",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:24"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:28"
   ]
  },
  {
@@ -15610,7 +15796,7 @@
   "key": "Zoom",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:300"
+   "src/main/java/com/dnd/ui/scenes/UpgradeTreeWindow.java:369"
   ]
  },
  {
@@ -15645,14 +15831,14 @@
   "key": "{0} = cantrip (free, unlimited). {1}-{2} = costs a slot or energy charge of that level or higher.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:116"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:121"
   ]
  },
  {
   "key": "{0} = ordinary tool. Above {1} = a workshop furnace that can make energy charges up to this level. Raise it to 'upgrade' the workshop.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:153"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:158"
   ]
  },
  {
@@ -15680,8 +15866,8 @@
   "key": "{0}-{1}, filled in on the sheet.",
   "kind": "exact",
   "where": [
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:92",
-   "src/main/java/com/dnd/ui/components/FieldHelp.java:93"
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:97",
+   "src/main/java/com/dnd/ui/components/FieldHelp.java:98"
   ]
  },
  {
@@ -15887,7 +16073,7 @@
   "key": "{A} Foundation",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:160"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:229"
   ]
  },
  {
@@ -16085,7 +16271,7 @@
   "key": "{A} The GM resolves this feat; the app tracks its rest use.",
   "kind": "pattern",
   "where": [
-   "src/main/java/com/dnd/model/character/UpgradeRules.java:76"
+   "src/main/java/com/dnd/model/character/UpgradeRules.java:84"
   ]
  },
  {

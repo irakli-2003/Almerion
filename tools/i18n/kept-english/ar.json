@@ -169,7 +169,6 @@
  "No {A} charge capacity yet.",
  "No {A} charge left{B}",
  "Node links must reference another existing node: {A}",
- "Node minimum level must be between {0} and {1}.",
  "OS: {A} {B}",
  "Oathblade",
  "Online Session{A}",

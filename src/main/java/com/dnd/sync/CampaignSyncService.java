@@ -102,7 +102,7 @@ public final class CampaignSyncService {
         }, executor);
     }
 
-    /** Full sync that settles files both computers changed as the GM chose (path to choice). */
+    /** Full sync using the GM's file paths or revision-bound catalogue field choice keys. */
     public CompletableFuture<CampaignRepo.Result> resolve(Path folder, Map<String, CampaignRepo.Choice> choices) {
         Map<String, CampaignRepo.Choice> copy = Map.copyOf(choices);
         return submit(folder, repo -> repo.resolve(copy));

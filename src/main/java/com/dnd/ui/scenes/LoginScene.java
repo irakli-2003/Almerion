@@ -8,6 +8,7 @@ import com.dnd.ui.UiSession;
 import com.dnd.ui.i18n.LanguagePicker;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -27,6 +28,34 @@ public class LoginScene extends BaseScene {
         PasswordField passwordField = passwordField("Password");
         Label error = body("");
         error.getStyleClass().add("error-label");
+        Button login = btn("Log In", () -> { });
+        login.setOnAction(event -> {
+            String identifier = identifierField.getText();
+            String password = passwordField.getText();
+            root.setDisable(true);
+            login.setDisable(true);
+            background(() -> authService.login(identifier, password), result -> {
+                root.setDisable(false);
+                login.setDisable(false);
+                if (!result.success()) {
+                    error.setText(result.message());
+                    return;
+                }
+                if (result.offline()) {
+                    Alert notice = new Alert(Alert.AlertType.WARNING, result.message());
+                    notice.setHeaderText(null);
+                    styleDialog(notice);
+                    notice.showAndWait();
+                }
+                passwordField.clear();
+                uiSession.setCurrentUser(result.user());
+                uiSession.getRouter().goTo(SceneType.LANDING);
+            }, failure -> {
+                root.setDisable(false);
+                login.setDisable(false);
+                error.setText(failure.getMessage());
+            });
+        });
 
         root.getChildren().addAll(
             title("⚔  Almerion  ⚔"),
@@ -34,15 +63,7 @@ public class LoginScene extends BaseScene {
             identifierField,
             passwordField,
             error,
-            btn("Log In", () -> {
-                AuthService.LoginResult result = authService.login(identifierField.getText(), passwordField.getText());
-                if (result.success()) {
-                    uiSession.setCurrentUser(result.user());
-                    uiSession.getRouter().goTo(SceneType.LANDING);
-                } else {
-                    error.setText(result.message());
-                }
-            }),
+            login,
             btn("Create an account", () -> uiSession.getRouter().goTo(SceneType.REGISTER)),
             btn("Forgot password?", () -> uiSession.getRouter().goTo(SceneType.FORGOT_PASSWORD)),
             btn("Test email settings", this::testEmailSettings)

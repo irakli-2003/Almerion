@@ -33,6 +33,7 @@ public class PlayerOnlineSessionScene extends BaseScene {
         VBox root = new VBox(0);
         root.getStyleClass().add("root");
         root.getChildren().add(backBar(SceneType.LANDING));
+        root.getChildren().add(com.dnd.ui.scenes.PlayerModeUi.banner(this));
 
         VBox content = new VBox(16);
         content.setPadding(new Insets(20, 60, 40, 60));

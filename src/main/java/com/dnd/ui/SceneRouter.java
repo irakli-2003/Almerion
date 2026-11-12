@@ -27,6 +27,7 @@ public class SceneRouter {
         if (!isPublic(type) && !uiSession.isLoggedIn()) {
             type = SceneType.LOGIN;
         }
+        if (!uiSession.isDm() && gmOnly(type)) type = SceneType.PLAYER_ONLINE_SESSION;
         if (type == SceneType.DM_MENU) {
             autoPush();
             if (uiSession.campaignRoot() != null) {
@@ -52,6 +53,14 @@ public class SceneRouter {
             return;
         }
         stage.setScene(scene);
+    }
+
+    static boolean gmOnly(SceneType type) {
+        return switch (type) {
+            case CAMPAIGN_SELECTION, CREATE_CAMPAIGN, DM_MENU, DM_ONLINE_SESSION, ENTITY_LIST, ENTITY_DETAIL,
+                 MAP_VIEW, MAP_EDITOR, WORLD_MAP, STORYLINE -> true;
+            default -> false;
+        };
     }
 
     private static String rootMessage(Throwable error) {

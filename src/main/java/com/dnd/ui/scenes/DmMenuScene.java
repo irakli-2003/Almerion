@@ -98,7 +98,13 @@ public class DmMenuScene extends BaseScene {
     /** "Run the Session": everything used while actually playing at the table. */
     private VBox sessionSection() {
         FlowPane row = new FlowPane(10, 10,
+            btn("Switch to Player Mode", () -> PlayerModeUi.enterPlayer(this)),
+            btn("Action history", () -> OperationHistoryUi.show(this)),
             btn("📜 Open Storyline", () -> uiSession.getRouter().goTo(SceneType.STORYLINE)),
+            btn("Notifications", () -> PrivateFilesUi.notifications(this)),
+            SessionChatUi.button(this),
+            btn("Restore points", () -> RestorePointsUi.show(this, uiSession.campaignRoot(),
+                () -> uiSession.getRouter().goTo(SceneType.DM_MENU))),
             btn("🧭 World Map", () -> uiSession.getRouter().goTo(SceneType.WORLD_MAP)),
             btn("👥 Members", () -> MembersWindow.open(this, uiSession.campaignRoot(),
                 uiSession.getCurrentUser() == null ? "" : uiSession.getCurrentUser().getUsername())),

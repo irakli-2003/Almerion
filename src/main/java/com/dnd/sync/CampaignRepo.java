@@ -41,6 +41,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -50,12 +51,12 @@ import java.util.regex.Pattern;
  * merge, push.
  *
  * <p>This follows Git: when only GitHub changed, its version is taken (fast-forward); changes
- * to different files are merged automatically. <b>When both computers changed the same file,
- * nothing is decided for the GM</b>: the merge is undone (this computer's files and commits are
- * kept, nothing is pushed) and {@link Outcome#CONFLICT} lists each file with who changed it on
- * each side and when. The GM then picks a version per file and {@link #resolve} finishes the
- * merge - keeping this computer's version, GitHub's, or both (GitHub's saved next to it as
- * {@code <file>.remote-<yyyyMMdd-HHmmss>}).</p>
+ * to different files are merged automatically. Supported catalogues merge by entity ID and
+ * object field, retaining independent edits. Competing values are never decided for the GM:
+ * the merge is undone, nothing is pushed, and {@link Outcome#CONFLICT} describes the fields
+ * or unsupported whole files needing review. Field choices are bound to the reviewed revisions.
+ * Whole-file choices can also keep both versions, saving GitHub's next to the original as
+ * {@code <file>.remote-<yyyyMMdd-HHmmss>}.</p>
  *
  * <p>Sync settings live in the campaign's own {@code .git/config} (never committed): the
  * {@code origin} remote URL, and {@code almerion.sync} to switch syncing off. The token is
@@ -138,8 +139,11 @@ public final class CampaignRepo {
     public record Version(String author, String computer, Instant when, boolean deleted) {
     }
 
-    /** A file both computers changed, relative to the campaign folder. */
-    public record Conflict(String path, Version mine, Version github) {
+    /** A competing file or field, with a revision-bound choice key for catalogue values. */
+    public record FieldConflict(String entity, String pointer, String before, String mine, String github) { }
+
+    public record Conflict(String path, Version mine, Version github, String choiceKey, FieldConflict field) {
+        public Conflict(String path, Version mine, Version github) { this(path, mine, github, path, null); }
         /** The version changed most recently: the default suggestion. */
         public Choice newer() {
             if (mine.when() == null || github.when() == null) return Choice.MINE;
@@ -314,8 +318,8 @@ public final class CampaignRepo {
     }
 
     /**
-     * As {@link #sync()}, settling files both computers changed as {@code choices} says (path to
-     * choice). If a conflicting file has no choice, nothing is merged and the conflicts are returned.
+     * As {@link #sync()}, settling conflicts by path or revision-bound field choice key.
+     * Missing or stale field choices return reviewable conflicts without applying the merge.
      */
     public Result resolve(Map<String, Choice> choices) {
         try (Git git = Git.open(folder.toFile())) {
@@ -423,6 +427,11 @@ public final class CampaignRepo {
         Result merged = null;
         if (remote != null) {
             ObjectId head = repo.resolve(Constants.HEAD);
+            try (org.eclipse.jgit.revwalk.RevWalk walk = new org.eclipse.jgit.revwalk.RevWalk(repo)) {
+                if (head == null || !walk.isMergedInto(walk.parseCommit(remote.getObjectId()), walk.parseCommit(head))) {
+                    com.dnd.data.CampaignRestorePoints.beforeIdentifiedCampaign(folder, "Before GitHub update");
+                }
+            }
             if (head == null) {
                 RefUpdate update = repo.updateRef(Constants.R_HEADS + repo.getBranch());
                 update.setNewObjectId(remote.getObjectId());
@@ -433,6 +442,8 @@ public final class CampaignRepo {
                     || read(repo, remote.getObjectId(), ManualFiles.MANIFEST) != null;
                 byte[] manualMerge = hasManualManifest
                     ? mergeManualManifest(repo, head, remote.getObjectId(), choices.get(ManualFiles.MANIFEST)) : null;
+                Map<String, CatalogueMerge.Result> catalogues = mergeCatalogues(repo, head, remote.getObjectId(), choices);
+                List<Conflict> fieldConflicts = describeFields(repo, head, remote.getObjectId(), catalogues);
                 MergeResult result = git.merge().include(remote).setStrategy(MergeStrategy.RECURSIVE)
                     .setCommit(true).setMessage("Merge campaign changes from GitHub").call();
                 switch (result.getMergeStatus()) {
@@ -442,16 +453,18 @@ public final class CampaignRepo {
                         if (conflicts.contains(ManualFiles.MANIFEST) && manualMerge != null) {
                             effective.putIfAbsent(ManualFiles.MANIFEST, Choice.MINE);
                         }
-                        if (!effective.keySet().containsAll(conflicts)) {
-                            Set<String> undecided = new TreeSet<>(conflicts);
-                            undecided.removeAll(effective.keySet());
-                            List<Conflict> described = describe(repo, head, remote.getObjectId(), undecided);
+                        Set<String> undecided = new TreeSet<>(conflicts);
+                        undecided.removeAll(effective.keySet());
+                        undecided.removeAll(catalogues.keySet());
+                        if (!undecided.isEmpty() || !fieldConflicts.isEmpty()) {
+                            List<Conflict> described = new ArrayList<>(describe(repo, head, remote.getObjectId(), undecided));
+                            described.addAll(fieldConflicts);
                             // Undo the half-done merge: this computer's files and commits stay as they were.
                             git.reset().setMode(org.eclipse.jgit.api.ResetCommand.ResetType.HARD)
                                 .setRef(head.name()).call();
                             return new Result(Outcome.CONFLICT, List.of(), described, conflictMessage(described.size()));
                         }
-                        merged = settle(git, head, remote.getObjectId(), conflicts, effective);
+                        merged = settle(git, head, remote.getObjectId(), conflicts, effective, catalogues);
                     }
                     case FAILED, ABORTED, NOT_SUPPORTED, CHECKOUT_CONFLICT -> {
                         return Result.of(Outcome.FAILED, "Couldn't merge the changes from GitHub ("
@@ -459,12 +472,28 @@ public final class CampaignRepo {
                     }
                     default -> { }
                 }
+                if (!fieldConflicts.isEmpty()) {
+                    git.reset().setMode(org.eclipse.jgit.api.ResetCommand.ResetType.HARD).setRef(head.name()).call();
+                    return new Result(Outcome.CONFLICT, List.of(), fieldConflicts, conflictMessage(fieldConflicts.size()));
+                }
+                boolean catalogueChanged = false;
+                for (var entry : catalogues.entrySet()) {
+                    Path file = folder.resolve(entry.getKey());
+                    if (!Files.exists(file) || !Arrays.equals(Files.readAllBytes(file), entry.getValue().bytes())) {
+                        Files.createDirectories(file.getParent());
+                        Files.write(file, entry.getValue().bytes());
+                        git.add().addFilepattern(entry.getKey()).call();
+                        catalogueChanged = true;
+                    }
+                }
+                if (catalogueChanged) commit(git, "Merge catalogue entities and fields");
                 if (hasManualManifest) {
                     if (manualMerge == null) {
                         List<Conflict> described = describe(repo, head, remote.getObjectId(), Set.of(ManualFiles.MANIFEST));
                         git.reset().setMode(org.eclipse.jgit.api.ResetCommand.ResetType.HARD).setRef(head.name()).call();
                         return new Result(Outcome.CONFLICT, List.of(), described, conflictMessage(described.size()));
                     }
+
                     Path manifest = folder.resolve(ManualFiles.MANIFEST);
                     if (!Files.exists(manifest) || !Arrays.equals(Files.readAllBytes(manifest), manualMerge)) {
                         Files.write(manifest, manualMerge);
@@ -478,8 +507,36 @@ public final class CampaignRepo {
         return merged != null && pushed.outcome() == Outcome.SYNCED ? merged : pushed;
     }
 
-    static String conflictMessage(int files) {
-        return "Files changed both on this computer and on GitHub since they were last in step: " + files
+    private static Map<String, CatalogueMerge.Result> mergeCatalogues(Repository repo, ObjectId ours, ObjectId theirs,
+                                                                     Map<String, Choice> choices) throws IOException {
+        ObjectId base = mergeBase(repo, ours, theirs);
+        Map<String, CatalogueMerge.Result> results = new TreeMap<>();
+        for (String path : CatalogueMerge.CATALOGUES.keySet()) {
+            byte[] before = base == null ? null : read(repo, base, path);
+            byte[] mine = read(repo, ours, path), remote = read(repo, theirs, path);
+            if (Arrays.equals(mine, remote) || Arrays.equals(before, mine) || Arrays.equals(before, remote)) continue;
+            CatalogueMerge.merge(path, before, mine, remote, choices).ifPresent(result -> results.put(path, result));
+        }
+        return results;
+    }
+
+    private static List<Conflict> describeFields(Repository repo, ObjectId ours, ObjectId theirs,
+                                                Map<String, CatalogueMerge.Result> catalogues) throws IOException {
+        List<Conflict> conflicts = new ArrayList<>();
+        ObjectId base = mergeBase(repo, ours, theirs);
+        for (var entry : catalogues.entrySet()) {
+            if (entry.getValue().conflicts().isEmpty()) continue;
+            Version mine = lastChange(repo, ours, base, entry.getKey()), remote = lastChange(repo, theirs, base, entry.getKey());
+            for (var field : entry.getValue().conflicts()) {
+                conflicts.add(new Conflict(entry.getKey(), mine, remote, field.key(),
+                    new FieldConflict(field.entity(), field.pointer(), field.before(), field.mine(), field.github())));
+            }
+        }
+        return conflicts;
+    }
+
+    static String conflictMessage(int conflicts) {
+        return "Conflicting files or catalogue fields: " + conflicts
             + ". Nothing was overwritten: choose which version to keep.";
     }
 
@@ -490,7 +547,8 @@ public final class CampaignRepo {
     }
 
     /** Writes the chosen version of each conflicting file and commits the merge. */
-    private Result settle(Git git, ObjectId ours, ObjectId theirs, Set<String> conflicts, Map<String, Choice> choices)
+    private Result settle(Git git, ObjectId ours, ObjectId theirs, Set<String> conflicts, Map<String, Choice> choices,
+                          Map<String, CatalogueMerge.Result> catalogues)
             throws IOException, GitAPIException {
         Repository repo = git.getRepository();
         String stamp = STAMP.format(LocalDateTime.now(clock));
@@ -499,7 +557,7 @@ public final class CampaignRepo {
             byte[] mine = read(repo, ours, path);
             byte[] remote = read(repo, theirs, path);
             Choice choice = choices.get(path);
-            byte[] keep = choice == Choice.GITHUB ? remote : mine;
+            byte[] keep = catalogues.containsKey(path) ? catalogues.get(path).bytes() : choice == Choice.GITHUB ? remote : mine;
             if (path.equals(ManualFiles.MANIFEST)) keep = mergeManualManifest(repo, ours, theirs, choice);
             Path file = folder.resolve(path);
             if (keep != null) {
@@ -510,7 +568,8 @@ public final class CampaignRepo {
                 Files.deleteIfExists(file);
                 git.rm().addFilepattern(path).call();
             }
-            if (choice == Choice.BOTH && !path.equals(ManualFiles.MANIFEST) && remote != null && !Arrays.equals(mine, remote)) {
+            if (choice == Choice.BOTH && !catalogues.containsKey(path) && !path.equals(ManualFiles.MANIFEST)
+                && remote != null && !Arrays.equals(mine, remote)) {
                 String copy = path + ".remote-" + stamp;
                 Path copyFile = folder.resolve(copy);
                 Files.createDirectories(copyFile.getParent());

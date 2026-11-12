@@ -4,6 +4,8 @@ import com.dnd.data.CampaignRepositories;
 import com.dnd.data.EntityInfoFormatter;
 import com.dnd.data.MapLink;
 import com.dnd.data.StorylineService;
+import com.dnd.data.StorylineDrafts;
+import com.dnd.data.AppHome;
 import com.dnd.model.world.map.GameMap;
 import com.dnd.ui.EntityCategory;
 import com.dnd.ui.components.SessionTimer;
@@ -66,6 +68,21 @@ final class StorylineEditorWindow {
     private TextField findField;
     private final StackPane playersHost = new StackPane();
     private ManagePlayersPanel playersPanel;
+    private final String draftId = java.util.UUID.randomUUID().toString();
+    private final Object draftGate = new Object();
+    private final javafx.animation.PauseTransition draftDelay =
+        new javafx.animation.PauseTransition(javafx.util.Duration.seconds(2));
+    private final javafx.animation.Timeline draftPulse = new javafx.animation.Timeline(
+        new javafx.animation.KeyFrame(javafx.util.Duration.seconds(10), e -> autosave()));
+    private final Label draftStatus = new Label("Encrypted autosave is off. Unlock private files to enable it.");
+    private StorylineDrafts drafts;
+    private String recoveredDraftId;
+    private long draftGeneration;
+    private long editRevision;
+    private long persistedRevision = -1;
+    private boolean draftPending;
+    private boolean closed;
+    private Throwable draftFailure;
 
     StorylineEditorWindow(BaseScene owner, StorylineService service, CampaignRepositories repos, Path file) {
         this.owner = owner;
@@ -97,6 +114,8 @@ final class StorylineEditorWindow {
         highlight();
         area.textProperty().addListener((obs, o, n) -> {
             markDirty(true);
+            editRevision++;
+            draftDelay.playFromStart();
             updateStats(n);
             rehighlight.playFromStart();
         });
@@ -106,6 +125,10 @@ final class StorylineEditorWindow {
         statsLabel = new Label();
         statsLabel.getStyleClass().add("body-label");
         timer = new SessionTimer();
+        draftDelay.setOnFinished(e -> autosave());
+        draftPulse.setCycleCount(javafx.animation.Animation.INDEFINITE);
+        draftStatus.getStyleClass().add("body-label");
+        draftStatus.setWrapText(true);
 
         // Double-clicking a [map:...] marker jumps straight into the battle map. A single
         // click would fight with normal text navigation, and requiring the toolbar button
@@ -151,7 +174,9 @@ final class StorylineEditorWindow {
         HBox center = new HBox(areaScroll, playersHost);
         VBox.setVgrow(center, Priority.ALWAYS);
 
-        VBox layout = new VBox(0, buildToolbar(stage), center, buildStatusBar(stage));
+        VBox recoveryBar = new VBox(draftStatus);
+        recoveryBar.setPadding(new Insets(4, 10, 4, 10));
+        VBox layout = new VBox(0, buildToolbar(stage), recoveryBar, center, buildStatusBar(stage));
         layout.getStyleClass().add("root");
 
         Scene scene = owner.themedScene(layout, 1000, 720);
@@ -167,6 +192,10 @@ final class StorylineEditorWindow {
                 e.consume();
                 return;
             }
+            if (!discardOwnDraft()) {
+                e.consume();
+                return;
+            }
             persistScrollAndDisposeTimer();
         });
         // Restore where the DM left off, once the area has laid out its paragraphs.
@@ -177,6 +206,7 @@ final class StorylineEditorWindow {
                     area.moveTo(savedPar, 0);
                     area.showParagraphAtTop(savedPar);
                 }
+                enableDrafts();
             });
         });
         stage.showAndWait();
@@ -196,6 +226,12 @@ final class StorylineEditorWindow {
             // Nothing laid out yet; keep the previous position.
         }
         rehighlight.stop();
+        draftDelay.stop();
+        draftPulse.stop();
+        synchronized (draftGate) {
+            closed = true;
+            draftGeneration++;
+        }
         timer.dispose();
     }
 
@@ -246,9 +282,11 @@ final class StorylineEditorWindow {
                     + " HP, mana, items and effects", this::toggleManagePlayers)),
             toolGroup("⏱ TIMER", timer),
             toolGroup("💾 FILE",
+                toolButton("Recovery & Autosave", "Unlock encrypted device-local drafts and review recovery copies",
+                    () -> PrivateFilesUi.unlocked(owner, this::enableDrafts)),
                 toolButton("Save", "Save this file (Ctrl+S)", this::save),
                 toolButton("Save & Close", "Save and close the editor",
-                    () -> { save(); persistScrollAndDisposeTimer(); stage.close(); }))
+                    () -> { if (save()) { persistScrollAndDisposeTimer(); stage.close(); } }))
         );
         return bar;
     }
@@ -590,7 +628,7 @@ final class StorylineEditorWindow {
         Button close = new Button("Close");
         close.getStyleClass().add("dnd-button");
         close.setOnAction(e -> {
-            if (!dirty || confirmDiscard()) {
+            if ((!dirty || confirmDiscard()) && discardOwnDraft()) {
                 persistScrollAndDisposeTimer();
                 stage.close();
             }
@@ -667,7 +705,7 @@ final class StorylineEditorWindow {
     /** Shows or hides the right-hand Manage Players panel (cards for the party and this session's creatures). */
     private void toggleManagePlayers() {
         if (playersPanel == null) {
-            playersPanel = new ManagePlayersPanel(owner, repos, file, statusLabel::setText);
+            playersPanel = new ManagePlayersPanel(owner, repos, file, statusLabel::setText, service);
             playersHost.getChildren().setAll(playersPanel.node());
         }
         boolean show = !playersHost.isVisible();
@@ -935,12 +973,150 @@ final class StorylineEditorWindow {
         return (seconds / 60) + "m " + (seconds % 60) + "s";
     }
 
-    private void save() {
+    private boolean save() {
         String refreshed = MapLink.refreshLabels(area.getText(), repos.maps().names());
         if (!refreshed.equals(area.getText())) area.replaceText(refreshed);
-        service.writeText(file, area.getText());
+        try {
+            synchronized (draftGate) {
+                service.writeText(file, area.getText());
+                draftGeneration++;
+            }
+        } catch (RuntimeException e) {
+            owner.showError("Could not save session file", e);
+            return false;
+        }
         markDirty(false);
         statusLabel.setText("Saved " + file.getFileName() + ".");
+        if (discardOwnDraft() && drafts != null && recoveredDraftId != null) {
+            try {
+                drafts.discard(recoveredDraftId);
+                recoveredDraftId = null;
+            } catch (RuntimeException e) {
+                owner.showError("The session was saved, but its recovery draft could not be removed.", e);
+            }
+        }
+        return true;
+    }
+
+    private void enableDrafts() {
+        var account = owner.uiSession.getPrivateAccount();
+        if (closed || account == null || !account.isUnlocked()) return;
+        if (draftFailure != null) {
+            owner.showError("Encrypted autosave failed", draftFailure);
+            draftFailure = null;
+        }
+        try {
+            synchronized (draftGate) {
+                drafts = new StorylineDrafts(AppHome.resolve("data", "auth", "storyline-drafts"), service, file, account);
+                draftGeneration++;
+                persistedRevision = -1;
+            }
+            draftStatus.setText("Encrypted autosave is on. Drafts stay on this device.");
+            draftPulse.play();
+            reviewDrafts();
+            autosave();
+        } catch (RuntimeException e) {
+            draftStatus.setText("Encrypted recovery is unavailable. Use Save to protect your changes.");
+            owner.showError("Could not open encrypted recovery drafts", e);
+        }
+    }
+
+    private void autosave() {
+        if (closed || drafts == null || !dirty || draftPending || persistedRevision == editRevision) return;
+        StorylineDrafts store = drafts;
+        String text = area.getText();
+        String baseline = service.editorRevision(file);
+        long generation = draftGeneration;
+        long revision = editRevision;
+        draftPending = true;
+        owner.background(() -> {
+            synchronized (draftGate) {
+                if (closed || generation != draftGeneration) return false;
+                store.save(draftId, baseline, text);
+                return true;
+            }
+        }, written -> {
+            draftPending = false;
+            if (closed || generation != draftGeneration) return;
+            if (written) {
+                persistedRevision = revision;
+                draftFailure = null;
+                draftStatus.setText("Encrypted recovery draft saved on this device.");
+            }
+        }, error -> {
+            draftPending = false;
+            if (closed || generation != draftGeneration) return;
+            draftFailure = error;
+            draftStatus.setText("Encrypted autosave failed. Use Save and open Recovery & Autosave for details.");
+        });
+    }
+
+    private boolean discardOwnDraft() {
+        try {
+            synchronized (draftGate) {
+                draftGeneration++;
+                if (drafts != null) drafts.discard(draftId);
+                persistedRevision = -1;
+            }
+            return true;
+        } catch (RuntimeException e) {
+            owner.showError("Could not remove the encrypted recovery draft", e);
+            return false;
+        }
+    }
+
+    private void reviewDrafts() {
+        List<StorylineDrafts.Draft> available = drafts.list().stream()
+            .filter(d -> !draftId.equals(d.editorId())).toList();
+        if (available.isEmpty()) return;
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.initOwner(editorStage);
+        dialog.setTitle("Encrypted recovery drafts");
+        ComboBox<StorylineDrafts.Draft> choices = new ComboBox<>(
+            javafx.collections.FXCollections.observableArrayList(available));
+        choices.getSelectionModel().selectFirst();
+        TextArea preview = new TextArea();
+        preview.setEditable(false);
+        preview.setWrapText(true);
+        preview.setPrefSize(760, 420);
+        TextArea current = new TextArea(area.getText());
+        current.setEditable(false);
+        current.setWrapText(true);
+        TabPane comparison = new TabPane(new Tab("Recovery draft text", preview), new Tab("Current session text", current));
+        comparison.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+        Label warning = new Label();
+        warning.setWrapText(true);
+        Runnable select = () -> {
+            var draft = choices.getValue();
+            preview.setText(draft.text());
+            warning.setText(draft.baseRevision().equals(service.editorRevision(file))
+                ? "Recovery changes only the editor. Save explicitly to update the session file."
+                : "The session file changed since this draft. Review both versions before saving recovered text.");
+        };
+        choices.valueProperty().addListener((o, a, b) -> select.run());
+        select.run();
+        ButtonType restore = new ButtonType("Recover into editor", ButtonBar.ButtonData.OK_DONE);
+        ButtonType discard = new ButtonType("Delete selected recovery draft", ButtonBar.ButtonData.OTHER);
+        dialog.getDialogPane().setContent(new VBox(10, choices, warning, comparison));
+        dialog.getDialogPane().getButtonTypes().addAll(restore, discard, ButtonType.CANCEL);
+        owner.styleDialog(dialog);
+        var chosen = dialog.showAndWait().orElse(ButtonType.CANCEL);
+        var selected = choices.getValue();
+        if (chosen == restore) {
+            // Revalidate after a potentially long preview, before exposing a recovered copy to the editor.
+            if (drafts.list().stream().noneMatch(d -> d.equals(selected))) {
+                throw new IllegalStateException("The recovery draft changed. Open recovery again.");
+            }
+            area.replaceText(selected.text());
+            recoveredDraftId = selected.editorId();
+            markDirty(true);
+        } else if (chosen == discard) {
+            Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION,
+                "Permanently delete this encrypted recovery draft?", ButtonType.OK, ButtonType.CANCEL);
+            confirmation.initOwner(editorStage);
+            owner.styleDialog(confirmation);
+            if (confirmation.showAndWait().filter(ButtonType.OK::equals).isPresent()) drafts.discard(selected.editorId());
+        }
     }
 
     private void markDirty(boolean value) {

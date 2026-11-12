@@ -213,9 +213,183 @@ Defaults live in `src/main/resources/cloud.properties`. A per-machine override g
 |---|---|---|
 | `enabled` | `true` | `false` keeps everything local |
 | `databaseUrl` | project Firebase RTDB | Realtime Database URL |
-| `rootPath` | `sessions/dnd-directory` | Root node for accounts, memberships and join codes |
-| `apiKey` | *(empty)* | Firebase Web API key. When set, and Email/Password sign-in is enabled, Firebase sends verification and reset emails. Not secret. |
+| `rootPath` | `sessions/dnd-directory` | Legacy export location only; authenticated clients use the fixed `almerion-cloud` namespace |
+| `apiKey` | Project Web API key | Public Firebase app identifier. With Email/Password sign-in enabled, Firebase sends verification and reset emails. Never put a service-account private key here. |
 | `authUrl` | `https://identitytoolkit.googleapis.com/v1` | Identity Toolkit endpoint |
+
+### Authenticated cloud and update-only cutover
+
+Online login now verifies Firebase Email/Password before any shared directory access.
+`almerion-cloud/profiles` contains only username, verified email and provider UID;
+password hashes, salts and recovery/verification codes remain device-local. Immutable
+`accountKeys/<uid>` bindings, not caller-supplied actor names, authorize rules. Username
+login needs a cached email on a new device; otherwise use email. Provider tokens refresh
+in memory and are cleared on logout. Offline login requires previously cached matching
+credentials and opens only a UID-scoped, read-only membership cache. Refused authorization
+never falls back to cached privileges. `-Ddnd.cloud=off` makes no Firebase auth requests.
+Before the first successful provider enrollment, legacy cached credentials/memberships remain
+usable only for read-only, device-offline access; they never authorize online requests.
+
+`CampaignDirectory` uses atomic multi-location updates and sparse member/application edits;
+accepting one player cannot overwrite another concurrent application. Rules check author-only
+GM promotions, DM player acceptance/removal, self-only applications/leave, member-only campaign
+reads and self-only indexes. Invitations reveal only campaign id/name/author to verified
+users who know the code; applicants cannot fetch live tokens or the full campaign record.
+Only the claimed campaign ID itself is readable by other verified accounts, so local
+folder discovery can distinguish an inaccessible campaign from an unregistered one.
+
+**Do not deploy the private-only or cloud-only rules file as the complete ruleset.**
+The migration tool combines both. Existing public records cannot establish trustworthy
+ownership: an administrator must independently review account emails and campaign roles.
+No automatic "first claimant owns this legacy campaign" migration is supported.
+
+Save exports/approvals outside repositories and campaign sync. Example approval shape:
+
+```json
+{
+  "accounts": [
+    { "username": "GM", "email": "owner@example.test" },
+    { "username": "Player", "email": "player@example.test" }
+  ],
+  "campaigns": {
+    "campaign-id": { "author": "GM", "members": { "GM": "DM", "Player": "PLAYER" } }
+  }
+}
+```
+
+Run `python tools\migrate_cloud.py --export <legacy-export.json> --approval <reviewed.json>
+--output <directory-v2.json> --rules-output <cutover.rules.json>
+--maintenance-rules-output <maintenance.rules.json>` as one command. It operates offline,
+refuses overwrites, preserves campaign IDs and valid join codes, rebuilds indexes, strips
+credentials/live tokens and resets pending applications (players reapply). Unreviewed legacy
+usernames are reserved but cannot be claimed. Approved emails can enroll their existing name
+after provider verification, without an administrator needing to know their password or UID.
+
+Administrator deployment order:
+
+1. Back up the database and rules, independently review the approval manifest, and keep all
+   app clients closed during migration. Do not copy passwords/hashes into the approval file.
+2. Publish the generated **maintenance** rules: both old and new shared-cloud clients are
+   blocked, while `almerion-private` accounts, requests and encrypted keys remain protected.
+3. Import the generated data into **only `/almerion-cloud`**, never the database root.
+   Verify identities, authors, roles and IDs. Do not overwrite or migrate `almerion-private`.
+4. Publish the generated complete **cutover** rules. All `sessions` legacy access is now
+   permanently denied; every online device must update. No live rule changes are made by
+   the application or migration tool. Old data remains stored but inaccessible to clients.
+5. Enroll/verify Firebase accounts, log in with email, and restart online sessions with new
+   tokens. Local campaign files are untouched. Reset reused passwords: closing old public
+   rules cannot undo past exposure of credential hashes or previously downloaded copies.
+
+Host snapshots live under `almerion-live/<256-bit-id>`. Verified campaign GMs create them;
+only that session's host UID, while still a campaign GM, can replace/delete them. Player
+tokens are v2, contain a separate random 256-bit decryption key, and grant no snapshot-write
+or administration privilege. The separate guest-chat capability permits bounded mailbox
+writes only; character passwords still authorize every guest chat command.
+Ciphertext-only snapshot reads intentionally use a bearer capability; anyone holding a token
+can decrypt it, including outside the app. Never promise membership revocation erases shared
+tokens or cached plaintext. Snapshot access expires 12 hours after the last host push;
+host-only metadata and directory records are not publicly readable. Legacy tokens are rejected.
+Host demotion or campaign deletion also stops further snapshot reads immediately; previously
+downloaded plaintext cannot be revoked.
+
+`node src\test\firebase\cloud-rules.mjs` exercises the combined deployed rules against the
+loopback emulator (same setup as below), including role spoofing, unsafe index writes,
+concurrent applications, private applicant reads, host impersonation and expiry.
+`python -m unittest discover -s tools -p test_migrate_cloud.py` checks the offline migration.
+
+### Private storyline storage and Firebase deployment
+
+`FirebasePrivateStore` authenticates separately with Firebase Email/Password, verifies
+provider UID/email/verification, retains refresh credentials only in memory, and uses
+`almerion-private` at the **database root**. It never uses `Cloud.store()`'s shared cache or
+the shared session-token passphrase. An online profile alone does not unlock private keys. HTTPS is required; anonymous account reads and
+conditional writes to absent key-record nonces are probed and rejected before use.
+Older accounts must enroll/verify at login; the explicit **Set up / verify email**
+action in the unlock dialog is also retained. This uses Firebase signup (or signs into an existing
+provider account) and emails a verification link; it does not recreate the local
+Almerion user or generate file keys. Unlock still requires the provider's verified
+email/UID after the link has been opened. A missing provider account is not an
+authorization grant or a reason to bypass verification.
+
+The combined cutover above preserves `packaging\firebase-private.rules.json`. Never deploy
+that standalone private-namespace ruleset in place of the complete combined rules. Remove permissive
+`.read`/`.write` rules from the database root and every ancestor of `almerion-private`;
+Firebase ancestor grants cannot be overridden by restrictive child rules. Deploying these
+rules is not performed by the app. Test denial of anonymous access, cross-account key
+reads/writes, identity-key replacement, forged request senders, and requester approval.
+The dependency-free `node src\test\firebase\private-rules.mjs` check exercises those rules
+against a dedicated Firebase Database emulator on `127.0.0.1:19190` (start its JAR with
+`--host 127.0.0.1 --port 19190`, then stop it after testing). It accepts loopback only,
+loads the actual rules file, and uses synthetic accounts in `demo-almerion-private`.
+
+Each provider UID owns two RSA-3072 pairs: RSA-OAEP SHA-256/MGF1 SHA-256 for AES key grants,
+and RSA-PSS SHA-256 (32-byte salt) for signatures. PKCS#8 bundles are password-encrypted by
+`SessionCipher` and independently wrapped with a random 256-bit recovery key. Password
+recovery rewraps the same keys; it never replaces them. Rules make public key identities
+immutable, so verified public keys can be cached only for the unlocked login lifetime.
+Recipient discovery uses provider-bound profiles and server-enforced campaign GM membership.
+Owners should still verify the recipient's email before granting access.
+
+`PrivateSessionFiles` uses a versioned envelope with owner-signed recipient grants,
+writer-signed ciphertext, and AES-256-GCM AAD binding file/owner/writer/grant signature.
+Text and roster share one encrypted payload. Access changes always rotate the AES key;
+only the owner signs new grants. Recipients may sign content edits, but not grant changes.
+`StorylineService` enforces these permissions for reads, saves, roster operations, moves,
+recursive deletes, and reorder; ancestor operations preflight all private descendants.
+Editors keep separate version baselines to reject stale saves after external edits or
+permission changes. Saves use same-directory atomic replacement with ciphertext-only
+temporary writes for private files. Direct `SessionRosterStore` access rejects private
+sessions. Existing plaintext sessions are not migrated automatically.
+
+Owner-only inboxes use sender-authenticated, per-file request records. Requesters can read
+their own responses but cannot approve them. Approval checks the current campaign GM list
+and actual local encrypted file owner/ID, grants locally, then persists the response.
+Campaign sync distributes the ciphertext/grant update separately; an approved response is
+not itself a decryption grant.
+
+### Ephemeral session chat
+
+`SessionChat` is an in-memory, host-mediated hub with reference-counted LAN/internet
+hosting per normalized campaign path. Last-host shutdown clears it. Participants see only
+their conversations; the current host sees all, with an explicit monitoring disclosure.
+Host monitoring grants no send/impersonation permission. Membership is immutable, direct
+threads deduplicate by participants, and each thread retains 500 messages. The last 500
+accepted mutation IDs per actor make uncertain-delivery retries idempotent.
+
+`SessionChatRelay` uses authenticated `almerion-chat/<sessionId>` mailboxes, independent
+of snapshot encryption. Each connection leases one of 32 fixed slots per UID. Rules reject
+lease replacement, unknown fields, oversized payloads, stale/non-matching replies, expired
+sessions, removed membership, and demoted hosts. Fixed slots are required because RTDB
+rules do not support `numChildren()`. AAD binds the session, authenticated UID, random
+connection ID, request UUID and direction. Ephemeral RSA-3072/OAEP-SHA256 keys wrap fresh
+AES-256-GCM keys for every request/reply; neither host nor client private keys are persisted.
+
+The host binds the request's public profile to the mailbox UID before checking character
+ownership/password; it never reads another user's private `accountKeys` entry or trusts
+a payload actor ID. Assigned-character access requires verified campaign membership.
+Account-free desktop guests use a domain-separated SHA-256 capability derived from the
+256-bit session token secret; only its holders can reach the separate guest channel.
+Its 32 fixed slots are shared across guests, its replies remain independently encrypted,
+and character passwords are checked on every command. Guest payload usernames never
+grant ownership. Brute-force throttling is per actual character (one bounded bucket for
+unknown characters), independent of connection/key churn. Token holders share encrypted
+guest transport access and can disrupt one another; the token is not an administration or
+snapshot-write credential. Password rotation revokes a guest; restarting hosting revokes
+the session token. Browser `/api/chat` derives its actor from the existing character bearer token
+and uses safe text rendering. LAN HTTP is restricted operationally to trusted networks.
+Normal stop deletes chat before live metadata, since permissions depend on the live record;
+failed cleanup/crashes can leave undecryptable ciphertext. Read/copied messages cannot be
+revoked. No chat enters campaign sync, local history, drafts, or restore points.
+
+`SessionChatUi` and the browser sheet poll without marking hidden conversations read.
+Uncertain mutations keep their UUID until successful retry or explicit discard. Poll errors,
+logout, role/context changes and session shutdown clear displayed chat. Connection teardown
+waits off the FX thread for an in-flight request before deleting its leased mailboxes.
+Closing a player's chat transfers its connection to the current home-screen unread badge,
+so token guests continue receiving notifications without saving their password to disk.
+Reopening chat takes that connection back; navigation/context teardown closes it.
+Coverage: `SessionChatTest`, `SessionChatRelayTest`, `SessionChatUiTest`,
+`LanSessionServerTest`, and the actual-emulator `src/test/firebase/cloud-rules.mjs` suite.
 
 ### Email (`data\auth\smtp-config.json`)
 

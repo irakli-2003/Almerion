@@ -20,14 +20,9 @@ import java.util.List;
  *   <li><b>stop</b> — delete the session node from Firebase and disconnect.</li>
  * </ul>
  *
- * <h2>Firebase database URL</h2>
- * The URL is hard-coded to the project's Realtime Database:
- * {@code https://dnd-campaign-f8c23-default-rtdb.europe-west1.firebasedatabase.app}
+ * Hosting requires a verified Firebase account and server-checked campaign GM membership.
  */
 public class OnlineSessionPage implements Page {
-
-    private static final String FIREBASE_URL =
-            "https://dnd-campaign-f8c23-default-rtdb.europe-west1.firebasedatabase.app";
 
     private final CliSession session;
     private Page parent;
@@ -85,28 +80,38 @@ public class OnlineSessionPage implements Page {
             return this;
         }
 
-        s.getConsole().print("Enter a passphrase for this session (players will need it): ");
-        String passphrase = s.getConsole().readLine().trim();
-        if (passphrase.isEmpty()) {
-            s.getConsole().println("Passphrase cannot be empty.");
-            return this;
-        }
-
-        String sessionId = FirebaseSessionSync.generateSessionId();
-        FirebaseSessionSync sync = new FirebaseSessionSync(FIREBASE_URL, sessionId, passphrase);
-
-        String snapshot = buildSnapshot(s);
+        FirebaseSessionSync sync;
         try {
-            sync.push(snapshot);
-        } catch (FirebaseSessionSync.SyncException e) {
-            s.getConsole().println("Failed to connect to Firebase: " + e.getMessage());
-            s.getConsole().println("Check your internet connection and try again.");
+            try {
+                com.dnd.cloud.Cloud.account();
+            } catch (com.dnd.cloud.CloudStore.CloudException notSignedIn) {
+                s.getConsole().print("Verified account email: ");
+                String email = s.getConsole().readLine().trim();
+                s.getConsole().print("Account password (hidden): ");
+                var result = new com.dnd.auth.AuthService().login(email, s.getConsole().readSecret());
+                if (!result.success() || result.offline()) {
+                    s.getConsole().println(result.message());
+                    return this;
+                }
+            }
+            String id = com.dnd.cloud.CampaignMeta.idOf(s.getCampaignContext().getPath())
+                .orElseThrow(() -> new IllegalStateException("Register the campaign before hosting it online."));
+            sync = FirebaseSessionSync.host(id);
+            sync.push(buildSnapshot(s));
+            try {
+                sync.startChat(s.getCampaignContext().getPath());
+            } catch (RuntimeException failure) {
+                try { sync.delete(); } catch (RuntimeException cleanup) { failure.addSuppressed(cleanup); }
+                throw failure;
+            }
+        } catch (FirebaseSessionSync.SyncException | com.dnd.cloud.CloudStore.CloudException | IllegalStateException e) {
+            s.getConsole().println("Could not start the online session: " + e.getMessage());
             return this;
         }
 
         s.setFirebaseSync(sync);
 
-        String token = FirebaseSessionSync.generateToken(FIREBASE_URL, sessionId, passphrase);
+        String token = sync.token();
         s.getConsole().println();
         s.getConsole().println("=== SESSION STARTED ===");
         s.getConsole().println("Share this token with your players:");
@@ -127,6 +132,7 @@ public class OnlineSessionPage implements Page {
             s.getConsole().println("Session ended and data removed from Firebase.");
         } catch (FirebaseSessionSync.SyncException e) {
             s.getConsole().println("Warning: could not remove session from Firebase: " + e.getMessage());
+            return this;
         }
         s.setFirebaseSync(null);
         return this;
@@ -139,11 +145,6 @@ public class OnlineSessionPage implements Page {
      * This is the payload that players receive when they pull from Firebase.
      */
     private String buildSnapshot(CliSession s) {
-        try {
-            return com.dnd.data.SessionSnapshot.capture(s.getCampaignContext().getPath(), s.getCampaignContext().getName());
-        } catch (Exception e) {
-            // Fallback: push minimal metadata rather than failing the whole command
-            return "{\"campaign\":\"" + s.getCampaignContext().getName() + "\"}";
-        }
+        return com.dnd.data.SessionSnapshot.capture(s.getCampaignContext().getPath(), s.getCampaignContext().getName());
     }
 }

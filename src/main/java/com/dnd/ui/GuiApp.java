@@ -33,9 +33,17 @@ public class GuiApp extends Application {
         primaryStage.setMaximized(true);
         primaryStage.setOnCloseRequest(e -> {
             if (session.isOnline()) {
-                try { session.getFirebaseSync().delete(); } catch (Exception ignored) {}
+                if (session.getFirebaseSync().isHost()) {
+                    try {
+                        session.getFirebaseSync().delete();
+                    } catch (com.dnd.security.FirebaseSessionSync.SyncException failure) {
+                        System.err.println("Could not remove the hosted session on exit; access expires automatically: " + failure.getMessage());
+                    }
+                }
                 session.setFirebaseSync(null);
             }
+            uiSession.lockPrivateAccount();
+            com.dnd.cloud.Cloud.signOut();
         });
         uiSession.getRouter().goTo(SceneType.LOGIN);
         primaryStage.show();

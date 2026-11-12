@@ -44,6 +44,14 @@ public final class UpdatePrompt {
 
         Thread t = new Thread(() -> {
             try {
+                com.dnd.sync.CampaignSyncService.shared().localFiles(() -> {
+                    var storage = new com.dnd.cli.storage.CampaignStorage();
+                    for (String name : storage.listCustomCampaigns()) {
+                        com.dnd.data.CampaignRestorePoints.forCampaign(storage.resolveCustomCampaignPath(name))
+                            .capture("Before app update");
+                    }
+                    return true;
+                }).join();
                 UpdateChecker.Outcome outcome = checker.download(release);
                 Platform.runLater(() -> {
                     if (outcome == UpdateChecker.Outcome.READY_AFTER_RESTART) offerRestart(owner, release);

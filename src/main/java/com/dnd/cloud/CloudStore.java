@@ -17,6 +17,11 @@ public interface CloudStore {
 
     void delete(String path);
 
+    /** Atomically applies relative-path replacements; null values delete nodes. */
+    default void update(java.util.Map<String, Object> changes) {
+        throw new UnsupportedOperationException("This cloud store does not support atomic updates.");
+    }
+
     /** Thrown when the shared store can't be reached or rejects a request. */
     class CloudException extends RuntimeException {
         private final boolean offline;

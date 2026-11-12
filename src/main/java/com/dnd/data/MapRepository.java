@@ -15,6 +15,11 @@ public class MapRepository extends JsonRepository<GameMap, MapCatalog> {
     public MapRepository(Path path, ObjectMapper mapper) {
         super(path, mapper, MapCatalog::new, MapCatalog.class,
             MapCatalog::getMaps, MapCatalog::setMaps, GameMap::getId);
+        try {
+            OperationHistory.ensureMapIds(path);
+        } catch (java.io.IOException e) {
+            throw new DataAccessException("Could not establish stable battle-token identities.", e);
+        }
     }
 
     public void validateName(String name, String exceptId) {

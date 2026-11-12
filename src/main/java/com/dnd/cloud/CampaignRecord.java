@@ -24,6 +24,7 @@ public class CampaignRecord {
 
     public static class Application {
         public String username;
+        public String joinCode;
         public long requestedAtMillis;
 
         public Application() {
@@ -39,6 +40,7 @@ public class CampaignRecord {
     public String name;
     /** Username of the DM who registered the campaign; the only one who can add or remove DMs. */
     public String author;
+    public String authorKey;
     public String joinCode;
     /** Keyed by {@link CloudKeys#of(String) username key}. */
     public Map<String, Member> members = new LinkedHashMap<>();

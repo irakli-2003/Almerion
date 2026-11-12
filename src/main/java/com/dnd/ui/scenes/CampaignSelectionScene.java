@@ -25,11 +25,16 @@ import java.util.List;
  * are not shown at all.
  */
 public class CampaignSelectionScene extends BaseScene {
-    private final CampaignDirectory directory = CampaignDirectory.shared();
+    private final CampaignDirectory directory;
     /** Folders of campaigns that sync with GitHub; filled in the background with the list. */
     private final java.util.Set<String> syncedFolders = java.util.concurrent.ConcurrentHashMap.newKeySet();
 
-    public CampaignSelectionScene(UiSession uiSession) { super(uiSession); }
+    public CampaignSelectionScene(UiSession uiSession) { this(uiSession, CampaignDirectory.shared()); }
+
+    CampaignSelectionScene(UiSession uiSession, CampaignDirectory directory) {
+        super(uiSession);
+        this.directory = directory;
+    }
 
     private String user() {
         return uiSession.getCurrentUser() == null ? "" : uiSession.getCurrentUser().getUsername();
@@ -71,6 +76,7 @@ public class CampaignSelectionScene extends BaseScene {
             Entry selected = mine.getSelectionModel().getSelectedItem();
             if (selected == null) return;
             Runnable enter = () -> {
+                if (!isCurrentRole()) return;
                 uiSession.getSession().setCampaignContext(
                     new CampaignContext(selected.local().folder(), selected.local().path()));
                 uiSession.getRouter().goTo(SceneType.DM_MENU);
@@ -111,7 +117,6 @@ public class CampaignSelectionScene extends BaseScene {
         });
 
         VBox unclaimedBox = new VBox(8);
-        VBox elsewhereBox = new VBox(6);
 
         Runnable reload = () -> uiSession.getRouter().goTo(SceneType.CAMPAIGN_SELECTION);
         Button syncBtn = btn("Sync with GitHub...", () -> {
@@ -139,10 +144,11 @@ public class CampaignSelectionScene extends BaseScene {
         importBtn.setOnAction(e -> CampaignArchiveUi.importCampaign(this, uiSession.getStorage(), user(),
             importBtn, status, reload));
         root.disableProperty().bind(exportBtn.disableProperty().or(importBtn.disableProperty()));
-        FlowPane transferRow = new FlowPane(12, 8, exportBtn, importBtn);
+        Button restoreBtn = btn("Restore points", () -> RestorePointsUi.show(this, null, reload));
+        FlowPane transferRow = new FlowPane(12, 8, exportBtn, importBtn, restoreBtn);
 
         content.getChildren().addAll(status, mine, new HBox(12, openBtn, createBtn, deleteBtn), githubRow, transferRow,
-            unclaimedBox, elsewhereBox);
+            unclaimedBox);
         ScrollPane scroll = new ScrollPane(content);
         scroll.setFitToWidth(true);
         scroll.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
@@ -157,7 +163,7 @@ public class CampaignSelectionScene extends BaseScene {
             for (LocalCampaign campaign : local) {
                 if (CampaignRepo.isSynced(campaign.path())) syncedFolders.add(campaign.folder());
             }
-            return CampaignAccess.classify(local, user(), directory);
+            return CampaignAccess.classifyLocal(local, user(), directory);
         }, listing -> {
             mine.getItems().setAll(listing.mine());
             status.setText(listing.mine().isEmpty()
@@ -165,7 +171,6 @@ public class CampaignSelectionScene extends BaseScene {
                 : (Cloud.isOffline() ? "Offline - showing the campaign list saved from your last connection." : ""));
             status.setManaged(!status.getText().isEmpty());
             fillUnclaimed(unclaimedBox, listing.unclaimed());
-            fillElsewhere(elsewhereBox, listing.elsewhere(), listing.mine());
         }, error -> status.setText(friendlyError(error)));
 
         return wrapInScene(root);
@@ -188,88 +193,6 @@ public class CampaignSelectionScene extends BaseScene {
         }
     }
 
-    private void fillElsewhere(VBox box, List<CampaignRecord> elsewhere, List<Entry> local) {
-        box.getChildren().clear();
-        if (elsewhere.isEmpty()) return;
-        box.getChildren().add(sectionLabel("Other online campaign registrations"));
-        for (CampaignRecord record : elsewhere) {
-            List<Entry> matches = CampaignAccess.similarlyNamed(local, record);
-            Label explanation = body(matches.isEmpty()
-                ? "No local campaign matches this registration's ID. Use Get Campaign from GitHub or Import Complete Campaign to bring it here."
-                : "A campaign with this name is already available above, but this online registration has a different ID. It may be an older duplicate; your local campaign is not missing.");
-            explanation.setWrapText(true);
-            Label name = com.dnd.ui.i18n.UiTranslator.skip(sectionLabel(record.name));
-            Button review = btn("Review online registration...", () -> reviewRegistration(record.id, matches));
-            box.getChildren().add(new VBox(6, name, explanation, review));
-        }
-    }
-
-    private void reviewRegistration(String id, List<Entry> matches) {
-        background(() -> directory.find(id).orElseThrow(() ->
-            new CampaignDirectory.MembershipException("This online registration no longer exists.")), record -> {
-            if (!record.isDm(user())) {
-                showInfo("Campaign access changed", "You are no longer a Game Master of this registration.");
-                return;
-            }
-            StringBuilder details = new StringBuilder();
-            details.append(com.dnd.ui.i18n.UiTranslator.text("Online registration ID: ")).append(record.id)
-                .append("\n").append(com.dnd.ui.i18n.UiTranslator.text("Author: ")).append(record.author)
-                .append("\n").append(com.dnd.ui.i18n.UiTranslator.text("Join code: ")).append(record.joinCode)
-                .append("\n").append(com.dnd.ui.i18n.UiTranslator.text("Members: "));
-            record.members.values().forEach(member ->
-                details.append(member.username).append(" (").append(member.role).append(") "));
-            details.append("\n").append(com.dnd.ui.i18n.UiTranslator.text("Pending applications: "))
-                .append(record.applications.size());
-            for (Entry entry : matches) {
-                details.append("\n\n").append(com.dnd.ui.i18n.UiTranslator.text("Playable local campaign: "))
-                    .append(entry.local().folder()).append("\n")
-                    .append(com.dnd.ui.i18n.UiTranslator.text("Local campaign ID: ")).append(entry.local().id());
-            }
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "", ButtonType.CLOSE);
-            alert.setHeaderText("Review online campaign registration");
-            Label intro = body("Compare this ID and join code with Campaign Members on your other device before removing anything. Matching names do not prove these are the same campaign.");
-            intro.setWrapText(true);
-            TextArea info = com.dnd.ui.i18n.UiTranslator.skip(new TextArea(details.toString()));
-            info.setEditable(false);
-            info.setWrapText(true);
-            info.setPrefRowCount(10);
-            VBox content = new VBox(10, intro, info);
-            if (record.isAuthor(user())) {
-                Button remove = dangerBtn("Remove only this online registration...", () -> {
-                    alert.close();
-                    confirmRemoveRegistration(record);
-                });
-                content.getChildren().add(remove);
-            }
-            alert.getDialogPane().setContent(content);
-            alert.getDialogPane().setPrefWidth(680);
-            alert.setResizable(true);
-            styleDialog(alert);
-            alert.showAndWait();
-        }, error -> showError("Couldn't review the online registration", error));
-    }
-
-    private void confirmRemoveRegistration(CampaignRecord record) {
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
-            "Remove this online registration, its member list, pending applications and join code?"
-                + " This affects every device using this registration. It cannot be undone."
-                + "\n\nNo local campaign folders, GitHub repositories or campaign files will be deleted."
-                + " Keep the registration if another device still uses its ID.",
-            ButtonType.OK, ButtonType.CANCEL);
-        confirm.setHeaderText("Remove online registration only?");
-        styleDialog(confirm);
-        if (confirm.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) return;
-        background(() -> {
-            List<LocalCampaign> current = new ArrayList<>();
-            for (String folder : uiSession.getStorage().listCustomCampaigns()) {
-                current.add(LocalCampaign.of(folder, uiSession.getStorage().resolveCustomCampaignPath(folder)));
-            }
-            CampaignAccess.removeUnavailableRegistration(record.id, current, user(), directory);
-            return true;
-        }, ok -> uiSession.getRouter().goTo(SceneType.CAMPAIGN_SELECTION),
-            error -> showError("Couldn't remove the online registration", error));
-    }
-
     private void confirmDelete(Entry selected) {
         if (!selected.record().isAuthor(user())) {
             showInfo("Only the author can delete this campaign",
@@ -277,16 +200,15 @@ public class CampaignSelectionScene extends BaseScene {
             return;
         }
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
-            "Delete campaign '" + selected.local().folder() + "'? Its files and its member list are removed. This cannot be undone.",
+            "Delete campaign '" + selected.local().folder() + "'? Its files and member list are removed."
+                + " A local restore point keeps the files, but restoring files does not restore online membership.",
             ButtonType.OK, ButtonType.CANCEL);
         confirm.setHeaderText("Confirm Delete");
         styleDialog(confirm);
         confirm.showAndWait().filter(bt -> bt == ButtonType.OK).ifPresent(bt -> background(() -> {
-            directory.delete(selected.record().id, user());
-            return true;
-        }, ok -> {
-            uiSession.getStorage().deleteCampaign(selected.local().folder());
-            uiSession.getRouter().goTo(SceneType.CAMPAIGN_SELECTION);
-        }, error -> showError("Couldn't delete the campaign", error)));
+            return CampaignSyncService.shared().localFiles(() -> uiSession.getStorage().deleteCampaign(selected.local().folder(),
+                () -> directory.delete(selected.record().id, user()), uiSession.getCurrentUser().getProviderUid())).join();
+        }, ok -> uiSession.getRouter().goTo(SceneType.CAMPAIGN_SELECTION),
+            error -> showError("Couldn't delete the campaign", error)));
     }
 }

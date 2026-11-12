@@ -58,6 +58,7 @@ public class CliSession {
     public void setFirebaseSync(FirebaseSessionSync firebaseSync) {
         if (this.firebaseSync != null) {
             this.firebaseSync.stopListening();
+            this.firebaseSync.closeChat();
         }
         this.firebaseSync = firebaseSync;
     }

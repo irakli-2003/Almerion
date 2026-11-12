@@ -32,5 +32,18 @@ public class SystemConsoleIO implements ConsoleIO {
     public String readLine() {
         return scanner.nextLine();
     }
+
+    @Override
+    public String readSecret() {
+        java.io.Console console = System.console();
+        if (console == null) throw new IllegalStateException("Open Almerion in a real terminal to enter your password without echo.");
+        char[] password = console.readPassword();
+        if (password == null) throw new IllegalStateException("Password input was cancelled.");
+        try {
+            return new String(password);
+        } finally {
+            java.util.Arrays.fill(password, '\0');
+        }
+    }
 }
 

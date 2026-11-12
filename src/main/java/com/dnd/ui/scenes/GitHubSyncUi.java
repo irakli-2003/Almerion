@@ -455,6 +455,7 @@ final class GitHubSyncUi {
 
     /** Reports a sync, asking the GM to choose versions on a conflict; {@code after} runs once it's all settled. */
     static void showResult(BaseScene owner, String folderName, Path folder, CampaignRepo.Result result, Runnable after) {
+        if (!owner.isCurrentRole()) return;
         switch (result.outcome()) {
             case SYNCED -> owner.showInfo("Synced with GitHub", result.conflictCopies().isEmpty()
                 ? "\"" + folderName + "\" is up to date on GitHub." : result.message());
@@ -492,12 +493,13 @@ final class GitHubSyncUi {
         java.time.format.DateTimeFormatter.ofPattern("d MMM yyyy, HH:mm");
 
     /**
-     * Both computers changed the same files: show who changed each version and when, and let the
-     * GM pick per file. "Decide Later" keeps everything as it is on this computer (nothing is
+     * Review competing catalogue fields or whole files with their versions and file timestamps.
+     * "Decide Later" keeps everything as it is on this computer (nothing is
      * uploaded until the conflict is settled). {@code after} runs exactly once.
      */
     static void resolveConflicts(BaseScene owner, String folderName, Path folder, CampaignRepo.Result result,
                                  Runnable after) {
+        if (!owner.isCurrentRole()) return;
         AtomicBoolean finished = new AtomicBoolean();
         Runnable done = () -> {
             if (finished.compareAndSet(false, true)) after.run();
@@ -509,18 +511,33 @@ final class GitHubSyncUi {
             ToggleGroup group = new ToggleGroup();
             RadioButton mine = choice(owner, "This computer: " + describe(conflict.mine()), CampaignRepo.Choice.MINE, group);
             RadioButton github = choice(owner, "GitHub: " + describe(conflict.github()), CampaignRepo.Choice.GITHUB, group);
-            RadioButton both = choice(owner, "Keep both (GitHub's version is saved next to this computer's)",
-                CampaignRepo.Choice.BOTH, group);
             (conflict.newer() == CampaignRepo.Choice.GITHUB ? github : mine).setSelected(true);
-            Label newer = owner.body(conflict.newer() == CampaignRepo.Choice.GITHUB
+            Label newer = owner.body(conflict.field() != null
+                ? "Suggestion uses the file's timestamp; review the field values before applying."
+                : conflict.newer() == CampaignRepo.Choice.GITHUB
                 ? "GitHub's version is newer." : "This computer's version is newer.");
             newer.setStyle("-fx-text-fill: #c9a84c;");
             Label path = UiTranslator.skip(owner.sectionLabel(conflict.path()));
-            VBox card = new VBox(6, path, newer, mine, github, both);
+            VBox card = new VBox(6, path);
+            if (conflict.field() != null) {
+                var field = conflict.field();
+                card.getChildren().add(UiTranslator.skip(owner.body(field.entity() + "\n" + field.pointer())));
+                TabPane values = new TabPane(
+                    new Tab("Common version", conflictValue(field.before())),
+                    new Tab("This computer", conflictValue(field.mine())),
+                    new Tab("GitHub", conflictValue(field.github())));
+                values.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+                card.getChildren().add(values);
+            }
+            card.getChildren().addAll(newer, mine, github);
+            if (conflict.field() == null) {
+                card.getChildren().add(choice(owner, "Keep both (GitHub's version is saved next to this computer's)",
+                    CampaignRepo.Choice.BOTH, group));
+            }
             card.setPadding(new Insets(10));
             card.setStyle("-fx-border-color: #c9a84c66; -fx-border-width: 1px; -fx-background-color: #ffffff08;");
             rows.getChildren().add(card);
-            groups.put(conflict.path(), group);
+            groups.put(conflict.choiceKey(), group);
         }
         ScrollPane scroll = new ScrollPane(rows);
         scroll.setFitToWidth(true);
@@ -546,7 +563,9 @@ final class GitHubSyncUi {
         });
         stage.setOnHidden(e -> done.run());
 
-        Label intro = owner.body(result.message() + " Files changed on only one side are merged automatically."
+        Label intro = owner.body(result.message() + " Independent catalogue entries and object fields are merged automatically."
+            + " Choose only the competing values below. Ordered lists are reviewed together."
+            + " File or entry deletions that compete with edits require a choice."
             + " Until you apply your choices, nothing is overwritten or uploaded; \"Decide Later\" keeps this"
             + " computer's files as they are and asks again next time.");
         VBox box = new VBox(12, intro, scroll, flow(allMine, allGithub), flow(apply, later), status);
@@ -554,6 +573,14 @@ final class GitHubSyncUi {
         fitTexts(box);
         stage.setScene(owner.themedScene(box, 760, 620));
         stage.show();
+    }
+
+    private static TextArea conflictValue(String value) {
+        TextArea text = new TextArea(value == null ? UiTranslator.text("Deleted / not present") : value);
+        text.setEditable(false);
+        text.setWrapText(true);
+        text.setPrefRowCount(5);
+        return text;
     }
 
     /** Shows the put-aside versions for review when the campaign has any, then runs {@code after}. */

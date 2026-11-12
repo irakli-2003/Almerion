@@ -16,10 +16,12 @@ import javafx.scene.layout.*;
 
 public abstract class BaseScene {
     protected final UiSession uiSession;
+    private final long roleGeneration;
     private static final String CSS_PATH = "/com/dnd/ui/styles/dnd-theme.css";
 
     protected BaseScene(UiSession uiSession) {
         this.uiSession = uiSession;
+        roleGeneration = uiSession == null ? 0 : uiSession.roleGeneration();
     }
 
     public abstract Scene build();
@@ -32,7 +34,17 @@ public abstract class BaseScene {
     protected Scene themedScene(Parent root, double width, double height) {
         Scene scene = new Scene(root, width, height);
         scene.getStylesheets().add(getClass().getResource(CSS_PATH).toExternalForm());
+        scene.windowProperty().addListener((o, previous, window) -> {
+            if (window == null) return;
+            window.showingProperty().addListener((property, was, showing) -> {
+                if (showing && !isCurrentRole()) window.hide();
+            });
+        });
         return scene;
+    }
+
+    protected boolean isCurrentRole() {
+        return uiSession == null || roleGeneration == uiSession.roleGeneration();
     }
 
     /**
@@ -210,12 +222,21 @@ public abstract class BaseScene {
     /** Runs slow (network) work off the UI thread and hands the result back on it. */
     protected <T> void background(java.util.function.Supplier<T> work, java.util.function.Consumer<T> done,
                                   java.util.function.Consumer<Throwable> failed) {
+        if (uiSession != null) uiSession.beginBackgroundAction();
         Thread thread = new Thread(() -> {
             try {
                 T result = work.get();
-                javafx.application.Platform.runLater(() -> done.accept(result));
+                javafx.application.Platform.runLater(() -> {
+                    if (uiSession != null) uiSession.endBackgroundAction();
+                    if (isCurrentRole()) done.accept(result);
+                });
             } catch (Throwable t) {
-                javafx.application.Platform.runLater(() -> failed.accept(t));
+                javafx.application.Platform.runLater(() -> {
+                    if (uiSession != null) uiSession.endBackgroundAction();
+                    if (isCurrentRole()) failed.accept(t);
+                    else java.util.logging.Logger.getLogger(BaseScene.class.getName())
+                        .log(java.util.logging.Level.WARNING, "Background action failed after changing roles", t);
+                });
             }
         }, "dnd-background");
         thread.setDaemon(true);
@@ -223,6 +244,11 @@ public abstract class BaseScene {
     }
 
     protected void showError(String header, Throwable error) {
+        if (!isCurrentRole()) {
+            java.util.logging.Logger.getLogger(BaseScene.class.getName())
+                .log(java.util.logging.Level.WARNING, "Action failed after changing roles", error);
+            return;
+        }
         javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
         alert.setHeaderText(header);
         alert.setContentText(friendlyError(error));
@@ -231,6 +257,7 @@ public abstract class BaseScene {
     }
 
     protected void showInfo(String header, String text) {
+        if (!isCurrentRole()) return;
         javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
         alert.setHeaderText(header);
         alert.setContentText(text);

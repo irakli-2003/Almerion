@@ -16,6 +16,7 @@ public class User {
     private String id = UUID.randomUUID().toString();
     private String username;
     private String email;
+    private String providerUid;
     private String passwordHash;
     private String passwordSalt;
     private boolean emailVerified;
@@ -36,6 +37,9 @@ public class User {
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+
+    public String getProviderUid() { return providerUid; }
+    public void setProviderUid(String providerUid) { this.providerUid = providerUid; }
 
     public String getPasswordHash() { return passwordHash; }
     public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }

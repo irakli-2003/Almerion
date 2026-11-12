@@ -23,12 +23,20 @@ public final class CampaignArchive {
     private CampaignArchive() { }
 
     public static void exportCampaign(Path campaign, Path archive) throws IOException {
+        exportCampaign(campaign, archive, true);
+    }
+
+    static void captureAvailableFiles(Path campaign, Path archive) throws IOException {
+        exportCampaign(campaign, archive, false);
+    }
+
+    private static void exportCampaign(Path campaign, Path archive, boolean requireComplete) throws IOException {
         Path source = campaign.toRealPath();
         Files.createDirectories(archive.toAbsolutePath().getParent());
         Path destination = archive.toAbsolutePath().getParent().toRealPath().resolve(archive.getFileName());
         if (destination.startsWith(source)) throw new IOException("Save the export outside the campaign folder.");
-        var missing = ManualFiles.inspect(source).missing();
-        if (!missing.isEmpty()) {
+        var missing = requireComplete ? ManualFiles.inspect(source).missing() : List.<ManualFiles.Entry>of();
+        if (requireComplete && !missing.isEmpty()) {
             throw new IOException("Import missing or different manual-transfer files before exporting a complete campaign:\n"
                 + String.join("\n", missing.stream().map(ManualFiles.Entry::path).toList()));
         }
@@ -189,6 +197,9 @@ public final class CampaignArchive {
                 }
             }
             Path backup = null;
+            if (!add.isEmpty() || !replace.isEmpty()) {
+                CampaignRestorePoints.forCampaign(target).capture("Before campaign import");
+            }
             if (!replace.isEmpty()) {
                 Path backups = storage.getCustomCampaignRoot().getParent().resolve("campaign-import-backups");
                 Files.createDirectories(backups);

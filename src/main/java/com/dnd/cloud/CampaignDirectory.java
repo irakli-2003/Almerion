@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
+import java.util.LinkedHashMap;
 
 /**
  * Who belongs to which campaign, kept in the shared {@link CloudStore}.
@@ -57,43 +59,67 @@ public class CampaignDirectory {
             if (record.applications == null) record.applications = new java.util.LinkedHashMap<>();
             return Optional.of(record);
         } catch (Exception e) {
-            return Optional.empty();
+            throw new CloudStore.CloudException("The campaign membership record is malformed.", false, e);
         }
+    }
+
+    /** A claimed ID is visible without exposing its owner, members, invite, or live token. */
+    public boolean isRegistered(String campaignId) {
+        return campaignId != null && store.get("campaigns/" + campaignId + "/id") != null;
+    }
+
+    public Optional<CampaignRecord> findForMember(String campaignId, String username) {
+        if (campaignId == null || username == null || username.isBlank()) return Optional.empty();
+        return store.get("campaigns/" + campaignId + "/members/" + CloudKeys.of(username)) == null
+            ? Optional.empty() : find(campaignId);
     }
 
     /** Registers a campaign with {@code author} as its first DM. */
     public CampaignRecord register(String campaignId, String name, String author) {
-        if (find(campaignId).isPresent()) {
+        if (isRegistered(campaignId)) {
             throw new MembershipException("A campaign with this id is already registered.");
         }
         CampaignRecord record = new CampaignRecord();
         record.id = campaignId;
         record.name = name;
         record.author = author;
+        record.authorKey = CloudKeys.of(author);
         record.members.put(CloudKeys.of(author), new CampaignRecord.Member(author, Role.DM));
         record.joinCode = newJoinCode();
-        store.put("joinCodes/" + record.joinCode, campaignId);
-        save(record);
+        store.update(Map.of("campaigns/" + campaignId, record,
+            "joinCodes/" + record.joinCode, invitation(record),
+            "userCampaigns/" + record.authorKey + "/" + campaignId, Role.DM.name()));
         return record;
     }
 
     /** Campaigns {@code username} is a member of, in any role. */
     public List<CampaignRecord> campaignsOf(String username) {
-        return recordsIndexedUnder("userCampaigns/" + CloudKeys.of(username), r -> r.isMember(username));
+        return recordsIndexedUnder("userCampaigns/" + CloudKeys.of(username), username);
     }
 
     /** Campaigns {@code username} has applied to and is still waiting on. */
     public List<CampaignRecord> pendingApplicationsOf(String username) {
-        return recordsIndexedUnder("userApplications/" + CloudKeys.of(username),
-            r -> r.applications.containsKey(CloudKeys.of(username)));
+        String key = CloudKeys.of(username);
+        JsonNode index = store.get("userApplications/" + key);
+        List<CampaignRecord> result = new ArrayList<>();
+        if (index == null) return result;
+        index.fields().forEachRemaining(entry -> {
+            if (store.get("campaigns/" + entry.getKey() + "/applications/" + key) != null) {
+                CampaignRecord summary = summary(entry.getValue());
+                summary.id = entry.getKey();
+                result.add(summary);
+            }
+        });
+        result.sort((a, b) -> String.valueOf(a.name).compareToIgnoreCase(String.valueOf(b.name)));
+        return result;
     }
 
-    private List<CampaignRecord> recordsIndexedUnder(String path, java.util.function.Predicate<CampaignRecord> stillValid) {
+    private List<CampaignRecord> recordsIndexedUnder(String path, String username) {
         List<CampaignRecord> result = new ArrayList<>();
         JsonNode index = store.get(path);
         if (index == null || !index.isObject()) return result;
         for (Iterator<String> it = index.fieldNames(); it.hasNext(); ) {
-            find(it.next()).filter(stillValid).ifPresent(result::add);
+            findForMember(it.next(), username).filter(r -> r.isMember(username)).ifPresent(result::add);
         }
         result.sort((a, b) -> String.valueOf(a.name).compareToIgnoreCase(String.valueOf(b.name)));
         return result;
@@ -103,20 +129,23 @@ public class CampaignDirectory {
     public CampaignRecord apply(String joinCode, String username) {
         String code = joinCode == null ? "" : joinCode.trim().toUpperCase(java.util.Locale.ROOT).replace(" ", "");
         JsonNode pointer = code.isEmpty() ? null : store.get("joinCodes/" + code);
-        CampaignRecord record = pointer == null ? null : find(pointer.asText()).orElse(null);
-        if (record == null || !code.equals(record.joinCode)) {
+        CampaignRecord record = pointer == null ? null : summary(pointer);
+        if (record == null) {
             throw new MembershipException("No campaign uses that join code. Check it with your GM.");
         }
-        if (record.isMember(username)) {
+        String key = CloudKeys.of(username);
+        if (store.get("campaigns/" + record.id + "/members/" + key) != null) {
             throw new MembershipException("You're already part of \"" + record.name + "\".");
         }
-        String key = CloudKeys.of(username);
-        if (record.applications.containsKey(key)) {
+        if (store.get("campaigns/" + record.id + "/applications/" + key) != null) {
             throw new MembershipException("You've already applied to \"" + record.name + "\". Wait for a GM to accept you.");
         }
-        record.applications.put(key, new CampaignRecord.Application(username));
-        save(record);
-        store.put("userApplications/" + key + "/" + record.id, true);
+        record.joinCode = code;
+        CampaignRecord.Application application = new CampaignRecord.Application(username);
+        application.joinCode = code;
+        record.applications.put(key, application);
+        store.update(Map.of("campaigns/" + record.id + "/applications/" + key, application,
+            "userApplications/" + key + "/" + record.id, invitation(record)));
         return record;
     }
 
@@ -128,10 +157,14 @@ public class CampaignDirectory {
         String key = CloudKeys.of(applicant);
         CampaignRecord.Application application = record.applications.remove(key);
         if (application == null) throw new MembershipException(applicant + " has no pending application.");
-        record.members.put(key, new CampaignRecord.Member(application.username, role));
-        save(record);
-        store.delete("userApplications/" + key + "/" + record.id);
-        store.put("userCampaigns/" + key + "/" + record.id, role.name());
+        CampaignRecord.Member member = new CampaignRecord.Member(application.username, role);
+        record.members.put(key, member);
+        Map<String, Object> changes = new LinkedHashMap<>();
+        changes.put("campaigns/" + record.id + "/members/" + key, member);
+        changes.put("campaigns/" + record.id + "/applications/" + key, null);
+        changes.put("userApplications/" + key + "/" + record.id, null);
+        changes.put("userCampaigns/" + key + "/" + record.id, role.name());
+        store.update(changes);
         return record;
     }
 
@@ -142,8 +175,10 @@ public class CampaignDirectory {
         if (record.applications.remove(key) == null) {
             throw new MembershipException(applicant + " has no pending application.");
         }
-        save(record);
-        store.delete("userApplications/" + key + "/" + record.id);
+        Map<String, Object> changes = new LinkedHashMap<>();
+        changes.put("campaigns/" + record.id + "/applications/" + key, null);
+        changes.put("userApplications/" + key + "/" + record.id, null);
+        store.update(changes);
         return record;
     }
 
@@ -156,8 +191,8 @@ public class CampaignDirectory {
         CampaignRecord.Member m = record.members.get(key);
         if (m == null) throw new MembershipException(member + " is not part of this campaign.");
         m.role = role;
-        save(record);
-        store.put("userCampaigns/" + key + "/" + record.id, role.name());
+        store.update(Map.of("campaigns/" + record.id + "/members/" + key, m,
+            "userCampaigns/" + key + "/" + record.id, role.name()));
         return record;
     }
 
@@ -184,17 +219,22 @@ public class CampaignDirectory {
     private void dropMember(CampaignRecord record, String member) {
         String key = CloudKeys.of(member);
         record.members.remove(key);
-        save(record);
-        store.delete("userCampaigns/" + key + "/" + record.id);
+        Map<String, Object> changes = new LinkedHashMap<>();
+        changes.put("campaigns/" + record.id + "/members/" + key, null);
+        changes.put("userCampaigns/" + key + "/" + record.id, null);
+        store.update(changes);
     }
 
     public CampaignRecord regenerateJoinCode(String campaignId, String actor) {
         CampaignRecord record = require(campaignId);
         requireDm(record, actor);
-        if (record.joinCode != null) store.delete("joinCodes/" + record.joinCode);
+        String oldCode = record.joinCode;
         record.joinCode = newJoinCode();
-        store.put("joinCodes/" + record.joinCode, record.id);
-        save(record);
+        Map<String, Object> changes = new LinkedHashMap<>();
+        changes.put("joinCodes/" + oldCode, null);
+        changes.put("joinCodes/" + record.joinCode, invitation(record));
+        changes.put("campaigns/" + campaignId + "/joinCode", record.joinCode);
+        store.update(changes);
         return record;
     }
 
@@ -212,17 +252,21 @@ public class CampaignDirectory {
     public void rename(String campaignId, String actor, String newName) {
         CampaignRecord record = require(campaignId);
         requireDm(record, actor);
-        store.put("campaigns/" + campaignId + "/name", newName);
+        record.name = newName;
+        store.update(Map.of("campaigns/" + campaignId + "/name", newName,
+            "joinCodes/" + record.joinCode, invitation(record)));
     }
 
     /** Deletes the campaign's record and every index pointing at it. Author only. */
     public void delete(String campaignId, String actor) {
         CampaignRecord record = require(campaignId);
         requireAuthor(record, actor, "Only the campaign's author can delete it.");
-        for (String key : record.members.keySet()) store.delete("userCampaigns/" + key + "/" + campaignId);
-        for (String key : record.applications.keySet()) store.delete("userApplications/" + key + "/" + campaignId);
-        if (record.joinCode != null) store.delete("joinCodes/" + record.joinCode);
-        store.delete("campaigns/" + campaignId);
+        Map<String, Object> changes = new LinkedHashMap<>();
+        for (String key : record.members.keySet()) changes.put("userCampaigns/" + key + "/" + campaignId, null);
+        for (String key : record.applications.keySet()) changes.put("userApplications/" + key + "/" + campaignId, null);
+        if (record.joinCode != null) changes.put("joinCodes/" + record.joinCode, null);
+        changes.put("campaigns/" + campaignId, null);
+        store.update(changes);
     }
 
     private CampaignRecord require(String campaignId) {
@@ -237,11 +281,21 @@ public class CampaignDirectory {
         if (!record.isAuthor(actor)) throw new MembershipException(message);
     }
 
-    private void save(CampaignRecord record) {
-        store.put("campaigns/" + record.id, record);
-        for (var entry : record.members.entrySet()) {
-            store.put("userCampaigns/" + entry.getKey() + "/" + record.id, entry.getValue().role.name());
+    private static Map<String, String> invitation(CampaignRecord record) {
+        return Map.of("id", record.id, "name", record.name, "author", record.author);
+    }
+
+    private static CampaignRecord summary(JsonNode node) {
+        if (!node.isObject() || !node.path("id").isTextual() || !node.path("name").isTextual()
+            || !node.path("author").isTextual()) {
+            throw new CloudStore.CloudException("The campaign invitation is malformed.", false);
         }
+        CampaignRecord record = new CampaignRecord();
+        record.id = node.path("id").asText();
+        record.name = node.path("name").asText();
+        record.author = node.path("author").asText();
+        record.authorKey = CloudKeys.of(record.author);
+        return record;
     }
 
     private String newJoinCode() {

@@ -20,6 +20,7 @@ public class PlayerCharacterSelectionScene extends BaseScene {
         VBox root = new VBox(0);
         root.getStyleClass().add("root");
         root.getChildren().add(backBar(SceneType.PLAYER_ONLINE_SESSION));
+        root.getChildren().add(com.dnd.ui.scenes.PlayerModeUi.banner(this));
 
         VBox content = new VBox(16);
         content.setPadding(new Insets(30, 60, 40, 60));

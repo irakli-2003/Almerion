@@ -19,6 +19,9 @@ public class NpcToken implements MapActor {
     private Position position;
     private List<MapItemToken> inventory = new ArrayList<>();
     private CombatState combat;
+    private String instanceId = java.util.UUID.randomUUID().toString();
+    @Override public String getInstanceId() { return instanceId; }
+    @Override public void setInstanceId(String value) { instanceId = value; }
 
     public NpcToken() {
     }

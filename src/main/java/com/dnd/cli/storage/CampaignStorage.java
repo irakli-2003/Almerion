@@ -170,6 +170,11 @@ public class CampaignStorage {
     }
 
     public boolean deleteCampaign(String name) {
+        return deleteCampaign(name, () -> { }, null);
+    }
+
+    /** Back up first, then remove the online registration, then remove the local files. */
+    public boolean deleteCampaign(String name, Runnable removeRegistration, String creatorUid) {
         ensureInitialized();
 
         String normalized = sanitizeName(name);
@@ -182,6 +187,12 @@ public class CampaignStorage {
             return false;
         }
 
+        try {
+            com.dnd.data.CampaignRestorePoints.forCampaign(campaignPath).capture("Before campaign deletion", creatorUid);
+        } catch (IOException e) {
+            throw new DataAccessException("Could not create a restore point. The campaign was not deleted.", e);
+        }
+        removeRegistration.run();
         deleteDirectory(campaignPath);
         return true;
     }

@@ -2,6 +2,7 @@ package com.dnd.lan;
 
 import com.dnd.data.CampaignPaths;
 import com.dnd.data.CampaignRepositories;
+import com.dnd.chat.SessionChat;
 import com.dnd.data.JsonMappers;
 import com.dnd.model.character.PlayerCharacter;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -78,7 +79,11 @@ public final class LanSessionServer {
         "Mana", "Spell slots", "Active effects", "Rounds left", "Attacks", "To hit", "Damage",
         "Actions", "Traits", "Class features", "Spells", "Cantrips", "Level", "Inventory",
         "Equipped", "Coins", "Proficiencies & languages", "Features & traits", "Notes", "XP",
-        "Sheet", "Combat", "Magic", "Gear", "Nothing here yet.", "ft."
+        "Sheet", "Combat", "Magic", "Gear", "Nothing here yet.", "ft.",
+        "Session chat", "New conversation", "Conversation title", "Send", "Message", "Retry pending action",
+        "Choose recipients", "Chat unavailable", "Unread", "Game Master", "Host monitoring", "No messages yet.",
+        "Chat delivery was not confirmed. Retry the pending action.", "Discard pending retry",
+        "Delivery may already have happened. Discard this retry and check the conversation before sending again?"
     };
 
     private static LanSessionServer running;
@@ -100,6 +105,7 @@ public final class LanSessionServer {
     private HttpServer server;
     private ExecutorService workers;
     private ScheduledExecutorService watcher;
+    private SessionChat chat;
 
     public LanSessionServer(Path campaignRoot, String campaignName, Function<String, String> translate) {
         this.campaignRoot = campaignRoot;
@@ -156,6 +162,7 @@ public final class LanSessionServer {
         server.setExecutor(workers);
         server.createContext("/", this::handle);
         open = true;
+        chat = SessionChat.acquire(campaignRoot);
         stamp = fingerprint();
         watcher = Executors.newSingleThreadScheduledExecutor(daemon("almerion-lan-watch"));
         watcher.scheduleWithFixedDelay(this::checkForChanges, 1, 1, TimeUnit.SECONDS);
@@ -171,6 +178,8 @@ public final class LanSessionServer {
         if (server != null) server.stop(0);
         if (workers != null) workers.shutdownNow();
         tokens.clear();
+        if (chat != null) SessionChat.release(campaignRoot, chat);
+        chat = null;
     }
 
     public boolean isOpen() {
@@ -255,6 +264,7 @@ public final class LanSessionServer {
                 case "/api/login" -> login(ex);
                 case "/api/sheet" -> sheet(ex);
                 case "/api/events" -> events(ex);
+                case "/api/chat" -> chat(ex);
                 case "/portrait" -> portrait(ex);
                 default -> text(ex, 404, "Not found");
             }
@@ -288,6 +298,8 @@ public final class LanSessionServer {
         n.put("campaign", campaignName);
         ObjectNode labels = n.putObject("labels");
         for (String l : LABELS) labels.put(l, translate.apply(l));
+        labels.put(SessionChat.DISCLOSURE, translate.apply(SessionChat.DISCLOSURE));
+        n.put("chatDisclosure", translate.apply(SessionChat.DISCLOSURE));
         return n;
     }
 
@@ -371,6 +383,29 @@ public final class LanSessionServer {
 
     ObjectNode sheetOf(PlayerCharacter pc) {
         return LanSheet.build(pc, new CampaignRepositories(campaignRoot), campaignName, translate, mapper);
+    }
+
+    private void chat(HttpExchange ex) throws IOException {
+        PlayerCharacter pc = authorised(ex);
+        if (pc == null) { text(ex, 401, "Sign in again"); return; }
+        try {
+            SessionChat.Command command;
+            if ("GET".equals(ex.getRequestMethod())) command = SessionChat.Command.poll(query(ex).get("conversation"));
+            else if ("POST".equals(ex.getRequestMethod())) {
+                byte[] raw = ex.getRequestBody().readNBytes(16385);
+                if (raw.length > 16384) { text(ex, 413, "Too large"); return; }
+                command = mapper.readValue(raw, SessionChat.Command.class);
+            } else { text(ex, 405, "GET or POST only"); return; }
+            SessionChat current = chat;
+            if (current == null) throw new IllegalStateException("The chat session has ended.");
+            json(ex, 200, mapper.valueToTree(current.execute(SessionChat.peerId(pc), command)));
+        } catch (IllegalArgumentException | IllegalStateException | SecurityException error) {
+            ObjectNode failure = mapper.createObjectNode();
+            failure.put("error", translate.apply(error.getMessage()));
+            json(ex, 400, failure);
+        } catch (com.fasterxml.jackson.core.JsonProcessingException error) {
+            text(ex, 400, "Bad request");
+        }
     }
 
     private void events(HttpExchange ex) throws IOException {

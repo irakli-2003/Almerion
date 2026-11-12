@@ -1,0 +1,71 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "almerion-private": {
+      "accounts": {
+        "$uid": {
+          ".read": "auth != null && auth.token.email_verified == true && auth.uid == $uid",
+          ".write": "auth != null && auth.token.email_verified == true && auth.uid == $uid && newData.exists() && (!data.exists() || (newData.child('identity/encryptionKey').val() == data.child('identity/encryptionKey').val() && newData.child('identity/signingKey').val() == data.child('identity/signingKey').val() && newData.child('identity/email').val() == data.child('identity/email').val()))",
+          ".validate": "newData.hasChildren(['version', 'identity', 'passwordBox', 'recoveryBox'])",
+          "version": { ".validate": "newData.val() == 1" },
+          "passwordBox": { ".validate": "newData.isString() && newData.val().length <= 32768" },
+          "recoveryBox": { ".validate": "newData.isString() && newData.val().length <= 32768" },
+          "identity": {
+            ".validate": "newData.hasChildren(['uid', 'email', 'name', 'encryptionKey', 'signingKey'])",
+            "uid": { ".validate": "newData.val() == auth.uid" },
+            "email": { ".validate": "newData.val() == auth.token.email" },
+            "name": { ".validate": "newData.isString() && newData.val().length <= 256" },
+            "encryptionKey": { ".validate": "newData.isString() && newData.val().length >= 400 && newData.val().length <= 1024" },
+            "signingKey": { ".validate": "newData.isString() && newData.val().length >= 400 && newData.val().length <= 1024" },
+            "$other": { ".validate": false }
+          },
+          "$other": { ".validate": false }
+        }
+      },
+      "identities": {
+        ".read": "auth != null && auth.token.email_verified == true",
+        "$uid": {
+          ".write": "auth != null && auth.token.email_verified == true && auth.uid == $uid && newData.exists()",
+          ".validate": "newData.hasChildren(['uid', 'email', 'name', 'encryptionKey', 'signingKey']) && newData.child('uid').val() == auth.uid && newData.child('email').val() == auth.token.email && newData.child('email').val() == root.child('almerion-private/accounts').child($uid).child('identity/email').val() && newData.child('name').val() == root.child('almerion-private/accounts').child($uid).child('identity/name').val() && newData.child('encryptionKey').val() == root.child('almerion-private/accounts').child($uid).child('identity/encryptionKey').val() && newData.child('signingKey').val() == root.child('almerion-private/accounts').child($uid).child('identity/signingKey').val()",
+          "uid": { ".validate": "newData.isString()" },
+          "email": { ".validate": "newData.isString()" },
+          "name": { ".validate": "newData.isString()" },
+          "encryptionKey": { ".validate": "newData.isString()" },
+          "signingKey": { ".validate": "newData.isString()" },
+          "$other": { ".validate": false }
+        }
+      },
+      "requests": {
+        "$ownerUid": {
+          ".read": "auth != null && auth.token.email_verified == true && auth.uid == $ownerUid",
+          "$requesterUid": {
+            "$fileId": {
+              ".read": "auth != null && auth.token.email_verified == true && auth.uid == $requesterUid",
+              ".write": "auth != null && auth.token.email_verified == true && newData.exists() && ((auth.uid == $requesterUid && root.child('almerion-private/identities').child($requesterUid).exists() && (!data.exists() || data.child('status').val() != 'pending') && newData.child('status').val() == 'pending') || (auth.uid == $ownerUid && data.exists() && newData.child('fileId').val() == data.child('fileId').val() && newData.child('campaignId').val() == data.child('campaignId').val() && newData.child('fileName').val() == data.child('fileName').val() && newData.child('requesterUid').val() == data.child('requesterUid').val() && newData.child('requestedAt').val() == data.child('requestedAt').val() && (newData.child('status').val() == 'approved' || newData.child('status').val() == 'denied')))",
+              ".validate": "newData.hasChildren(['fileId', 'campaignId', 'fileName', 'requesterUid', 'requestedAt', 'status'])",
+              "fileId": { ".validate": "newData.val() == $fileId" },
+              "campaignId": { ".validate": "newData.isString() && newData.val().length <= 128" },
+              "fileName": { ".validate": "newData.isString() && newData.val().length <= 256" },
+              "requesterUid": { ".validate": "newData.val() == $requesterUid" },
+              "requestedAt": { ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= now + 60000" },
+              "status": { ".validate": "newData.val() == 'pending' || newData.val() == 'approved' || newData.val() == 'denied'" },
+              "$other": { ".validate": false }
+            }
+          }
+        }
+      },
+      "outgoing": {
+        "$uid": {
+          ".read": "auth != null && auth.token.email_verified == true && auth.uid == $uid",
+          "$fileId": {
+            ".write": "auth != null && auth.token.email_verified == true && auth.uid == $uid",
+            ".validate": "newData.hasChildren(['ownerUid'])",
+            "ownerUid": { ".validate": "newData.isString() && newData.val().length <= 128" },
+            "$other": { ".validate": false }
+          }
+        }
+      }
+    }
+  }
+}

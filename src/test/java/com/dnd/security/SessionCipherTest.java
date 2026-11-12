@@ -47,8 +47,8 @@ public class SessionCipherTest {
     @Test
     public void tokenRoundTrip() {
         String dbUrl = "https://my-db.firebaseio.com";
-        String sessionId = "abc123";
-        String passphrase = "my-passphrase";
+        String sessionId = FirebaseSessionSync.generateSessionId();
+        String passphrase = FirebaseSessionSync.generateSessionId();
 
         String token = FirebaseSessionSync.generateToken(dbUrl, sessionId, passphrase);
         FirebaseSessionSync sync = FirebaseSessionSync.fromToken(token);
@@ -68,7 +68,7 @@ public class SessionCipherTest {
     public void generateSessionIdIsHexAndCorrectLength() {
         String id = FirebaseSessionSync.generateSessionId();
         assertNotNull(id);
-        assertEquals(24, id.length());   // 12 bytes -> 24 hex chars
+        assertEquals(64, id.length());   // 32 bytes -> 64 hex chars
         assertTrue(id.matches("[0-9a-f]+"));
     }
 }

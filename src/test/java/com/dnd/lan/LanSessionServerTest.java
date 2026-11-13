@@ -151,6 +151,34 @@ public class LanSessionServerTest {
         assertNull(server.characterForToken(token));
     }
 
+    @Test public void browserChatSharesHostHubButCannotReadOtherConversationsOrSpoofSender() throws Exception {
+        String token = server.login("ip", "hero", "secret").token();
+        var chat = com.dnd.chat.SessionChat.hosted(root);
+        assertNotNull(chat);
+        var create = new com.dnd.chat.SessionChat.Command(java.util.UUID.randomUUID().toString(), "create", null,
+            java.util.List.of("pc:hero"), "GM secret", "");
+        String thread = chat.execute(com.dnd.chat.SessionChat.HOST, create).selected();
+        chat.execute(com.dnd.chat.SessionChat.HOST, new com.dnd.chat.SessionChat.Command(java.util.UUID.randomUUID().toString(),
+            "send", thread, java.util.List.of(), "", "For Ardan only"));
+        assertEquals(401, get("/api/chat?token=bogus").statusCode());
+        var response = JsonMappers.create().readTree(get("/api/chat?token=" + token + "&conversation=" + thread).body());
+        assertEquals("pc:hero", response.path("peer").asText());
+        assertEquals("For Ardan only", response.path("messages").get(0).path("text").asText());
+        String hidden = chat.execute("pc:open", new com.dnd.chat.SessionChat.Command(java.util.UUID.randomUUID().toString(),
+            "create", null, java.util.List.of(com.dnd.chat.SessionChat.HOST), "Not Ardan", "")).selected();
+        assertEquals(400, get("/api/chat?token=" + token + "&conversation=" + hidden).statusCode());
+        var command = new com.dnd.chat.SessionChat.Command(java.util.UUID.randomUUID().toString(), "send", thread,
+            java.util.List.of(), "", "<script>not executable</script>");
+        var reply = http.send(HttpRequest.newBuilder(URI.create("http://localhost:" + server.port() + "/api/chat?token=" + token))
+            .header("Content-Type", "application/json").POST(HttpRequest.BodyPublishers.ofString(JsonMappers.create().writeValueAsString(command))).build(),
+            HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, reply.statusCode());
+        assertEquals("pc:hero", chat.execute(com.dnd.chat.SessionChat.HOST, com.dnd.chat.SessionChat.Command.poll(thread))
+            .messages().getLast().sender());
+        server.stop();
+        assertNull(com.dnd.chat.SessionChat.hosted(root));
+    }
+
     private static JsonNode nextSheet(BufferedReader in) throws Exception {
         String line;
         while ((line = in.readLine()) != null) {

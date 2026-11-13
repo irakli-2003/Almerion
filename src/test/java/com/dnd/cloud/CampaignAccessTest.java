@@ -14,6 +14,28 @@ import static org.junit.Assert.*;
 public class CampaignAccessTest {
 
     @Test
+    public void memberOnlyRulesDoNotBreakListingOtherLocalFoldersOrTreatThemAsUnclaimed() {
+        LocalCloudStore store = new LocalCloudStore() {
+            @Override public com.fasterxml.jackson.databind.JsonNode get(String path) {
+                if ("campaigns/theirs".equals(path)) {
+                    throw new AssertionError("A nonmember must not fetch the private campaign record");
+                }
+                return super.get(path);
+            }
+        };
+        CampaignDirectory directory = new CampaignDirectory(store);
+        directory.register("mine", "Mine", "gm");
+        directory.register("theirs", "Theirs", "another");
+        LocalCampaign mine = new LocalCampaign("mine", Path.of("mine"), "mine");
+        LocalCampaign theirs = new LocalCampaign("theirs", Path.of("theirs"), "theirs");
+        var listing = CampaignAccess.classifyLocal(List.of(mine, theirs), "gm", directory);
+        assertEquals(1, listing.mine().size());
+        assertTrue(listing.unclaimed().isEmpty());
+        store.put("userCampaigns/gm/theirs", "DM");
+        assertEquals(1, directory.campaignsOf("gm").size());
+    }
+
+    @Test
     public void sameNameWithDifferentIdIsOnlyADuplicateCandidate() throws Exception {
         CampaignDirectory dir = new CampaignDirectory(new LocalCloudStore());
         Path folder = Files.createTempDirectory("local-zurabaach");
@@ -29,6 +51,27 @@ public class CampaignAccessTest {
         assertEquals(active.id, CampaignMeta.idOf(folder).orElseThrow());
         CampaignRecord unrelated = dir.register("another-id", "Different campaign", "gm");
         assertTrue(CampaignAccess.similarlyNamed(listing.mine(), unrelated).isEmpty());
+    }
+
+    @Test
+    public void localListingDoesNotEnumerateOrChangeRemoteRegistrations() throws Exception {
+        var store = new LocalCloudStore();
+        var dir = new CampaignDirectory(store) {
+            @Override public List<CampaignRecord> campaignsOf(String user) {
+                throw new AssertionError("Local campaign listing must not enumerate online-only registrations");
+            }
+        };
+        Path base = Files.createTempDirectory("local-campaign-list");
+        Path folder = Files.createDirectories(base.resolve("zurabaach"));
+        Path fresh = Files.createDirectories(base.resolve("fresh"));
+        CampaignRecord active = CampaignAccess.claim(LocalCampaign.of("zurabaach", folder), "gm", dir);
+        CampaignRecord other = dir.register("other", "zurabaach", "gm");
+        var listing = CampaignAccess.classifyLocal(List.of(LocalCampaign.of("zurabaach", folder),
+            LocalCampaign.of("fresh", fresh)), "gm", dir);
+        assertEquals(active.id, listing.mine().getFirst().record().id);
+        assertEquals("fresh", listing.unclaimed().getFirst().folder());
+        assertEquals(other.joinCode, dir.find(other.id).orElseThrow().joinCode);
+        assertEquals(active.id, CampaignMeta.idOf(folder).orElseThrow());
     }
 
     @Test

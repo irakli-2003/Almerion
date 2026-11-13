@@ -27,7 +27,7 @@ public class StorylineScene extends BaseScene {
 
     @Override
     public Scene build() {
-        service = new StorylineService(uiSession.campaignRoot());
+        service = new StorylineService(uiSession.campaignRoot(), uiSession::getPrivateAccount);
         service.ensureRoot();
 
         VBox root = new VBox(0);
@@ -36,7 +36,11 @@ public class StorylineScene extends BaseScene {
 
         VBox content = new VBox(12);
         content.setPadding(new Insets(10, 20, 20, 20));
-        content.getChildren().add(title("Storyline"));
+        FlowPane header = new FlowPane(10, 10, title("Storyline"),
+            btn("Unlock private files", () -> PrivateFilesUi.unlocked(this, this::refreshAll)),
+            btn("Notifications", () -> PrivateFilesUi.notifications(this)),
+            btn("Lock private files", () -> { uiSession.lockPrivateAccount(); refreshAll(); }));
+        content.getChildren().add(header);
 
         SplitPane split = new SplitPane();
         split.getItems().addAll(buildTreePane(), buildArcPane());
@@ -80,6 +84,13 @@ public class StorylineScene extends BaseScene {
         upBtn.setTooltip(new Tooltip("Move the selected item up among its siblings"));
         downBtn.setTooltip(new Tooltip("Move the selected item down among its siblings"));
         Button deleteBtn = dangerBtn("Delete", this::onDelete);
+        Button accessBtn = btn("Session-file access", () -> {
+            Path selected = selectedPath();
+            if (selected != null && service.isSessionFile(selected)) {
+                PrivateFilesUi.access(this, service, selected, this::refreshAll);
+            }
+        });
+        accessBtn.setDisable(true);
         newFolderBtn.setDisable(true);
         newFileBtn.setDisable(true);
         moveBtn.setDisable(true);
@@ -96,9 +107,10 @@ public class StorylineScene extends BaseScene {
             deleteBtn.setDisable(!hasSelection || isRoot);
             upBtn.setDisable(!hasSelection || isRoot);
             downBtn.setDisable(!hasSelection || isRoot);
+            accessBtn.setDisable(!hasSelection || !service.isSessionFile(newV.getValue()));
         });
 
-        FlowPane actions = new FlowPane(6, 6, newFolderBtn, newFileBtn, moveBtn, upBtn, downBtn, deleteBtn);
+        FlowPane actions = new FlowPane(6, 6, newFolderBtn, newFileBtn, accessBtn, moveBtn, upBtn, downBtn, deleteBtn);
 
         Label hint = body("Drag an item onto another to reorder it, or onto a folder to move it in.");
         hint.setStyle("-fx-font-size: 11px;");
@@ -112,10 +124,14 @@ public class StorylineScene extends BaseScene {
     private void onNudge(boolean up) {
         Path selected = selectedPath();
         if (selected == null || selected.equals(service.getRoot())) return;
-        if (up) service.moveUp(selected);
-        else service.moveDown(selected);
-        refreshAll();
-        selectPath(selected);
+        try {
+            if (up) service.moveUp(selected);
+            else service.moveDown(selected);
+            refreshAll();
+            selectPath(selected);
+        } catch (RuntimeException e) {
+            showError(e.getMessage());
+        }
     }
 
     /** Restores the tree selection to {@code target} after a rebuild. */
@@ -215,7 +231,7 @@ public class StorylineScene extends BaseScene {
             refreshAll();
             selectPath(source);
             return true;
-        } catch (IllegalArgumentException e) {
+        } catch (RuntimeException e) {
             showError(e.getMessage());
             return false;
         }
@@ -231,7 +247,8 @@ public class StorylineScene extends BaseScene {
     }
 
     private String displayName(Path item) {
-        return item.equals(service.getRoot()) ? "Storyline" : item.getFileName().toString();
+        return item.equals(service.getRoot()) ? "Storyline" : item.getFileName().toString()
+            + (service.isPrivate(item) ? " [private]" : "");
     }
 
     private void refreshTree() {
@@ -279,7 +296,7 @@ public class StorylineScene extends BaseScene {
             try {
                 service.createFolder(parent, name);
                 refreshAll();
-            } catch (IllegalArgumentException e) {
+            } catch (RuntimeException e) {
                 showError(e.getMessage());
             }
         });
@@ -288,14 +305,11 @@ public class StorylineScene extends BaseScene {
     private void onNewFile() {
         Path parent = selectedFolder();
         if (parent == null) return;
-        promptName("New File", "File name:").ifPresent(name -> {
-            try {
-                service.createFile(parent, name);
+        PrivateFilesUi.unlocked(this, () -> promptName("New File", "File name:").ifPresent(name ->
+            background(() -> service.createFile(parent, name), created -> {
                 refreshAll();
-            } catch (IllegalArgumentException e) {
-                showError(e.getMessage());
-            }
-        });
+                selectPath(created);
+            }, error -> showError("Could not create private session file", error))));
     }
 
     /** Repeatedly prompts until a non-blank name is entered, or the user cancels. */
@@ -322,8 +336,16 @@ public class StorylineScene extends BaseScene {
         styleDialog(confirm);
         confirm.showAndWait().ifPresent(bt -> {
             if (bt == ButtonType.OK) {
-                service.delete(target);
-                refreshAll();
+                var sceneRoot = tree.getScene().getRoot();
+                sceneRoot.setDisable(true);
+                com.dnd.sync.CampaignSyncService.shared().localFiles(() -> {
+                    service.delete(target);
+                    return true;
+                }).whenComplete((ok, error) -> javafx.application.Platform.runLater(() -> {
+                    sceneRoot.setDisable(false);
+                    if (error == null) refreshAll();
+                    else showError("Could not delete storyline files", error);
+                }));
             }
         });
     }
@@ -344,7 +366,7 @@ public class StorylineScene extends BaseScene {
                 try {
                     service.move(source, opt.path);
                     refreshAll();
-                } catch (IllegalArgumentException ex) {
+                } catch (RuntimeException ex) {
                     showError(ex.getMessage());
                 }
             });
@@ -369,8 +391,27 @@ public class StorylineScene extends BaseScene {
     }
 
     private void openEditor(Path file) {
-        new StorylineEditorWindow(this, service, repos(), file).show();
-        refreshAll();
+        if (service.isPrivate(file)) {
+            PrivateFilesUi.unlocked(this, () -> {
+                var account = uiSession.getPrivateAccount();
+                if (!service.permissions(file).grants().containsKey(account.uid())) {
+                    PrivateFilesUi.request(this, service, file);
+                    return;
+                }
+                showEditor(file);
+            });
+        } else {
+            showEditor(file);
+        }
+    }
+
+    private void showEditor(Path file) {
+        try {
+            new StorylineEditorWindow(this, service.forEditor(), repos(), file).show();
+            refreshAll();
+        } catch (RuntimeException e) {
+            showError(e.getMessage());
+        }
     }
 
     private com.dnd.data.CampaignRepositories repos() {

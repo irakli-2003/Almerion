@@ -1,6 +1,8 @@
 package com.dnd.data;
 
 import org.junit.Test;
+import org.junit.Rule;
+import org.junit.rules.TemporaryFolder;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,6 +16,7 @@ import static org.junit.Assert.*;
 /** Every bundled campaign must load cleanly - e.g. no leftover merge-conflict markers in its JSON. */
 public class BundledCampaignDataTest {
 
+    @Rule public TemporaryFolder temp = new TemporaryFolder();
     private static final Path CAMPAIGNS = Paths.get("src", "main", "resources", "data", "custom-campaigns");
 
     @Test
@@ -71,7 +74,12 @@ public class BundledCampaignDataTest {
             assertNotNull(name, repos.alchemyIngredients().list());
             assertNotNull(name, repos.books().list());
             assertNotNull(name, repos.dice().list());
-            assertNotNull(name, repos.maps().list());
+            Path maps = temp.newFolder().toPath().resolve("maps.json");
+            Path source = new CampaignPaths(campaign).mapsFile();
+            byte[] original = Files.readAllBytes(source);
+            Files.copy(source, maps);
+            assertNotNull(name, new MapRepository(maps, JsonMappers.forCampaign(campaign)).list());
+            assertArrayEquals(original, Files.readAllBytes(source));
         }
     }
 

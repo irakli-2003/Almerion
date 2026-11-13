@@ -25,9 +25,6 @@ import java.util.List;
  */
 public class OnlineSessionScene extends BaseScene {
 
-    private static final String FIREBASE_URL =
-        "https://dnd-campaign-f8c23-default-rtdb.europe-west1.firebasedatabase.app";
-
     public OnlineSessionScene(UiSession uiSession) { super(uiSession); }
 
     @Override
@@ -151,40 +148,53 @@ public class OnlineSessionScene extends BaseScene {
     // ── Over the internet ───────────────────────────────────────────────────
 
     private void buildStartView(VBox content) {
-        PasswordField passphraseField = passwordField("Session passphrase (share with players)");
         Label error = body("");
         error.setStyle("-fx-text-fill: #e07070;");
 
-        Button startBtn = btn("Start internet session", () -> {
-            String passphrase = passphraseField.getText().trim();
-            if (passphrase.isEmpty()) { error.setText("Passphrase cannot be empty."); return; }
-            if (uiSession.getSession().getCampaignContext() == null) {
+        Button startBtn = btn("Start internet session", () -> { });
+        startBtn.setOnAction(event -> {
+            var context = uiSession.getSession().getCampaignContext();
+            var user = uiSession.getCurrentUser();
+            if (context == null) {
                 error.setText("No campaign selected.");
                 return;
             }
 
-            String sessionId = FirebaseSessionSync.generateSessionId();
-            FirebaseSessionSync sync = new FirebaseSessionSync(FIREBASE_URL, sessionId, passphrase);
-
-            try {
-                sync.push(buildSnapshot());
-            } catch (FirebaseSessionSync.SyncException e) {
-                error.setText("Firebase error: " + e.getMessage());
-                return;
-            }
-
-            String token = FirebaseSessionSync.generateToken(FIREBASE_URL, sessionId, passphrase);
-            uiSession.getSession().setFirebaseSync(sync);
-            uiSession.setSessionToken(token);
-            publishLiveToken(token);
-            uiSession.getRouter().goTo(SceneType.DM_ONLINE_SESSION);
+            startBtn.setDisable(true);
+            background(() -> {
+                String campaignId = com.dnd.cloud.CampaignMeta.idOf(context.getPath()).orElseThrow(
+                    () -> new IllegalStateException("Register the campaign before hosting it online."));
+                FirebaseSessionSync sync = FirebaseSessionSync.host(campaignId);
+                sync.push(SessionSnapshot.capture(context.getPath(), context.getName()));
+                try {
+                    sync.startChat(context.getPath());
+                } catch (RuntimeException failure) {
+                    try { sync.delete(); } catch (RuntimeException cleanup) { failure.addSuppressed(cleanup); }
+                    throw failure;
+                }
+                return sync;
+            }, sync -> {
+                if (context != uiSession.getSession().getCampaignContext() || user != uiSession.getCurrentUser()) {
+                    background(() -> { sync.delete(); return true; }, ignored -> { },
+                        failure -> showError("Could not end the online session. Check your connection and account permissions.", failure));
+                    startBtn.setDisable(false);
+                    return;
+                }
+                uiSession.getSession().setFirebaseSync(sync);
+                uiSession.setSessionToken(sync.token());
+                publishLiveToken(sync.token());
+                uiSession.getRouter().goTo(SceneType.DM_ONLINE_SESSION);
+            }, failure -> {
+                startBtn.setDisable(false);
+                error.setText("Could not start the online session: " + failure.getMessage());
+            });
         });
 
         content.getChildren().addAll(
             body("Players anywhere join from Player → My Campaigns, or with a token. All data is AES-256 encrypted,"
                 + " and players only receive their characters and what those characters use, never your notes, NPCs or maps."),
-            sectionLabel("Passphrase"),
-            passphraseField,
+            body("The player token is read only and uses a randomly generated encryption key. Only the verified host can publish changes."
+                + " Access expires 12 hours after the last push. Keep the token private."),
             error,
             startBtn
         );
@@ -203,18 +213,25 @@ public class OnlineSessionScene extends BaseScene {
         tokenArea.getStyleClass().add("dnd-text-field");
         tokenArea.setMaxWidth(700);
 
-        Button stopBtn = dangerBtn("Stop internet session", () -> {
-            try { uiSession.getSession().getFirebaseSync().delete(); } catch (Exception ignored) {}
+        Label error = body("");
+        error.setStyle("-fx-text-fill: #e07070;");
+        Button stopBtn = dangerBtn("Stop internet session", () -> background(() -> {
+            var context = uiSession.getSession().getCampaignContext();
+            String id = com.dnd.cloud.CampaignMeta.idOf(context.getPath()).orElseThrow();
+            com.dnd.cloud.CampaignDirectory.shared().setLiveToken(id, uiSession.getCurrentUser().getUsername(), null);
+            uiSession.getSession().getFirebaseSync().delete();
+            return true;
+        }, ignored -> {
             uiSession.getSession().setFirebaseSync(null);
             uiSession.setSessionToken(null);
-            publishLiveToken(null);
             uiSession.getRouter().goTo(SceneType.DM_ONLINE_SESSION);
-        });
+        }, failure -> error.setText("Could not finish stopping the session. Retry: " + failure.getMessage())));
 
         Button pushBtn = btn("Push State Now", () -> {
-            try {
+            background(() -> {
                 uiSession.getSession().getFirebaseSync().push(buildSnapshot());
-            } catch (Exception ignored) {}
+                return true;
+            }, ignored -> error.setText(""), failure -> error.setText("Session push failed: " + failure.getMessage()));
         });
 
         content.getChildren().addAll(
@@ -222,6 +239,7 @@ public class OnlineSessionScene extends BaseScene {
             statusLabel,
             sectionLabel("Player Token"),
             tokenArea,
+            error,
             new HBox(12, pushBtn, stopBtn)
         );
     }
@@ -238,16 +256,12 @@ public class OnlineSessionScene extends BaseScene {
         background(() -> {
             com.dnd.cloud.CampaignDirectory.shared().setLiveToken(id, user, token);
             return true;
-        }, ok -> { }, error -> { });
+        }, ok -> { }, error -> showError("Could not update the campaign's live token. Players can use the token shown on screen.", error));
     }
 
     private String buildSnapshot() {
         // Players get their characters and whatever those use, never the GM's secrets.
         var context = uiSession.getSession().getCampaignContext();
-        try {
-            return SessionSnapshot.capture(context.getPath(), context.getName());
-        } catch (RuntimeException e) {
-            return "{\"campaign\":\"" + context.getName() + "\"}";
-        }
+        return SessionSnapshot.capture(context.getPath(), context.getName());
     }
 }

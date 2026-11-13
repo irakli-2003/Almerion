@@ -20,6 +20,62 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.junit.Assert.*;
 
 public class GitHubSyncUiTest {
+    @Test public void fieldReviewKeepsChoicesSeparateAndDecideLaterOnlyClosesWindow() throws Exception {
+        CountDownLatch done = new CountDownLatch(1);
+        AtomicReference<Throwable> error = new AtomicReference<>();
+        Platform.runLater(() -> {
+            try {
+                Platform.setImplicitExit(false);
+                UiTranslator translator = UiTranslator.get();
+                if (translator == null) translator = UiTranslator.install(TranslationService.createDefault(), null);
+                String previous = translator.getLanguage().code();
+                try {
+                    translator.setLanguage("en");
+                    var version = new com.dnd.sync.CampaignRepo.Version("GM", "Device", java.time.Instant.now(), false);
+                    var conflicts = java.util.List.of(
+                        new com.dnd.sync.CampaignRepo.Conflict("players/players.json", version, version, "hp-key",
+                            new com.dnd.sync.CampaignRepo.FieldConflict("Hero", "/players/hero/hp", "10", "7", "4")),
+                        new com.dnd.sync.CampaignRepo.Conflict("players/players.json", version, version, "mana-key",
+                            new com.dnd.sync.CampaignRepo.FieldConflict("Hero", "/players/hero/mana", "5", "2", "1")));
+                    var result = new com.dnd.sync.CampaignRepo.Result(com.dnd.sync.CampaignRepo.Outcome.CONFLICT,
+                        java.util.List.of(), conflicts, "Competing values.");
+                    java.util.concurrent.atomic.AtomicInteger closed = new java.util.concurrent.atomic.AtomicInteger();
+                    GitHubSyncUi.resolveConflicts(new BaseScene(null) {
+                        @Override public javafx.scene.Scene build() { throw new UnsupportedOperationException(); }
+                    }, "fixture", java.nio.file.Path.of("."), result, closed::incrementAndGet);
+                    var stage = javafx.stage.Window.getWindows().stream().filter(w -> w instanceof javafx.stage.Stage s
+                        && s.getTitle().equals("Choose which version to keep - fixture"))
+                        .map(w -> (javafx.stage.Stage) w).findFirst().orElseThrow();
+                    try {
+                        var root = stage.getScene().getRoot();
+                        root.applyCss();
+                        root.layout();
+                        var radios = root.lookupAll(".radio-button");
+                        assertEquals(4, radios.size());
+                        assertEquals(2, root.lookupAll(".tab-pane").size());
+                        for (var node : root.lookupAll(".tab-pane")) {
+                            var tabs = (javafx.scene.control.TabPane) node;
+                            assertEquals(3, tabs.getTabs().size());
+                            for (var tab : tabs.getTabs()) assertFalse(((javafx.scene.control.TextArea) tab.getContent()).isEditable());
+                        }
+                        ((Button) root.lookupAll(".button").stream().filter(n -> n instanceof Button b
+                            && b.getText().equals("Keep All from GitHub")).findFirst().orElseThrow()).fire();
+                        var groups = radios.stream().map(n -> ((javafx.scene.control.RadioButton) n).getToggleGroup()).distinct().toList();
+                        assertEquals(2, groups.size());
+                        for (var group : groups) assertEquals(com.dnd.sync.CampaignRepo.Choice.GITHUB, group.getSelectedToggle().getUserData());
+                        ((Button) root.lookupAll(".button").stream().filter(n -> n instanceof Button b
+                            && b.getText().equals("Decide Later")).findFirst().orElseThrow()).fire();
+                        assertFalse(stage.isShowing());
+                        assertEquals(1, closed.get());
+                    } finally { stage.close(); }
+                } finally { translator.setLanguage(previous); }
+            } catch (Throwable problem) { error.set(problem); }
+            finally { done.countDown(); }
+        });
+        assertTrue(done.await(30, TimeUnit.SECONDS));
+        if (error.get() != null) throw new AssertionError(error.get());
+    }
+
     @BeforeClass
     public static void toolkit() throws Exception {
         CountDownLatch ready = new CountDownLatch(1);

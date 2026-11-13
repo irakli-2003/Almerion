@@ -31,32 +31,41 @@ public final class CampaignAccess {
     public record Listing(List<Entry> mine, List<LocalCampaign> unclaimed, List<CampaignRecord> elsewhere) {
     }
 
+    public record LocalListing(List<Entry> mine, List<LocalCampaign> unclaimed) {
+    }
+
     /** Campaigns registered to other people are left out entirely. */
-    public static Listing classify(List<LocalCampaign> local, String user, CampaignDirectory directory) {
+    public static LocalListing classifyLocal(List<LocalCampaign> local, String user, CampaignDirectory directory) {
         List<Entry> mine = new ArrayList<>();
         List<LocalCampaign> unclaimed = new ArrayList<>();
-        Set<String> localIds = new HashSet<>();
         for (LocalCampaign campaign : local) {
-            CampaignRecord record = campaign.id() == null ? null : directory.find(campaign.id()).orElse(null);
-            if (campaign.id() != null) localIds.add(campaign.id());
-            if (record == null) {
+            if (campaign.id() == null || !directory.isRegistered(campaign.id())) {
                 unclaimed.add(campaign);
-            } else if (record.isDm(user)) {
-                mine.add(new Entry(campaign, record));
+            } else {
+                directory.findForMember(campaign.id(), user).filter(r -> r.isDm(user))
+                    .ifPresent(record -> mine.add(new Entry(campaign, record)));
             }
         }
+        return new LocalListing(mine, unclaimed);
+    }
+
+    public static Listing classify(List<LocalCampaign> local, String user, CampaignDirectory directory) {
+        LocalListing localListing = classifyLocal(local, user, directory);
+        Set<String> localIds = new HashSet<>();
+        for (LocalCampaign campaign : local) if (campaign.id() != null) localIds.add(campaign.id());
         List<CampaignRecord> elsewhere = new ArrayList<>();
         for (CampaignRecord record : directory.campaignsOf(user)) {
             if (record.isDm(user) && !localIds.contains(record.id)) elsewhere.add(record);
         }
-        return new Listing(mine, unclaimed, elsewhere);
+        return new Listing(localListing.mine(), localListing.unclaimed(), elsewhere);
     }
 
     /** Registers an unclaimed local campaign with {@code user} as its author DM. */
     public static CampaignRecord claim(LocalCampaign campaign, String user, CampaignDirectory directory) {
         String id = CampaignMeta.ensureId(campaign.path());
-        CampaignRecord existing = directory.find(id).orElse(null);
-        if (existing != null) {
+        if (directory.isRegistered(id)) {
+            CampaignRecord existing = directory.findForMember(id, user).orElseThrow(() ->
+                new MembershipException("Only a Game Master of this campaign can do that."));
             if (existing.isDm(user)) return existing;
             throw new MembershipException("\"" + campaign.folder() + "\" is already registered by "
                 + existing.author + ". Ask them to add you as a Game Master.");
@@ -66,7 +75,7 @@ public final class CampaignAccess {
 
     /** Whether {@code user} may open the campaign at {@code path} as a DM. */
     public static boolean canRunAsDm(Path path, String user, CampaignDirectory directory) {
-        return CampaignMeta.idOf(path).flatMap(directory::find).map(r -> r.isDm(user)).orElse(false);
+        return CampaignMeta.idOf(path).flatMap(id -> directory.findForMember(id, user)).map(r -> r.isDm(user)).orElse(false);
     }
 
     /** A name match suggests a duplicate registration, never proof that two identities may be merged. */

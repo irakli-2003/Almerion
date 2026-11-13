@@ -14,6 +14,8 @@ import java.util.List;
  * {@link #getInventory()}.</p>
  */
 public interface MapActor extends MapObject {
+    String getInstanceId();
+    void setInstanceId(String instanceId);
 
     /** The items this actor is currently carrying (mutable list). */
     List<MapItemToken> getInventory();

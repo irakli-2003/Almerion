@@ -1,0 +1,208 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "sessions": { ".read": false, ".write": false },
+    "almerion-cloud": {
+      "reservedNames": { ".write": false },
+      "claimsByEmail": {
+        "$emailKey": {
+          ".read": "auth != null && auth.token.email_verified === true && (!data.exists() || data.child('email').val().toLowerCase() === auth.token.email.toLowerCase())"
+        }
+      },
+      "accountKeys": {
+        "$uid": {
+          ".read": "auth != null && auth.token.email_verified === true && auth.uid === $uid",
+          ".write": "auth != null && auth.token.email_verified === true && auth.uid === $uid && !data.exists() && newData.exists()",
+          ".validate": "newData.isString() && newData.parent().parent().child('profiles').child(newData.val()).child('uid').val() === $uid"
+        }
+      },
+      "profiles": {
+        ".read": "auth != null && auth.token.email_verified === true",
+        "$key": {
+          ".write": "auth != null && auth.token.email_verified === true && !data.exists() && newData.exists() && newData.child('uid').val() === auth.uid && (!root.child('almerion-cloud/reservedNames/'+$key).exists() || root.child('almerion-cloud/reservedNames/'+$key+'/email').val() === auth.token.email.toLowerCase())",
+          ".validate": "newData.hasChildren(['uid','email','username']) && newData.parent().parent().child('accountKeys/'+auth.uid).val() === $key",
+          "uid": { ".validate": "newData.val() === auth.uid" },
+          "email": { ".validate": "newData.val() === auth.token.email" },
+          "username": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 128 && (!root.child('almerion-cloud/reservedNames/'+$key).exists() || newData.val() === root.child('almerion-cloud/reservedNames/'+$key+'/username').val())" },
+          "$other": { ".validate": false }
+        }
+      },
+      "campaigns": {
+        "$id": {
+          ".read": "auth != null && auth.token.email_verified === true && (!data.exists() || data.child('members').child(root.child('almerion-cloud/accountKeys/'+auth.uid).val()).exists())",
+          ".write": "auth != null && auth.token.email_verified === true && ((!data.exists() && newData.exists() && newData.child('authorKey').val() === root.child('almerion-cloud/accountKeys/'+auth.uid).val() && newData.child('author').val() === root.child('almerion-cloud/profiles').child(newData.child('authorKey').val()).child('username').val() && !newData.child('applications').exists() && !newData.child('liveToken').exists()) || (!newData.exists() && data.child('authorKey').val() === root.child('almerion-cloud/accountKeys/'+auth.uid).val()))",
+          ".validate": "newData.hasChildren(['id','name','author','authorKey','joinCode','members']) && newData.child('members').child(newData.child('authorKey').val()).child('role').val() === 'DM'",
+          "id": {
+            ".read": "auth != null && auth.token.email_verified === true",
+            ".validate": "newData.val() === $id && (!data.exists() || newData.val() === data.val())"
+          },
+          "author": { ".validate": "newData.isString() && (!data.exists() || newData.val() === data.val())" },
+          "authorKey": { ".validate": "newData.isString() && (!data.exists() || newData.val() === data.val())" },
+          "name": {
+            ".write": "auth != null && auth.token.email_verified === true && root.child('almerion-cloud/campaigns/'+$id+'/members').child(root.child('almerion-cloud/accountKeys/'+auth.uid).val()).child('role').val() === 'DM'",
+            ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 256"
+          },
+          "joinCode": {
+            ".write": "auth != null && auth.token.email_verified === true && root.child('almerion-cloud/campaigns/'+$id+'/members').child(root.child('almerion-cloud/accountKeys/'+auth.uid).val()).child('role').val() === 'DM'",
+            ".validate": "newData.isString() && newData.val().matches(/^[A-Z2-9]{6}$/)"
+          },
+          "liveToken": {
+            ".write": "auth != null && auth.token.email_verified === true && root.child('almerion-cloud/campaigns/'+$id+'/members').child(root.child('almerion-cloud/accountKeys/'+auth.uid).val()).child('role').val() === 'DM'",
+            ".validate": "newData.isString() && newData.val().length <= 16384"
+          },
+          "members": {
+            "$key": {
+              ".read": "auth != null && auth.token.email_verified === true && root.child('almerion-cloud/accountKeys/'+auth.uid).val() === $key",
+              ".write": "auth != null && auth.token.email_verified === true && (root.child('almerion-cloud/campaigns/'+$id+'/authorKey').val() === root.child('almerion-cloud/accountKeys/'+auth.uid).val() || (root.child('almerion-cloud/campaigns/'+$id+'/members').child(root.child('almerion-cloud/accountKeys/'+auth.uid).val()).child('role').val() === 'DM' && root.child('almerion-cloud/campaigns/'+$id+'/authorKey').val() !== $key && ((!newData.exists() && data.child('role').val() === 'PLAYER') || (newData.child('role').val() === 'PLAYER' && (data.child('role').val() === 'PLAYER' || (!data.exists() && root.child('almerion-cloud/campaigns/'+$id+'/applications/'+$key).exists()))))) || (!newData.exists() && root.child('almerion-cloud/accountKeys/'+auth.uid).val() === $key && root.child('almerion-cloud/campaigns/'+$id+'/authorKey').val() !== $key))",
+              ".validate": "newData.hasChildren(['username','role','joinedAtMillis']) && (root.child('almerion-cloud/campaigns/'+$id).exists() || $key === newData.parent().parent().child('authorKey').val()) && (data.exists() || !root.child('almerion-cloud/campaigns/'+$id).exists() || root.child('almerion-cloud/campaigns/'+$id+'/applications/'+$key).exists())",
+              "username": { ".validate": "newData.isString() && (newData.val() === data.val() || newData.val() === root.child('almerion-cloud/profiles/'+$key+'/username').val() || newData.val() === root.child('almerion-cloud/campaigns/'+$id+'/applications/'+$key+'/username').val())" },
+              "role": { ".validate": "newData.val() === 'DM' || newData.val() === 'PLAYER'" },
+              "joinedAtMillis": { ".validate": "newData.isNumber() && newData.val() > 0" },
+              "$other": { ".validate": false }
+            }
+          },
+          "applications": {
+            "$key": {
+              ".read": "auth != null && auth.token.email_verified === true && root.child('almerion-cloud/accountKeys/'+auth.uid).val() === $key",
+              ".write": "auth != null && auth.token.email_verified === true && ((!newData.exists() && (root.child('almerion-cloud/accountKeys/'+auth.uid).val() === $key || root.child('almerion-cloud/campaigns/'+$id+'/members').child(root.child('almerion-cloud/accountKeys/'+auth.uid).val()).child('role').val() === 'DM')) || (!data.exists() && newData.exists() && root.child('almerion-cloud/campaigns/'+$id).exists() && !root.child('almerion-cloud/campaigns/'+$id+'/members/'+$key).exists() && root.child('almerion-cloud/accountKeys/'+auth.uid).val() === $key))",
+              ".validate": "newData.hasChildren(['username','requestedAtMillis','joinCode'])",
+              "username": { ".validate": "newData.val() === root.child('almerion-cloud/profiles/'+$key+'/username').val()" },
+              "requestedAtMillis": { ".validate": "newData.isNumber() && newData.val() > 0" },
+              "joinCode": { ".validate": "newData.isString() && newData.val() === root.child('almerion-cloud/campaigns/'+$id+'/joinCode').val()" },
+              "$other": { ".validate": false }
+            }
+          },
+          "$other": { ".validate": false }
+        }
+      },
+      "joinCodes": {
+        "$code": {
+          ".read": "auth != null && auth.token.email_verified === true",
+          ".write": "auth != null && auth.token.email_verified === true && ((!newData.exists() && root.child('almerion-cloud/campaigns').child(data.child('id').val()).child('members').child(root.child('almerion-cloud/accountKeys/'+auth.uid).val()).child('role').val() === 'DM') || (newData.exists() && (!data.exists() || data.child('id').val() === newData.child('id').val()) && (root.child('almerion-cloud/campaigns').child(newData.child('id').val()).child('members').child(root.child('almerion-cloud/accountKeys/'+auth.uid).val()).child('role').val() === 'DM' || (!root.child('almerion-cloud/campaigns').child(newData.child('id').val()).exists() && newData.parent().parent().child('campaigns').child(newData.child('id').val()).child('authorKey').val() === root.child('almerion-cloud/accountKeys/'+auth.uid).val()))))",
+          ".validate": "$code.matches(/^[A-Z2-9]{6}$/) && newData.hasChildren(['id','name','author']) && newData.parent().parent().child('campaigns').child(newData.child('id').val()).child('joinCode').val() === $code && newData.child('name').val() === newData.parent().parent().child('campaigns').child(newData.child('id').val()).child('name').val() && newData.child('author').val() === newData.parent().parent().child('campaigns').child(newData.child('id').val()).child('author').val()",
+          "id": { ".validate": "newData.isString()" },
+          "name": { ".validate": "newData.isString()" },
+          "author": { ".validate": "newData.isString()" },
+          "$other": { ".validate": false }
+        }
+      },
+      "userCampaigns": {
+        "$key": {
+          ".read": "auth != null && auth.token.email_verified === true && root.child('almerion-cloud/accountKeys/'+auth.uid).val() === $key",
+          "$id": {
+            ".write": "auth != null && auth.token.email_verified === true && (root.child('almerion-cloud/campaigns/'+$id+'/authorKey').val() === root.child('almerion-cloud/accountKeys/'+auth.uid).val() || (root.child('almerion-cloud/campaigns/'+$id+'/members').child(root.child('almerion-cloud/accountKeys/'+auth.uid).val()).child('role').val() === 'DM' && root.child('almerion-cloud/campaigns/'+$id+'/members/'+$key+'/role').val() !== 'DM') || (!newData.exists() && root.child('almerion-cloud/accountKeys/'+auth.uid).val() === $key && root.child('almerion-cloud/campaigns/'+$id+'/authorKey').val() !== $key) || (!root.child('almerion-cloud/campaigns/'+$id).exists() && newData.parent().parent().parent().child('campaigns/'+$id+'/authorKey').val() === root.child('almerion-cloud/accountKeys/'+auth.uid).val()))",
+            ".validate": "newData.isString() && newData.val() === newData.parent().parent().parent().child('campaigns/'+$id+'/members/'+$key+'/role').val()"
+          }
+        }
+      },
+      "userApplications": {
+        "$key": {
+          ".read": "auth != null && auth.token.email_verified === true && root.child('almerion-cloud/accountKeys/'+auth.uid).val() === $key",
+          "$id": {
+            ".write": "auth != null && auth.token.email_verified === true && (root.child('almerion-cloud/accountKeys/'+auth.uid).val() === $key || root.child('almerion-cloud/campaigns/'+$id+'/members').child(root.child('almerion-cloud/accountKeys/'+auth.uid).val()).child('role').val() === 'DM')",
+            ".validate": "newData.hasChildren(['id','name','author']) && newData.child('id').val() === $id && newData.parent().parent().parent().child('campaigns/'+$id+'/applications/'+$key).exists() && newData.child('name').val() === newData.parent().parent().parent().child('campaigns/'+$id+'/name').val() && newData.child('author').val() === newData.parent().parent().parent().child('campaigns/'+$id+'/author').val()",
+            "id": { ".validate": "newData.isString()" },
+            "name": { ".validate": "newData.isString()" },
+            "author": { ".validate": "newData.isString()" },
+            "$other": { ".validate": false }
+          }
+        }
+      }
+    },
+    "almerion-chat": {
+      "$sessionId": {
+        ".read": "auth != null && auth.token.email_verified === true && root.child('almerion-live/'+$sessionId+'/hostUid').val() === auth.uid && root.child('almerion-live/'+$sessionId+'/expiresAt').val() > now && root.child('almerion-cloud/campaigns').child(root.child('almerion-live/'+$sessionId+'/campaignId').val()).child('members').child(root.child('almerion-cloud/accountKeys/'+auth.uid).val()).child('role').val() === 'DM'",
+        ".write": "auth != null && auth.token.email_verified === true && root.child('almerion-live/'+$sessionId+'/hostUid').val() === auth.uid && root.child('almerion-live/'+$sessionId+'/expiresAt').val() > now && root.child('almerion-cloud/campaigns').child(root.child('almerion-live/'+$sessionId+'/campaignId').val()).child('members').child(root.child('almerion-cloud/accountKeys/'+auth.uid).val()).child('role').val() === 'DM'",
+        ".validate": "$sessionId.matches(/^[a-f0-9]{64}$/) && newData.hasChildren(['publicKey'])",
+        "guestKey": {
+          ".validate": "newData.isString() && newData.val().matches(/^[a-f0-9]{64}$/)"
+        },
+        "guests": {
+          "$capability": {
+            ".read": "$capability === root.child('almerion-chat/'+$sessionId+'/guestKey').val() && root.child('almerion-live/'+$sessionId+'/expiresAt').val() > now && root.child('almerion-cloud/campaigns').child(root.child('almerion-live/'+$sessionId+'/campaignId').val()).child('members').child(root.child('almerion-cloud/accountKeys').child(root.child('almerion-live/'+$sessionId+'/hostUid').val()).val()).child('role').val() === 'DM'",
+            ".validate": "$capability.matches(/^[a-f0-9]{64}$/) && $capability === root.child('almerion-chat/'+$sessionId+'/guestKey').val() && newData.hasChildren(['publicKey'])",
+            "publicKey": { ".validate": "newData.isString() && newData.val().length <= 1024" },
+            "inbox": {
+              "guest": {
+                "$connection": {
+                  ".write": "$capability === root.child('almerion-chat/'+$sessionId+'/guestKey').val() && (!data.exists() || !newData.exists() || newData.child('connection').val() === data.child('connection').val()) && root.child('almerion-live/'+$sessionId+'/expiresAt').val() > now && root.child('almerion-cloud/campaigns').child(root.child('almerion-live/'+$sessionId+'/campaignId').val()).child('members').child(root.child('almerion-cloud/accountKeys').child(root.child('almerion-live/'+$sessionId+'/hostUid').val()).val()).child('role').val() === 'DM'",
+                  ".validate": "$connection.matches(/^(0|[1-9]|[12][0-9]|3[01])$/) && newData.hasChildren(['connection','id','key','data'])",
+                  "connection": { ".validate": "newData.isString() && newData.val().matches(/^[a-f0-9-]{36}$/)" },
+                  "id": { ".validate": "newData.isString() && newData.val().matches(/^[a-f0-9-]{36}$/)" },
+                  "key": { ".validate": "newData.isString() && newData.val().length <= 1024" },
+                  "data": { ".validate": "newData.isString() && newData.val().length <= 32768" },
+                  "$other": { ".validate": false }
+                }
+              },
+              "$other": { ".validate": false }
+            },
+            "outbox": {
+              "guest": {
+                "$connection": {
+                  ".write": "$capability === root.child('almerion-chat/'+$sessionId+'/guestKey').val() && !newData.exists()",
+                  ".validate": "$connection.matches(/^(0|[1-9]|[12][0-9]|3[01])$/) && newData.hasChildren(['connection','id','key','data']) && newData.child('connection').val() === root.child('almerion-chat/'+$sessionId+'/guests/'+$capability+'/inbox/guest/'+$connection+'/connection').val() && newData.child('id').val() === root.child('almerion-chat/'+$sessionId+'/guests/'+$capability+'/inbox/guest/'+$connection+'/id').val()",
+                  "connection": { ".validate": "newData.isString() && newData.val().matches(/^[a-f0-9-]{36}$/)" },
+                  "id": { ".validate": "newData.isString() && newData.val().matches(/^[a-f0-9-]{36}$/)" },
+                  "key": { ".validate": "newData.isString() && newData.val().length <= 1024" },
+                  "data": { ".validate": "newData.isString() && newData.val().length <= 8388608" },
+                  "$other": { ".validate": false }
+                }
+              },
+              "$other": { ".validate": false }
+            },
+            "$other": { ".validate": false }
+          }
+        },
+        "publicKey": {
+          ".read": "auth != null && auth.token.email_verified === true && root.child('almerion-live/'+$sessionId+'/expiresAt').val() > now && root.child('almerion-cloud/campaigns').child(root.child('almerion-live/'+$sessionId+'/campaignId').val()).child('members').child(root.child('almerion-cloud/accountKeys').child(root.child('almerion-live/'+$sessionId+'/hostUid').val()).val()).child('role').val() === 'DM' && root.child('almerion-cloud/campaigns').child(root.child('almerion-live/'+$sessionId+'/campaignId').val()).child('members').child(root.child('almerion-cloud/accountKeys/'+auth.uid).val()).exists()",
+          ".validate": "newData.isString() && newData.val().length <= 1024"
+        },
+        "inbox": {
+          "$uid": {
+            "$connection": {
+              ".read": "auth != null && auth.token.email_verified === true && auth.uid === $uid && root.child('almerion-live/'+$sessionId+'/expiresAt').val() > now && root.child('almerion-cloud/campaigns').child(root.child('almerion-live/'+$sessionId+'/campaignId').val()).child('members').child(root.child('almerion-cloud/accountKeys').child(root.child('almerion-live/'+$sessionId+'/hostUid').val()).val()).child('role').val() === 'DM' && root.child('almerion-cloud/campaigns').child(root.child('almerion-live/'+$sessionId+'/campaignId').val()).child('members').child(root.child('almerion-cloud/accountKeys/'+auth.uid).val()).exists()",
+              ".write": "auth != null && auth.token.email_verified === true && auth.uid === $uid && (!data.exists() || !newData.exists() || newData.child('connection').val() === data.child('connection').val()) && root.child('almerion-live/'+$sessionId+'/expiresAt').val() > now && root.child('almerion-cloud/campaigns').child(root.child('almerion-live/'+$sessionId+'/campaignId').val()).child('members').child(root.child('almerion-cloud/accountKeys').child(root.child('almerion-live/'+$sessionId+'/hostUid').val()).val()).child('role').val() === 'DM' && root.child('almerion-cloud/campaigns').child(root.child('almerion-live/'+$sessionId+'/campaignId').val()).child('members').child(root.child('almerion-cloud/accountKeys/'+auth.uid).val()).exists()",
+              ".validate": "$connection.matches(/^(0|[1-9]|[12][0-9]|3[01])$/) && newData.hasChildren(['connection','id','key','data'])",
+              "connection": { ".validate": "newData.isString() && newData.val().matches(/^[a-f0-9-]{36}$/)" },
+              "id": { ".validate": "newData.isString() && newData.val().matches(/^[a-f0-9-]{36}$/)" },
+              "key": { ".validate": "newData.isString() && newData.val().length <= 1024" },
+              "data": { ".validate": "newData.isString() && newData.val().length <= 32768" },
+              "$other": { ".validate": false }
+            }
+          }
+        },
+        "outbox": {
+          "$uid": {
+            ".read": "auth != null && auth.token.email_verified === true && auth.uid === $uid && root.child('almerion-live/'+$sessionId+'/expiresAt').val() > now && root.child('almerion-cloud/campaigns').child(root.child('almerion-live/'+$sessionId+'/campaignId').val()).child('members').child(root.child('almerion-cloud/accountKeys').child(root.child('almerion-live/'+$sessionId+'/hostUid').val()).val()).child('role').val() === 'DM' && root.child('almerion-cloud/campaigns').child(root.child('almerion-live/'+$sessionId+'/campaignId').val()).child('members').child(root.child('almerion-cloud/accountKeys/'+auth.uid).val()).exists()",
+            "$connection": {
+              ".write": "auth != null && auth.token.email_verified === true && auth.uid === $uid && !newData.exists()",
+              ".validate": "$connection.matches(/^(0|[1-9]|[12][0-9]|3[01])$/) && newData.hasChildren(['connection','id','key','data']) && newData.child('connection').val() === root.child('almerion-chat/'+$sessionId+'/inbox/'+$uid+'/'+$connection+'/connection').val() && newData.child('id').val() === root.child('almerion-chat/'+$sessionId+'/inbox/'+$uid+'/'+$connection+'/id').val()",
+              "connection": { ".validate": "newData.isString() && newData.val().matches(/^[a-f0-9-]{36}$/)" },
+              "id": { ".validate": "newData.isString() && newData.val().matches(/^[a-f0-9-]{36}$/)" },
+              "key": { ".validate": "newData.isString() && newData.val().length <= 1024" },
+              "data": { ".validate": "newData.isString() && newData.val().length <= 8388608" },
+              "$other": { ".validate": false }
+            }
+          }
+        },
+        "$other": { ".validate": false }
+      }
+    },
+    "almerion-live": {
+      "$sessionId": {
+        ".read": "auth != null && auth.token.email_verified === true && data.child('hostUid').val() === auth.uid",
+        ".write": "auth != null && auth.token.email_verified === true && ((!data.exists() && newData.child('hostUid').val() === auth.uid && root.child('almerion-cloud/campaigns').child(newData.child('campaignId').val()).child('members').child(root.child('almerion-cloud/accountKeys/'+auth.uid).val()).child('role').val() === 'DM') || (data.child('hostUid').val() === auth.uid && root.child('almerion-cloud/campaigns').child(data.child('campaignId').val()).child('members').child(root.child('almerion-cloud/accountKeys/'+auth.uid).val()).child('role').val() === 'DM'))",
+        ".validate": "newData.hasChildren(['hostUid','campaignId','expiresAt','snapshot']) && $sessionId.matches(/^[a-f0-9]{64}$/)",
+        "hostUid": { ".validate": "newData.val() === auth.uid && (!data.exists() || newData.val() === data.val())" },
+        "campaignId": { ".validate": "newData.isString() && (!data.exists() || newData.val() === data.val())" },
+        "expiresAt": { ".validate": "newData.isNumber() && newData.val() > now && newData.val() <= now + 86400000" },
+        "snapshot": {
+          ".read": "data.parent().child('expiresAt').val() > now && root.child('almerion-cloud/campaigns').child(data.parent().child('campaignId').val()).child('members').child(root.child('almerion-cloud/accountKeys').child(data.parent().child('hostUid').val()).val()).child('role').val() === 'DM'",
+          ".validate": "newData.isString() && newData.val().length <= 16777216"
+        },
+        "$other": { ".validate": false }
+      }
+    }
+  }
+}

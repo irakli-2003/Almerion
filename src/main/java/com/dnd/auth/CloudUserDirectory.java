@@ -10,8 +10,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Optional;
 
 /**
- * Accounts kept in the shared {@link CloudStore}, so a player who registers on their own
- * laptop is the same person the DM sees on theirs.
+ * Legacy account serialization, retained for device-local/offline credentials and old
+ * exports. Production must never attach this credential-bearing directory to Firebase;
+ * online identity is provided by {@link com.dnd.cloud.CloudProfiles}.
  *
  * <p>Layout: {@code users/<username-key>} holds the account, {@code emails/<email-key>} points
  * back at the username key. Accounts that only exist in an older, device-local

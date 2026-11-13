@@ -36,6 +36,7 @@ public final class SessionRosterStore {
     }
 
     public static List<TrackedCreature> load(Path sessionFile) {
+        rejectPrivateFile(sessionFile);
         Path file = rosterFile(sessionFile);
         if (!Files.isRegularFile(file)) return new ArrayList<>();
         try {
@@ -47,13 +48,24 @@ public final class SessionRosterStore {
     }
 
     public static void save(Path sessionFile, List<TrackedCreature> creatures) {
-        Path file = rosterFile(sessionFile);
+        rejectPrivateFile(sessionFile);
         try {
-            if (creatures == null || creatures.isEmpty()) {
-                Files.deleteIfExists(file);
-                return;
+            OperationHistory.writeRoster(sessionFile, creatures, null);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    private static void rejectPrivateFile(Path sessionFile) {
+        try {
+            if (Files.isRegularFile(sessionFile)) {
+                try (var reader = Files.newBufferedReader(sessionFile)) {
+                    String first = reader.readLine();
+                    if (com.dnd.security.PrivateSessionFiles.isProtected(first)) {
+                        throw new SecurityException("Private session rosters must be accessed through the encrypted storyline service.");
+                    }
+                }
             }
-            MAPPER.writerWithDefaultPrettyPrinter().writeValue(file.toFile(), creatures);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

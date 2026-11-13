@@ -30,6 +30,7 @@ public class PlayerHomeScene extends BaseScene {
         VBox root = new VBox(0);
         root.getStyleClass().add("root");
         root.getChildren().add(backBar(SceneType.PLAYER_ONLINE_SESSION));
+        root.getChildren().add(com.dnd.ui.scenes.PlayerModeUi.banner(this));
 
         VBox content = new VBox(20);
         content.setPadding(new Insets(20, 60, 40, 60));
@@ -53,6 +54,7 @@ public class PlayerHomeScene extends BaseScene {
             btn("View Inventory", () -> showInventory(pc, repos)),
             btn("View Abilities", () -> showAbilities(pc, repos)),
             btn("My Profile", () -> uiSession.getRouter().goTo(SceneType.CHARACTER_PROFILE)),
+            com.dnd.ui.scenes.SessionChatUi.button(this),
             btn("Online Session" + (uiSession.getSession().isOnline() ? "  ●" : ""),
                 () -> uiSession.getRouter().goTo(SceneType.PLAYER_ONLINE_SESSION))
         );

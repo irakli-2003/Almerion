@@ -1,5 +1,6 @@
 [
  "+refs/heads/*:refs/remotes/{A}/*",
+ "ALMERION-GUEST-CHAT/1:{A}:{B}",
  "GitHub:",
  "GitHub: {A}",
  "HP:",

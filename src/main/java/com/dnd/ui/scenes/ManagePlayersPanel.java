@@ -46,6 +46,7 @@ final class ManagePlayersPanel {
     private final CampaignRepositories repos;
     private final Path sessionFile;
     private final Consumer<String> status;
+    private final com.dnd.data.StorylineService storyline;
 
     private final VBox root = new VBox();
     private final List<TrackedCreature> creatures;
@@ -57,11 +58,17 @@ final class ManagePlayersPanel {
     private int lastXp = 100;
 
     ManagePlayersPanel(BaseScene owner, CampaignRepositories repos, Path sessionFile, Consumer<String> status) {
+        this(owner, repos, sessionFile, status, null);
+    }
+
+    ManagePlayersPanel(BaseScene owner, CampaignRepositories repos, Path sessionFile, Consumer<String> status,
+                       com.dnd.data.StorylineService storyline) {
         this.owner = owner;
         this.repos = repos;
         this.sessionFile = sessionFile;
         this.status = status;
-        this.creatures = SessionRosterStore.load(sessionFile);
+        this.storyline = storyline;
+        this.creatures = storyline == null ? SessionRosterStore.load(sessionFile) : storyline.readRoster(sessionFile);
         root.getStyleClass().add("side-panel");
         root.setPrefWidth(WIDTH);
         root.setMinWidth(WIDTH);
@@ -78,7 +85,8 @@ final class ManagePlayersPanel {
 
     private void saveCreatures() {
         try {
-            SessionRosterStore.save(sessionFile, creatures);
+            if (storyline == null) SessionRosterStore.save(sessionFile, creatures);
+            else storyline.writeRoster(sessionFile, creatures);
         } catch (RuntimeException ex) {
             status.accept("Couldn't save the session's creatures: " + ex.getMessage());
         }

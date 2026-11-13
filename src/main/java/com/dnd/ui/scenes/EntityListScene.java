@@ -168,13 +168,15 @@ public class EntityListScene extends BaseScene {
                 styleDialog(confirm);
                 confirm.showAndWait().ifPresent(bt -> {
                     if (bt == ButtonType.OK) {
-                        try {
+                        root.setDisable(true);
+                        com.dnd.sync.CampaignSyncService.shared().localFiles(() -> {
                             deleteEntity(repos, cat, id);
-                        } catch (IllegalStateException ex) {
-                            showError("Could not delete " + catName, ex);
-                            return;
-                        }
-                        uiSession.getRouter().goTo(SceneType.ENTITY_LIST);
+                            return true;
+                        }).whenComplete((ok, error) -> javafx.application.Platform.runLater(() -> {
+                            root.setDisable(false);
+                            if (error == null) uiSession.getRouter().goTo(SceneType.ENTITY_LIST);
+                            else showError("Could not delete " + catName, error);
+                        }));
                     }
                 });
             });

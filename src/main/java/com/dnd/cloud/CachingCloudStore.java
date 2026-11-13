@@ -47,6 +47,12 @@ public class CachingCloudStore implements CloudStore {
         cache.delete(path);
     }
 
+    @Override
+    public void update(java.util.Map<String, Object> changes) {
+        remote.update(changes);
+        cache.update(changes);
+    }
+
     /** True when the most recent read had to fall back to the offline mirror. */
     public boolean isOffline() {
         return lastReadOffline;

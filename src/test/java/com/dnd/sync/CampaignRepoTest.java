@@ -29,12 +29,19 @@ public class CampaignRepoTest {
     private static final Clock CLOCK = Clock.fixed(Instant.parse("2026-10-27T18:30:00Z"), ZoneOffset.UTC);
 
     private String remote;
+    private String previousHome;
 
     @Before
     public void createBareRemote() throws Exception {
+        previousHome = System.getProperty("dnd.home");
+        System.setProperty("dnd.home", temp.getRoot().getAbsolutePath());
         File bare = temp.newFolder("remote.git");
         Git.init().setBare(true).setInitialBranch("main").setDirectory(bare).call().close();
         remote = bare.toURI().toString();
+    }
+
+    @org.junit.After public void restoreHome() {
+        if (previousHome == null) System.clearProperty("dnd.home"); else System.setProperty("dnd.home", previousHome);
     }
 
     private Path campaign(String name) throws Exception {
@@ -238,9 +245,93 @@ public class CampaignRepoTest {
         try (org.eclipse.jgit.api.Git git = org.eclipse.jgit.api.Git.open(second.toFile())) {
             assertEquals(org.eclipse.jgit.lib.RepositoryState.SAFE, git.getRepository().getRepositoryState());
         }
+
         // And GitHub still has the first computer's version.
         assertEquals(CampaignRepo.Outcome.SYNCED, repo(first).sync().outcome());
         assertEquals("[\"from first\"]", read(first, "world/npcs.json"));
+    }
+
+    @Test public void cataloguesMergeByCharacterAndFieldInsteadOfJsonLines() throws Exception {
+        Path first = campaign("first");
+        write(first, "players/players.json",
+            "{\"players\":[{\"id\":\"a\",\"hp\":10,\"mana\":5},{\"id\":\"b\",\"hp\":20}]}");
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(first).connect(remote).outcome());
+        Path second = cloneOf("second");
+        write(first, "players/players.json",
+            "{\"players\":[{\"id\":\"a\",\"hp\":8,\"mana\":5},{\"id\":\"b\",\"hp\":20}]}");
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(first).sync().outcome());
+        write(second, "players/players.json",
+            "{\"players\":[{\"id\":\"a\",\"hp\":10,\"mana\":2},{\"id\":\"b\",\"hp\":15}]}");
+        var merged = repo(second).sync();
+        assertEquals(merged.message(), CampaignRepo.Outcome.SYNCED, merged.outcome());
+        var root = com.dnd.data.JsonMappers.create().readTree(read(second, "players/players.json"));
+        assertEquals(8, root.at("/players/0/hp").asInt());
+        assertEquals(2, root.at("/players/0/mana").asInt());
+        assertEquals(15, root.at("/players/1/hp").asInt());
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(first).sync().outcome());
+        assertEquals(root, com.dnd.data.JsonMappers.create().readTree(read(first, "players/players.json")));
+    }
+
+    @Test public void semanticListConflictIsDetectedEvenWhenGitCanMergeSeparateLines() throws Exception {
+        Path first = campaign("first");
+        String base = """
+            {"players":[{
+              "id":"a",
+              "items":[
+                "one",
+                "two",
+                "three",
+                "four",
+                "five",
+                "six"
+              ]
+            }]}
+            """;
+        write(first, "players/players.json", base);
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(first).connect(remote).outcome());
+        Path second = cloneOf("second");
+        write(first, "players/players.json", base.replace("\"one\"", "\"remote\""));
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(first).sync().outcome());
+        String local = base.replace("\"six\"", "\"mine\"");
+        write(second, "players/players.json", local);
+        var result = repo(second).sync();
+        assertEquals(CampaignRepo.Outcome.CONFLICT, result.outcome());
+        assertEquals("/players/a/items", result.conflicts().getFirst().field().pointer());
+        assertEquals(local, read(second, "players/players.json"));
+        try (Git git = Git.open(second.toFile())) {
+            assertEquals(org.eclipse.jgit.lib.RepositoryState.SAFE, git.getRepository().getRepositoryState());
+        }
+    }
+
+    @Test public void fieldChoicesPreserveIndependentChangesAndStaleChoicesAskAgain() throws Exception {
+        Path first = campaign("first");
+        write(first, "players/players.json", "{\"players\":[{\"id\":\"a\",\"hp\":10,\"mana\":5}]}");
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(first).connect(remote).outcome());
+        Path second = cloneOf("second");
+        write(first, "players/players.json", "{\"players\":[{\"id\":\"a\",\"hp\":8,\"mana\":5}]}");
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(first).sync().outcome());
+        String local = "{\"players\":[{\"id\":\"a\",\"hp\":6,\"mana\":2}]}";
+        write(second, "players/players.json", local);
+        var pending = repo(second).sync();
+        assertEquals(CampaignRepo.Outcome.CONFLICT, pending.outcome());
+        assertEquals(1, pending.conflicts().size());
+        var field = pending.conflicts().getFirst();
+        assertEquals("/players/a/hp", field.field().pointer());
+        assertEquals("6", field.field().mine());
+        assertEquals("8", field.field().github());
+        assertEquals(local, read(second, "players/players.json"));
+        var oldChoice = Map.of(field.choiceKey(), CampaignRepo.Choice.GITHUB);
+        write(first, "players/players.json", "{\"players\":[{\"id\":\"a\",\"hp\":7,\"mana\":5}]}");
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(first).sync().outcome());
+        var refreshed = repo(second).resolve(oldChoice);
+        assertEquals(CampaignRepo.Outcome.CONFLICT, refreshed.outcome());
+        assertEquals(local, read(second, "players/players.json"));
+        var settled = repo(second).resolve(Map.of(refreshed.conflicts().getFirst().choiceKey(), CampaignRepo.Choice.GITHUB));
+        assertEquals(settled.message(), CampaignRepo.Outcome.SYNCED, settled.outcome());
+        var hero = com.dnd.data.JsonMappers.create().readTree(read(second, "players/players.json")).at("/players/0");
+        assertEquals(7, hero.path("hp").asInt());
+        assertEquals(2, hero.path("mana").asInt());
+        assertTrue(settled.conflictCopies().isEmpty());
     }
 
     @Test

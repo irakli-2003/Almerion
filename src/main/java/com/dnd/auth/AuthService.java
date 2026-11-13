@@ -33,9 +33,11 @@ public class AuthService {
     private final boolean allowOnScreenResetCodes;
     /** Why the most recent email send failed, surfaced to the UI via {@link CodeResult#emailError()}. */
     private String lastEmailError;
+    private boolean authenticatedCloud;
 
     public AuthService() {
         this(defaultDirectory(), new EmailService(), defaultEmailLinks(), !Cloud.config().enabled());
+        authenticatedCloud = Cloud.config().enabled();
     }
 
     public AuthService(UserDirectory store, EmailService emailService) {
@@ -51,12 +53,15 @@ public class AuthService {
     }
 
     private static UserDirectory defaultDirectory() {
-        return new CloudUserDirectory(Cloud.store(), new UserStore());
+        // Legacy cached accounts are offline credentials/hints, never online authority.
+        return new CloudUserDirectory(new com.dnd.cloud.LocalCloudStore(com.dnd.data.AppHome.resolve(
+            "data", "auth", Cloud.config().enabled() ? "directory-cache.json" : "local-directory.json")), new UserStore());
     }
 
     private static EmailLinkAuth defaultEmailLinks() {
         CloudConfig config = Cloud.config();
-        return config.emailLinksEnabled() ? new FirebaseEmailLinkAuth(config.authUrl(), config.apiKey()) : null;
+        return config.enabled() && config.emailLinksEnabled()
+            ? new FirebaseEmailLinkAuth(config.authUrl(), config.apiKey()) : null;
     }
 
     public static boolean isValidEmail(String email) {
@@ -87,7 +92,10 @@ public class AuthService {
     }
 
     /** Result of a login attempt. */
-    public record LoginResult(boolean success, String message, User user) {
+    public record LoginResult(boolean success, String message, User user, boolean offline) {
+        public LoginResult(boolean success, String message, User user) {
+            this(success, message, user, false);
+        }
         public static LoginResult failure(String message) {
             return new LoginResult(false, message, null);
         }
@@ -100,6 +108,7 @@ public class AuthService {
         if (!isValidEmail(email)) return CodeResult.failure("Please enter a valid email address.");
         if (password == null || password.length() < 6) return CodeResult.failure("Password must be at least 6 characters.");
         if (!password.equals(confirmPassword)) return CodeResult.failure("Passwords do not match.");
+        if (authenticatedCloud) return registerCloud(username, email, password);
         if (store.findByUsername(username).isPresent()) return CodeResult.failure("That username is already taken.");
         if (store.findByEmail(email).isPresent()) return CodeResult.failure("An account with that email already exists.");
 
@@ -136,6 +145,7 @@ public class AuthService {
     }
 
     public CodeResult resendVerification(String email) {
+        if (authenticatedCloud) return CodeResult.failure("Log in with your password to request a verification link.");
         Optional<User> found = store.findByEmail(email);
         if (found.isEmpty()) return CodeResult.failure("No account found with that email.");
         User user = found.get();
@@ -153,6 +163,7 @@ public class AuthService {
     }
 
     public SimpleResult verifyEmail(String email, String code) {
+        if (authenticatedCloud) return new SimpleResult(false, "Online accounts must verify their email using the emailed link.");
         Optional<User> found = store.findByEmail(email);
         if (found.isEmpty()) return new SimpleResult(false, "No account found with that email.");
         User user = found.get();
@@ -171,6 +182,7 @@ public class AuthService {
     }
 
     public LoginResult login(String identifier, String password) {
+        if (authenticatedCloud) return loginCloud(identifier, password);
         Optional<User> found = store.findByEmailOrUsername(identifier == null ? null : identifier.trim());
         if (found.isEmpty()) return LoginResult.failure("No account found with that username/email.");
         User user = found.get();
@@ -230,6 +242,16 @@ public class AuthService {
     }
 
     public CodeResult requestPasswordReset(String email) {
+        if (authenticatedCloud) {
+            if (!isValidEmail(email)) return CodeResult.failure("Please enter a valid email address.");
+            if (emailLinks == null) return CodeResult.failure("Firebase email authentication is not configured.");
+            try {
+                emailLinks.sendPasswordReset(email.trim());
+                return CodeResult.link("If that account exists, a password reset link has been emailed. Check your inbox and spam.");
+            } catch (EmailLinkAuth.EmailLinkException e) {
+                return CodeResult.failure("Could not request the password reset: " + e.getMessage());
+            }
+        }
         Optional<User> found = store.findByEmail(email == null ? null : email.trim());
         if (found.isEmpty()) return CodeResult.failure("No account found with that email.");
         User user = found.get();
@@ -259,6 +281,7 @@ public class AuthService {
     }
 
     public SimpleResult resetPassword(String email, String code, String newPassword, String confirmPassword) {
+        if (authenticatedCloud) return new SimpleResult(false, "Online accounts must reset their password using the emailed link.");
         Optional<User> found = store.findByEmail(email);
         if (found.isEmpty()) return new SimpleResult(false, "No account found with that email.");
         User user = found.get();
@@ -279,6 +302,63 @@ public class AuthService {
         user.setResetExpiresAtMillis(null);
         store.save(user);
         return new SimpleResult(true, "Password reset. You can now log in.");
+    }
+
+    private CodeResult registerCloud(String username, String email, String password) {
+        if (emailLinks == null) return CodeResult.failure("Firebase email authentication is not configured.");
+        Optional<User> named = store.findByUsername(username);
+        if (named.isPresent() && !email.equalsIgnoreCase(named.get().getEmail())) {
+            return CodeResult.failure("That username is already used on this device.");
+        }
+        try {
+            emailLinks.sendVerification(email, password);
+            User pending = new User();
+            pending.setUsername(username);
+            pending.setEmail(email);
+            setPassword(pending, password);
+            store.save(pending);
+            return CodeResult.link("Check your verification email, then log in. Your online username is reserved only after verification.");
+        } catch (EmailLinkAuth.EmailLinkException | com.dnd.cloud.CloudStore.CloudException e) {
+            return CodeResult.failure("Could not set up the online account: " + e.getMessage());
+        }
+    }
+
+    private LoginResult loginCloud(String identifier, String password) {
+        Cloud.signOut();
+        if (identifier == null || identifier.isBlank() || password == null || password.isBlank()) {
+            return LoginResult.failure("Enter your email and password.");
+        }
+        Optional<User> local = store.findByEmailOrUsername(identifier.trim());
+        String email = isValidEmail(identifier.trim()) ? identifier.trim()
+            : local.map(User::getEmail).orElse(null);
+        if (email == null) return LoginResult.failure("Use your email for the first login on this device.");
+        try {
+            User profile = Cloud.signIn(local.orElse(null), email, password);
+            setPassword(profile, password);
+            store.save(profile);
+            return new LoginResult(true, "Welcome back, " + profile.getUsername() + "!", profile);
+        } catch (com.dnd.cloud.CloudStore.CloudException e) {
+            User cached = local.orElse(null);
+            if (e.isOffline() && cached != null && cached.isEmailVerified()
+                && PasswordHasher.matches(password, cached.getPasswordSalt(), cached.getPasswordHash())) {
+                Cloud.useOffline(cached);
+                return new LoginResult(true, "Offline: local campaigns are available. Cloud changes and hosting require signing in online again.", cached, true);
+            }
+            Cloud.signOut();
+            if (e instanceof com.dnd.security.FirebasePrivateStore.SignInException && !e.isOffline()
+                && cached != null && PasswordHasher.matches(password, cached.getPasswordSalt(), cached.getPasswordHash())) {
+                try {
+                    com.dnd.security.FirebasePrivateStore.sendVerification(Cloud.config(), cached, password);
+                    return LoginResult.failure("Verify your Firebase email using the link just sent, then log in again.");
+                } catch (EmailLinkAuth.EmailLinkException enrollment) {
+                    return LoginResult.failure("Firebase sign-in failed. Use the emailed password reset link if your online password changed.");
+                }
+            }
+            return LoginResult.failure("Online sign-in failed: " + e.getMessage());
+        } catch (IllegalStateException | SecurityException e) {
+            Cloud.signOut();
+            return LoginResult.failure(e.getMessage());
+        }
     }
 
     /** True when verification and reset emails are sent as links rather than codes. */

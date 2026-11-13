@@ -56,6 +56,12 @@ public class LocalCloudStore implements CloudStore {
         save();
     }
 
+    @Override
+    public synchronized void update(java.util.Map<String, Object> changes) {
+        changes.forEach((path, value) -> tree.set(path, value == null ? null : mapper.valueToTree(value)));
+        save();
+    }
+
     private void save() {
         if (file == null) return;
         try {

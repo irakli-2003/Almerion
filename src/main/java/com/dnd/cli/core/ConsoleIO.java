@@ -22,5 +22,9 @@ public interface ConsoleIO {
      * Reads a single line of input, blocking until one is available.
      */
     String readLine();
+
+    default String readSecret() {
+        throw new IllegalStateException("Password input requires a terminal with echo disabled.");
+    }
 }
 

@@ -147,6 +147,24 @@ password; your sheet then updates live as the GM changes it.
 Your GM controls stats, level, items and spells. Your portrait, name and appearance text are
 kept on your own computer.
 
+### Switching from GM to player
+
+Use **Switch to Player Mode** in the GM menu, or **Player** on the role screen. Stop both
+internet and local hosting first; Almerion never disconnects joined players automatically
+as part of a role switch. Pending actions must finish first.
+
+The switch closes secondary windows through their normal close requests, preserving
+save/discard/cancel prompts. If a window refuses to close, you remain a GM. After a
+successful switch, private-file keys lock, campaign/character/map selections clear, and
+GM routes and stale GM previews are blocked. The player screens display a **Player Mode**
+banner. Join your co-GM's hosted session normally; this uses the player-safe snapshot,
+not the old GM campaign folder.
+
+Use **Choose role → Game Master** to return, then open a campaign through the normal GM
+membership checks. Private files must be unlocked again and their owners' grants still
+apply. Player Mode does not change campaign membership, revoke already-read copies,
+clear the operating-system clipboard, or restrict access to files outside the app.
+
 ---
 
 ## 6. Key concepts
@@ -171,17 +189,24 @@ kept on your own computer.
 
 Everyone needs an account. One account works for both GM and player roles.
 
-- **Log in** with your username or email and your password.
+- **Log in** with your email and password. Username login also works after this device has
+  remembered the account's email.
 - **Create an account** needs a username, an email address and a password of at least 6
   characters.
-- **Verify your email.** The app sends a verification link, or a code you enter on the
-  **Verify your email** screen. Didn't get it? Check spam, then click **Resend code**.
-  If the app can't send email at all, it shows the code on screen, so you can always finish.
-- **Forgot password?** Enter your email. You receive a link, or a code to enter on the
-  **Choose a new password** screen.
+- **Verify your email.** Online accounts require Firebase's emailed verification link.
+  Check spam. An old device-local account may need to enroll/verify its existing email
+  first; no second campaign profile is needed. No on-screen code can bypass online verification.
+- **Forgot password?** Enter your email and use the emailed password-reset link.
 - **Log Out** is on the role-choice screen.
 
-Accounts are stored online, so you can sign in from any computer with the app installed.
+Firebase handles online passwords; the shared directory stores only verified profile details
+and memberships, never password hashes or reset codes. Offline sign-in uses previously cached
+credentials and opens local campaigns with a read-only cloud list; online changes and hosting
+require signing in online again. Fully local installations (`-Ddnd.cloud=off`) retain their
+separate local account/code flow.
+
+The authenticated-cloud update requires an administrator-assisted migration before deployment.
+Older versions cannot access online accounts or sessions after cutover, but local files remain.
 
 ---
 
@@ -243,22 +268,27 @@ Almerion. The badge in the GM screen shows **Synced**, **Syncing…**, **Offline
 While a battle map is open, changes are uploaded every 10 minutes instead of every 90 seconds,
 so the fight stays smooth. The normal pace resumes when the battle closes.
 
-**Conflicts:** syncing works like git. Changes made on only one computer are simply merged. If
-the same file was changed on both computers, nothing is overwritten. Almerion asks you which
-version to keep, file by file. For each version it shows who changed it, on which computer and
-when, and the newer one is selected for you. You can choose **This computer**, **GitHub**, or
-**Keep both**, which keeps yours and saves GitHub's next to it as `name.remote-<date-time>`.
-If you click **Decide Later**, nothing is uploaded and you are asked again at the next sync.
+**Conflicts:** independent catalogue entries and nested object fields merge automatically,
+including edits to different characters or different fields of the same character. Entries
+are matched by ID, not array position or JSON lines. Unknown fields are preserved. Competing
+values show the character/entry, field path, common version, and both proposed values.
+Choose **This computer** or **GitHub** for each competing value; unrelated edits from both
+devices survive. Ordered lists (inventory, spells, etc.) are chosen as a unit rather than
+combined by position. Deletion versus an edit, or different new entries with the same ID,
+requires an explicit choice.
 
-**Duplicate online registrations:** the campaign list matches copies by campaign ID, not name.
-Under **Other online campaign registrations**, a same-named local campaign is identified as a
-possible older duplicate, not reported as missing. **Review online registration…** shows the
-online ID, author, join code and members, plus matching local campaign IDs. Compare the join
-code with **Campaign Members** on the other device before removing anything.
-The author can remove an obsolete registration after confirmation; this deletes its online
-membership/application records and join code, **not** campaign files or GitHub repositories.
-Removal is refused if the registration is used by a local campaign or has a live online session.
-Do not remove an entry still used by another device. Matching names never merge IDs automatically.
+Other files, unsupported legacy catalogue shapes, and whole-file deletion conflicts retain
+file-level review, including **Keep both** (GitHub's copy becomes `name.remote-<date-time>`).
+Each side shows its last file author, computer, and time; these are not per-field timestamps.
+The newer file is the default suggestion, not an automatic decision. A field choice is
+invalidated if either reviewed file version changes before applying it. **Decide Later**
+keeps this computer's files unchanged, uploads nothing, and asks again at the next sync.
+
+**Campaign identity:** the campaign list shows playable and unclaimed local campaigns.
+Online registrations are kept in the background rather than listed separately. Matching
+names do not merge campaign IDs or delete registrations; access and identity errors are
+shown when an attempted action needs attention. Use **Get Campaign from GitHub…** or
+**Import Complete Campaign…** to bring a campaign onto this device.
 
 **Put-aside versions:** versions saved next to a file as `name.remote-<date-time>` (by **Keep
 both**, or automatically by Almerion 1.2.1 and older) are listed when you open the campaign, and
@@ -328,7 +358,8 @@ Open it with **👥 Members** in the GM menu.
   **Make Player** or **Remove** them. Only the author GM can promote or remove GMs.
 - **Refresh** reloads the lists.
 
-People who aren't members can't see a campaign or join its sessions.
+The directory shows full campaign records only to accepted members. Keep session tokens private:
+they are bearer decryption capabilities, and anyone holding one can decrypt its player snapshot.
 
 ### The starter world
 
@@ -539,9 +570,121 @@ Open it with **📜 Open Storyline**.
 - A **story-arc timeline**: each session is a point, and each folder is an arc spanning its
   sessions. The order always matches the tree.
 
+### Private session files and access requests
+
+**New File** creates an encrypted session owned by the GM creating it. Enable **Unlock
+private files** with your verified account password first, and save the recovery key outside
+the campaign/GitHub. The same account password unlocks your keys on a second device; after
+a password reset, use the recovery key. Losing both your keys and recovery key can make
+private files unrecoverable. This requires administrator-deployed private Firebase rules
+(see [DEVELOPER.md](DEVELOPER.md)); shared session tokens cannot unlock private files.
+If your account predates Firebase Authentication, enter your existing password and choose
+**Set up / verify email** in the unlock dialog. Open the emailed verification link, then
+unlock again. This registers/verifies the same email with Firebase, not another Almerion
+profile. If Firebase already has that email with another password, use its password or
+the normal password-reset flow; do not create a duplicate profile.
+
+Existing files remain shared. Select one and use **Session-file access** to explicitly
+encrypt it and become its owner. Only that owner can grant other campaign GMs read/edit
+access, change access, move, or delete the file. The campaign author has no automatic
+override. Other GMs must enable their own private-file account before being selected;
+verify their displayed email with them before granting access.
+
+A denied GM can request access through the same panel, or by opening the private file.
+The owner receives a request in **Notifications** in Storyline and the GM panel. Use
+**Refresh**, review the verified recipient email, and approve or deny. Approval updates
+the local encrypted file: the owner must sync it, then the requester must sync to receive
+the grant. Requests and responses persist online while the app is closed.
+
+Text and the session encounter roster are encrypted together. Sync/import/export carries
+ciphertext, not decrypted session text. File names, folder placement, owner IDs, and grant
+IDs are not concealed. Encryption cannot erase previously synced plaintext Git history,
+old exports, or copies already read. Revoking access rotates the file key for future
+versions; it cannot revoke old copies. Explicit **Player View**, clipboard sharing, global
+catalogue changes, and the campaign-wide **Notes** scratchpad are still shared actions.
+Chat and mobile/token-player notifications are the next implementation stage.
+
 ### The session editor
 
 Double-click a file to open it. The editor fills the window.
+
+With your private-file keys unlocked, **Recovery & Autosave** saves an encrypted draft
+after a two-second typing pause, or every ten seconds during continuous editing. Drafts
+are account-only copies under the device's `data/auth/storyline-drafts`, outside campaign
+folders, GitHub sync, campaign archives, and hosted snapshots. Other GMs granted the
+original file cannot decrypt your drafts. No draft is uploaded or copied to another device.
+
+After a crash, reopen the same session file with the same account and unlock its keys.
+Review the recovery preview alongside the current text before choosing **Recover into
+editor**. A changed-source warning prompts review; recovery never writes the session file
+automatically. Normal Save still rejects an externally changed file or permissions.
+Recovery also requires access to the current source file; a revoked grant or replaced
+private-file identity cannot be bypassed with a draft. Saving removes this editor's draft
+and the selected recovered copy; closing without saving removes only this editor's draft.
+Other recovery copies remain until explicitly deleted. Drafts are keyed to the original
+absolute file path, so moving a campaign/file does not relocate its recovery copies.
+
+If account keys are locked or unavailable, ordinary editing still works and the editor
+clearly shows **Encrypted autosave is off**. Use **Recovery & Autosave** to enable/unlock
+keys, or save manually. Initial key setup/unlock currently requires verified online access;
+already-unlocked keys can save drafts offline. Keep the independent account recovery key:
+encrypted drafts cannot recover lost encryption keys, and an abrupt crash can still lose
+the edits made since the last completed draft.
+
+### Local restore points
+
+Open **Restore points** from the GM menu or campaign selection. Almerion keeps the latest
+20 points per campaign on this device under `data/auth/restore-points`, outside campaign
+folders and GitHub sync. Renaming a campaign keeps its history. Use **Create restore point**
+for a manual snapshot; automatic snapshots precede campaign imports, incoming GitHub
+merges, catalogue/storyline deletion, whole-campaign deletion, and app update downloads.
+If a required snapshot fails, the operation stops before changing the campaign.
+
+Snapshots contain the files available locally, not missing manual-transfer assets. They
+are not a substitute for complete exports or an off-device backup. Compare saved/current
+text, select files, then **Restore selected files**. Other current files remain unchanged.
+Storyline files also restore their encounter rosters. Existing campaigns get a safety
+point before restoration, subject to the same 20-point retention.
+
+Only current campaign GMs may use its history. After online registration is deleted,
+only points explicitly captured with your account identity (including campaign deletion)
+are accessible to that account. Restoring a deleted campaign recreates its identity, not
+its online membership or Git history. Linked campaigns share restored changes through
+their normal GitHub sync.
+
+Private-file access is checked again for previews and restoration. Historical grants
+never replace current grants, and restoring old plaintext never removes current
+encryption. A missing/replaced plaintext target of a private snapshot can only be
+recovered by its original owner, as a fresh owner-only encrypted file.
+
+### Local action history
+
+Open **Action history** from the GM menu after closing editors and maps through their
+normal save prompts. The latest **500 saved mechanical actions per campaign** remain
+on the original device under `data/auth/action-history`, outside campaign exports and
+GitHub sync. This is a saved-change journal: one save can group multiple changes,
+particularly NPC/monster/beast battle changes. Player-character battle changes use the
+character sheet as their authority.
+
+Compare **Before action** and **After action**, then **Undo selected action**. Damage,
+healing, resources, character inventory, effects and mechanical GM corrections are recorded.
+Every recorded field must still match its after-value; otherwise nothing is undone.
+Unrelated newer fields survive, and undo itself creates a correction record. Current
+campaign GM membership is required. Entity creation/deletion and whole-file recovery
+belong to restore points, not action undo. Rabbit's in-world rewind is separate.
+
+Storyline text, explicit notes, passwords and chat are excluded. Private encounter
+deltas are encrypted; preview and undo require current access and matching private-file
+identity. Undo preserves current storyline text and grants, never downgrades encryption,
+and does not revoke previously readable public copies or history. Mechanical effect
+definitions and inventory structures remain part of the recorded mechanical values.
+
+Interrupted saves recover automatically when the file still matches the before/after
+revision. If an external edit makes the result uncertain, **Resolve interrupted actions**
+lets you explicitly retain current campaign files and discard incomplete journal
+entries; those uncertain actions can no longer be undone. A journal failure before
+the data write prevents the mechanical change; a finalization failure explicitly
+reports that the data was already saved.
 
 | Tool | What it does |
 |---|---|
@@ -762,17 +905,60 @@ The data is AES-256 encrypted.
 
 **GM:**
 
-1. Under **Over the internet**, enter a **session passphrase** and click
-   **Start internet session**.
+1. Sign in online as a verified campaign GM, then click **Start internet session** under
+   **Over the internet**. A strong random encryption key is generated automatically.
 2. Members can now click **Join Live Session**. You can also give the **Player Token** to
    someone who needs to join by token.
 3. The campaign is pushed automatically each time you return to the GM menu. **Push State Now**
    sends it immediately.
 4. Click **Stop internet session** when you're done.
 
+Only the verified host can write or delete the shared snapshot; the player token is read only
+for campaign state. Guest chat has its own limited mailbox access, not host permissions.
+Token access expires 12 hours after the last push. Old-format tokens no longer work: update all
+devices and start a new session after the administrator completes the cloud migration.
+If your old app account is not yet listed in Firebase Authentication, choose **Create an
+account** using your existing username and the administrator-confirmed email. Verify the
+emailed link, then log in with that email. This claims your reserved identity and existing
+campaign membership; do not create a replacement campaign.
+
 **Player:** in **My Campaigns**, click **Join Live Session**. Or open
 *Join with a session token instead*, paste the token and click **Join Session**.
 **Go to My Character** opens your sheet, and **Leave Session** disconnects.
+
+### Private and group session chat
+
+Open **Session chat** from the GM menu, Notifications, your desktop character home, or
+your hosted browser sheet. Choose recipients under **New conversation**, optionally name
+the conversation, then send messages. Groups keep their original members; create another
+conversation to change the audience. The badge counts unread messages; opening a
+conversation marks it read.
+
+**The current hosting GM can read every conversation, including player-only private and
+group chats.** This is disclosed in every chat panel. Monitoring does not let the GM send
+as another player or send into a conversation they have not joined.
+
+Browser-link and desktop-token guests use their character password, without creating an
+account. Verified campaign members can chat as their assigned character without another
+password. **Use character password** switches a desktop chat to account-free guest access,
+including when an online account is not a campaign member. Simultaneous local and internet
+hosting shares the same conversations.
+
+Chats are session-only: the latest **500 messages per conversation** stay in host memory,
+and disappear when the final hosting transport stops. They are not written into campaign
+files, exports, backups or action history. Internet mailboxes use separate per-connection
+encryption; the player sheet token cannot decrypt another player's chat. Normal stop
+removes the encrypted cloud mailboxes. A crash or failed cleanup can leave encrypted
+residue, but the ephemeral host key is not saved. Previously read or copied messages
+cannot be recalled. Local HTTP hosting is for trusted private networks, not public Wi-Fi.
+
+If delivery is uncertain, use **Retry pending action** rather than sending again. Retry
+reuses the request ID to avoid duplicate messages. **Discard pending retry** warns that
+the original delivery may already have succeeded. Safety limits are 2,000 characters per
+message, 100 conversations per session, 32 selected recipients, 32 desktop chat connections
+per verified account, and 32 account-free desktop guest connections per hosted session.
+Keep tokens private. To revoke a guest, change the character password; stop/restart internet
+hosting to invalidate all old tokens. Guest password throttling is shared per character.
 
 ---
 
@@ -942,7 +1128,7 @@ email application and send it there.
 
 | Problem | What to do |
 |---|---|
-| **No verification or reset email** | Check spam and click **Resend code**. If email can't be sent, the app shows the code on screen. On the login screen, **Test email settings** reports the exact reason. Office, university and VPN networks often block outgoing email. |
+| **No verification or reset email** | Check spam and the Firebase email/password setup. Online verification/reset uses emailed links, never an on-screen bypass. SMTP **Test email settings** applies only to local-code accounts and outgoing app reports. |
 | **"You aren't part of ..."** | You aren't a member yet. Apply with the join code and wait for a GM to accept you. |
 | **A campaign I created is missing from my list** | Look under *On this device, not registered to anyone* and click **Claim**. If it's under *Yours, but not on this device*, its files are on another computer. |
 | **"Offline - showing the campaign list saved from your last connection."** | You aren't connected. Local campaigns still open; joining and members need the internet. |

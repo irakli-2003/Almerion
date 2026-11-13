@@ -95,6 +95,13 @@ details p { margin: 6px 0 2px; color: var(--dim); white-space: pre-wrap; }
 @keyframes flash { 0% { box-shadow: 0 0 0 2px var(--gold); background: #4a3a1c; } 100% { box-shadow: none; } }
 .foot { text-align: center; margin-top: 16px; }
 .banner { background: #3a1f1c; border: 1px solid var(--red); border-radius: 10px; padding: 10px; margin-top: 10px; text-align: center; }
+.chat-controls { display: grid; gap: 8px; margin: 10px 0; }
+.chat-controls input, .chat-controls select, .chat-controls textarea { font: inherit; background: var(--panel2);
+  color: var(--ink); padding: 10px; border: 1px solid var(--line); border-radius: 6px; width: 100%; }
+#chatMessages { max-height: 48vh; overflow-y: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
+#chatMessages p { border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+#chatPeers { display: flex; flex-wrap: wrap; gap: 12px; }
+#chatPeers input { width: auto; }
 </style>
 </head>
 <body>
@@ -123,6 +130,24 @@ details p { margin: 6px 0 2px; color: var(--dim); white-space: pre-wrap; }
       <div class="tabs" id="tabs"></div>
     </div>
     <div id="body"></div>
+    <button class="btn ghost" id="chatToggle" style="margin-top:12px" data-t="Session chat"></button>
+    <section id="chatPanel" class="card hidden" style="margin-top:10px">
+      <p class="small dim" id="chatDisclosure">The current hosting GM can read every session conversation, including private and group chats. Chats are erased when hosting ends; only the latest 500 messages per conversation are kept.</p>
+      <div class="chat-controls">
+        <select id="chatThreads" aria-label="Session chat"></select>
+        <div id="chatMessages"></div>
+        <textarea id="chatText" maxlength="2000" rows="3"></textarea>
+        <button class="btn" id="chatSend" data-t="Send"></button>
+        <details><summary data-t="New conversation"></summary>
+          <input id="chatTitle" maxlength="100">
+          <p data-t="Choose recipients"></p><div id="chatPeers"></div>
+          <button class="btn ghost" id="chatCreate" data-t="New conversation"></button>
+        </details>
+        <button class="btn ghost hidden" id="chatRetry" data-t="Retry pending action"></button>
+        <button class="btn ghost hidden" id="chatDiscard" data-t="Discard pending retry"></button>
+      </div>
+      <p class="msg" id="chatError" role="status"></p>
+    </section>
     <div class="foot small dim"><span data-t="View only: your GM keeps this sheet up to date."></span>
       <br><button class="btn ghost" id="logout" style="margin-top:10px" data-t="Log out"></button></div>
   </section>
@@ -130,6 +155,7 @@ details p { margin: 6px 0 2px; color: var(--dim); white-space: pre-wrap; }
 <script>
 "use strict";
 let L = {}, token = null, es = null, data = null, prev = {}, tab = "Sheet", campaign = "";
+let chatTimer = null, chatView = null, chatSelected = null, chatPending = null, chatBusy = false, chatGeneration = 0;
 const $ = id => document.getElementById(id);
 const t = s => L[s] || s;
 const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -139,10 +165,12 @@ async function boot() {
   try {
     const info = await (await fetch("api/info")).json();
     L = info.labels || {}; campaign = info.campaign || "";
+    if (info.chatDisclosure) $("chatDisclosure").textContent = info.chatDisclosure;
   } catch (e) { /* labels stay English */ }
   document.title = campaign ? campaign + " · Almerion" : "Almerion";
   document.querySelectorAll("[data-t]").forEach(n => n.textContent = t(n.dataset.t));
   $("pw").placeholder = t("Password");
+  $("chatText").placeholder = t("Message"); $("chatTitle").placeholder = t("Conversation title");
   $("camp").textContent = campaign;
   token = localStorage.getItem(storeKey());
   if (token && await openSheet()) return;
@@ -150,6 +178,7 @@ async function boot() {
 }
 
 async function showLogin() {
+  stopChat();
   stopStream(); token = null; localStorage.removeItem(storeKey());
   $("sheet").classList.add("hidden"); $("login").classList.remove("hidden");
   $("pwBox").classList.add("hidden"); $("charList").classList.remove("hidden");
@@ -190,7 +219,7 @@ async function openSheet() {
   if (!r.ok) return false;
   data = await r.json(); prev = {};
   $("login").classList.add("hidden"); $("sheet").classList.remove("hidden"); $("ended").classList.add("hidden");
-  render(); startStream();
+  render(); startStream(); startChat();
   return true;
 }
 
@@ -200,7 +229,7 @@ function startStream() {
   es.onopen = () => setStatus(true);
   es.onmessage = e => { data = JSON.parse(e.data); render(); setStatus(true); };
   es.addEventListener("gone", () => showLogin());
-  es.addEventListener("ended", () => { stopStream(); setStatus(false); $("ended").classList.remove("hidden"); });
+  es.addEventListener("ended", () => { stopStream(); stopChat(); setStatus(false); $("ended").classList.remove("hidden"); });
   es.onerror = () => {
     setStatus(false);
     if (es && es.readyState === EventSource.CLOSED) setTimeout(recover, 3000);
@@ -220,6 +249,120 @@ function setStatus(live) {
   s.textContent = live ? "● " + t("Live") : t("Reconnecting…");
   s.className = "status " + (live ? "live" : "off");
 }
+
+function stopChat() {
+  chatGeneration++;
+  clearTimeout(chatTimer); chatTimer = null; chatView = null; chatPending = null; chatSelected = null;
+  chatBusy = false; $("chatPanel").classList.add("hidden");
+  $("chatMessages").replaceChildren(); $("chatPeers").replaceChildren(); $("chatThreads").replaceChildren();
+  delete $("chatPeers").dataset.peers;
+  $("chatText").value = ""; $("chatTitle").value = ""; $("chatError").textContent = "";
+}
+function startChat() {
+  clearTimeout(chatTimer);
+  const generation = chatGeneration;
+  const poll = async () => {
+    if (generation !== chatGeneration || !token) return;
+    if (!chatBusy) await chatRequest(null, generation);
+    if (generation === chatGeneration) chatTimer = setTimeout(poll, 2500);
+  };
+  poll();
+}
+function chatId() {
+  const bytes = crypto.getRandomValues(new Uint8Array(16));
+  bytes[6] = (bytes[6] & 15) | 64; bytes[8] = (bytes[8] & 63) | 128;
+  const hex = [...bytes].map(b => b.toString(16).padStart(2, "0")).join("");
+  return hex.slice(0,8)+"-"+hex.slice(8,12)+"-"+hex.slice(12,16)+"-"+hex.slice(16,20)+"-"+hex.slice(20);
+}
+async function chatRequest(command, generation = chatGeneration) {
+  if (!token || chatBusy) return;
+  chatBusy = true; updateChatControls();
+  const url = "api/chat?token=" + encodeURIComponent(token) +
+    (chatSelected && !$("chatPanel").classList.contains("hidden") ? "&conversation=" + encodeURIComponent(chatSelected) : "");
+  try {
+    const r = await fetch(url, command ? {method:"POST", headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(command)} : {});
+    if (r.status === 401) { showLogin(); return; }
+    const response = await r.json();
+    if (generation !== chatGeneration) return;
+    if (!r.ok) throw new Error(response.error || t("Chat unavailable"));
+    chatView = response;
+    if (command) {
+      chatPending = null; chatSelected = response.selected;
+      if (command.operation === "send") $("chatText").value = "";
+    }
+    if (!chatPending) $("chatError").textContent = "";
+    renderChat();
+  } catch (e) {
+    if (generation === chatGeneration) {
+      if (!command) {
+        chatView = null; chatSelected = null;
+        $("chatMessages").replaceChildren(); $("chatThreads").replaceChildren(); $("chatPeers").replaceChildren();
+        delete $("chatPeers").dataset.peers;
+      }
+      $("chatError").textContent = e.message || t("Chat unavailable");
+    }
+  } finally {
+    if (generation === chatGeneration) { chatBusy = false; updateChatControls(); }
+  }
+}
+function updateChatControls() {
+  $("chatSend").disabled = chatBusy || !!chatPending || !chatSelected;
+  $("chatCreate").disabled = $("chatThreads").disabled = chatBusy || !!chatPending;
+  $("chatRetry").classList.toggle("hidden", !chatPending);
+  $("chatDiscard").classList.toggle("hidden", !chatPending);
+  $("chatRetry").disabled = $("chatDiscard").disabled = chatBusy;
+}
+function renderChat() {
+  if (!chatView) return;
+  const unread = chatView.conversations.reduce((n,c) => n + c.unread, 0);
+  $("chatToggle").textContent = t("Session chat") + (unread ? " (" + unread + ")" : "");
+  const select = $("chatThreads");
+  select.replaceChildren(new Option(t("Session chat"), ""));
+  chatView.conversations.forEach(c => select.add(new Option(c.title + (c.unread ? " ("+c.unread+")" : ""), c.id)));
+  select.value = chatSelected || "";
+  const names = new Map(chatView.peers.map(p => [p.id, p.id === "gm" ? t("Game Master") : p.name]));
+  const fingerprint = JSON.stringify(chatView.peers);
+  if ($("chatPeers").dataset.peers !== fingerprint) {
+    $("chatPeers").replaceChildren(); $("chatPeers").dataset.peers = fingerprint;
+    chatView.peers.filter(p => p.id !== chatView.peer).forEach(p => {
+      const label = document.createElement("label"), box = document.createElement("input");
+      box.type = "checkbox"; box.value = p.id;
+      label.append(box, document.createTextNode(" "+names.get(p.id))); $("chatPeers").append(label);
+    });
+  }
+  if (chatView.selected === chatSelected) {
+    const list = $("chatMessages"), atBottom = list.scrollHeight - list.scrollTop - list.clientHeight < 40;
+    list.replaceChildren();
+    chatView.messages.forEach(m => {
+      const p = document.createElement("p");
+      p.textContent = new Date(m.at).toLocaleTimeString() + " · " + (names.get(m.sender) || m.sender) + "\n" + m.text;
+      list.append(p);
+    });
+    if (atBottom) list.scrollTop = list.scrollHeight;
+  }
+  updateChatControls();
+}
+$("chatToggle").onclick = () => {
+  $("chatPanel").classList.toggle("hidden");
+  if (!$("chatPanel").classList.contains("hidden")) chatRequest(null);
+};
+$("chatThreads").onchange = () => { chatSelected = $("chatThreads").value || null; chatRequest(null); };
+$("chatSend").onclick = () => {
+  chatPending = {id:chatId(), operation:"send", conversation:chatSelected, recipients:[], title:"", text:$("chatText").value};
+  chatRequest(chatPending);
+};
+$("chatCreate").onclick = () => {
+  chatPending = {id:chatId(), operation:"create", conversation:null,
+    recipients:[...$("chatPeers").querySelectorAll("input:checked")].map(b => b.value), title:$("chatTitle").value, text:""};
+  chatRequest(chatPending);
+};
+$("chatRetry").onclick = () => chatRequest(chatPending);
+$("chatDiscard").onclick = () => {
+  if (confirm(t("Delivery may already have happened. Discard this retry and check the conversation before sending again?"))) {
+    chatPending = null; updateChatControls(); chatRequest(null);
+  }
+};
 
 // ── rendering ──────────────────────────────────────────────
 const TABS = ["Sheet", "Combat", "Magic", "Gear"];

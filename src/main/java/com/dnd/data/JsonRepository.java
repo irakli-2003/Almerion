@@ -125,15 +125,29 @@ public class JsonRepository<T, W> {
         if (id == null) {
             return false;
         }
+        ensureFileExists();
+        String revision = fileRevision();
         W wrapper = readWrapper();
         List<T> items = listGetter.apply(wrapper);
         int index = findIndex(items, id);
         if (index == -1) {
             return false;
         }
+        CampaignRestorePoints.beforeEntityDeletion(filePath);
+        if (!revision.equals(fileRevision())) {
+            throw new IllegalStateException("The catalogue changed while preparing deletion. Refresh and try again.");
+        }
         items.remove(index);
         writeWrapper(wrapper);
         return true;
+    }
+
+    private String fileRevision() {
+        try {
+            return com.dnd.sync.ManualFiles.hash(filePath);
+        } catch (IOException e) {
+            throw new DataAccessException("Failed to read " + filePath, e);
+        }
     }
 
     private int findIndex(List<T> items, String id) {
@@ -175,7 +189,7 @@ public class JsonRepository<T, W> {
     private void writeWrapper(W wrapper) {
         try {
             Files.createDirectories(filePath.getParent());
-            mapper.writeValue(filePath.toFile(), wrapper);
+            OperationHistory.writeCatalogue(filePath, mapper.writeValueAsBytes(wrapper));
         } catch (IOException e) {
             throw new DataAccessException("Failed to write " + filePath, e);
         }

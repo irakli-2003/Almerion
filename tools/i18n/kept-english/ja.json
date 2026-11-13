@@ -4,6 +4,8 @@
  "+refs/heads/*:refs/remotes/{A}/*",
  "--- NPC: <name> ---",
  "AC:",
+ "ALMERION-CHAT/1:{A}:{B}:{C}:{D}",
+ "ALMERION-GUEST-CHAT/1:{A}:{B}",
  "Found \"{A}\" ({B} of {C}).",
  "GitHub:",
  "HP:",

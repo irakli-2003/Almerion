@@ -64,10 +64,10 @@ public class StoryArcViewTest {
         Path root = Files.createTempDirectory("dnd-story-arc-test");
         StorylineService service = new StorylineService(root);
         service.ensureRoot();
-        service.createFile(root, "A Very Long Session Name That Should Wrap Across Several Lines.md");
+        service.createFile(service.getRoot(), "A Very Long Session Name That Should Wrap Across Several Lines.md");
 
         onFxThread(() -> {
-            Pane pane = StoryArcView.build(service, root);
+            Pane pane = StoryArcView.build(service, service.getRoot());
 
             Rectangle bar = firstRectangle(pane);
             Text label = firstText(pane);

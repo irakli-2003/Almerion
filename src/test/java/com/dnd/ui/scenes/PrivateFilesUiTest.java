@@ -132,6 +132,78 @@ public class PrivateFilesUiTest {
         });
     }
 
+    @Test public void gmCanBrowseAndSearchEncryptedLoreWithoutExposingItToPlayers() throws Exception {
+        LocalCloudStore identities = new LocalCloudStore();
+        PrivateAccount account = PrivateAccount.finishSetup(identities,
+            PrivateAccount.prepare("owner", "owner@example.test", "Owner", "password"), "password");
+        Path campaign = temp.newFolder("lore-campaign").toPath();
+        String campaignId = CampaignMeta.ensureId(campaign);
+        LocalCloudStore directory = new LocalCloudStore();
+        new com.dnd.cloud.CampaignDirectory(directory).register(campaignId, "Test", "Owner");
+        directory.put("profiles/" + com.dnd.cloud.CloudKeys.of("Owner"),
+            java.util.Map.of("uid", "owner", "email", "owner@example.test", "username", "Owner"));
+        com.dnd.cloud.Cloud.override(directory, null);
+        var book = new com.dnd.data.LoreBook();
+        var section = new com.dnd.data.LoreBook.Section("History");
+        section.articles.add(new com.dnd.data.LoreBook.Article("War", "The Moon is a secret."));
+        section.articles.add(new com.dnd.data.LoreBook.Article("Peace", "Another story."));
+        book.sections.add(section);
+        var notes = com.dnd.data.CharacterNotes.loreBook(campaign, campaignId, account);
+        var gms = java.util.List.of(account.identity());
+        notes.save(LoreBookUi.DOCUMENT, notes.read(LoreBookUi.DOCUMENT, gms), book.serialize(), gms);
+        AtomicReference<Throwable> error = new AtomicReference<>();
+        try {
+            onFx(() -> {
+                Stage stage = new Stage();
+                UiSession session = session(stage, campaign);
+                session.setDm(true);
+                user(session, account);
+                StorylineScene owner = new StorylineScene(session) {
+                    @Override protected <T> void background(Supplier<T> work, Consumer<T> success, Consumer<Throwable> failure) {
+                        try { success.accept(work.get()); } catch (Throwable problem) { failure.accept(problem); }
+                    }
+                    @Override protected void showError(String title, Throwable problem) { throw new AssertionError(title, problem); }
+                };
+                stage.setScene(owner.build());
+                stage.show();
+                Platform.runLater(() -> {
+                    try {
+                        Stage window = Window.getWindows().stream().filter(w -> w instanceof Stage s
+                            && "GM lore book".equals(s.getTitle())).map(w -> (Stage) w).findFirst().orElseThrow();
+                        Parent content = window.getScene().getRoot();
+                        content.applyCss();
+                        content.layout();
+                        var search = content.lookupAll(".text-field").stream()
+                            .filter(n -> n instanceof javafx.scene.control.TextField f
+                                && "Search lore".equals(f.getPromptText()))
+                            .map(n -> (javafx.scene.control.TextField) n).findFirst().orElseThrow();
+                        search.setText("moon");
+                        @SuppressWarnings("unchecked")
+                        TreeView<Object> tree = (TreeView<Object>) content.lookup(".tree-view");
+                        assertEquals(1, tree.getRoot().getChildren().size());
+                        var branch = tree.getRoot().getChildren().getFirst();
+                        assertEquals(1, branch.getChildren().size());
+                        tree.getSelectionModel().select(branch.getChildren().getFirst());
+                        var editor = (javafx.scene.control.TextArea) content.lookup(".text-area");
+                        assertEquals("The Moon is a secret.", editor.getText());
+                        button(content, "Cancel").fire();
+                    } catch (Throwable problem) {
+                        error.set(problem);
+                        for (Window w : java.util.List.copyOf(Window.getWindows())) if (w != stage) w.hide();
+                    }
+                });
+                LoreBookUi.open(owner);
+                if (error.get() != null) throw new AssertionError(error.get());
+                session.setDm(false);
+                assertThrows(SecurityException.class, () -> LoreBookUi.open(owner));
+                stage.close();
+            });
+        } finally {
+            account.close();
+            com.dnd.cloud.Cloud.signOut();
+        }
+    }
+
     @Test public void editorAutomaticallyEncryptsTypingAndSaveCloseRemovesOnlyItsDraft() throws Exception {
         String oldHome = System.getProperty("dnd.home");
         System.setProperty("dnd.home", temp.getRoot().getAbsolutePath());

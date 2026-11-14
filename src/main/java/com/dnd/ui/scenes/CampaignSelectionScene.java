@@ -91,8 +91,12 @@ public class CampaignSelectionScene extends BaseScene {
             status.setText("Getting the latest changes from GitHub...");
             status.setManaged(true);
             mine.setDisable(true);
+            content.setDisable(true);
             CampaignSyncService.shared().syncNow(selected.local().path()).thenAccept(result ->
                 javafx.application.Platform.runLater(() -> {
+                    mine.setDisable(false);
+                    content.setDisable(false);
+                    if (!isCurrentRole()) return;
                     if (result.outcome() == CampaignRepo.Outcome.CONFLICT) {
                         GitHubSyncUi.resolveConflicts(this, selected.local().folder(), selected.local().path(),
                             result, open);
@@ -129,8 +133,8 @@ public class CampaignSelectionScene extends BaseScene {
         });
         Button getBtn = btn("Get Campaign from GitHub...",
             () -> GitHubSyncUi.downloadCampaign(this, uiSession.getStorage(), reload));
-        FlowPane githubRow = new FlowPane(12, 8, syncBtn, getBtn, GitHubSyncUi.accountBar(this, reload));
-        githubRow.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        VBox githubGroup = toolGroup("GitHub collaboration", syncBtn, getBtn);
+        githubGroup.getChildren().add(GitHubSyncUi.accountBar(this, reload));
         Button exportBtn = btn("Export Complete Campaign...", () -> { });
         exportBtn.setOnAction(e -> {
             Entry selected = mine.getSelectionModel().getSelectedItem();
@@ -144,10 +148,18 @@ public class CampaignSelectionScene extends BaseScene {
         importBtn.setOnAction(e -> CampaignArchiveUi.importCampaign(this, uiSession.getStorage(), user(),
             importBtn, status, reload));
         root.disableProperty().bind(exportBtn.disableProperty().or(importBtn.disableProperty()));
-        Button restoreBtn = btn("Restore points", () -> RestorePointsUi.show(this, null, reload));
-        FlowPane transferRow = new FlowPane(12, 8, exportBtn, importBtn, restoreBtn);
+        Button restoreBtn = btn("Restore points", () -> {
+            Entry selected = mine.getSelectionModel().getSelectedItem();
+            RestorePointsUi.show(this, selected == null ? null : selected.local().path(), reload);
+        });
+        openBtn.disableProperty().bind(mine.getSelectionModel().selectedItemProperty().isNull().or(mine.disableProperty()));
+        syncBtn.disableProperty().bind(mine.getSelectionModel().selectedItemProperty().isNull());
+        deleteBtn.disableProperty().bind(mine.getSelectionModel().selectedItemProperty().isNull());
+        FlowPane campaignActions = new FlowPane(10, 8, openBtn, createBtn);
+        VBox transferGroup = toolGroup("Backups & transfer", exportBtn, importBtn, restoreBtn);
+        VBox management = toolGroup("Campaign management", deleteBtn);
 
-        content.getChildren().addAll(status, mine, new HBox(12, openBtn, createBtn, deleteBtn), githubRow, transferRow,
+        content.getChildren().addAll(status, mine, campaignActions, githubGroup, transferGroup, management,
             unclaimedBox);
         ScrollPane scroll = new ScrollPane(content);
         scroll.setFitToWidth(true);

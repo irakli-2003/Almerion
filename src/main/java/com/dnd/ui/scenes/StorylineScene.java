@@ -37,6 +37,7 @@ public class StorylineScene extends BaseScene {
         VBox content = new VBox(12);
         content.setPadding(new Insets(10, 20, 20, 20));
         FlowPane header = new FlowPane(10, 10, title("Storyline"),
+            btn("GM lore book", () -> LoreBookUi.open(this)),
             btn("Unlock private files", () -> PrivateFilesUi.unlocked(this, this::refreshAll)),
             btn("Notifications", () -> PrivateFilesUi.notifications(this)),
             btn("Lock private files", () -> { uiSession.lockPrivateAccount(); refreshAll(); }));

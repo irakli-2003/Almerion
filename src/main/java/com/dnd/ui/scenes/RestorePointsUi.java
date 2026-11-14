@@ -90,10 +90,13 @@ final class RestorePointsUi {
         HBox center = new HBox(10, files, comparison);
         HBox.setHgrow(comparison, Priority.ALWAYS);
         VBox.setVgrow(center, Priority.ALWAYS);
-        Label explanation = new Label("The latest 20 restore points are kept per campaign on this device."
-            + " Select files to compare and restore. Other current files are kept."
-            + " Storyline files also restore their encounter rosters."
-            + " Private-file access is checked again; current grants are never replaced with old grants.");
+        Label explanation = new Label("A restore point is a local backup of campaign files, not an undo of one action."
+            + "\n1. Choose a restore point from the list. The latest 20 per campaign are kept on this device."
+            + "\n2. Select a file to compare its saved version with the current version. Ctrl-click to select several files."
+            + "\n3. Choose Restore selected files. Only those files are replaced; other current files are kept."
+            + "\nCreate restore point saves a backup of the selected campaign now. Restoration first creates a safety backup."
+            + " Storyline files include their encounter rosters. Encrypted files require your private-file keys."
+            + " Current access grants are preserved; online memberships are not restored.");
         explanation.setWrapText(true);
         status.setWrapText(true);
         layout.setPadding(new Insets(16));

@@ -424,6 +424,7 @@ final class ManagePlayersPanel {
         refreshEffects.run();
 
         detailFrame(pc.getName(),
+            owner.btn("GM character note", () -> CharacterNotesUi.open(owner, pc)),
             ProgressionPanel.build(owner, repos, pc, () -> showPlayer(pc)),
             subLabel("Vitals"), vitals,
             subLabel("Class & Race Features"), featuresBox(pc, persist),

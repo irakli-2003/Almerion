@@ -91,6 +91,7 @@ public class EntityDetailScene extends BaseScene {
         content.getChildren().add(imageSection);
 
         if (uiSession.isDm() && entity instanceof com.dnd.model.character.PlayerCharacter pc) {
+            content.getChildren().add(btn("GM character note", () -> CharacterNotesUi.open(this, pc)));
             content.getChildren().add(ProgressionPanel.build(this, repos, pc,
                 () -> uiSession.getRouter().goTo(SceneType.ENTITY_DETAIL)));
             content.getChildren().add(sheetSummary(repos, pc));
@@ -196,6 +197,14 @@ public class EntityDetailScene extends BaseScene {
             root.getChildren().add(saveBar);
         }
         return wrapInScene(root);
+    }
+
+    @Override public boolean prepareHistoryChange() {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+            "Undo or redo reloads this character or entity editor. Discard any unsaved edits and continue?"
+                + " Choose Cancel to return and save them first.", ButtonType.OK, ButtonType.CANCEL);
+        styleDialog(confirm);
+        return confirm.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK;
     }
 
     private Object getEntity(CampaignRepositories repos, EntityCategory cat, String id) {

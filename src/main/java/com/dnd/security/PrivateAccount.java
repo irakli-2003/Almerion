@@ -81,13 +81,17 @@ public final class PrivateAccount implements AutoCloseable {
     }
 
     public static PrivateAccount unlock(CloudStore store, Vault vault, String password) {
+        PrivateAccount account = unlockWithoutPublishing(store, vault, password);
+        account.publishIdentity();
+        return account;
+    }
+
+    static PrivateAccount unlockWithoutPublishing(CloudStore store, Vault vault, String password) {
         validate(vault);
         if (store instanceof FirebasePrivateStore firebase && !firebase.uid().equals(vault.identity().uid())) {
             throw new SecurityException("Private-file account identity mismatch.");
         }
-        PrivateAccount account = new PrivateAccount(store, vault, read(SessionCipher.decrypt(vault.passwordBox(), password), Keys.class));
-        account.publishIdentity();
-        return account;
+        return new PrivateAccount(store, vault, read(SessionCipher.decrypt(vault.passwordBox(), password), Keys.class));
     }
 
     public static PrivateAccount recover(CloudStore store, Vault vault, String recovery, String newPassword) {
@@ -148,6 +152,12 @@ public final class PrivateAccount implements AutoCloseable {
             result.add(found);
         });
         return List.copyOf(result);
+    }
+
+    /** Public identities obtained during the last successful unlock or online lookup. */
+    public List<Identity> cachedIdentities() {
+        requireUnlocked();
+        return List.copyOf(trustedIdentities.values());
     }
 
     public void requestAccess(String ownerUid, String fileId, String campaignId, String fileName) {

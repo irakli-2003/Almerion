@@ -20,9 +20,14 @@ public final class OperationHistory {
     public record Delta(String map, String subject, String field, boolean beforePresent, JsonNode before,
                         boolean afterPresent, JsonNode after) { }
     public record Action(int version, String id, long at, String path, Kind kind, List<Delta> changes,
-                         String encryptedChanges, String beforeHash, String afterHash, String undoOf) {
+                         String encryptedChanges, String beforeHash, String afterHash, String undoOf, Boolean redo) {
         @Override public String toString() { return java.time.Instant.ofEpochMilli(at) + " - " + kind; }
     }
+    public record Cursor(List<Action> undo, List<Action> redo) {
+        public Action nextUndo() { return undo.isEmpty() ? null : undo.getLast(); }
+        public Action nextRedo() { return redo.isEmpty() ? null : redo.getLast(); }
+    }
+    private static final List<java.util.function.Consumer<Path>> LISTENERS = new java.util.concurrent.CopyOnWriteArrayList<>();
     private record Subject(String map, String id) { }
     private record Source(Path file, JsonNode json, String privateRaw, String revision) { }
     private static final Object LOCK = new Object();
@@ -72,7 +77,7 @@ public final class OperationHistory {
             var before = JsonMappers.create().readTree(previous);
             var after = JsonMappers.create().readTree(bytes);
             history.save(root.relativize(absolute).toString().replace('\\', '/'), kind,
-                differences(kind, before, after), null, absolute, bytes, null, null, hash(previous));
+                differences(kind, before, after), null, absolute, bytes, null, null, null, hash(previous));
         }
     }
 
@@ -117,7 +122,7 @@ public final class OperationHistory {
             if (root == null || CampaignMeta.idOf(root).isEmpty()) { atomicWrite(target, next); return; }
             Kind kind = encrypted ? Kind.PRIVATE_ROSTER : Kind.ROSTER;
             new OperationHistory(root).save(root.relativize(file).toString().replace('\\', '/'), kind,
-                differences(kind, before, after), encrypted ? raw : null, target, next, account, null,
+                differences(kind, before, after), encrypted ? raw : null, target, next, account, null, null,
                 encrypted ? hash(raw.getBytes(StandardCharsets.UTF_8)) : previous == null ? "missing" : hash(previous));
         }
     }
@@ -135,7 +140,57 @@ public final class OperationHistory {
                 if (!file.equals(entry(action.id(), ".action"))) throw new IOException("Invalid action record.");
                 result.add(action);
             }
+
             return result.stream().sorted(Comparator.comparingLong(Action::at).reversed()).toList();
+        }
+    }
+
+    public static AutoCloseable listen(java.util.function.Consumer<Path> listener) {
+        LISTENERS.add(listener);
+        return () -> LISTENERS.remove(listener);
+    }
+
+    public Cursor cursor() throws IOException { return cursor(list()); }
+
+    public static Cursor cursor(List<Action> newestFirst) {
+        List<Action> undo = new ArrayList<>(), redo = new ArrayList<>();
+        for (Action action : newestFirst.reversed()) {
+            if (action.undoOf() == null) {
+                undo.add(action);
+                redo.clear();
+                continue;
+            }
+            int undone = indexOf(undo, action.undoOf()), redone = indexOf(redo, action.undoOf());
+            boolean isRedo = action.redo() != null ? action.redo() : redone >= 0;
+            if (isRedo) {
+                if (redone >= 0) redo.remove(redone);
+                undo.add(action);
+            } else {
+                if (undone >= 0) undo.remove(undone);
+                redo.add(action);
+            }
+        }
+        return new Cursor(List.copyOf(undo), List.copyOf(redo));
+    }
+
+    private static int indexOf(List<Action> actions, String id) {
+        for (int i = 0; i < actions.size(); i++) if (id.equals(actions.get(i).id())) return i;
+        return -1;
+    }
+
+    public void undoLatest(PrivateAccount account) throws IOException {
+        synchronized (LOCK) {
+            Action action = cursor().nextUndo();
+            if (action == null) throw new IOException("There is no saved action to undo.");
+            undo(action, account);
+        }
+    }
+
+    public void redoLatest(PrivateAccount account) throws IOException {
+        synchronized (LOCK) {
+            Action action = cursor().nextRedo();
+            if (action == null) throw new IOException("There is no undone action to redo.");
+            undo(action, account);
         }
     }
 
@@ -200,6 +255,10 @@ public final class OperationHistory {
             if (!actions.contains(action) || actions.stream().anyMatch(a -> action.id().equals(a.undoOf()))) {
                 throw new IOException("This action is unavailable or has already been undone.");
             }
+            Cursor cursor = cursor(actions);
+            if (!cursor.undo().contains(action) && !action.equals(cursor.nextRedo())) {
+                throw new IOException("This correction is no longer available. A new action clears redo history.");
+            }
             Source source = source(action, account);
             List<Delta> changes = readChanges(action, source, account);
             Map<Subject, ObjectNode> current = subjects(action.kind(), source.json());
@@ -218,12 +277,13 @@ public final class OperationHistory {
             Kind kind = source.privateRaw() != null ? Kind.PRIVATE_ROSTER : action.kind();
             List<Delta> reversed = changes.stream().map(d -> new Delta(d.map(), d.subject(), d.field(),
                 d.afterPresent(), d.after(), d.beforePresent(), d.before())).toList();
-            save(action.path(), kind, reversed, source.privateRaw(), source.file(), bytes, account, action.id(), source.revision());
+            save(action.path(), kind, reversed, source.privateRaw(), source.file(), bytes, account, action.id(),
+                action.equals(cursor.nextRedo()), source.revision());
         }
     }
 
     private void save(String path, Kind kind, List<Delta> changes, String privateRaw, Path target,
-                      byte[] bytes, PrivateAccount account, String undoOf, String expected) throws IOException {
+                      byte[] bytes, PrivateAccount account, String undoOf, Boolean redo, String expected) throws IOException {
         checkCampaign();
         List<Path> committed = recover();
         if (!fingerprint(target).equals(expected)) throw new IOException("Campaign changed before saving the action.");
@@ -236,7 +296,7 @@ public final class OperationHistory {
             ? PrivateSessionFiles.write(privateRaw, new PrivateSessionFiles.Content(
                 JsonMappers.create().writeValueAsString(changes), List.of()), account) : null;
         Action action = new Action(1, id, now, path, kind, sealed == null ? List.copyOf(changes) : null,
-            sealed, expected, bytes == null ? "missing" : hash(bytes), undoOf);
+            sealed, expected, bytes == null ? "missing" : hash(bytes), undoOf, redo);
         Path pending = entry(id, ".pending");
         byte[] record = JsonMappers.create().writeValueAsBytes(action);
         if (record.length > 16L * 1024 * 1024) throw new IOException("Action record is too large.");
@@ -252,6 +312,13 @@ public final class OperationHistory {
             List<Path> updated = new ArrayList<>(committed);
             updated.add(completed);
             prune(updated);
+            for (var listener : LISTENERS) {
+                try { listener.accept(campaign); }
+                catch (RuntimeException e) {
+                    java.util.logging.Logger.getLogger(OperationHistory.class.getName())
+                        .log(java.util.logging.Level.WARNING, "Action history listener failed", e);
+                }
+            }
         } catch (IOException e) {
             throw new IOException("Change saved, but action history could not be finalized. Reopen action history before retrying.", e);
         }

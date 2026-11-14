@@ -1679,6 +1679,16 @@ public class MapEditorScene extends BaseScene {
         return String.valueOf(parts[0].charAt(0)).toUpperCase() + String.valueOf(parts[1].charAt(0)).toUpperCase();
     }
 
+    @Override public boolean prepareHistoryChange() {
+        if (map == null || com.dnd.data.JsonMappers.create().valueToTree(map)
+            .equals(com.dnd.data.JsonMappers.create().valueToTree(repos.maps().getById(map.getId())))) return true;
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+            "Undo or redo reloads this map editor. Discard unsaved map edits and continue?"
+                + " Choose Cancel to return and save them first.", ButtonType.OK, ButtonType.CANCEL);
+        styleDialog(confirm);
+        return confirm.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK;
+    }
+
     private void saveMap() {
         try {
             if (map.isWorldMap()) new com.dnd.data.WorldMaps(repos).saveLayout(map);

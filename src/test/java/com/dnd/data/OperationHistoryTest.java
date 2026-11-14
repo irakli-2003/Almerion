@@ -91,6 +91,111 @@ public class OperationHistoryTest {
         assertEquals(1, repos.players().getById("hero").getItems().size());
     }
 
+    @Test public void undoRedoSurvivesReopeningAndCanBeRepeatedInOrder() throws Exception {
+        Path root = campaign();
+        var repos = new CampaignRepositories(root);
+        var pc = character(repos);
+        pc.applyDamage(10);
+        repos.players().save(pc);
+        pc.applyDamage(20);
+        repos.players().save(pc);
+        var history = new OperationHistory(root);
+        history.undoLatest(null);
+        assertEquals(1990, repos.players().getById("hero").getCurrentHitPoints());
+        history.undoLatest(null);
+        assertEquals(2000, repos.players().getById("hero").getCurrentHitPoints());
+        assertNull(history.cursor().nextUndo());
+        history = new OperationHistory(root);
+        history.redoLatest(null);
+        assertEquals(1990, repos.players().getById("hero").getCurrentHitPoints());
+        history.redoLatest(null);
+        assertEquals(1970, repos.players().getById("hero").getCurrentHitPoints());
+        assertNull(history.cursor().nextRedo());
+        for (int i = 0; i < 3; i++) {
+            history.undoLatest(null);
+            assertEquals(1990, repos.players().getById("hero").getCurrentHitPoints());
+            history.redoLatest(null);
+            assertEquals(1970, repos.players().getById("hero").getCurrentHitPoints());
+        }
+
+    }
+
+    @Test public void correctionDirectionSurvivesRetentionOfOnlyTheNewestRecord() throws Exception {
+        Path root = campaign();
+        var repos = new CampaignRepositories(root);
+        var pc = character(repos);
+        pc.applyDamage(10); repos.players().save(pc);
+        var history = new OperationHistory(root);
+        history.undoLatest(null);
+        var undo = history.list().getFirst();
+        assertEquals(Boolean.FALSE, undo.redo());
+        assertEquals(undo, OperationHistory.cursor(List.of(undo)).nextRedo());
+        history.redoLatest(null);
+        var redo = history.list().getFirst();
+        assertEquals(Boolean.TRUE, redo.redo());
+        assertEquals(redo, OperationHistory.cursor(List.of(redo)).nextUndo());
+        assertNull(OperationHistory.cursor(List.of(redo)).nextRedo());
+    }
+
+    @Test public void newMechanicalActionClearsRedoButTextEditDoesNot() throws Exception {
+        Path root = campaign();
+        var repos = new CampaignRepositories(root);
+        var pc = character(repos);
+        pc.applyDamage(10);
+        repos.players().save(pc);
+        var history = new OperationHistory(root);
+        history.undoLatest(null);
+        pc = repos.players().getById("hero");
+        pc.setBackstory("Current narrative");
+        repos.players().save(pc);
+        history.redoLatest(null);
+        assertEquals("Current narrative", repos.players().getById("hero").getBackstory());
+        history.undoLatest(null);
+        var discardedRedo = history.cursor().nextRedo();
+        pc = repos.players().getById("hero");
+        pc.setCurrentMana(3);
+        repos.players().save(pc);
+        assertNull(history.cursor().nextRedo());
+        assertThrows(IOException.class, () -> history.redoLatest(null));
+        assertThrows(IOException.class, () -> history.undo(discardedRedo, null));
+        assertEquals(2000, repos.players().getById("hero").getCurrentHitPoints());
+        assertEquals(3, repos.players().getById("hero").getCurrentMana());
+    }
+
+    @Test public void redoChecksCurrentValuesWithoutRewritingNotesOrGrants() throws Exception {
+        Path root = campaign();
+        LocalCloudStore store = new LocalCloudStore();
+        try (var owner = PrivateAccount.finishSetup(store,
+            PrivateAccount.prepare("owner", "owner@example.test", "Owner", "password"), "password")) {
+            var service = new StorylineService(root, () -> owner);
+            service.ensureRoot();
+            Path file = service.createFile(service.getRoot(), "Private.txt");
+            service.writeRoster(file, List.of(new TrackedCreature(TrackedCreature.Kind.MONSTER, "dragon",
+                "Dragon", 100, 10, 15, null)));
+            var roster = service.readRoster(file);
+            roster.getFirst().setCurrentHitPoints(80);
+            service.writeRoster(file, roster);
+            var history = new OperationHistory(root);
+            history.undoLatest(owner);
+            service = new StorylineService(root, () -> owner);
+            service.readText(file);
+            service.writeText(file, "Keep this newer private text");
+            assertThrows(SecurityException.class, () -> history.redoLatest(null));
+            history.redoLatest(owner);
+            assertEquals(80, service.readRoster(file).getFirst().getCurrentHitPoints());
+            assertEquals("Keep this newer private text", service.readText(file));
+            history.undoLatest(owner);
+            // An external file change is not a new journal action, so redo itself must check it.
+            String current = Files.readString(file);
+            var content = PrivateSessionFiles.read(current, owner);
+            content.roster().getFirst().setCurrentHitPoints(95);
+            Files.writeString(file, PrivateSessionFiles.write(current, content, owner));
+            String external = Files.readString(file);
+            assertThrows(IOException.class, () -> history.redoLatest(owner));
+            assertEquals(external, Files.readString(file));
+        }
+    }
+
     @Test public void keepsLatestFiveHundredAndRecoversInterruptedCommittedAction() throws Exception {
         Path root = campaign();
         var repos = new CampaignRepositories(root);

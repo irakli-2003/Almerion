@@ -51,6 +51,37 @@ public class ReportUiTest {
         });
     }
 
+    @Test public void historyArrowsStayLeftOfReportAcrossSceneChangesAndAreDisabledWithoutGmContext() throws Exception {
+        onFx(() -> {
+            Platform.setImplicitExit(false);
+            ReportUi.install();
+            var owner = new com.dnd.ui.scenes.BaseScene(null) {
+                @Override public Scene build() {
+                    return wrapInScene(new VBox(new Label("Campaign controls")));
+                }
+            };
+            Stage stage = new Stage();
+            try {
+                for (int i = 0; i < 2; i++) {
+                    stage.setScene(owner.build());
+                    stage.show();
+                    var root = stage.getScene().getRoot();
+                    root.applyCss(); root.layout();
+                    Button undo = (Button) root.lookup("#undo-action");
+                    Button redo = (Button) root.lookup("#redo-action");
+                    Button report = reportButton(stage.getScene());
+                    assertNotNull(undo); assertNotNull(redo);
+                    assertTrue(undo.isDisabled()); assertTrue(redo.isDisabled());
+                    assertEquals(1, root.lookupAll("#operation-history-controls").size());
+                    assertTrue(undo.localToScene(undo.getBoundsInLocal()).getMaxX()
+                        < report.localToScene(report.getBoundsInLocal()).getMinX());
+                    assertTrue(redo.localToScene(redo.getBoundsInLocal()).getMaxX()
+                        < report.localToScene(report.getBoundsInLocal()).getMinX());
+                }
+            } finally { stage.close(); }
+        });
+    }
+
     @Test
     public void successfulReportStaysReadableAndCanBeClosedInEnglishAndGeorgian() throws Exception {
         verifyReportCompletion("en", false);

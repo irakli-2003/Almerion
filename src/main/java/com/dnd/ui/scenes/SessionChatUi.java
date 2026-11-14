@@ -56,11 +56,20 @@ public final class SessionChatUi {
             var previous = client.getAndSet(null);
             if (previous != null) previous.close();
         };
+        javafx.beans.value.ChangeListener<javafx.stage.Window> windowChanged = (p, before, window) -> {
+            if (before != null && window == null) close.run();
+        };
         button.sceneProperty().addListener((o, previous, scene) -> {
-            if (previous != null && previous != scene) close.run();
-            if (scene != null) scene.windowProperty().addListener((p, before, window) -> {
-                if (before != null && window == null) close.run();
-            });
+            if (previous != null) previous.windowProperty().removeListener(windowChanged);
+            if (previous != null && previous != scene) {
+                if (scene == null) {
+                    // Footer wrapping briefly detaches the button from the same scene.
+                    javafx.application.Platform.runLater(() -> {
+                        if (button.getScene() != previous) close.run();
+                    });
+                } else close.run();
+            }
+            if (scene != null) scene.windowProperty().addListener(windowChanged);
         });
         timer.getKeyFrames().add(new KeyFrame(Duration.seconds(3), event -> {
             if (!owner.isCurrentRole() || user != owner.uiSession.getCurrentUser()

@@ -14,7 +14,7 @@ public class UiSession {
     private String activeMapId;
     private boolean dm = false;
     private long roleGeneration;
-    private int backgroundActions;
+    private final javafx.beans.property.ReadOnlyIntegerWrapper backgroundActions = new javafx.beans.property.ReadOnlyIntegerWrapper();
     private final Stage primaryStage;
     private com.dnd.auth.User currentUser;
     private com.dnd.security.PrivateAccount privateAccount;
@@ -52,9 +52,10 @@ public class UiSession {
 
     public Stage primaryStage() { return primaryStage; }
     public long roleGeneration() { return roleGeneration; }
-    public void beginBackgroundAction() { backgroundActions++; }
-    public void endBackgroundAction() { backgroundActions--; }
-    public boolean hasBackgroundActions() { return backgroundActions > 0; }
+    public void beginBackgroundAction() { backgroundActions.set(backgroundActions.get() + 1); }
+    public void endBackgroundAction() { backgroundActions.set(backgroundActions.get() - 1); }
+    public boolean hasBackgroundActions() { return backgroundActions.get() > 0; }
+    public javafx.beans.property.ReadOnlyIntegerProperty backgroundActionsProperty() { return backgroundActions.getReadOnlyProperty(); }
 
     public boolean isHosting() {
         var online = session.getFirebaseSync();

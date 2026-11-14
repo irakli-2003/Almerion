@@ -64,6 +64,9 @@ public final class CampaignArchive {
                 zip.closeEntry();
                 for (FileEntry entry : files) {
                     Path file = ManualFiles.resolve(source, entry.path());
+                    zip.setLevel(!requireComplete && compressedMedia(entry.path())
+                        ? java.util.zip.Deflater.NO_COMPRESSION
+                        : requireComplete ? java.util.zip.Deflater.DEFAULT_COMPRESSION : java.util.zip.Deflater.BEST_SPEED);
                     zip.putNextEntry(new ZipEntry("campaign/" + entry.path()));
                     Files.copy(file, zip);
                     zip.closeEntry();
@@ -80,6 +83,13 @@ public final class CampaignArchive {
 
     public static Snapshot inspect(Path archive) throws IOException {
         try (ZipFile zip = new ZipFile(archive.toFile())) { return inspect(zip); }
+    }
+
+    private static boolean compressedMedia(String path) {
+        int dot = path.lastIndexOf('.');
+        if (dot < 0) return false;
+        return Set.of("mp3", "ogg", "flac", "m4a", "mp4", "webm", "png", "jpg", "jpeg",
+            "gif", "webp", "zip", "jar", "pdf").contains(path.substring(dot + 1).toLowerCase(Locale.ROOT));
     }
 
     private static Snapshot inspect(ZipFile zip) throws IOException {

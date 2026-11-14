@@ -11,6 +11,7 @@ import java.util.Map;
 public class SceneRouter {
     private final UiSession uiSession;
     private final Stage stage;
+    private SceneType currentType;
 
     public SceneRouter(UiSession uiSession, Stage stage) {
         this.uiSession = uiSession;
@@ -53,6 +54,18 @@ public class SceneRouter {
             return;
         }
         stage.setScene(scene);
+        currentType = type;
+    }
+
+    public void reload() {
+        if (currentType != null) goTo(currentType);
+    }
+
+    public boolean isCampaignOpen() {
+        return currentType != null && switch (currentType) {
+            case DM_MENU, DM_ONLINE_SESSION, ENTITY_LIST, ENTITY_DETAIL, MAP_VIEW, MAP_EDITOR, WORLD_MAP, STORYLINE -> true;
+            default -> false;
+        };
     }
 
     static boolean gmOnly(SceneType type) {

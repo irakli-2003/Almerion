@@ -252,9 +252,12 @@ public final class CampaignRepo {
         if (Files.exists(target)) return Result.of(Outcome.FAILED, "A campaign folder named \""
             + target.getFileName() + "\" already exists.");
         try (Git git = Git.cloneRepository().setURI(remoteUrl).setDirectory(target.toFile())
-                .setCredentialsProvider(credentials).setTimeout(TIMEOUT_SECONDS).call()) {
+                .setNoCheckout(true).setCredentialsProvider(credentials).setTimeout(TIMEOUT_SECONDS).call()) {
             CampaignRepo repo = new CampaignRepo(target, credentials, identity);
             repo.configure(git);
+            if (git.getRepository().resolve(Constants.HEAD) != null) {
+                git.checkout().setName(git.getRepository().getBranch()).call();
+            }
             git.getRepository().getConfig().setBoolean("almerion", null, "sync", true);
             git.getRepository().getConfig().save();
             return Result.of(Outcome.SYNCED, "Downloaded.");
@@ -427,22 +430,26 @@ public final class CampaignRepo {
         Result merged = null;
         if (remote != null) {
             ObjectId head = repo.resolve(Constants.HEAD);
+            boolean fastForward;
             try (org.eclipse.jgit.revwalk.RevWalk walk = new org.eclipse.jgit.revwalk.RevWalk(repo)) {
-                if (head == null || !walk.isMergedInto(walk.parseCommit(remote.getObjectId()), walk.parseCommit(head))) {
-                    com.dnd.data.CampaignRestorePoints.beforeIdentifiedCampaign(folder, "Before GitHub update");
+                if (head != null && walk.isMergedInto(walk.parseCommit(remote.getObjectId()), walk.parseCommit(head))) {
+                    return push(git, true);
                 }
+                fastForward = head == null || walk.isMergedInto(walk.parseCommit(head), walk.parseCommit(remote.getObjectId()));
             }
+            com.dnd.data.CampaignRestorePoints.beforeIdentifiedCampaign(folder, "Before GitHub update");
             if (head == null) {
                 RefUpdate update = repo.updateRef(Constants.R_HEADS + repo.getBranch());
                 update.setNewObjectId(remote.getObjectId());
                 update.update();
                 git.reset().setMode(org.eclipse.jgit.api.ResetCommand.ResetType.HARD).call();
             } else {
-                boolean hasManualManifest = Files.exists(folder.resolve(ManualFiles.MANIFEST))
-                    || read(repo, remote.getObjectId(), ManualFiles.MANIFEST) != null;
+                boolean hasManualManifest = !fastForward && (Files.exists(folder.resolve(ManualFiles.MANIFEST))
+                    || read(repo, remote.getObjectId(), ManualFiles.MANIFEST) != null);
                 byte[] manualMerge = hasManualManifest
                     ? mergeManualManifest(repo, head, remote.getObjectId(), choices.get(ManualFiles.MANIFEST)) : null;
-                Map<String, CatalogueMerge.Result> catalogues = mergeCatalogues(repo, head, remote.getObjectId(), choices);
+                Map<String, CatalogueMerge.Result> catalogues = fastForward ? Map.of()
+                    : mergeCatalogues(repo, head, remote.getObjectId(), choices);
                 List<Conflict> fieldConflicts = describeFields(repo, head, remote.getObjectId(), catalogues);
                 MergeResult result = git.merge().include(remote).setStrategy(MergeStrategy.RECURSIVE)
                     .setCommit(true).setMessage("Merge campaign changes from GitHub").call();
@@ -503,7 +510,7 @@ public final class CampaignRepo {
                 }
             }
         }
-        Result pushed = push(git);
+        Result pushed = push(git, true);
         return merged != null && pushed.outcome() == Outcome.SYNCED ? merged : pushed;
     }
 
@@ -643,8 +650,17 @@ public final class CampaignRepo {
     }
 
     private Result push(Git git) throws IOException, GitAPIException {
+        return push(git, false);
+    }
+
+    private Result push(Git git, boolean freshlyFetched) throws IOException, GitAPIException {
         Repository repo = git.getRepository();
-        if (repo.resolve(Constants.HEAD) == null) return Result.of(Outcome.SYNCED, "Nothing to sync yet.");
+        ObjectId head = repo.resolve(Constants.HEAD);
+        if (head == null) return Result.of(Outcome.SYNCED, "Nothing to sync yet.");
+        Ref remote = repo.exactRef(remoteRef(repo.getBranch()));
+        if (freshlyFetched && remote != null && head.equals(remote.getObjectId())) {
+            return Result.of(Outcome.SYNCED, "Synced.");
+        }
         List<String> oversized = LargeFileHistory.oversized(repo);
         if (!oversized.isEmpty()) {
             String message = "Upload stopped before sending file data to GitHub: oversized files exist in"

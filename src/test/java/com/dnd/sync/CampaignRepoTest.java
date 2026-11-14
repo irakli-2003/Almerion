@@ -127,6 +127,26 @@ public class CampaignRepoTest {
         assertFalse(Files.exists(first.resolve("storyline/chapter1.md")));
     }
 
+    @Test public void freshFastForwardKeepsSafetyBackupAndUnchangedOpenCreatesNoMoreBackups() throws Exception {
+        Path first = campaign("first");
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(first).connect(remote).outcome());
+        Path second = cloneOf("second");
+        write(first, "world/npcs.json", "[{\"name\":\"Latest on other device\"}]");
+        write(first, "storyline/session.txt", "Latest scene");
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(first).commitAndPush().outcome());
+        var backups = com.dnd.data.CampaignRestorePoints.forCampaign(second);
+        int count = backups.list().size();
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(second).sync().outcome());
+        assertEquals("Latest scene", read(second, "storyline/session.txt"));
+        assertEquals(count + 1, backups.list().size());
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(second).sync().outcome());
+        assertEquals(count + 1, backups.list().size());
+        write(first, "storyline/session.txt", "An even newer scene");
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(first).commitAndPush().outcome());
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(second).sync().outcome());
+        assertEquals("An even newer scene", read(second, "storyline/session.txt"));
+    }
+
     @Test public void oversizedFilesStayLocalAndRecipientGetsTransferNotice() throws Exception {
         Path first = campaign("first");
         ManualFilesTest.large(first.resolve("music").resolve("theme.mp3"), ManualFiles.MAX_GIT_BYTES + 1);

@@ -34,6 +34,25 @@ public class CampaignArchiveTest {
         return storage;
     }
 
+    @Test public void quickRestoreBackupKeepsAllMediaBytesAndImportsNormally() throws Exception {
+        Path root = source("campaign"), zip = temp.getRoot().toPath().resolve("quick-backup.zip");
+        Files.createDirectories(root.resolve("music"));
+        byte[] music = new byte[2 * 1024 * 1024];
+        new java.util.Random(17).nextBytes(music);
+        Files.write(root.resolve("music").resolve("theme.mp3"), music);
+        Files.writeString(root.resolve("story.txt"), "Session text and private campaign content");
+        CampaignArchive.captureAvailableFiles(root, zip);
+        try (ZipFile file = new ZipFile(zip.toFile())) {
+            var entry = file.getEntry("campaign/music/theme.mp3");
+            assertArrayEquals(music, file.getInputStream(entry).readAllBytes());
+            // Already-compressed media must bypass recompression, not disappear from the backup.
+            assertTrue(entry.getCompressedSize() >= entry.getSize());
+        }
+        var imported = CampaignArchive.importCampaign(storage("other-device"), zip);
+        assertArrayEquals(music, Files.readAllBytes(imported.campaign().resolve("music").resolve("theme.mp3")));
+        assertEquals("Session text and private campaign content", Files.readString(imported.campaign().resolve("story.txt")));
+    }
+
     @Test public void fullExportIncludesLargeAssetsIdentityAndNestedContentButNoGitInternals() throws Exception {
         Path root = source("campaign"), zip = temp.getRoot().toPath().resolve("campaign.zip");
         Files.createDirectories(root.resolve(".git"));

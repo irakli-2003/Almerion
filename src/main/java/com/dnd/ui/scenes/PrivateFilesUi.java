@@ -45,22 +45,26 @@ final class PrivateFilesUi {
             }
             owner.background(() -> prepare(owner, password), prepared -> {
                 if (prepared.account() != null) {
-                    finish(owner, prepared.account(), action);
+                    finish(owner, prepared.account(), prepared.vault(), action);
                 } else if (prepared.setup() != null) {
                     if (!saveRecovery(owner, prepared.setup().recoveryKey())) {
                         prepared.store().close();
                         return;
                     }
                     owner.background(() -> PrivateAccount.finishSetup(prepared.store(), prepared.setup(), password),
-                        account -> finish(owner, account, action), error -> {
+                        account -> finish(owner, account, prepared.setup().vault(), action), error -> {
                             prepared.store().close();
                             owner.showError("Could not create private-file keys", error);
                         });
                 } else {
                     password(owner, "Recover private-file keys",
                         "Your account password changed. Enter the recovery key saved when private files were enabled.")
-                        .ifPresentOrElse(recovery -> owner.background(() -> PrivateAccount.recover(prepared.store(),
-                            prepared.vault(), recovery, password), account -> finish(owner, account, action),
+                        .ifPresentOrElse(recovery -> owner.background(() -> {
+                            PrivateAccount recovered = PrivateAccount.recover(prepared.store(),
+                                prepared.vault(), recovery, password);
+                            return new Prepared(prepared.store(), PrivateAccount.load(prepared.store(), recovered.uid()),
+                                null, recovered);
+                        }, result -> finish(owner, result.account(), result.vault(), action),
                             error -> {
                                 prepared.store().close();
                                 owner.showError("Could not recover private-file keys", error);
@@ -89,6 +93,14 @@ final class PrivateFilesUi {
 
     private static Prepared prepare(BaseScene owner, String password) {
         var user = owner.uiSession.getCurrentUser();
+        if (Cloud.isOffline()) {
+            if (user.getProviderUid() == null) {
+                throw new SecurityException("Sign in online and unlock private files on this device first.");
+            }
+            PrivateAccount account = OfflinePrivateAccounts.unlock(offlineCache(), user.getProviderUid(),
+                user.getEmail(), password);
+            return new Prepared(null, null, null, account);
+        }
         FirebasePrivateStore store = FirebasePrivateStore.connect(Cloud.config(), user, password);
         try {
             PrivateAccount.Vault vault = PrivateAccount.load(store, store.uid());
@@ -106,15 +118,27 @@ final class PrivateFilesUi {
         }
     }
 
-    private static void finish(BaseScene owner, PrivateAccount account, Runnable action) {
-        try {
-            owner.uiSession.setPrivateAccount(account);
-        } catch (RuntimeException error) {
-            owner.showError("Could not unlock private files", error);
-            return;
-        }
-        owner.background(account::identities, ignored -> runAction(owner, action),
-            error -> owner.showError("Could not load private-file identities", error));
+    private static Path offlineCache() {
+        return com.dnd.data.AppHome.resolve("data", "auth", "private-account-cache");
+    }
+
+    private static void finish(BaseScene owner, PrivateAccount account, PrivateAccount.Vault vault, Runnable action) {
+        owner.background(() -> {
+            var identities = account.identities();
+            if (vault != null) OfflinePrivateAccounts.save(offlineCache(), vault, identities);
+            return identities;
+        }, ignored -> {
+            try {
+                owner.uiSession.setPrivateAccount(account);
+                runAction(owner, action);
+            } catch (RuntimeException error) {
+                account.close();
+                owner.showError("Could not unlock private files", error);
+            }
+        }, error -> {
+            account.close();
+            owner.showError("Could not load private-file identities", error);
+        });
     }
 
     private static void runAction(BaseScene owner, Runnable action) {

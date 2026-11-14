@@ -30,8 +30,18 @@ public final class ReportUi {
     private static final String REPORT = "almerion.report.window";
     private static final String CSS = "/com/dnd/ui/styles/dnd-theme.css";
     private static boolean installed;
+    private static final String OWNER = "almerion.report.owner";
 
     private ReportUi() {}
+
+    public static void bind(Scene scene, com.dnd.ui.scenes.BaseScene owner) {
+        scene.getProperties().put(OWNER, owner);
+    }
+
+    public static boolean prepareHistoryChange(Scene scene) {
+        return !(scene.getProperties().get(OWNER) instanceof com.dnd.ui.scenes.BaseScene owner)
+            || owner.prepareHistoryChange();
+    }
 
     public static void install() {
         if (installed) return;
@@ -70,6 +80,11 @@ public final class ReportUi {
         configureButton(bug);
         bug.setOnAction(e -> show(scene));
         HBox footer = new HBox(bug);
+        if (scene.getProperties().get(OWNER) instanceof com.dnd.ui.scenes.BaseScene owner) {
+            Region spacer = new Region();
+            HBox.setHgrow(spacer, Priority.ALWAYS);
+            footer.getChildren().setAll(com.dnd.ui.scenes.OperationHistoryUi.footer(owner, scene), spacer, bug);
+        }
         footer.setAlignment(Pos.CENTER_RIGHT);
         footer.setPadding(new Insets(2, 8, 2, 8));
         // A separate strip avoids covering Save buttons or map controls.

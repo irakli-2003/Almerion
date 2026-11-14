@@ -97,26 +97,33 @@ public class DmMenuScene extends BaseScene {
 
     /** "Run the Session": everything used while actually playing at the table. */
     private VBox sessionSection() {
-        FlowPane row = new FlowPane(10, 10,
-            btn("Switch to Player Mode", () -> PlayerModeUi.enterPlayer(this)),
-            btn("Action history", () -> OperationHistoryUi.show(this)),
+        VBox navigation = toolGroup("Session preparation",
             btn("📜 Open Storyline", () -> uiSession.getRouter().goTo(SceneType.STORYLINE)),
-            btn("Notifications", () -> PrivateFilesUi.notifications(this)),
-            SessionChatUi.button(this),
-            btn("Restore points", () -> RestorePointsUi.show(this, uiSession.campaignRoot(),
-                () -> uiSession.getRouter().goTo(SceneType.DM_MENU))),
-            btn("🧭 World Map", () -> uiSession.getRouter().goTo(SceneType.WORLD_MAP)),
+            btn("GM lore book", () -> LoreBookUi.open(this)),
+            btn("World Map", () -> uiSession.getRouter().goTo(SceneType.WORLD_MAP)));
+        VBox communication = toolGroup("People & communication",
             btn("👥 Members", () -> MembersWindow.open(this, uiSession.campaignRoot(),
                 uiSession.getCurrentUser() == null ? "" : uiSession.getCurrentUser().getUsername())),
+            btn("Notifications", () -> PrivateFilesUi.notifications(this)),
+            SessionChatUi.button(this));
+        VBox play = toolGroup("At the table",
+            btn("📡 Host Session" + (uiSession.getSession().isOnline() || com.dnd.lan.LanSessionServer.current() != null ? "  ●" : ""),
+                () -> uiSession.getRouter().goTo(SceneType.DM_ONLINE_SESSION)),
             btn("🖨 Print Character Sheets", () -> {
                 if (uiSession.campaignRoot() == null) return;
                 var ctx = uiSession.getSession().getCampaignContext();
                 com.dnd.ui.print.CharacterSheetPrintDialog.show(
                     com.dnd.ui.WindowOrder.current(), new CampaignRepositories(uiSession.campaignRoot()), ctx != null ? ctx.getName() : null);
-            }),
-            btn("📡 Host Session" + (uiSession.getSession().isOnline() || com.dnd.lan.LanSessionServer.current() != null ? "  ●" : ""),
-                () -> uiSession.getRouter().goTo(SceneType.DM_ONLINE_SESSION)));
-        return card("▶ Run the Session", row);
+            }));
+        VBox safety = toolGroup("History & role",
+            btn("Action history", () -> OperationHistoryUi.show(this)),
+            btn("Restore points", () -> RestorePointsUi.show(this, uiSession.campaignRoot(),
+                () -> uiSession.getRouter().goTo(SceneType.DM_MENU))),
+            btn("Switch to Player Mode", () -> PlayerModeUi.enterPlayer(this)));
+        FlowPane groups = new FlowPane(10, 10, navigation, play, communication, safety);
+        VBox panel = card("▶ Run the Session", groups);
+        groups.prefWrapLengthProperty().bind(panel.widthProperty().subtract(30));
+        return panel;
     }
 
     /** "Music": playback buttons usable without opening the music panel. */
@@ -150,22 +157,25 @@ public class DmMenuScene extends BaseScene {
         for (int i = 0; i < WORLDBUILDING_GROUPS.length; i++) {
             Label caption = new Label(WORLDBUILDING_GROUP_NAMES[i]);
             caption.getStyleClass().add("sub-label");
-            HBox buttons = new HBox(6);
+            FlowPane buttons = new FlowPane(6, 6);
             for (EntityCategory cat : WORLDBUILDING_GROUPS[i]) {
                 buttons.getChildren().add(btn(categoryLabel(cat), () -> {
                     uiSession.setActiveEntityCategory(cat);
                     uiSession.getRouter().goTo(SceneType.ENTITY_LIST);
                 }));
             }
+            if (i == 3) {
+                buttons.getChildren().addAll(
+                    btn("Stats & Skills", () -> StatDefinitionsWindow.show(this, new CampaignRepositories(uiSession.campaignRoot()))),
+                    btn("Class Upgrade Trees", () -> UpgradeTreeWindow.showEditor(this, new CampaignRepositories(uiSession.campaignRoot()))));
+            }
             VBox group = new VBox(5, caption, buttons);
+            group.setPrefWidth(300);
+            buttons.prefWrapLengthProperty().bind(group.widthProperty().subtract(24));
             group.getStyleClass().addAll("dm-subgroup", "tool-group");
             groups.getChildren().add(group);
         }
         VBox card = card("🏰 Worldbuilding", groups);
-        card.getChildren().add(btn("Stats & Skills", () ->
-            StatDefinitionsWindow.show(this, new CampaignRepositories(uiSession.campaignRoot()))));
-        card.getChildren().add(btn("Class Upgrade Trees", () ->
-            UpgradeTreeWindow.showEditor(this, new CampaignRepositories(uiSession.campaignRoot()))));
         groups.prefWrapLengthProperty().bind(card.widthProperty().subtract(30));
         return card;
     }

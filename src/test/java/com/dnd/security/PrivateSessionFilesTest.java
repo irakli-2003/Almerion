@@ -4,6 +4,8 @@ import com.dnd.cloud.LocalCloudStore;
 import com.dnd.data.SessionRosterStore;
 import com.dnd.data.StorylineService;
 import com.dnd.data.StorylineDrafts;
+import com.dnd.data.CharacterNotes;
+import com.dnd.data.SessionSnapshot;
 import com.dnd.model.session.TrackedCreature;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -38,6 +40,68 @@ public class PrivateSessionFilesTest {
     private static PrivateSessionFiles.Content content() {
         return new PrivateSessionFiles.Content("The secret villain is the king.",
             List.of(new TrackedCreature(TrackedCreature.Kind.NPC, "secret-npc", "Hidden Assassin", 7, 0, 12, null)));
+    }
+
+    @Test public void sharedCharacterNotesStayEncryptedAndOutsidePlayerSnapshots() throws Exception {
+        Path root = temp.newFolder("notes").toPath();
+        CharacterNotes notes = new CharacterNotes(root, "campaign", owner);
+        var gms = List.of(owner.identity(), friend.identity());
+        CharacterNotes.Loaded empty = notes.read("hero", gms);
+        notes.save("hero", empty, "Secret patron", List.of(owner.identity(), friend.identity()));
+        CharacterNotes.Loaded saved = notes.read("hero", gms);
+        assertEquals("Secret patron", saved.text());
+        assertFalse(saved.version().contains("Secret patron"));
+        assertFalse(SessionSnapshot.capture(root, "Campaign").contains("Secret patron"));
+        assertEquals("Secret patron", new CharacterNotes(root, "campaign", friend).read("hero", gms).text());
+        assertThrows(SecurityException.class, () -> new CharacterNotes(root, "campaign", author).read("hero", gms));
+        assertThrows(SecurityException.class, () -> new CharacterNotes(root, "other-campaign", friend).read("hero", gms));
+        assertThrows(SecurityException.class, () -> notes.read("hero", List.of(friend.identity())));
+        String forgery = PrivateCharacterNotes.encrypt("campaign", "hero", "Forged", author,
+            List.of(author.identity(), owner.identity()));
+        assertThrows(SecurityException.class, () ->
+            PrivateCharacterNotes.decrypt(forgery, "campaign", "hero", owner, gms));
+        String tampered = saved.version().replace("campaign", "different");
+        assertThrows(SecurityException.class, () ->
+            PrivateCharacterNotes.decrypt(tampered, "campaign", "hero", owner, gms));
+        assertThrows(IllegalStateException.class, () -> notes.save("hero", empty, "Overwrite", List.of(owner.identity())));
+        notes.save("hero", saved, "Updated", List.of(owner.identity()));
+        assertThrows(SecurityException.class, () -> new CharacterNotes(root, "campaign", friend).read("hero", gms));
+        assertEquals("Secret patron", PrivateCharacterNotes.decrypt(saved.version(), "campaign", "hero", friend, gms));
+    }
+
+    @Test public void offlineCacheUnlocksWithPasswordAndNeverAllowsCloudWrites() throws Exception {
+        Path cache = temp.newFolder("offline-private").toPath();
+        OfflinePrivateAccounts.save(cache, ownerSetup.vault(), List.of(owner.identity(), friend.identity()));
+        String stored = Files.readString(cache.resolve(owner.uid() + ".json"));
+        assertFalse(stored.contains(PASSWORD));
+        PrivateAccount offline = OfflinePrivateAccounts.unlock(cache, owner.uid(), owner.identity().email(), PASSWORD);
+        String encrypted = PrivateCharacterNotes.encrypt("campaign", "hero", "Offline secret", offline,
+            List.of(offline.identity(), offline.identity(friend.uid())));
+        assertEquals("Offline secret", PrivateCharacterNotes.decrypt(encrypted, "campaign", "hero", friend,
+            List.of(owner.identity(), friend.identity())));
+        assertThrows(com.dnd.cloud.CloudStore.CloudException.class,
+            () -> offline.requestAccess(friend.uid(), "file", "campaign", "file"));
+        assertThrows(SessionCipher.CipherException.class, () ->
+            OfflinePrivateAccounts.unlock(cache, owner.uid(), owner.identity().email(), "wrong-password"));
+        assertThrows(SecurityException.class, () ->
+            OfflinePrivateAccounts.unlock(cache, owner.uid(), "other@example.test", PASSWORD));
+        offline.close();
+    }
+
+    @Test public void loreBookIsEncryptedSeparatelyAndNeverEntersPlayerSnapshots() throws Exception {
+        Path root = temp.newFolder("lore").toPath();
+        var gms = List.of(owner.identity(), friend.identity());
+        CharacterNotes store = CharacterNotes.loreBook(root, "campaign", owner);
+        CharacterNotes.Loaded empty = store.read("@gm-lore-book", gms);
+        store.save("@gm-lore-book", empty, "{\"title\":\"Secret lore\"}", gms);
+        var saved = new CharacterNotes(root, "campaign", friend);
+        assertNull(saved.read("@gm-lore-book", gms).version());
+        assertEquals("{\"title\":\"Secret lore\"}",
+            CharacterNotes.loreBook(root, "campaign", friend).read("@gm-lore-book", gms).text());
+        assertFalse(store.read("@gm-lore-book", gms).version().contains("Secret lore"));
+        assertFalse(SessionSnapshot.capture(root, "Campaign").contains("Secret lore"));
+        assertThrows(SecurityException.class,
+            () -> CharacterNotes.loreBook(root, "campaign", author).read("@gm-lore-book", gms));
     }
 
     @Test public void campaignAuthorCannotReadCoGmFileEvenWithSyncedBytes() {

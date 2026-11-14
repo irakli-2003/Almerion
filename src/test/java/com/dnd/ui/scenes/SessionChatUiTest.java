@@ -177,6 +177,7 @@ public class SessionChatUiTest {
         AtomicReference<Button> badge = new AtomicReference<>();
         try {
             onFx(() -> {
+                com.dnd.ui.ReportUi.install();
                 primary.set(new Stage());
                 var storage = new CampaignStorage(temp.getRoot().toPath());
                 var cli = new CliSession(storage, null);

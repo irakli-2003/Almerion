@@ -19,7 +19,7 @@ import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-final class OperationHistoryUi {
+public final class OperationHistoryUi {
     private final BaseScene owner;
     private final Path campaign;
     private final Stage stage = new Stage();
@@ -84,7 +84,8 @@ final class OperationHistoryUi {
                     case PLAYERS -> UiTranslator.text("Character action");
                 };
                 String state = undone.contains(action.id()) ? UiTranslator.text("Undone") : "";
-                String correction = action.undoOf() == null ? "" : UiTranslator.text("Undo correction");
+                String correction = action.undoOf() == null ? ""
+                    : UiTranslator.text(Boolean.TRUE.equals(action.redo()) ? "Redo correction" : "Undo correction");
                 setText(java.time.Instant.ofEpochMilli(action.at()) + " - " + kind
                     + (state.isEmpty() ? "" : " - " + state) + (correction.isEmpty() ? "" : " - " + correction));
             }
@@ -96,10 +97,14 @@ final class OperationHistoryUi {
         HBox center = new HBox(10, actions, comparison);
         HBox.setHgrow(comparison, Priority.ALWAYS);
         VBox.setVgrow(center, Priority.ALWAYS);
-        Label explanation = owner.body("The latest 500 saved mechanical actions are kept on this device."
-            + " Undo only changes the recorded fields; later edits to those values block undo."
-            + " This is not Rabbit's rewind. Notes, passwords and chat are not recorded."
-            + " Private encounters still require current file access.");
+        Label explanation = owner.body("Action history records saved character stats, inventory and encounter changes on this device."
+            + "\nSelect an action to compare Before action and After action, then choose Undo selected action."
+            + " Only the listed fields are restored. If those fields changed later, the action is blocked."
+            + "\nThe bottom-left arrows undo the latest available action and redo the last undo."
+            + " A new saved action clears redo. The latest 500 records are kept."
+            + "\nNotes, chat, passwords, map terrain and unsaved text are not included."
+            + " Encrypted encounters require current private-file access."
+            + " Resolve interrupted actions only clears incomplete history records; it does not restore files.");
         explanation.setWrapText(true);
         undo.setDisable(true);
         root.getChildren().addAll(explanation, new FlowPane(10, 8, owner.btn("Refresh", this::refresh),
@@ -119,7 +124,9 @@ final class OperationHistoryUi {
             history = new OperationHistory(campaign);
             return history.list();
         }, list -> {
-            undone = list.stream().map(OperationHistory.Action::undoOf).filter(java.util.Objects::nonNull).collect(Collectors.toSet());
+            var available = OperationHistory.cursor(list);
+            var active = available.undo().stream().map(OperationHistory.Action::id).collect(Collectors.toSet());
+            undone = list.stream().map(OperationHistory.Action::id).filter(id -> !active.contains(id)).collect(Collectors.toSet());
             actions.getItems().setAll(list);
             actions.getSelectionModel().selectFirst();
             status.setText(list.isEmpty() ? "No recorded actions on this device yet." : "");
@@ -215,6 +222,136 @@ final class OperationHistoryUi {
                 undo.setDisable(true);
                 owner.showError("Could not manage action history", error);
             }
+        }));
+    }
+
+    public static HBox footer(BaseScene owner, javafx.scene.Scene scene) {
+        Button undo = arrow(false);
+        Button redo = arrow(true);
+        HBox controls = new HBox(6, undo, redo);
+        controls.setId("operation-history-controls");
+        Path campaign = owner.uiSession == null ? null : owner.uiSession.campaignRoot();
+        java.util.concurrent.atomic.AtomicBoolean reading = new java.util.concurrent.atomic.AtomicBoolean();
+        Runnable refresh = () -> {
+            undo.setDisable(true);
+            redo.setDisable(true);
+            if (campaign == null || !owner.isCurrentRole() || !owner.uiSession.isDm()
+                || !campaign.equals(owner.uiSession.campaignRoot()) || owner.uiSession.hasBackgroundActions()
+                || owner.uiSession.getRouter() == null || !owner.uiSession.getRouter().isCampaignOpen()
+                || scene.getWindow() == null || !scene.getWindow().isShowing()
+                || scene.getWindow() instanceof Stage s && s.getModality() != Modality.NONE
+                || !reading.compareAndSet(false, true)) return;
+            CampaignSyncService.shared().localFiles(() -> new OperationHistory(campaign).cursor())
+                .whenComplete((cursor, error) -> Platform.runLater(() -> {
+                    reading.set(false);
+                    if (scene.getWindow() == null || !scene.getWindow().isShowing()
+                        || !owner.isCurrentRole() || !campaign.equals(owner.uiSession.campaignRoot())
+                        || !owner.uiSession.getRouter().isCampaignOpen() || owner.uiSession.hasBackgroundActions()) return;
+                    undo.setDisable(error != null || cursor.nextUndo() == null);
+                    redo.setDisable(error != null || cursor.nextRedo() == null);
+                    if (error != null) {
+                        undo.setTooltip(new Tooltip("Action history is unavailable. Open Action history to review the problem."));
+                    }
+                }));
+        };
+        AutoCloseable[] listener = {null};
+        javafx.beans.value.ChangeListener<Number> busyListener = (obs, previous, count) -> refresh.run();
+        java.util.function.Supplier<AutoCloseable> watch = () -> {
+            if (owner.uiSession != null) owner.uiSession.backgroundActionsProperty().addListener(busyListener);
+            AutoCloseable historyListener = OperationHistory.listen(changed -> {
+                if (campaign != null && campaign.toAbsolutePath().normalize().equals(changed)) Platform.runLater(refresh);
+            });
+            return () -> {
+                historyListener.close();
+                if (owner.uiSession != null) owner.uiSession.backgroundActionsProperty().removeListener(busyListener);
+            };
+        };
+        Runnable detach = () -> {
+            if (listener[0] == null) return;
+            try { listener[0].close(); }
+            catch (Exception e) { throw new IllegalStateException("Could not detach history controls.", e); }
+            listener[0] = null;
+        };
+        javafx.beans.value.ChangeListener<Boolean> showingListener = (obs, previous, showing) -> {
+            if (showing) {
+                detach.run();
+                listener[0] = watch.get();
+                refresh.run();
+            } else detach.run();
+        };
+        javafx.beans.value.ChangeListener<Boolean> focusListener = (obs, previous, focused) -> {
+            if (focused) refresh.run();
+        };
+        java.util.function.Consumer<javafx.stage.Window> hook = window -> {
+            if (window == null) return;
+            window.showingProperty().addListener(showingListener);
+            window.focusedProperty().addListener(focusListener);
+            if (window.isShowing()) showingListener.changed(window.showingProperty(), false, true);
+        };
+        scene.windowProperty().addListener((obs, previous, window) -> {
+            if (previous != null) {
+                previous.showingProperty().removeListener(showingListener);
+                previous.focusedProperty().removeListener(focusListener);
+                detach.run();
+            }
+            hook.accept(window);
+        });
+        hook.accept(scene.getWindow());
+        undo.setOnAction(event -> quick(owner, campaign, false));
+        redo.setOnAction(event -> quick(owner, campaign, true));
+        return controls;
+    }
+
+    private static Button arrow(boolean redo) {
+        Button button = new Button();
+        javafx.scene.shape.SVGPath glyph = new javafx.scene.shape.SVGPath();
+        glyph.setContent(redo ? "M 3 18 C 3 8 12 5 19 10 M 19 10 L 13 10 M 19 10 L 19 4"
+            : "M 19 18 C 19 8 10 5 3 10 M 3 10 L 9 10 M 3 10 L 3 4");
+        glyph.setFill(null);
+        glyph.setStroke(javafx.scene.paint.Color.WHITE);
+        glyph.setStyle("-fx-stroke: #c9a84c;");
+        glyph.setStrokeWidth(2);
+        button.setGraphic(glyph);
+        button.setId(redo ? "redo-action" : "undo-action");
+        button.setAccessibleText(redo ? "Redo saved action" : "Undo saved action");
+        button.setTooltip(new Tooltip(redo ? "Redo the last undone saved action" : "Undo the latest saved action"));
+        button.getStyleClass().add("dnd-button");
+        button.setMinSize(32, 28);
+        button.setDisable(true);
+        return button;
+    }
+
+    private static void quick(BaseScene owner, Path campaign, boolean redo) {
+        if (campaign == null || !owner.isCurrentRole() || !owner.uiSession.isDm()
+            || !campaign.equals(owner.uiSession.campaignRoot()) || !owner.uiSession.getRouter().isCampaignOpen()) return;
+        if (owner.uiSession.hasBackgroundActions()) {
+            owner.showInfo("Action history", "Wait for pending actions before using undo or redo.");
+            return;
+        }
+        if (!com.dnd.ui.ReportUi.prepareHistoryChange(owner.uiSession.primaryStage().getScene())) return;
+        if (!PlayerModeUi.closeSecondaryWindows(owner.uiSession.primaryStage())
+            || owner.uiSession.hasBackgroundActions()) {
+            owner.showInfo("Action history", "Finish or cancel the open editor before using undo or redo.");
+            return;
+        }
+        var account = owner.uiSession.getPrivateAccount();
+        owner.uiSession.beginBackgroundAction();
+        CampaignSyncService.shared().localFiles(() -> {
+            if (!owner.isCurrentRole() || !owner.uiSession.isDm()
+                || !campaign.equals(owner.uiSession.campaignRoot())) throw new SecurityException("The GM context changed.");
+            String id = CampaignMeta.idOf(campaign).orElseThrow();
+            var user = owner.uiSession.getCurrentUser();
+            if (user == null || CampaignDirectory.shared().findForMember(id, user.getUsername())
+                .filter(record -> record.isDm(user.getUsername())).isEmpty()) {
+                throw new SecurityException("Only this campaign's Game Masters may change action history.");
+            }
+            var history = new OperationHistory(campaign);
+            if (redo) history.redoLatest(account); else history.undoLatest(account);
+            return true;
+        }).whenComplete((result, error) -> Platform.runLater(() -> {
+            owner.uiSession.endBackgroundAction();
+            if (owner.uiSession.getRouter() != null) owner.uiSession.getRouter().reload();
+            if (error != null) owner.showError(redo ? "Could not redo action" : "Could not undo action", error);
         }));
     }
 }

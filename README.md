@@ -268,6 +268,13 @@ Almerion. The badge in the GM screen shows **Synced**, **Syncing…**, **Offline
 While a battle map is open, changes are uploaded every 10 minutes instead of every 90 seconds,
 so the fight stays smooth. The normal pace resumes when the battle closes.
 
+Campaign opening still fetches current GitHub revisions before loading files. An
+unchanged repository or a clean fast-forward avoids unnecessary catalogue merges
+and a second network request to push an already-current branch. Automatic safety
+backups still include every local campaign file; already-compressed media bypasses
+recompression. A new download applies byte-preserving Git settings before checkout,
+avoiding artificial line-ending edits on Windows.
+
 **Conflicts:** independent catalogue entries and nested object fields merge automatically,
 including edits to different characters or different fields of the same character. Entries
 are matched by ID, not array position or JSON lines. Unknown fields are preserved. Competing
@@ -604,6 +611,29 @@ versions; it cannot revoke old copies. Explicit **Player View**, clipboard shari
 catalogue changes, and the campaign-wide **Notes** scratchpad are still shared actions.
 Chat and mobile/token-player notifications are the next implementation stage.
 
+### GM character notes
+
+Open a saved character and select **GM character note**. These notes are encrypted separately
+from character sheets; they are not included in player snapshots, hosted sheets, or PDFs.
+Every campaign GM must first unlock private files online. Save a note online to encrypt it
+for the current GM roster, then sync the campaign. When a GM joins or is removed, an existing
+GM must reopen and save each note online and sync it to refresh its access. Previously obtained
+copies cannot be revoked. A note last signed by a removed GM requires administrator review
+before recovery; arrange a current GM's save before removing the author.
+
+After online setup and a successful sync, notes can be read offline with the account password.
+Saving requires a fresh online membership check. If a note changes while it is open, saving is
+refused rather than overwriting the newer copy; preserve your text and reopen the note.
+
+### GM lore book
+
+Open **GM lore book** from the GM panel or Storyline. Organize lore into sections and articles,
+search titles or text, and add, edit, or delete entries. The book is encrypted for campaign GMs
+and excluded from player snapshots and sheets. It has the same online-save, offline-read,
+GM-key setup, roster-refresh, sync, and old-copy limitations as GM character notes. The whole
+book is one conflict-checked encrypted document: if another GM changes it, reopen it before
+saving your changes.
+
 ### The session editor
 
 Double-click a file to open it. The editor fills the window.
@@ -660,7 +690,7 @@ recovered by its original owner, as a fresh owner-only encrypted file.
 ### Local action history
 
 Open **Action history** from the GM menu after closing editors and maps through their
-normal save prompts. The latest **500 saved mechanical actions per campaign** remain
+normal save prompts. The latest **500 mechanical action records per campaign** remain
 on the original device under `data/auth/action-history`, outside campaign exports and
 GitHub sync. This is a saved-change journal: one save can group multiple changes,
 particularly NPC/monster/beast battle changes. Player-character battle changes use the
@@ -671,7 +701,14 @@ healing, resources, character inventory, effects and mechanical GM corrections a
 Every recorded field must still match its after-value; otherwise nothing is undone.
 Unrelated newer fields survive, and undo itself creates a correction record. Current
 campaign GM membership is required. Entity creation/deletion and whole-file recovery
-belong to restore points, not action undo. Rabbit's in-world rewind is separate.
+belong to restore points, not action undo.
+
+The **bottom-left undo and redo arrows**, beside the report strip, work on the latest
+available saved action. Undo/redo can be repeated, survive app restart, and reload the
+current screen after restoring values. A new mechanical save clears the redo branch;
+narrative-only edits do not. Editors and maps must close through their normal prompts
+first; pending operations block history changes. Controls are disabled without a GM
+campaign context and inside modal editors. They do not undo unsaved text.
 
 Storyline text, explicit notes, passwords and chat are excluded. Private encounter
 deltas are encrypted; preview and undo require current access and matching private-file

@@ -33,6 +33,7 @@ public abstract class BaseScene {
     /** Builds a {@link Scene} of the given size with the app's stylesheet applied, for windows/dialogs that shouldn't use the default 900x650 size. */
     protected Scene themedScene(Parent root, double width, double height) {
         Scene scene = new Scene(root, width, height);
+        com.dnd.ui.ReportUi.bind(scene, this);
         scene.getStylesheets().add(getClass().getResource(CSS_PATH).toExternalForm());
         scene.windowProperty().addListener((o, previous, window) -> {
             if (window == null) return;
@@ -119,6 +120,17 @@ public abstract class BaseScene {
         l.getStyleClass().add("section-label");
         return l;
     }
+
+    protected VBox toolGroup(String title, javafx.scene.Node... controls) {
+        FlowPane buttons = new FlowPane(8, 8, controls);
+        VBox group = new VBox(8, sectionLabel(title), buttons);
+        group.setPrefWidth(320);
+        group.getStyleClass().addAll("dm-subgroup", "tool-group");
+        buttons.prefWrapLengthProperty().bind(group.widthProperty().subtract(24));
+        return group;
+    }
+
+    public boolean prepareHistoryChange() { return true; }
 
     protected Button btn(String text, Runnable action) {
         Button b = new Button(text);

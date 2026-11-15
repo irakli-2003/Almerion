@@ -334,6 +334,42 @@ public class EntityFormTest {
         return null;
     }
 
+    @Test public void searchedSpellRowsHaveFullHoverDescriptions() throws Exception {
+        var repos = new CampaignRepositories(Files.createTempDirectory("dnd-spell-hover"));
+        var spell = new com.dnd.model.magic.Spell();
+        spell.setId("light"); spell.setName("Light"); spell.setDescription("A bright light shines for one hour.");
+        repos.spells().save(spell);
+        onFxThread(() -> {
+            Platform.setImplicitExit(false);
+            var form = EntityForm.of(PlayerCharacter.PlayerSpell.class, new PlayerCharacter.PlayerSpell(), Set.of(),
+                Map.of("spellId", List.of(new EntityForm.Ref("light", "Light", spell)),
+                    "_repositories", List.of(new EntityForm.Ref("repositories", "repositories", repos))));
+            var stage = new javafx.stage.Stage();
+            var root = new javafx.scene.layout.StackPane(form.getNode());
+            stage.setScene(new javafx.scene.Scene(root, 600, 400));
+            stage.show();
+            try {
+                root.applyCss(); root.layout();
+                var button = form.getNode().lookupAll(".button").stream()
+                    .filter(n -> SearchPicker.options(n) != null).map(n -> (javafx.scene.control.Button) n).findFirst().orElseThrow();
+                button.fire();
+                var popup = javafx.stage.Window.getWindows().stream().filter(w -> w instanceof javafx.stage.Popup)
+                    .map(w -> (javafx.stage.Popup) w).findFirst().orElseThrow();
+                try {
+                    var content = (javafx.scene.Parent) popup.getContent().getFirst();
+                    content.applyCss(); content.layout();
+                    var cell = content.lookupAll(".list-cell").stream().filter(n -> n instanceof javafx.scene.control.ListCell<?> c
+                        && c.getItem() instanceof EntityForm.Ref ref && ref.id().equals("light"))
+                        .map(n -> (javafx.scene.control.ListCell<?>) n).findFirst().orElseThrow();
+                    assertNotNull(cell.getTooltip());
+                    var graphic = (javafx.scene.Parent) cell.getTooltip().getGraphic();
+                    assertTrue(graphic.getChildrenUnmodifiable().stream().filter(n -> n instanceof javafx.scene.text.Text)
+                        .map(n -> ((javafx.scene.text.Text) n).getText()).anyMatch(s -> s.contains("one hour")));
+                } finally { popup.hide(); }
+            } finally { stage.close(); }
+        });
+    }
+
     private static List<EntityForm.Ref> refs(List<?> entities) throws Exception {
         List<EntityForm.Ref> refs = new ArrayList<>();
         for (Object entity : entities) {

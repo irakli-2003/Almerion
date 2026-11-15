@@ -83,7 +83,16 @@ public final class LanSessionServer {
         "Session chat", "New conversation", "Conversation title", "Send", "Message", "Retry pending action",
         "Choose recipients", "Chat unavailable", "Unread", "Game Master", "Host monitoring", "No messages yet.",
         "Chat delivery was not confirmed. Retry the pending action.", "Discard pending retry",
-        "Delivery may already have happened. Discard this retry and check the conversation before sending again?"
+        "Delivery may already have happened. Discard this retry and check the conversation before sending again?",
+        "Level up", "Level-up choices require GM approval. XP is unchanged until acceptance.", "Check request status",
+        "Your GM manages the sheet. Level-up changes require approval.",
+        "Level-up request", "pending", "accepted", "declined", "Upgrade request failed.",
+        "The hosting GM needs to update Almerion.", "1. Ability improvements", "Available points", "Maximum score",
+        "Next: class upgrade", "Points remaining", "2. Class upgrade tree", "Choose a class upgrade",
+        "Locked upgrades", "No class upgrades are available. Ask the GM to review the class tree.",
+        "Send to GM", "Back: ability improvements", "Already known", "Choose an alternative or acknowledge the existing spell",
+        "Sent to GM. Your character and XP are unchanged while approval is pending.",
+        "GM approved your level up. Your sheet updates automatically.", "GM declined this request. Your XP is unchanged."
     };
 
     private static LanSessionServer running;

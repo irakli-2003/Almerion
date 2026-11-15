@@ -96,12 +96,15 @@ details p { margin: 6px 0 2px; color: var(--dim); white-space: pre-wrap; }
 .foot { text-align: center; margin-top: 16px; }
 .banner { background: #3a1f1c; border: 1px solid var(--red); border-radius: 10px; padding: 10px; margin-top: 10px; text-align: center; }
 .chat-controls { display: grid; gap: 8px; margin: 10px 0; }
-.chat-controls input, .chat-controls select, .chat-controls textarea { font: inherit; background: var(--panel2);
+.chat-controls input, .chat-controls select, .chat-controls textarea, #upgradeForm input, #upgradeForm select { font: inherit; background: var(--panel2);
   color: var(--ink); padding: 10px; border: 1px solid var(--line); border-radius: 6px; width: 100%; }
 #chatMessages { max-height: 48vh; overflow-y: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
 #chatMessages p { border-bottom: 1px solid var(--line); padding-bottom: 8px; }
 #chatPeers { display: flex; flex-wrap: wrap; gap: 12px; }
 #chatPeers input { width: auto; }
+#upgradeForm { min-width: 0; }
+#upgradeForm select { min-width: 0; max-width: 100%; }
+#upgradePanel { overflow-wrap: anywhere; }
 </style>
 </head>
 <body>
@@ -130,6 +133,15 @@ details p { margin: 6px 0 2px; color: var(--dim); white-space: pre-wrap; }
       <div class="tabs" id="tabs"></div>
     </div>
     <div id="body"></div>
+    <button class="btn" id="upgradeOpen" style="margin-top:12px" data-t="Level up"></button>
+    <section id="upgradePanel" class="card hidden" style="margin-top:10px">
+      <p data-t="Level-up choices require GM approval. XP is unchanged until acceptance."></p>
+      <div id="upgradeStatus" role="status"></div>
+      <fieldset id="upgradeForm" style="border:0;padding:0"></fieldset>
+      <p class="msg" id="upgradeError" role="alert"></p>
+      <button class="btn ghost hidden" id="upgradeRetry" data-t="Retry pending action"></button>
+      <button class="btn ghost" id="upgradeCheck" data-t="Check request status"></button>
+    </section>
     <button class="btn ghost" id="chatToggle" style="margin-top:12px" data-t="Session chat"></button>
     <section id="chatPanel" class="card hidden" style="margin-top:10px">
       <p class="small dim" id="chatDisclosure">The current hosting GM can read every session conversation, including private and group chats. Chats are erased when hosting ends; only the latest 500 messages per conversation are kept.</p>
@@ -148,7 +160,7 @@ details p { margin: 6px 0 2px; color: var(--dim); white-space: pre-wrap; }
       </div>
       <p class="msg" id="chatError" role="status"></p>
     </section>
-    <div class="foot small dim"><span data-t="View only: your GM keeps this sheet up to date."></span>
+    <div class="foot small dim"><span data-t="Your GM manages the sheet. Level-up changes require approval."></span>
       <br><button class="btn ghost" id="logout" style="margin-top:10px" data-t="Log out"></button></div>
   </section>
 </div>
@@ -156,6 +168,7 @@ details p { margin: 6px 0 2px; color: var(--dim); white-space: pre-wrap; }
 "use strict";
 let L = {}, token = null, es = null, data = null, prev = {}, tab = "Sheet", campaign = "";
 let chatTimer = null, chatView = null, chatSelected = null, chatPending = null, chatBusy = false, chatGeneration = 0;
+let upgradeOptions = null, upgradeDraft = null, upgradePending = null, upgradeBusy = false;
 const $ = id => document.getElementById(id);
 const t = s => L[s] || s;
 const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -252,6 +265,12 @@ function setStatus(live) {
 
 function stopChat() {
   chatGeneration++;
+  upgradeOptions = upgradeDraft = upgradePending = null; upgradeBusy = false;
+  $("upgradePanel").classList.add("hidden"); $("upgradeForm").replaceChildren();
+  $("upgradeStatus").replaceChildren(); $("upgradeError").textContent = "";
+  delete $("upgradeStatus").dataset.state;
+  delete $("upgradeForm").dataset.awaiting;
+  $("upgradeRetry").classList.add("hidden");
   clearTimeout(chatTimer); chatTimer = null; chatView = null; chatPending = null; chatSelected = null;
   chatBusy = false; $("chatPanel").classList.add("hidden");
   $("chatMessages").replaceChildren(); $("chatPeers").replaceChildren(); $("chatThreads").replaceChildren();
@@ -287,10 +306,157 @@ async function chatRequest(command, generation = chatGeneration) {
     if (generation !== chatGeneration) return;
     if (!r.ok) throw new Error(response.error || t("Chat unavailable"));
     chatView = response;
+    upgradeStatus(response.upgrades);
     if (command) {
       chatPending = null; chatSelected = response.selected;
       if (command.operation === "send") $("chatText").value = "";
     }
+    function upgradeStatus(inbox) {
+      if (!inbox) return;
+      upgradeConfirmation(inbox);
+      const state = JSON.stringify(inbox.requests);
+      if ($("upgradeStatus").dataset.state === state) return;
+      $("upgradeStatus").dataset.state = state;
+      $("upgradeStatus").replaceChildren();
+      for (const request of [...inbox.requests].reverse()) {
+        const details = document.createElement("details"), title = document.createElement("summary");
+        title.textContent = t("Level-up request") + ": " + t(request.status);
+        const text = document.createElement("div");
+        text.style.whiteSpace = "pre-wrap"; text.textContent = request.details;
+        details.append(title, text); $("upgradeStatus").appendChild(details);
+      }
+      function upgradeConfirmation(inbox) {
+        const request = inbox.requests.find(r => r.id === $("upgradeForm").dataset.awaiting);
+        if (request && request.status !== "pending") $("upgradeForm").textContent = t(request.status === "accepted"
+          ? "GM approved your level up. Your sheet updates automatically."
+          : "GM declined this request. Your XP is unchanged.");
+      }
+    }
+    function upgradeCommand(operation, proposal) {
+      return {id:chatId(), operation, conversation:null, recipients:[], title:"",
+        text:proposal == null ? "" : JSON.stringify(proposal)};
+    }
+    async function upgradeRequest(command, done) {
+      if (upgradeBusy || !token) return;
+      const generation = chatGeneration;
+      upgradeBusy = true; $("upgradeForm").disabled = true;
+      $("upgradeRetry").disabled = $("upgradeOpen").disabled = $("upgradeCheck").disabled = true;
+      $("upgradeError").textContent = "";
+      if (command.operation === "upgrade-submit") upgradePending = command;
+      try {
+        const response = await fetch("api/chat?token=" + encodeURIComponent(token), {
+          method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(command)});
+        if (generation !== chatGeneration) return;
+        if (response.status === 401) { showLogin(); return; }
+        const view = await response.json();
+        if (!response.ok) {
+          if (response.status >= 400 && response.status < 500) upgradePending = null;
+          throw new Error(view.error || t("Upgrade request failed."));
+        }
+        if (!view.upgrades) throw new Error(t("The hosting GM needs to update Almerion."));
+        upgradeStatus(view.upgrades);
+        upgradePending = null;
+        if (command.operation === "upgrade-submit") $("upgradeForm").dataset.awaiting = command.id;
+        done(view.upgrades);
+        upgradeConfirmation(view.upgrades);
+      } catch (error) {
+        if (generation === chatGeneration) $("upgradeError").textContent = error.message || t("Upgrade request failed.");
+      } finally {
+        if (generation === chatGeneration) {
+          upgradeBusy = false; $("upgradeForm").disabled = !!upgradePending;
+          $("upgradeRetry").disabled = $("upgradeOpen").disabled = $("upgradeCheck").disabled = false;
+          $("upgradeRetry").classList.toggle("hidden", !upgradePending);
+        }
+      }
+    }
+    function upgradeStats(options) {
+      delete $("upgradeForm").dataset.awaiting;
+      upgradeOptions = options;
+      $("upgradeForm").innerHTML = `<h2>${esc(t("1. Ability improvements"))}</h2>
+        <p style="white-space:pre-wrap">${esc(options.summary)}</p>
+        <p>${esc(t("Available points"))}: ${options.budget} · ${esc(t("Maximum score"))}: 20</p>
+        ${options.abilities.map((a,i) => `<label class="row">${esc(a.name)} (${a.score}) +
+          <input type="number" data-ability="${i}" min="0" max="${Math.min(options.budget,Math.max(0,20-a.score))}"
+          step="1" value="${upgradeDraft && upgradeDraft.revision === options.revision ? upgradeDraft.points[a.id] || 0 : 0}" style="width:80px"></label>`).join("")}
+        <p id="upgradeRemaining"></p><button class="btn" id="upgradeNext">${esc(t("Next: class upgrade"))}</button>`;
+      const points = () => Object.fromEntries([...$("upgradeForm").querySelectorAll("[data-ability]")].map(input =>
+        [options.abilities[Number(input.dataset.ability)].id, Number(input.value)]).filter(([,n]) => n !== 0));
+      const update = () => {
+        const used = Object.values(points()).reduce((a,b) => a+b, 0);
+        $("upgradeRemaining").textContent = t("Points remaining") + ": " + (options.budget-used);
+        $("upgradeNext").disabled = used !== options.budget || [...$("upgradeForm").querySelectorAll("input")].some(input => !input.checkValidity());
+      };
+      $("upgradeForm").oninput = update; update();
+      $("upgradeNext").onclick = () => {
+        upgradeDraft = {revision:options.revision, points:points(), node:null, spells:{}};
+        upgradeRequest(upgradeCommand("upgrade-options", upgradeDraft), inbox => upgradeNodes(inbox.options));
+      };
+    }
+    function upgradeNodes(options) {
+      const choices = options.choices.filter(c => !c.blocked);
+      $("upgradeForm").oninput = null;
+      $("upgradeForm").innerHTML = `<h2>${esc(t("2. Class upgrade tree"))}</h2>
+        <p style="white-space:pre-wrap">${esc(options.summary)}</p>
+        <select id="upgradeNode"><option value="">${esc(t("Choose a class upgrade"))}</option>
+          ${choices.map((c,i) => `<option value="${i}">${esc(c.name)}</option>`).join("")}</select>
+        <p id="upgradeDescription" style="white-space:pre-wrap"></p><div id="upgradeSpells"></div>
+        <details><summary>${esc(t("Locked upgrades"))}</summary>
+          ${options.choices.filter(c => c.blocked).map(c => `<p>${esc(c.name)}: ${esc(c.blocked)}</p>`).join("")}</details>
+        ${choices.length ? "" : `<p>${esc(t("No class upgrades are available. Ask the GM to review the class tree."))}</p>`}
+        <button class="btn" id="upgradeSend" disabled>${esc(t("Send to GM"))}</button>
+        <button class="btn ghost" id="upgradeBack">${esc(t("Back: ability improvements"))}</button>`;
+      $("upgradeNode").onchange = () => {
+        const choice = $("upgradeNode").value === "" ? null : choices[Number($("upgradeNode").value)];
+        $("upgradeDescription").textContent = choice ? choice.description : "";
+        $("upgradeSend").disabled = !choice;
+        $("upgradeSpells").innerHTML = choice ? choice.spells.map((s,i) =>
+          `<label>${esc(t("Already known"))}: ${esc(s.name)}
+            <select data-spell="${i}"><option value="">${esc(t("Choose an alternative or acknowledge the existing spell"))}</option>
+              ${s.options.map((o,j) => `<option value="${j}">${esc(o.name)}</option>`).join("")}</select></label>
+            <p data-spell-detail="${i}" style="white-space:pre-wrap"></p>`).join("") : "";
+        for (const select of $("upgradeSpells").querySelectorAll("select")) select.onchange = () => {
+          const spell = choice.spells[Number(select.dataset.spell)];
+          const selected = select.value === "" ? null : spell.options[Number(select.value)];
+          $("upgradeSpells").querySelector(`[data-spell-detail="${select.dataset.spell}"]`).textContent = selected ? selected.description : "";
+          $("upgradeSend").disabled = [...$("upgradeSpells").querySelectorAll("select")].some(s => s.value === "");
+        };
+      };
+      $("upgradeSend").onclick = () => {
+        const choice = choices[Number($("upgradeNode").value)];
+        if (!choice || $("upgradeNode").value === "") return;
+        const spells = Object.create(null);
+        for (const select of $("upgradeSpells").querySelectorAll("select")) {
+          if (select.value === "") return;
+          const spell = choice.spells[Number(select.dataset.spell)];
+          spells[spell.primary] = spell.options[Number(select.value)].id;
+        }
+        upgradeDraft = {...upgradeDraft, node:choice.id, spells};
+        upgradeRequest(upgradeCommand("upgrade-submit", upgradeDraft), () => {
+          $("upgradeForm").textContent = t("Sent to GM. Your character and XP are unchanged while approval is pending.");
+        });
+      };
+      $("upgradeBack").onclick = () => upgradeStats(upgradeOptions);
+    }
+    $("upgradeOpen").onclick = () => {
+      $("upgradePanel").classList.remove("hidden");
+      if (upgradePending) return;
+      upgradeDraft = null;
+      upgradeRequest(upgradeCommand("upgrade-options", null), inbox => upgradeStats(inbox.options));
+    };
+    $("upgradeRetry").onclick = () => {
+      if (upgradePending) upgradeRequest(upgradePending, () => {
+        $("upgradeForm").textContent = t("Sent to GM. Your character and XP are unchanged while approval is pending.");
+      });
+    };
+    $("upgradeCheck").onclick = () => {
+      if (upgradeBusy) return;
+      upgradePending = null;
+      delete $("upgradeForm").dataset.awaiting;
+      $("upgradeRetry").classList.add("hidden");
+      upgradeRequest({id:chatId(), operation:"poll", conversation:null, recipients:[], title:"", text:""}, () => {
+        $("upgradeForm").replaceChildren();
+      });
+    };
     if (!chatPending) $("chatError").textContent = "";
     renderChat();
   } catch (e) {

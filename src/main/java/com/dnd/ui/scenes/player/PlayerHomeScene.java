@@ -54,6 +54,7 @@ public class PlayerHomeScene extends BaseScene {
             btn("View Inventory", () -> showInventory(pc, repos)),
             btn("View Abilities", () -> showAbilities(pc, repos)),
             btn("My Profile", () -> uiSession.getRouter().goTo(SceneType.CHARACTER_PROFILE)),
+            btn("Level up", () -> com.dnd.ui.scenes.UpgradeRequestsUi.show(this)),
             com.dnd.ui.scenes.SessionChatUi.button(this),
             btn("Online Session" + (uiSession.getSession().isOnline() ? "  ●" : ""),
                 () -> uiSession.getRouter().goTo(SceneType.PLAYER_ONLINE_SESSION))

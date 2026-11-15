@@ -20,6 +20,7 @@ import java.util.function.Supplier;
  * {@link IllegalArgumentException}.
  */
 public class JsonRepository<T, W> {
+    private static final java.util.concurrent.ConcurrentMap<Path, Object> WRITE_LOCKS = new java.util.concurrent.ConcurrentHashMap<>();
     private final Path filePath;
     private final ObjectMapper mapper;
     private final Supplier<W> wrapperFactory;
@@ -86,60 +87,102 @@ public class JsonRepository<T, W> {
     }
 
     public void add(T item) {
-        String id = requireId(item);
-        W wrapper = readWrapper();
-        List<T> items = listGetter.apply(wrapper);
-        if (findIndex(items, id) != -1) {
-            throw new IllegalArgumentException("Duplicate id: " + id);
+        synchronized (writeLock()) {
+            String id = requireId(item);
+            W wrapper = readWrapper();
+            List<T> items = listGetter.apply(wrapper);
+            if (findIndex(items, id) != -1) {
+                throw new IllegalArgumentException("Duplicate id: " + id);
+            }
+            items.add(item);
+            writeWrapper(wrapper);
         }
-        items.add(item);
-        writeWrapper(wrapper);
     }
 
     public void update(T item) {
-        String id = requireId(item);
-        W wrapper = readWrapper();
-        List<T> items = listGetter.apply(wrapper);
-        int index = findIndex(items, id);
-        if (index == -1) {
-            throw new IllegalArgumentException("Unknown id: " + id);
+        synchronized (writeLock()) {
+            String id = requireId(item);
+            W wrapper = readWrapper();
+            List<T> items = listGetter.apply(wrapper);
+            int index = findIndex(items, id);
+            if (index == -1) {
+                throw new IllegalArgumentException("Unknown id: " + id);
+            }
+            checkUpgradeReceipts(items.get(index), item);
+            items.set(index, item);
+            writeWrapper(wrapper);
         }
-        items.set(index, item);
-        writeWrapper(wrapper);
     }
 
     public void save(T entity) {
-        String id = requireId(entity);
-        W wrapper = readWrapper();
-        List<T> items = listGetter.apply(wrapper);
-        int index = findIndex(items, id);
-        if (index == -1) {
-            items.add(entity);
-        } else {
-            items.set(index, entity);
+        synchronized (writeLock()) {
+            String id = requireId(entity);
+            W wrapper = readWrapper();
+            List<T> items = listGetter.apply(wrapper);
+            int index = findIndex(items, id);
+            if (index == -1) {
+                items.add(entity);
+            } else {
+                checkUpgradeReceipts(items.get(index), entity);
+                items.set(index, entity);
+            }
+            writeWrapper(wrapper);
         }
-        writeWrapper(wrapper);
+    }
+
+    /** Refuses to overwrite combat/XP changes made while an approval was being prepared. */
+    public void updateIfUnchanged(T expected, T replacement) {
+        synchronized (writeLock()) {
+            String id = requireId(expected);
+            if (!id.equals(requireId(replacement))) throw new IllegalArgumentException("Entity identity changed.");
+            W wrapper = readWrapper();
+            List<T> items = listGetter.apply(wrapper);
+            int index = findIndex(items, id);
+            if (index < 0 || !mapper.valueToTree(expected).equals(mapper.valueToTree(items.get(index))))
+                throw new IllegalStateException("The character changed while saving. Review and retry.");
+            checkUpgradeReceipts(items.get(index), replacement);
+            items.set(index, replacement);
+            writeWrapper(wrapper);
+        }
+    }
+
+    private Object writeLock() {
+        return WRITE_LOCKS.computeIfAbsent(filePath.toAbsolutePath().normalize(), p -> new Object());
+    }
+
+    private void checkUpgradeReceipts(T previous, T replacement) {
+        if (!(previous instanceof com.dnd.model.character.PlayerCharacter oldPc)
+                || !(replacement instanceof com.dnd.model.character.PlayerCharacter newPc)
+                || oldPc.getUpgrades() == null) return;
+        var saved = newPc.getUpgrades() == null ? java.util.Set.<String>of()
+            : newPc.getUpgrades().getUnlocks().stream().map(com.dnd.model.character.UpgradeProgress.Unlock::getSourceRequestId)
+                .filter(java.util.Objects::nonNull).collect(java.util.stream.Collectors.toSet());
+        if (oldPc.getUpgrades().getUnlocks().stream().map(com.dnd.model.character.UpgradeProgress.Unlock::getSourceRequestId)
+                .filter(java.util.Objects::nonNull).anyMatch(id -> !saved.contains(id)))
+            throw new IllegalStateException("This character was upgraded in another window. Reopen the character before editing.");
     }
 
     public boolean delete(String id) {
-        if (id == null) {
-            return false;
+        synchronized (writeLock()) {
+            if (id == null) {
+                return false;
+            }
+            ensureFileExists();
+            String revision = fileRevision();
+            W wrapper = readWrapper();
+            List<T> items = listGetter.apply(wrapper);
+            int index = findIndex(items, id);
+            if (index == -1) {
+                return false;
+            }
+            CampaignRestorePoints.beforeEntityDeletion(filePath);
+            if (!revision.equals(fileRevision())) {
+                throw new IllegalStateException("The catalogue changed while preparing deletion. Refresh and try again.");
+            }
+            items.remove(index);
+            writeWrapper(wrapper);
+            return true;
         }
-        ensureFileExists();
-        String revision = fileRevision();
-        W wrapper = readWrapper();
-        List<T> items = listGetter.apply(wrapper);
-        int index = findIndex(items, id);
-        if (index == -1) {
-            return false;
-        }
-        CampaignRestorePoints.beforeEntityDeletion(filePath);
-        if (!revision.equals(fileRevision())) {
-            throw new IllegalStateException("The catalogue changed while preparing deletion. Refresh and try again.");
-        }
-        items.remove(index);
-        writeWrapper(wrapper);
-        return true;
     }
 
     private String fileRevision() {

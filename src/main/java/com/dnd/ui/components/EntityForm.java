@@ -303,7 +303,7 @@ public final class EntityForm {
     }
 
     /** Turns {@code challengeRating} into {@code Challenge Rating} for display. */
-    static String humanize(String propertyName) {
+    public static String humanize(String propertyName) {
         StringBuilder out = new StringBuilder();
         for (int i = 0; i < propertyName.length(); i++) {
             char c = propertyName.charAt(i);
@@ -508,7 +508,7 @@ public final class EntityForm {
             selected[0] = new Ref(currentId, "(missing)");
             all.add(selected[0]);
         }
-        Button picker = SearchPicker.single(all, selected[0], Ref::toString, true, ref -> selected[0] = ref);
+        Button picker = SearchPicker.single(all, selected[0], Ref::toString, true, ref -> selected[0] = ref, this::referenceHover);
         if (compact) picker.setPrefWidth(260);
         else {
             picker.setPrefWidth(420);
@@ -766,7 +766,7 @@ public final class EntityForm {
                 refs.forEach(ref -> {
                     if (ref.value() != null) selected.add(ref.value());
                 });
-            });
+            }, this::referenceHover);
         picker.setPrefWidth(compact ? 260 : 560);
         picker.setMaxWidth(560);
         node.getChildren().add(labelled(prop.name(), picker));
@@ -812,11 +812,19 @@ public final class EntityForm {
             refs -> {
                 selected.clear();
                 refs.forEach(ref -> selected.add(ref.id()));
-            });
+            }, this::referenceHover);
         picker.setPrefWidth(compact ? 260 : 560);
         picker.setMaxWidth(560);
         node.getChildren().add(labelled(prop.name(), picker));
         bind(prop, () -> List.copyOf(selected));
+    }
+
+    private void referenceHover(javafx.scene.Node node, Ref ref) {
+        List<Ref> contexts = catalogs.get("_repositories");
+        if (contexts == null || contexts.isEmpty()
+                || !(contexts.getFirst().value() instanceof com.dnd.data.CampaignRepositories repos)) return;
+        if (ref.value() instanceof com.dnd.model.magic.Spell spell) EntityHoverCard.spell(node, spell, repos);
+        else if (ref.value() instanceof com.dnd.model.item.Item item) EntityHoverCard.item(node, item, repos);
     }
 
     private void addObjectListEditor(Prop prop, List<?> values, Class<?> elementClass) {

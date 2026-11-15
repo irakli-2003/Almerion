@@ -179,6 +179,46 @@ public class LanSessionServerTest {
         assertNull(com.dnd.chat.SessionChat.hosted(root));
     }
 
+    @Test public void mobileUpgradeRequestsAreAuthenticatedAndDoNotSpendXpUntilGmAcceptance() throws Exception {
+        var pc = repos.players().getById("hero");
+        pc.setClassId("fighter"); pc.setLevel(5); pc.setXp(100);
+        pc.setStats(new com.dnd.model.character.stats.CoreStats(10, 10, 10, 10, 10, 10));
+        repos.players().save(pc);
+        var cls = new com.dnd.model.character.CharacterClass(); cls.setId("fighter");
+        repos.classes().save(cls);
+        String token = JsonMappers.create().readTree(login("hero", "secret").body()).path("token").asText();
+        var mapper = JsonMappers.create();
+        var optionsCommand = new com.dnd.chat.SessionChat.Command(java.util.UUID.randomUUID().toString(),
+            "upgrade-options", "open", java.util.List.of(), "", "");
+        var optionsReply = upgradePost(token, optionsCommand);
+        assertEquals(optionsReply.body(), 200, optionsReply.statusCode());
+        var options = mapper.readTree(optionsReply.body()).path("upgrades").path("options");
+        var node = java.util.stream.StreamSupport.stream(options.path("choices").spliterator(), false)
+            .filter(n -> n.path("blocked").asText().isBlank()).findFirst().orElseThrow();
+        var proposal = new com.dnd.model.character.UpgradeRequests.Proposal(options.path("revision").asText(),
+            java.util.Map.of("strength", 2), node.path("id").asText(), java.util.Map.of());
+        var submit = new com.dnd.chat.SessionChat.Command(java.util.UUID.randomUUID().toString(),
+            "upgrade-submit", "open", java.util.List.of(), "", mapper.writeValueAsString(proposal));
+        assertEquals(401, upgradePost("wrong-token", submit).statusCode());
+        assertEquals(200, upgradePost(token, submit).statusCode());
+        assertEquals(200, upgradePost(token, submit).statusCode());
+        assertEquals(100, repos.players().getById("hero").getXp());
+        var accept = new com.dnd.chat.SessionChat.Command(java.util.UUID.randomUUID().toString(),
+            "upgrade-accept", submit.id(), java.util.List.of(), "", mapper.writeValueAsString(proposal));
+        assertEquals(400, upgradePost(token, accept).statusCode());
+        com.dnd.chat.SessionChat.hosted(root).execute("gm", accept);
+        assertEquals(6, repos.players().getById("hero").getLevel());
+        assertEquals(0, repos.players().getById("hero").getXp());
+        assertEquals(1, repos.players().getById("open").getLevel());
+    }
+
+    private HttpResponse<String> upgradePost(String token, com.dnd.chat.SessionChat.Command command) throws Exception {
+        return http.send(HttpRequest.newBuilder(URI.create("http://localhost:" + server.port() + "/api/chat?token=" + token))
+            .header("Content-Type", "application/json")
+            .POST(HttpRequest.BodyPublishers.ofString(JsonMappers.create().writeValueAsString(command))).build(),
+            HttpResponse.BodyHandlers.ofString());
+    }
+
     private static JsonNode nextSheet(BufferedReader in) throws Exception {
         String line;
         while ((line = in.readLine()) != null) {

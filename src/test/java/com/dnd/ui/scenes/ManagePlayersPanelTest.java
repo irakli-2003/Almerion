@@ -186,6 +186,59 @@ public class ManagePlayersPanelTest {
         });
     }
 
+    @Test public void selectedPlayerShowsStatsAndFullSpellDescriptions() throws Exception {
+        Path root = Files.createTempDirectory("dnd-manage-sheet");
+        var repos = new CampaignRepositories(root);
+        var pc = new PlayerCharacter();
+        pc.setId("hero"); pc.setName("Hero");
+        var spell = new com.dnd.model.magic.Spell();
+        spell.setId("light"); spell.setName("Light"); spell.setDescription("A bright light shines for one hour.");
+        repos.spells().save(spell);
+        var learned = new PlayerCharacter.PlayerSpell(); learned.setSpellId("light");
+        pc.setSpells(new ArrayList<>(List.of(learned)));
+        repos.players().save(pc);
+        onFx(() -> {
+            var panel = new ManagePlayersPanel(new CharacterCreationWizard(null, repos), repos, root.resolve("Session.md"), s -> { });
+            panel.showPlayer(pc);
+            var full = (javafx.scene.control.TitledPane) find(panel.node(), n -> n instanceof javafx.scene.control.TitledPane p
+                && "Full character sheet".equals(p.getText()));
+            assertNotNull(full);
+            assertNotNull(find(full.getContent(), n -> n instanceof Label l && "Abilities".equals(l.getText())));
+            var details = (javafx.scene.control.TitledPane) find(full.getContent(), n -> n instanceof javafx.scene.control.TitledPane p
+                && p.getText().startsWith("Light"));
+            assertNotNull(details);
+            assertTrue(((javafx.scene.control.TextArea) details.getContent()).getText().contains("one hour"));
+            assertNotNull(details.getTooltip());
+        });
+    }
+
+    @Test public void hpButtonsUseTheFreshCharacterAfterAnUpgradeWasApproved() throws Exception {
+        Path root = Files.createTempDirectory("dnd-manage-upgraded");
+        var repos = new CampaignRepositories(root);
+        var cls = new com.dnd.model.character.CharacterClass(); cls.setId("fighter");
+        repos.classes().save(cls);
+        var pc = new PlayerCharacter("hero", "Hero", "fighter", "human", 5,
+            new com.dnd.model.character.stats.CoreStats(10, 10, 10, 10, 10, 10), new ArrayList<>(), new ArrayList<>());
+        pc.setMaxHitPoints(40); pc.setCurrentHitPoints(10); pc.setXp(100); repos.players().save(pc);
+        onFx(() -> {
+            var panel = new ManagePlayersPanel(new CharacterCreationWizard(null, repos), repos, root.resolve("Session.md"), s -> { });
+            panel.showList();
+            var service = com.dnd.model.character.UpgradeRequests.at(root);
+            var options = service.options("hero", null);
+            String node = options.choices().stream().filter(c -> c.blocked().isBlank()).findFirst().orElseThrow().id();
+            String proposal = com.dnd.data.JsonMappers.create().writeValueAsString(
+                new com.dnd.model.character.UpgradeRequests.Proposal(options.revision(), java.util.Map.of("strength", 2), node, java.util.Map.of()));
+            String id = java.util.UUID.randomUUID().toString();
+            service.execute("pc:hero", new com.dnd.chat.SessionChat.Command(id, "upgrade-submit", null, List.of(), "", proposal));
+            service.execute("gm", new com.dnd.chat.SessionChat.Command(java.util.UUID.randomUUID().toString(),
+                "upgrade-accept", id, List.of(), "", proposal));
+            int hp = repos.players().getById("hero").getCurrentHitPoints();
+            button(card(panel, "Hero"), "−").fire();
+            assertEquals(6, repos.players().getById("hero").getLevel());
+            assertEquals(hp - 5, repos.players().getById("hero").getCurrentHitPoints());
+        });
+    }
+
     private static Node card(ManagePlayersPanel panel, String name) {
         Node card = find(panel.node(), n -> n instanceof HBox h && h.getStyleClass().contains("creature-card")
             && find(h, m -> m instanceof Label l && name.equals(l.getText())) != null);

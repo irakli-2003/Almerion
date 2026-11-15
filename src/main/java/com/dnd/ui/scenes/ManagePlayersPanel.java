@@ -263,11 +263,21 @@ final class ManagePlayersPanel {
             pc.getCurrentHitPoints(), pc.getMaxHitPoints(), pc.getCurrentMana(), pc.getMaxMana(),
             pc.getActiveEffects(),
             delta -> {
-                pc.setCurrentHitPoints(Math.max(0, Math.min(pc.getMaxHitPoints(), pc.getCurrentHitPoints() + delta)));
-                repos.players().save(pc);
+                PlayerCharacter current = repos.players().getById(pc.getId());
+                if (current == null) {
+                    status.accept("This character no longer exists.");
+                    showList();
+                    return;
+                }
+                current.setCurrentHitPoints(Math.max(0, Math.min(current.getMaxHitPoints(), current.getCurrentHitPoints() + delta)));
+                repos.players().save(current);
                 showList();
             },
-            () -> showPlayer(pc));
+            () -> {
+                PlayerCharacter current = repos.players().getById(pc.getId());
+                if (current == null) { status.accept("This character no longer exists."); showList(); }
+                else showPlayer(current);
+            });
     }
 
     private Node creatureCard(TrackedCreature c) {
@@ -377,7 +387,16 @@ final class ManagePlayersPanel {
     }
 
     void showPlayer(PlayerCharacter pc) {
-        Runnable persist = () -> repos.players().save(pc);
+        Runnable persist = () -> {
+            try { repos.players().save(pc); }
+            catch (IllegalStateException error) {
+                PlayerCharacter current = repos.players().getById(pc.getId());
+                if (current != null) showPlayer(current);
+                owner.showError("Could not save character", error);
+                // Stop chained callbacks from reporting a successful edit of the stale sheet.
+                throw error;
+            }
+        };
 
         GridPane vitals = vitalsGrid(
             pc.getCurrentHitPoints(), v -> { pc.setCurrentHitPoints(v); persist.run(); },
@@ -427,10 +446,70 @@ final class ManagePlayersPanel {
             owner.btn("GM character note", () -> CharacterNotesUi.open(owner, pc)),
             ProgressionPanel.build(owner, repos, pc, () -> showPlayer(pc)),
             subLabel("Vitals"), vitals,
+            fullSheet(pc),
             subLabel("Class & Race Features"), featuresBox(pc, persist),
             workshopBox(pc, persist),
             headerRow("Items", addItem), itemPicker, itemsBox,
             headerRow("Active Effects", addEffect), effectPicker, effectsBox);
+    }
+
+    private Node fullSheet(PlayerCharacter pc) {
+        var sheet = com.dnd.lan.LanSheet.build(pc, repos, "", com.dnd.ui.i18n.UiTranslator::text,
+            com.dnd.data.JsonMappers.create());
+        VBox content = new VBox(7);
+        for (String key : List.of("race", "className", "subclass", "level", "xp", "armorClass",
+                "armorBreakdown", "initiative", "speed", "proficiency", "passivePerception", "hitDice",
+                "deathSuccesses", "deathFailures", "inspiration", "casting", "abilities", "skills",
+                "slots", "attacks", "actions", "passives", "proficiencies", "features", "notes")) {
+            var value = sheet.get(key);
+            if (value == null || value.isEmpty() && value.isContainerNode() || value.isTextual() && value.asText().isBlank()) continue;
+            content.getChildren().add(subLabel(com.dnd.ui.components.EntityForm.humanize(key)));
+            appendSheetValue(content, value);
+        }
+        if (pc.getBackstory() != null && !pc.getBackstory().isBlank()) {
+            content.getChildren().addAll(subLabel("Backstory"), sheetText(pc.getBackstory()));
+        }
+        VBox spells = new VBox(6);
+        var descriptions = com.dnd.data.EntityDescriptions.of(repos);
+        for (var entry : pc.getSpells() == null ? List.<PlayerCharacter.PlayerSpell>of() : pc.getSpells()) {
+            if (entry == null) continue;
+            var spell = repos.spells().getById(entry.getSpellId());
+            if (spell == null) {
+                spells.getChildren().add(sheetText("Missing spell: " + entry.getSpellId()));
+                continue;
+            }
+            TextArea details = new TextArea(descriptions.spellSummary(spell) + "\n\n" + descriptions.spellBody(spell));
+            details.setEditable(false); details.setWrapText(true); details.setPrefRowCount(6);
+            TitledPane row = new TitledPane(spell.getName() + " (rank " + entry.getRank() + ")", details);
+            row.setExpanded(false);
+            com.dnd.ui.components.EntityHoverCard.spell(row, spell, repos);
+            spells.getChildren().add(row);
+        }
+        if (spells.getChildren().isEmpty()) spells.getChildren().add(sheetText("No spells or spell-like abilities."));
+        content.getChildren().addAll(subLabel("Spells & spell-like abilities"), spells);
+        TitledPane pane = new TitledPane("Full character sheet", content);
+        pane.setExpanded(true);
+        return pane;
+    }
+
+    private void appendSheetValue(VBox content, com.fasterxml.jackson.databind.JsonNode value) {
+        if (value.isArray()) {
+            for (var row : value) appendSheetValue(content, row);
+        } else if (value.isObject()) {
+            List<String> fields = new ArrayList<>();
+            value.fields().forEachRemaining(e -> {
+                if (!e.getValue().isNull()) fields.add(com.dnd.ui.components.EntityForm.humanize(e.getKey())
+                    + ": " + e.getValue().asText());
+            });
+            content.getChildren().add(sheetText(String.join(" | ", fields)));
+        } else content.getChildren().add(sheetText(value.asText()));
+    }
+
+    private Label sheetText(String value) {
+        Label label = new Label(value);
+        label.setWrapText(true);
+        label.setMaxWidth(330);
+        return label;
     }
 
     /**

@@ -61,6 +61,7 @@ public final class ReportUi {
     }
 
     private static void decorate(Scene scene) {
+        if (scene != null) TextClipboard.install(scene);
         if (scene == null || scene.getProperties().containsKey(REPORT)) return;
         scene.getProperties().put(REPORT, true);
         Parent content = scene.getRoot();

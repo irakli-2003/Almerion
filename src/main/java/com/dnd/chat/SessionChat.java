@@ -17,7 +17,12 @@ public final class SessionChat implements AutoCloseable {
     }
     public record Message(long sequence, long at, String sender, String text) { }
     public record Conversation(String id, String title, List<String> members, int unread) { }
-    public record View(String peer, List<Peer> peers, List<Conversation> conversations, String selected, List<Message> messages) { }
+    public record View(String peer, List<Peer> peers, List<Conversation> conversations, String selected,
+                       List<Message> messages, com.dnd.model.character.UpgradeRequests.Inbox upgrades) {
+        public View(String peer, List<Peer> peers, List<Conversation> conversations, String selected, List<Message> messages) {
+            this(peer, peers, conversations, selected, messages, null);
+        }
+    }
     public interface Connection extends AutoCloseable {
         View execute(Command command);
         @Override default void close() { }
@@ -38,6 +43,7 @@ public final class SessionChat implements AutoCloseable {
     private long sequence;
     private boolean closed;
     private int references;
+    private com.dnd.model.character.UpgradeRequests upgrades;
 
     public SessionChat(Supplier<List<Peer>> roster) { this.roster = Objects.requireNonNull(roster); }
     public static String peerId(PlayerCharacter pc) { return "pc:" + pc.getId(); }
@@ -48,6 +54,7 @@ public final class SessionChat implements AutoCloseable {
             new CampaignRepositories(p).players().list().stream().map(pc -> new Peer(peerId(pc),
                 pc.getName() == null ? pc.getId() : pc.getName())).toList()));
         chat.references++;
+        chat.upgrades = com.dnd.model.character.UpgradeRequests.at(root);
         return chat;
     }
 
@@ -70,6 +77,12 @@ public final class SessionChat implements AutoCloseable {
         if (!peers.containsKey(actor)) throw new SecurityException("This character is no longer in the session.");
         if (command == null || command.id() == null || !command.id().matches("[a-f0-9-]{36}")) throw new IllegalArgumentException("Invalid chat request.");
         String selected = command.conversation();
+        if (command.operation() != null && command.operation().startsWith("upgrade-")) {
+            if (upgrades == null) throw new IllegalStateException("Upgrades are unavailable in this session.");
+            var inbox = upgrades.execute(actor, command);
+            View state = view(actor, null, peers);
+            return new View(state.peer(), state.peers(), state.conversations(), state.selected(), state.messages(), inbox);
+        }
         if ("poll".equals(command.operation())) return view(actor, selected, peers);
         var previous = accepted.computeIfAbsent(actor, p -> new LinkedHashMap<>());
         Command duplicate = previous.get(command.id());
@@ -138,7 +151,7 @@ public final class SessionChat implements AutoCloseable {
             visible.add(new Conversation(thread.id, thread.title, thread.members, unread));
         }
         return new View(actor, List.copyOf(peers.values()), List.copyOf(visible), selected,
-            chosen == null ? List.of() : List.copyOf(chosen.messages));
+            chosen == null ? List.of() : List.copyOf(chosen.messages), upgrades == null ? null : upgrades.inbox(actor));
     }
 
     @Override public synchronized void close() {

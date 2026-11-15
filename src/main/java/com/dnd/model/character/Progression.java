@@ -87,6 +87,9 @@ public final class Progression {
         for (int asi : ASI_LEVELS) {
             if (asi == plan.toLevel) plan.abilityScoreImprovement = true;
         }
+        String classId = cls == null ? pc.getClassId() : cls.getId();
+        if ("fighter".equals(classId) && (plan.toLevel == 6 || plan.toLevel == 14)
+                || "rogue".equals(classId) && plan.toLevel == 10) plan.abilityScoreImprovement = true;
         plan.proficiencyBonus = proficiencyBonus(plan.toLevel);
         return plan;
     }

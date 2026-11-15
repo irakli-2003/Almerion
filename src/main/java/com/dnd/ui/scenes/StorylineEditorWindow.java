@@ -276,6 +276,7 @@ final class StorylineEditorWindow {
                     this::openPlayerView)),
             toolGroup("🎵 MUSIC", buildMusicControls()),
             toolGroup("☻ PLAYERS",
+                UpgradeRequestsUi.button(owner),
                 toolButton("Award XP", "Give a player character experience without leaving this file",
                     this::openAwardXp),
                 toolButton("Manage Players", "Show or hide the panel with every player and this session's creatures:"

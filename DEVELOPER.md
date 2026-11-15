@@ -603,7 +603,7 @@ credentials or custom provider addresses. To configure SMTP:
   No separate history branch.
   Uploaded pictures use campaign-relative `images/upgrades` paths. The generic entity form
   intentionally hides tree definitions and earned ledgers to avoid bypassing validation.
-  Player profiles are read-only; mechanical selection remains GM-controlled.
+  Player profiles are read-only; player level-up proposals require host validation and GM approval.
 - Targeted tests: `UpgradeRulesTest`, `UpgradeTreeViewTest`, `BundledCampaignDataTest`,
   `RulesTest`, `FeatureRulesTest`, `SheetValuesTest`, `SessionSnapshotTest`.
 
@@ -625,6 +625,31 @@ giver in `source`; a fresh grant replaces the old marker rather than stacking di
 Encore consumes only its giver's marker, requires conscious participants and missing HP,
 and heals proficiency without refunding Inspiration. Throws are manual counters, not
 automated attacks or movement. Targeted coverage: `PersonalFeaturesTest`.
+
+### Player level-up proposals
+
+`UpgradeRequests` validates detached, campaign-schema-aware drafts against current class
+trees. Ability allocation is +2 at standard ASI levels (including fighter 6/14 and rogue 10),
+capped at 20; tree rewards still follow the GM's definitions. Proposals cannot set arbitrary
+HP, resources, XP or spells. Existing manual skill bonuses are preserved.
+
+LAN `/api/chat` and the existing encrypted Firebase chat relay carry `upgrade-options`,
+`upgrade-submit`, `upgrade-accept` and `upgrade-decline` commands. Identity comes from the
+authenticated connection, never the payload. Only the GM may decide requests.
+No new public Firebase path or rules deployment is needed.
+
+The host persists `upgrade-requests.json` outside player snapshots. Acceptance journals an
+`applying` decision before saving the character; the new unlock's `sourceRequestId` is the
+receipt used to recover interrupted approvals without granting rewards twice.
+`JsonRepository.updateIfUnchanged` protects concurrent HP/XP changes, and normal saves
+reject stale editors that would erase approval receipts. Character/class-tree revision
+checks reject stale proposals; declined requests never write the roster.
+
+`UpgradeRequestsUi` provides desktop proposals, editable GM review and inbox badges.
+The mobile sheet uses the same server-calculated options and preserves its form while
+chat/sheet polling continues. Approved changes reach LAN sheets through the existing
+watcher; desktop GM approval also republishes a running internet session's player snapshot.
+Coverage: `UpgradeRequestsTest`, `UpgradeRequestsUiTest`, `LanSessionServerTest`.
 
 ### Hosting sessions
 

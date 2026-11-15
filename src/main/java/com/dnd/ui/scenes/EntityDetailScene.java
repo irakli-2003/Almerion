@@ -300,6 +300,7 @@ public class EntityDetailScene extends BaseScene {
     static Map<String, List<EntityForm.Ref>> catalogsFor(CampaignRepositories repos) {
         Map<String, List<EntityForm.Ref>> catalogs = new LinkedHashMap<>();
         catalogs.put("_statSchema", List.of(new EntityForm.Ref("schema", "schema", repos.statSchema())));
+        catalogs.put("_repositories", List.of(new EntityForm.Ref("repositories", "repositories", repos)));
         catalogs.put("classId", refs(repos.classes().list()));
         catalogs.put("raceId", refs(repos.races().list()));
         catalogs.put("mapId", refs(repos.maps().list()));

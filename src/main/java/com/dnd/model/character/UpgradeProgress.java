@@ -14,6 +14,7 @@ public class UpgradeProgress {
 
     public static class Unlock {
         private String classId;
+        private String sourceRequestId;
         private String nodeId;
         private String branchName;
         private String name;
@@ -25,6 +26,8 @@ public class UpgradeProgress {
         private UpgradeTree.Reward reward = new UpgradeTree.Reward();
         public String getClassId() { return classId; }
         public void setClassId(String value) { classId = value; }
+        public String getSourceRequestId() { return sourceRequestId; }
+        public void setSourceRequestId(String value) { sourceRequestId = value; }
         public String getNodeId() { return nodeId; }
         public void setNodeId(String value) { nodeId = value; }
         public String getBranchName() { return branchName; }

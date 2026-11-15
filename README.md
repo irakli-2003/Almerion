@@ -498,6 +498,32 @@ costs no choice and describes starting class features, hit die, saves and starti
 Existing automatic class/subclass features continue unchanged;
 tree branches are additional specialisations, not replacements for the legacy subclass.
 
+### Player level-up requests
+
+Players can choose **Level up** from their hosted mobile sheet or desktop player home
+while connected to a hosting GM. At standard D&D Ability Score Improvement levels they
+allocate **two ability points** (+2 to one score or +1 to two), capped at **20**.
+Fighters also receive these points at levels 6 and 14; rogues at level 10.
+Other levels grant no ability points. If every score is capped, only the points that
+can actually fit are offered.
+
+Next, choose one eligible upgrade from the campaign's real class tree, read its full
+rewards and spell descriptions, and select any required predefined spell alternatives.
+**Send to GM** saves a pending proposal, without changing the character or spending XP.
+The GM's **Level-up requests** badge appears on the GM menu and session editor; the same
+inbox is available from **Notifications**. The GM can review and edit ability allocation,
+tree choice and spell alternatives, then accept or decline.
+
+Declining preserves XP and all character values. Acceptance applies one level and one
+tree upgrade, including normal HP/resource/slot progression; it does not grant a full
+heal or rest. Constitution ability-point improvements include retroactive HP.
+Manually entered skill bonuses remain GM-managed. The campaign's existing
+**100 XP, reset to zero on level-up** rule still applies. Requests survive restarts;
+players see their three most recent decisions. Stale character/tree proposals must be
+declined and resubmitted. If delivery is uncertain, use **Retry pending action** or
+**Check request status** before submitting again. Desktop players need an updated app;
+mobile players receive the new interface directly from the updated host.
+
 Renaming or deleting a tree node does not refund choices or remove rewards already earned:
 each unlock saves its original reward and description on the character. Close battle windows
 before editing trees or applying unlocks. Players can inspect the tree from their profile;
@@ -1099,6 +1125,7 @@ charge type:
 
 | Where | Keys | Action |
 |---|---|---|
+| Text fields | **Ctrl+C** / **Ctrl+V** | Copy the selection / paste, including with a Georgian keyboard layout. Read-only fields allow copying; password fields retain their native secure behavior. |
 | Session editor | **Ctrl+S** | Save |
 | Session editor | **Ctrl+F** | Find; **Enter** / **Shift+Enter** go to the next / previous match, **Esc** closes |
 | Search pickers | Type, then **Enter** | Pick the first match; **↓** moves into the list |

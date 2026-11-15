@@ -292,6 +292,7 @@ final class PrivateFilesUi {
         owner.background(() -> new Inbox(account.requests(), account.outgoing()), inbox -> {
             content.getChildren().setAll(owner.btn("Refresh", () -> loadNotifications(owner, content)),
                 owner.btn("Session chat", () -> SessionChatUi.show(owner)));
+            if (owner.uiSession.isDm()) content.getChildren().add(owner.btn("Level-up requests", () -> UpgradeRequestsUi.show(owner)));
             content.getChildren().add(owner.sectionLabel("Session-file access requests"));
             for (var request : inbox.incoming()) {
                 VBox row = new VBox(6, UiTranslator.skip(owner.body(request.fileName() + " - " + request.status())));
@@ -311,7 +312,7 @@ final class PrivateFilesUi {
             for (var request : inbox.outgoing().keySet()) {
                 content.getChildren().add(UiTranslator.skip(owner.body(request.fileName() + " - " + request.status())));
             }
-            content.getChildren().add(owner.body("Approved access arrives with the next campaign sync. Chat notifications are not available yet."));
+            content.getChildren().add(owner.body("Approved access arrives with the next campaign sync."));
         }, error -> owner.showError("Could not load notifications", error));
     }
 

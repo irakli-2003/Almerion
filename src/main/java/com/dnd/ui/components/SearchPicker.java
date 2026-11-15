@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.BiConsumer;
 
 /**
  * A field-like button that opens a search box over a long catalogue (items, spells, ...):
@@ -56,6 +57,11 @@ public final class SearchPicker {
     /** Picks one option; {@code onChange} receives the new choice (null when "(none)" is chosen). */
     public static <T> Button single(List<T> options, T initial, Function<T, String> label,
                                     boolean allowNone, Consumer<T> onChange) {
+        return single(options, initial, label, allowNone, onChange, (cell, value) -> { });
+    }
+
+    public static <T> Button single(List<T> options, T initial, Function<T, String> label,
+                                    boolean allowNone, Consumer<T> onChange, BiConsumer<javafx.scene.Node, T> hover) {
         Button field = field();
         Object none = new Object();
         Consumer<T> show = t -> field.setText((t == null ? "(none)" : label.apply(t)) + "   \u25BE");
@@ -76,6 +82,8 @@ public final class SearchPicker {
                 protected void updateItem(Object item, boolean empty) {
                     super.updateItem(item, empty);
                     setText(empty || item == null ? null : item == none ? "(none)" : label(label, item));
+                    setTooltip(null);
+                    if (!empty && item != null && item != none) installHover(hover, this, item);
                 }
             });
             @SuppressWarnings("unchecked")
@@ -91,6 +99,11 @@ public final class SearchPicker {
     /** Ticks any number of options; {@code onChange} receives the full ticked list after each change. */
     public static <T> Button multi(List<T> options, List<T> initial, Function<T, String> label,
                                    Consumer<List<T>> onChange) {
+        return multi(options, initial, label, onChange, (cell, value) -> { });
+    }
+
+    public static <T> Button multi(List<T> options, List<T> initial, Function<T, String> label,
+                                   Consumer<List<T>> onChange, BiConsumer<javafx.scene.Node, T> hover) {
         Button field = field();
         List<T> ticked = new ArrayList<>(initial);
         Runnable show = () -> field.setText((ticked.isEmpty() ? "(none)"
@@ -109,7 +122,7 @@ public final class SearchPicker {
                 state.put(t, p);
             }
             ListView<Object> list = new ListView<>();
-            list.setCellFactory(CheckBoxListCell.forListView(state::get, new javafx.util.StringConverter<>() {
+            var converter = new javafx.util.StringConverter<Object>() {
                 @Override
                 public String toString(Object o) {
                     return o == null ? "" : label(label, o);
@@ -119,7 +132,14 @@ public final class SearchPicker {
                 public Object fromString(String s) {
                     return null;
                 }
-            }));
+            };
+            list.setCellFactory(view -> new CheckBoxListCell<>(state::get, converter) {
+                @Override public void updateItem(Object item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setTooltip(null);
+                    if (!empty && item != null) installHover(hover, this, item);
+                }
+            });
             Consumer<Object> toggle = o -> {
                 BooleanProperty p = o == null ? null : state.get(o);
                 if (p != null) p.set(!p.get());
@@ -127,6 +147,11 @@ public final class SearchPicker {
             open(field, new ArrayList<>(options), o -> label(label, o), list, toggle, false);
         });
         return field;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> void installHover(BiConsumer<javafx.scene.Node, T> hover, javafx.scene.Node node, Object value) {
+        hover.accept(node, (T) value);
     }
 
     @SuppressWarnings("unchecked")

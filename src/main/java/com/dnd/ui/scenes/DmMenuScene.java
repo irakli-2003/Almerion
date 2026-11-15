@@ -105,7 +105,8 @@ public class DmMenuScene extends BaseScene {
             btn("👥 Members", () -> MembersWindow.open(this, uiSession.campaignRoot(),
                 uiSession.getCurrentUser() == null ? "" : uiSession.getCurrentUser().getUsername())),
             btn("Notifications", () -> PrivateFilesUi.notifications(this)),
-            SessionChatUi.button(this));
+            SessionChatUi.button(this),
+            UpgradeRequestsUi.button(this));
         VBox play = toolGroup("At the table",
             btn("📡 Host Session" + (uiSession.getSession().isOnline() || com.dnd.lan.LanSessionServer.current() != null ? "  ●" : ""),
                 () -> uiSession.getRouter().goTo(SceneType.DM_ONLINE_SESSION)),

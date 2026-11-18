@@ -508,14 +508,30 @@ public final class EntityForm {
             selected[0] = new Ref(currentId, "(missing)");
             all.add(selected[0]);
         }
-        Button picker = SearchPicker.single(all, selected[0], Ref::toString, true, ref -> selected[0] = ref, this::referenceHover);
+        Label preview = new Label("\u24d8");
+        preview.getStyleClass().add("body-label");
+        preview.setAccessibleText("Selected option details");
+        Runnable updatePreview = () -> {
+            preview.setTooltip(null);
+            if (selected[0] != null) referenceHover(preview, selected[0]);
+            preview.setVisible(preview.getTooltip() != null);
+            preview.setManaged(preview.isVisible());
+        };
+        Button picker = SearchPicker.single(DisplayOrder.named(all, Ref::toString), selected[0], Ref::toString, true,
+            ref -> {
+                selected[0] = ref;
+                updatePreview.run();
+            }, this::referenceHover);
+        updatePreview.run();
         if (compact) picker.setPrefWidth(260);
         else {
             picker.setPrefWidth(420);
             picker.setMaxWidth(500);
         }
         if (firstPicker == null) firstPicker = picker;
-        node.getChildren().add(labelled(prop.name(), picker));
+        var line = new HBox(6, picker, preview);
+        line.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        node.getChildren().add(labelled(prop.name(), line));
         bind(prop, () -> selected[0] == null ? null : selected[0].id());
     }
 
@@ -825,15 +841,23 @@ public final class EntityForm {
                 || !(contexts.getFirst().value() instanceof com.dnd.data.CampaignRepositories repos)) return;
         if (ref.value() instanceof com.dnd.model.magic.Spell spell) EntityHoverCard.spell(node, spell, repos);
         else if (ref.value() instanceof com.dnd.model.item.Item item) EntityHoverCard.item(node, item, repos);
+        else if (ref.value() instanceof com.dnd.model.world.map.ActiveEffect effect && effect.getDescription() != null
+                && !effect.getDescription().isBlank()) {
+            EntityHoverCard.install(node, effect.label(), "", effect.getDescription());
+        }
     }
 
     private void addObjectListEditor(Prop prop, List<?> values, Class<?> elementClass) {
         VBox rows = new VBox(4);
         List<Map.Entry<Object, EntityForm>> entries = new ArrayList<>();
-        for (Object value : values) {
-            if (value != null) {
-                entries.add(objectRow(rows, entries, value));
-            }
+        List<?> displayed = values;
+        if ("items".equals(prop.name()) && elementClass == com.dnd.model.character.PlayerCharacter.PlayerItem.class) {
+            displayed = sortedReferences(values, "itemId", "getItemId");
+        } else if ("spells".equals(prop.name()) && elementClass == com.dnd.model.character.PlayerCharacter.PlayerSpell.class) {
+            displayed = sortedReferences(values, "spellId", "getSpellId");
+        }
+        for (Object value : displayed) {
+            if (value != null) entries.add(objectRow(rows, entries, value));
         }
 
         Button add = new Button("Add " + humanize(elementClass.getSimpleName()).toLowerCase(Locale.ROOT));
@@ -855,6 +879,15 @@ public final class EntityForm {
                 result.add(entry.getKey());
             }
             return result;
+        });
+    }
+
+    private List<?> sortedReferences(List<?> values, String catalog, String getter) {
+        Map<String, String> labels = new LinkedHashMap<>();
+        for (Ref ref : catalogs.getOrDefault(catalog, List.of())) labels.put(ref.id(), ref.toString());
+        return DisplayOrder.named(values, value -> {
+            String id = invokeString(value, getter);
+            return labels.getOrDefault(id, id);
         });
     }
 

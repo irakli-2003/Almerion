@@ -8,7 +8,6 @@ import com.dnd.ui.EntityCategory;
 import com.dnd.ui.ImageStore;
 import com.dnd.ui.SceneType;
 import com.dnd.ui.UiSession;
-import com.dnd.ui.i18n.LanguagePicker;
 import com.dnd.ui.i18n.UiTranslator;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -56,9 +55,6 @@ public class DmMenuScene extends BaseScene {
             header.getChildren().add(GitHubSyncUi.statusBadge(this, uiSession.campaignRoot()));
         }
 
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-        header.getChildren().addAll(spacer, new LanguagePicker());
         content.getChildren().add(header);
 
         ensureWorldMap();
@@ -110,6 +106,8 @@ public class DmMenuScene extends BaseScene {
         VBox play = toolGroup("At the table",
             btn("📡 Host Session" + (uiSession.getSession().isOnline() || com.dnd.lan.LanSessionServer.current() != null ? "  ●" : ""),
                 () -> uiSession.getRouter().goTo(SceneType.DM_ONLINE_SESSION)),
+            btn("Rest…", () -> PartyRestUi.show(this, new CampaignRepositories(uiSession.campaignRoot()),
+                message -> showInfo("Party rest", message))),
             btn("🖨 Print Character Sheets", () -> {
                 if (uiSession.campaignRoot() == null) return;
                 var ctx = uiSession.getSession().getCampaignContext();

@@ -42,7 +42,52 @@ public final class MembersWindow {
                 "Go back to Campaign Selection and claim it first; then you can invite players.");
             return;
         }
-        new MembersWindow(owner, id, user).show();
+        openRegistered(owner, id, user);
+    }
+
+    static void openRegistered(BaseScene owner, String campaignId, String user) {
+        new MembersWindow(owner, campaignId, user).show();
+    }
+
+    static void invite(BaseScene owner, CampaignRecord record, String user, Runnable finished) {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Invite to campaign");
+        dialog.setHeaderText(record.name);
+        TextField code = owner.textField("Recipient's account code");
+        ComboBox<Role> role = new ComboBox<>();
+        role.getItems().add(Role.PLAYER);
+        if (record.isAuthor(user)) role.getItems().add(Role.DM);
+        role.setValue(Role.PLAYER);
+        role.setConverter(new javafx.util.StringConverter<>() {
+            public String toString(Role value) { return value == Role.DM ? "Game Master" : "Player"; }
+            public Role fromString(String value) { throw new UnsupportedOperationException(); }
+        });
+        ButtonType send = new ButtonType("Send invitation", ButtonBar.ButtonData.OK_DONE);
+        ButtonType revoke = new ButtonType("Withdraw invitation", ButtonBar.ButtonData.OTHER);
+        dialog.getDialogPane().setContent(new VBox(10, owner.body("Ask the recipient for the code in Join Campaign."),
+            code, owner.body("Invite as"), role));
+        dialog.getDialogPane().getButtonTypes().setAll(send, revoke, ButtonType.CANCEL);
+        dialog.getDialogPane().lookupButton(send).disableProperty().bind(code.textProperty().isEmpty());
+        dialog.getDialogPane().lookupButton(revoke).disableProperty().bind(code.textProperty().isEmpty());
+        owner.styleDialog(dialog);
+        dialog.showAndWait().ifPresent(button -> {
+            String recipient = code.getText();
+            Role selectedRole = role.getValue();
+            if (button == send) {
+                owner.background(() -> CampaignDirectory.shared().invite(record.id, user, recipient, selectedRole), result -> {
+                    owner.showInfo("Invitation sent", "The invitation appears in the recipient's My Campaigns screen.");
+                    finished.run();
+                }, error -> owner.showError("Couldn't send invitation", error));
+            } else if (button == revoke) {
+                owner.background(() -> {
+                    CampaignDirectory.shared().revokeInvitation(record.id, user, recipient);
+                    return true;
+                }, result -> {
+                    owner.showInfo("Invitation withdrawn", "Any pending invitation for that account was cleared.");
+                    finished.run();
+                }, error -> owner.showError("Couldn't withdraw invitation", error));
+            }
+        });
     }
 
     private void show() {
@@ -94,7 +139,7 @@ public final class MembersWindow {
         codeRow.setAlignment(Pos.CENTER_LEFT);
         content.getChildren().addAll(owner.sectionLabel("Join code"),
             owner.body("Players sign in with their own account, choose Player → Join a Campaign and enter this code. You then accept them below."),
-            codeRow);
+            codeRow, owner.btn("Invite to campaign", () -> invite(owner, record, user, this::reload)));
 
         content.getChildren().add(owner.sectionLabel("Waiting to join (" + record.applications.size() + ")"));
         if (record.applications.isEmpty()) content.getChildren().add(owner.body("Nobody is waiting."));
@@ -112,7 +157,8 @@ public final class MembersWindow {
         }
 
         content.getChildren().add(owner.sectionLabel("Members (" + record.members.size() + ")"));
-        for (CampaignRecord.Member member : record.members.values()) {
+        for (CampaignRecord.Member member : record.members.values().stream()
+                .sorted(java.util.Comparator.comparing(m -> m.username, String.CASE_INSENSITIVE_ORDER)).toList()) {
             boolean isAuthor = record.isAuthor(member.username);
             String label = member.username + "  -  " + (isAuthor ? "Author GM" : member.role == Role.DM ? "GM" : "Player");
             HBox row = row(owner.body(label));
@@ -121,6 +167,16 @@ public final class MembersWindow {
                 row.getChildren().add(owner.btn(other == Role.DM ? "Make GM" : "Make Player",
                     () -> act("Couldn't change " + member.username + "'s role",
                         () -> directory.setRole(campaignId, user, member.username, other))));
+                if (member.role == Role.DM) {
+                    row.getChildren().add(owner.btn("Transfer ownership", () -> {
+                        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+                            "Make " + member.username + " the campaign owner? You will stay a GM but lose owner permissions.",
+                            ButtonType.OK, ButtonType.CANCEL);
+                        owner.styleDialog(confirm);
+                        if (confirm.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK)
+                            act("Couldn't transfer ownership", () -> directory.transferOwnership(campaignId, user, member.username));
+                    }));
+                }
             }
             boolean canRemove = !isAuthor && (author || member.role == Role.PLAYER);
             if (canRemove) {

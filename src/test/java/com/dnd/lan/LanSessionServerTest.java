@@ -144,6 +144,82 @@ public class LanSessionServerTest {
     }
 
     @Test
+    public void playerLinksNeverUseLoopbackOrUnroutableAddresses() throws Exception {
+        assertTrue(LanSessionServer.isJoinAddress(java.net.InetAddress.getByName("192.168.1.20")));
+        for (String invalid : java.util.List.of("127.0.0.1", "169.254.5.1", "0.0.0.0", "224.0.0.1", "::1")) {
+            assertFalse(invalid, LanSessionServer.isJoinAddress(java.net.InetAddress.getByName(invalid)));
+        }
+        for (var link : server.joinAddresses()) {
+            var uri = URI.create(link.url());
+            assertTrue(LanSessionServer.isJoinAddress(java.net.InetAddress.getByName(uri.getHost())));
+            assertEquals(server.port(), uri.getPort());
+            assertFalse(link.adapter().isBlank());
+        }
+        assertEquals(200, http.send(HttpRequest.newBuilder(URI.create(server.hostPreviewUrl())).build(),
+            HttpResponse.BodyHandlers.discarding()).statusCode());
+    }
+
+    @Test(timeout = 10000)
+    public void signedInPlayersReceiveCountdownUpdatesAndClears() throws Exception {
+        String token = server.login("ip", "hero", "secret").token();
+        server.publishCountdown(root, "first", 11, true, true, true);
+        var stream = http.send(HttpRequest.newBuilder(
+            URI.create("http://localhost:" + server.port() + "/api/events?token=" + token)).build(),
+            HttpResponse.BodyHandlers.ofInputStream());
+        assertEquals(200, stream.statusCode());
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(stream.body(), StandardCharsets.UTF_8))) {
+            assertEquals(24, nextSheet(in).path("hp").path("current").asInt());
+            assertEquals(11, nextTimer(in).path("seconds").asInt());
+            server.publishCountdown(root, "first", 10, true, true, false);
+            var tick = nextTimer(in);
+            assertEquals(10, tick.path("seconds").asInt());
+            assertTrue(tick.path("sound").asBoolean());
+            server.publishCountdown(root, "replacement", 5, true, false, true);
+            server.publishCountdown(root, "first", -1, false, false, false);
+            var replacement = nextTimer(in);
+            assertEquals("replacement", replacement.path("id").asText());
+            assertFalse(replacement.path("sound").asBoolean());
+            server.publishCountdown(root, "replacement", -1, false, false, false);
+            assertTrue(nextTimer(in).isNull());
+        }
+    }
+
+    @Test(timeout = 10000)
+    public void liveSheetOnlyReceivesItsOwnTurnAndClearsItWhenBattleCloses() throws Exception {
+        var source = new Object();
+        String token = server.login("ip", "hero", "secret").token();
+        var stream = http.send(HttpRequest.newBuilder(
+            URI.create("http://localhost:" + server.port() + "/api/events?token=" + token)).build(),
+            HttpResponse.BodyHandlers.ofInputStream());
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(stream.body(), StandardCharsets.UTF_8))) {
+            assertFalse(nextSheet(in).has("battleTurn"));
+            com.dnd.data.BattleTurns.publish(root, source, new com.dnd.data.BattleTurns.View(
+                "turn-1", 2, java.util.Map.of("hero", 2, "other-character", 0)));
+            server.notifyChanged();
+            var sheet = nextSheet(in);
+            assertEquals(2, sheet.path("battleTurn").path("remaining").asInt());
+            assertFalse(sheet.toString().contains("other-character"));
+            com.dnd.data.BattleTurns.clear(root, source);
+            server.notifyChanged();
+            assertFalse(nextSheet(in).has("battleTurn"));
+        } finally {
+            com.dnd.data.BattleTurns.clear(root, source);
+        }
+    }
+
+    private static JsonNode nextTimer(BufferedReader in) throws Exception {
+        String line;
+        while ((line = in.readLine()) != null) {
+            if (line.equals("event: timer")) {
+                String data = in.readLine();
+                if (data != null && data.startsWith("data: ")) return JsonMappers.create().readTree(data.substring(6));
+                throw new AssertionError("Missing timer event data");
+            }
+        }
+        throw new AssertionError("Timer stream ended");
+    }
+
+    @Test
     public void stopEndsTheSession() throws Exception {
         String token = server.login("ip", "hero", "secret").token();
         server.stop();
@@ -175,6 +251,18 @@ public class LanSessionServerTest {
         assertEquals(200, reply.statusCode());
         assertEquals("pc:hero", chat.execute(com.dnd.chat.SessionChat.HOST, com.dnd.chat.SessionChat.Command.poll(thread))
             .messages().getLast().sender());
+        var history = chat.execute("pc:hero", com.dnd.chat.SessionChat.Command.poll(thread)).messages();
+        assertEquals(400, upgradePost(token, new com.dnd.chat.SessionChat.Command(java.util.UUID.randomUUID().toString(),
+            "delete-message", thread, java.util.List.of(), "", Long.toString(history.getFirst().sequence()))).statusCode());
+        assertEquals(200, upgradePost(token, new com.dnd.chat.SessionChat.Command(java.util.UUID.randomUUID().toString(),
+            "delete-message", thread, java.util.List.of(), "", Long.toString(history.getLast().sequence()))).statusCode());
+        assertEquals(1, chat.execute("pc:hero", com.dnd.chat.SessionChat.Command.poll(thread)).messages().size());
+        var group = chat.execute("gm", new com.dnd.chat.SessionChat.Command(java.util.UUID.randomUUID().toString(),
+            "create", null, java.util.List.of("pc:hero", "pc:open"), "Table", "")).selected();
+        assertEquals(200, upgradePost(token, new com.dnd.chat.SessionChat.Command(java.util.UUID.randomUUID().toString(),
+            "rename", group, java.util.List.of(), "New table", "")).statusCode());
+        assertTrue(chat.execute("gm", com.dnd.chat.SessionChat.Command.poll(group)).conversations().stream()
+            .anyMatch(c -> c.id().equals(group) && c.title().equals("New table")));
         server.stop();
         assertNull(com.dnd.chat.SessionChat.hosted(root));
     }

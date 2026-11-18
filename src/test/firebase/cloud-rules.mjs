@@ -127,6 +127,37 @@ await ok(patch(owner, {
 }));
 await denied(set(dm, `${root}/campaigns/campaign/members/second`, null));
 
+const directed = (inviter, role) => ({ campaignId: "campaign", name: "Campaign", inviter, inviterKey: inviter, role });
+const incoming = "campaignInvites/stranger/campaign";
+const acceptDirected = (role) => ({
+  "campaigns/campaign/members/stranger": member("stranger", role),
+  "userCampaigns/stranger/campaign": role,
+  "campaigns/campaign/applications/stranger": null,
+  "userApplications/stranger/campaign": null,
+  [incoming]: null
+});
+await denied(set(player, `${root}/${incoming}`, directed("player", "PLAYER")));
+await denied(set(dm, `${root}/${incoming}`, directed("codm", "DM")));
+await ok(set(dm, `${root}/${incoming}`, directed("codm", "PLAYER")));
+await denied(get(player, `${root}/${incoming}`));
+await ok(get(stranger, `${root}/${incoming}`));
+await denied(set(owner, `${root}/campaigns/campaign/members/stranger`, member("stranger")));
+await denied(patch(stranger, acceptDirected("DM")));
+await denied(set(stranger, `${root}/campaigns/campaign/members/stranger`, member("stranger")));
+await ok(patch(stranger, acceptDirected("PLAYER")));
+assert.equal(await (await get(stranger, `${root}/${incoming}`)).json(), null);
+assert.equal(await (await get(stranger, `${root}/userCampaigns/stranger/campaign`)).json(), "PLAYER");
+await ok(patch(stranger, { "campaigns/campaign/members/stranger": null, "userCampaigns/stranger/campaign": null }));
+await denied(patch(stranger, acceptDirected("PLAYER")));
+await ok(set(owner, `${root}/${incoming}`, directed("owner", "DM")));
+await denied(set(dm, `${root}/${incoming}`, null));
+await ok(set(owner, `${root}/${incoming}`, null));
+await denied(patch(stranger, acceptDirected("DM")));
+await ok(set(owner, `${root}/${incoming}`, directed("owner", "DM")));
+await ok(patch(stranger, acceptDirected("DM")));
+assert.equal(await (await get(stranger, `${root}/userCampaigns/stranger/campaign`)).json(), "DM");
+await ok(patch(stranger, { "campaigns/campaign/members/stranger": null, "userCampaigns/stranger/campaign": null }));
+
 const id = "a".repeat(64), another = "b".repeat(64);
 const live = (hostUid, campaignId = "campaign") => ({
   hostUid, campaignId, expiresAt: Date.now() + 43_200_000, snapshot: "encrypted-only"
@@ -241,6 +272,19 @@ await ok(patch(player, { "campaigns/campaign/members/player": null, "userCampaig
 await denied(get(player, `${root}/campaigns/campaign`));
 await denied(set(owner, `${root}/campaigns/campaign/members/player`, member("player")));
 await denied(set(dm, `${root}/campaigns/campaign`, null));
+const ownership = (successor) => ({
+  "campaigns/campaign/author": successor, "campaigns/campaign/authorKey": successor,
+  "joinCodes/ABC234": { ...invite, author: successor }
+});
+await denied(patch(owner, ownership("pending")));
+await denied(patch(owner, { "campaigns/campaign/author": "second", "campaigns/campaign/authorKey": "second" }));
+await denied(patch(second, ownership("second")));
+await ok(patch(owner, ownership("second")));
+assert.equal(await (await get(owner, `${root}/campaigns/campaign/authorKey`)).json(), "second");
+assert.equal((await (await get(pending, `${root}/joinCodes/ABC234`)).json()).author, "second");
+await denied(set(owner, `${root}/campaigns/campaign`, null));
+await denied(set(second, `${root}/campaigns/campaign/members/second`, null));
+await ok(patch(second, ownership("owner")));
 const maintenance = { rules: { ".read": false, ".write": false,
   "almerion-private": privateRules.rules["almerion-private"] } };
 async function deploy(value) {

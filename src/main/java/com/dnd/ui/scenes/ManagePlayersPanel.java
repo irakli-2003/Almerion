@@ -444,7 +444,11 @@ final class ManagePlayersPanel {
 
         detailFrame(pc.getName(),
             owner.btn("GM character note", () -> CharacterNotesUi.open(owner, pc)),
-            ProgressionPanel.build(owner, repos, pc, () -> showPlayer(pc)),
+            ProgressionPanel.build(owner, repos, pc, () -> {
+                var latest = repos.players().getById(pc.getId());
+                if (latest == null) showList();
+                else showPlayer(latest);
+            }),
             subLabel("Vitals"), vitals,
             fullSheet(pc),
             subLabel("Class & Race Features"), featuresBox(pc, persist),
@@ -471,9 +475,13 @@ final class ManagePlayersPanel {
         }
         VBox spells = new VBox(6);
         var descriptions = com.dnd.data.EntityDescriptions.of(repos);
-        for (var entry : pc.getSpells() == null ? List.<PlayerCharacter.PlayerSpell>of() : pc.getSpells()) {
-            if (entry == null) continue;
-            var spell = repos.spells().getById(entry.getSpellId());
+        var catalog = repos.spells().list().stream().collect(java.util.stream.Collectors.toMap(
+            com.dnd.model.magic.Spell::getId, java.util.function.Function.identity(), (first, duplicate) -> first));
+        for (var entry : com.dnd.ui.components.DisplayOrder.named(pc.getSpells(), known -> {
+            var spell = catalog.get(known.getSpellId());
+            return spell == null ? known.getSpellId() : spell.getName();
+        })) {
+            var spell = catalog.get(entry.getSpellId());
             if (spell == null) {
                 spells.getChildren().add(sheetText("Missing spell: " + entry.getSpellId()));
                 continue;
@@ -494,7 +502,12 @@ final class ManagePlayersPanel {
 
     private void appendSheetValue(VBox content, com.fasterxml.jackson.databind.JsonNode value) {
         if (value.isArray()) {
-            for (var row : value) appendSheetValue(content, row);
+            List<com.fasterxml.jackson.databind.JsonNode> rows = new ArrayList<>();
+            value.forEach(rows::add);
+            if (rows.stream().allMatch(row -> row.hasNonNull("name"))) {
+                rows = com.dnd.ui.components.DisplayOrder.named(rows, row -> row.path("name").asText());
+            }
+            for (var row : rows) appendSheetValue(content, row);
         } else if (value.isObject()) {
             List<String> fields = new ArrayList<>();
             value.fields().forEachRemaining(e -> {
@@ -673,7 +686,12 @@ final class ManagePlayersPanel {
         if (!kit.getResistances().isEmpty()) {
             box.getChildren().add(owner.body("Resists: " + String.join(", ", kit.getResistances())));
         }
-        for (FeatureRules.Action action : kit.getActions()) {
+        if (kit.getActions().stream().anyMatch(FeatureRules.Action::isLimited)) {
+            Label recharge = owner.body("Uses show what is left. The rest listed beside a feature restores its uses.");
+            recharge.setWrapText(true);
+            box.getChildren().add(recharge);
+        }
+        for (FeatureRules.Action action : com.dnd.ui.components.DisplayOrder.named(kit.getActions(), FeatureRules.Action::getName)) {
             int left = action.usesLeft(pc.getFeatureUses());
             Label label = new Label(action.getName() + "  ·  " + action.usesLabel(pc.getFeatureUses()));
             label.getStyleClass().add(left > 0 ? "body-label" : "muted-label");
@@ -701,7 +719,7 @@ final class ManagePlayersPanel {
             }
             box.getChildren().add(row);
         }
-        for (FeatureRules.Passive passive : kit.getPassives()) {
+        for (FeatureRules.Passive passive : com.dnd.ui.components.DisplayOrder.named(kit.getPassives(), FeatureRules.Passive::name)) {
             Label p = new Label("• " + passive.name());
             p.getStyleClass().add("muted-label");
             p.setWrapText(true);
@@ -795,8 +813,13 @@ final class ManagePlayersPanel {
             box.getChildren().add(hint("No items."));
             return;
         }
-        for (PlayerCharacter.PlayerItem item : new ArrayList<>(items)) {
-            Item catalogItem = repos.items().getById(item.getItemId());
+        var catalog = repos.items().list().stream().collect(java.util.stream.Collectors.toMap(
+            Item::getId, java.util.function.Function.identity(), (first, duplicate) -> first));
+        for (PlayerCharacter.PlayerItem item : com.dnd.ui.components.DisplayOrder.named(items, carried -> {
+            Item found = catalog.get(carried.getItemId());
+            return found == null ? carried.getItemId() : found.getName();
+        })) {
+            Item catalogItem = catalog.get(item.getItemId());
             Label label = owner.body((catalogItem != null ? catalogItem.getName() : item.getItemId())
                 + (item.getQuantity() > 1 ? "  ×" + item.getQuantity() : ""));
             label.setWrapText(true);
@@ -826,7 +849,7 @@ final class ManagePlayersPanel {
             box.getChildren().add(hint("No active effects."));
             return;
         }
-        for (ActiveEffect effect : new ArrayList<>(effects)) {
+        for (ActiveEffect effect : com.dnd.ui.components.DisplayOrder.named(effects, ActiveEffect::label)) {
             Label label = owner.body(effect.label());
             label.setWrapText(true);
             label.setMaxWidth(Double.MAX_VALUE);

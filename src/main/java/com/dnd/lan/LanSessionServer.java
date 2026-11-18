@@ -82,6 +82,9 @@ public final class LanSessionServer {
         "Sheet", "Combat", "Magic", "Gear", "Nothing here yet.", "ft.",
         "Session chat", "New conversation", "Conversation title", "Send", "Message", "Retry pending action",
         "Choose recipients", "Chat unavailable", "Unread", "Game Master", "Host monitoring", "No messages yet.",
+        "Rename group", "Delete message", "Delete this message?",
+        "Session timer", "Enable timer sound", "Mute timer sound", "Timer sound unavailable",
+        "Your turn!", "My turn in 1 turn", "My turn in {A} turns", "Enable session sounds", "Mute session sounds", "Direct messages",
         "Chat delivery was not confirmed. Retry the pending action.", "Discard pending retry",
         "Delivery may already have happened. Discard this retry and check the conversation before sending again?",
         "Level up", "Level-up choices require GM approval. XP is unchanged until acceptance.", "Check request status",
@@ -109,12 +112,16 @@ public final class LanSessionServer {
     private final Map<String, Long> lockedUntil = new ConcurrentHashMap<>();
     private final Object changeLock = new Object();
     private volatile long version;
+    private record Countdown(String id, int seconds, boolean running, boolean sound) { }
+    private volatile Countdown countdown;
     private volatile boolean open;
     private long stamp;
     private HttpServer server;
     private ExecutorService workers;
     private ScheduledExecutorService watcher;
     private SessionChat chat;
+
+    private String chatHostName;
 
     public LanSessionServer(Path campaignRoot, String campaignName, Function<String, String> translate) {
         this.campaignRoot = campaignRoot;
@@ -129,11 +136,26 @@ public final class LanSessionServer {
         return running;
     }
 
+    public void publishCountdown(Path campaign, String id, int seconds, boolean running, boolean sound, boolean start) {
+        if (campaign == null || !campaignRoot.toAbsolutePath().normalize().equals(campaign.toAbsolutePath().normalize())) return;
+        synchronized (changeLock) {
+            if (!open || !start && (countdown == null || !countdown.id().equals(id))) return;
+            countdown = seconds < 0 ? null : new Countdown(id, seconds, running, sound);
+            changeLock.notifyAll();
+        }
+    }
+
     /** Hosts {@code campaignRoot}, replacing any session already running. */
     public static synchronized LanSessionServer startShared(Path campaignRoot, String campaignName,
                                                             Function<String, String> translate) throws IOException {
+        return startShared(campaignRoot, campaignName, translate, null);
+    }
+
+    public static synchronized LanSessionServer startShared(Path campaignRoot, String campaignName,
+                                                            Function<String, String> translate, String hostName) throws IOException {
         stopShared();
         LanSessionServer s = new LanSessionServer(campaignRoot, campaignName, translate);
+        s.chatHostName = hostName;
         s.start(DEFAULT_PORT);
         running = s;
         return s;
@@ -171,7 +193,7 @@ public final class LanSessionServer {
         server.setExecutor(workers);
         server.createContext("/", this::handle);
         open = true;
-        chat = SessionChat.acquire(campaignRoot);
+        chat = SessionChat.acquire(campaignRoot, chatHostName);
         stamp = fingerprint();
         watcher = Executors.newSingleThreadScheduledExecutor(daemon("almerion-lan-watch"));
         watcher.scheduleWithFixedDelay(this::checkForChanges, 1, 1, TimeUnit.SECONDS);
@@ -203,25 +225,34 @@ public final class LanSessionServer {
         return campaignRoot;
     }
 
-    /** Addresses players can type into their browser, most likely first. */
-    public List<String> addresses() {
-        List<String> lan = new ArrayList<>();
-        List<String> other = new ArrayList<>();
-        try {
-            for (NetworkInterface ni : Collections.list(NetworkInterface.getNetworkInterfaces())) {
-                if (!ni.isUp() || ni.isLoopback() || ni.isVirtual()) continue;
-                for (InetAddress a : Collections.list(ni.getInetAddresses())) {
-                    if (!(a instanceof Inet4Address) || a.isLinkLocalAddress()) continue;
-                    String url = "http://" + a.getHostAddress() + ":" + port() + "/";
-                    (a.isSiteLocalAddress() ? lan : other).add(url);
-                }
+    public record JoinAddress(String adapter, String url) { }
+
+    /** Lists addresses for other devices; loopback is never a shareable address. */
+    public List<JoinAddress> joinAddresses() throws IOException {
+        List<JoinAddress> lan = new ArrayList<>();
+        List<JoinAddress> other = new ArrayList<>();
+        var interfaces = NetworkInterface.getNetworkInterfaces();
+        if (interfaces == null) return List.of();
+        for (NetworkInterface ni : Collections.list(interfaces)) {
+            if (!ni.isUp() || ni.isLoopback() || ni.isVirtual()) continue;
+            for (InetAddress a : Collections.list(ni.getInetAddresses())) {
+                if (!isJoinAddress(a)) continue;
+                var address = new JoinAddress(ni.getDisplayName() == null ? ni.getName() : ni.getDisplayName(),
+                    "http://" + a.getHostAddress() + ":" + port() + "/");
+                (a.isSiteLocalAddress() ? lan : other).add(address);
             }
-        } catch (IOException ignored) {
-            // Fall through to localhost.
         }
         lan.addAll(other);
-        if (lan.isEmpty()) lan.add("http://localhost:" + port() + "/");
-        return lan;
+        return List.copyOf(lan);
+    }
+
+    static boolean isJoinAddress(InetAddress address) {
+        return address instanceof Inet4Address && !address.isLoopbackAddress() && !address.isLinkLocalAddress()
+            && !address.isAnyLocalAddress() && !address.isMulticastAddress();
+    }
+
+    public String hostPreviewUrl() {
+        return "http://127.0.0.1:" + port() + "/";
     }
 
     /** Wakes every open sheet so it re-reads the campaign (also called by the file watcher). */
@@ -391,7 +422,11 @@ public final class LanSessionServer {
     }
 
     ObjectNode sheetOf(PlayerCharacter pc) {
-        return LanSheet.build(pc, new CampaignRepositories(campaignRoot), campaignName, translate, mapper);
+        var sheet = LanSheet.build(pc, new CampaignRepositories(campaignRoot), campaignName, translate, mapper);
+        var battle = com.dnd.data.BattleTurns.view(campaignRoot);
+        var hint = battle == null ? null : battle.forPlayer(pc.getId());
+        if (hint != null) sheet.set("battleTurn", mapper.valueToTree(hint));
+        return sheet;
     }
 
     private void chat(HttpExchange ex) throws IOException {
@@ -428,6 +463,7 @@ public final class LanSessionServer {
         ex.sendResponseHeaders(200, 0);
         OutputStream out = ex.getResponseBody();
         String last = null;
+        Countdown lastCountdown = null;
         long seen = -1;
         long lastWrite = System.currentTimeMillis();
         try {
@@ -446,12 +482,18 @@ public final class LanSessionServer {
                         lastWrite = System.currentTimeMillis();
                     }
                 }
+                Countdown current = countdown;
+                if (!java.util.Objects.equals(lastCountdown, current)) {
+                    lastCountdown = current;
+                    send(out, "event: timer\ndata: " + compact.writeValueAsString(current) + "\n\n");
+                    lastWrite = System.currentTimeMillis();
+                }
                 if (System.currentTimeMillis() - lastWrite >= HEARTBEAT_MILLIS) {
                     send(out, ": ping\n\n");
                     lastWrite = System.currentTimeMillis();
                 }
                 synchronized (changeLock) {
-                    if (seen == version && open) changeLock.wait(1000);
+                    if (seen == version && java.util.Objects.equals(lastCountdown, countdown) && open) changeLock.wait(1000);
                 }
             }
             if (!open) send(out, "event: ended\ndata: {}\n\n");

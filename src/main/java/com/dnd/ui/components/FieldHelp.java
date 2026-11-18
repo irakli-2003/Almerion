@@ -122,6 +122,7 @@ public final class FieldHelp {
         f("Spell.manaCost", "Mana spent by mana-based casters (and HP for blood-magic casters). Slot casters ignore it.");
         f("Spell.range", "How far away the target can be, in feet. 0 = touch or self.");
         f("Spell.radius", "Area of effect in feet; 0 means a single target.");
+        f("Spell.areaTargets", "Everyone affects every creature in the area. A Choose option lets the GM check individual targets, starting with allies, enemies, or everyone.");
         f("Spell.cooldownRounds", "Rounds before it can be used again; 0 = no wait.");
         f("Spell.requiredConsumables", "Items used up every time (e.g. ammunition). Casting fails without them.");
         f("Spell.requiredTools", "Items that must be carried but are not used up.");

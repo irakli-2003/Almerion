@@ -34,6 +34,61 @@ import static org.junit.Assert.*;
 public class BattleMapWindowTest {
     @Rule public TemporaryFolder temp = new TemporaryFolder();
 
+    @Test public void defeatXpPaysOnlyAtDeathAndDoesNotRepeatAfterRevival() throws Exception {
+        runBattle((battle, map, stage) -> {
+            var repos = new CampaignRepositories(temp.getRoot().toPath());
+            var target = map.getCell(0, 0).getOccupants().getFirst();
+            var state = TokenSupport.combatOf(target);
+            state.setKillXp(40);
+            state.setSharedXp(11);
+            state.setCurrentHitPoints(0);
+            state.setDownedByPlayerId("player-0");
+            Canvas canvas = (Canvas) field(battle, "canvas");
+            canvas.getOnMousePressed().handle(mouse(MouseButton.PRIMARY, 12, 12));
+            canvas.getOnMouseReleased().handle(mouse(MouseButton.PRIMARY, 12, 12));
+            button(stage, "Failed Save").fire();
+            button(stage, "Failed Save").fire();
+            assertEquals(0, repos.players().getById("player-0").getXp());
+            button(stage, "Failed Save").fire();
+            assertEquals(45, repos.players().getById("player-0").getXp());
+            assertEquals(5, repos.players().getById("player-1").getXp());
+            var saved = TokenSupport.combatOf(repos.maps().getById(map.getId()).getCell(0, 0).getOccupants().getFirst());
+            assertEquals(state.getXpRewardId(), saved.getXpRewardId());
+            assertFalse(com.dnd.data.BattleXp.award(repos, map.getId() + "/" + saved.getXpRewardId(), 40, 11,
+                "player-1", java.util.List.of("player-0", "player-1")).applied());
+            state.revive();
+            var panel = BattleMapWindow.class.getDeclaredMethod("showDetail", MapObject.class);
+            panel.setAccessible(true);
+            panel.invoke(battle, target);
+            button(stage, "Kill").fire();
+            assertEquals(45, repos.players().getById("player-0").getXp());
+            assertEquals(5, repos.players().getById("player-1").getXp());
+        });
+    }
+
+    @Test public void unattributedKillCanBeDeferredAndResolvedByChoosingAPlayer() throws Exception {
+        runBattle((battle, map, stage) -> {
+            var repos = new CampaignRepositories(temp.getRoot().toPath());
+            var target = map.getCell(0, 0).getOccupants().getFirst();
+            TokenSupport.combatOf(target).setKillXp(23);
+            Canvas canvas = (Canvas) field(battle, "canvas");
+            canvas.getOnMousePressed().handle(mouse(MouseButton.PRIMARY, 12, 12));
+            canvas.getOnMouseReleased().handle(mouse(MouseButton.PRIMARY, 12, 12));
+            Platform.runLater(() -> ((Button) dialogPane(stage).lookupButton(ButtonType.CANCEL)).fire());
+            button(stage, "Kill").fire();
+            assertEquals(0, repos.players().getById("player-0").getXp());
+            Platform.runLater(() -> {
+                var pane = dialogPane(stage);
+                var combo = (ComboBox<?>) pane.lookup(".combo-box");
+                combo.getSelectionModel().select(0);
+                ((Button) pane.lookupButton(ButtonType.OK)).fire();
+            });
+            button(stage, "Resolve defeat XP").fire();
+            assertEquals(0, repos.players().getById("player-0").getXp());
+            assertEquals(23, repos.players().getById("player-1").getXp());
+        });
+    }
+
     @Test public void hpInputIsCompactAndRevivalUsesEnteredD4WithIndependentSaves() throws Exception {
         runBattle((battle, map, stage) -> {
             Canvas canvas = (Canvas) field(battle, "canvas");
@@ -276,6 +331,38 @@ public class BattleMapWindowTest {
             assertEquals(20, TokenSupport.combatOf(rabbit).getCurrentMana());
             assertEquals(0, TokenSupport.combatOf(rabbit).cooldownFor("pocket_watch_rewind"));
             assertEquals(2, history.previousTurnOf(rabbit, false).getRound());
+        });
+    }
+
+    @Test public void closingBattleResumesCurrentTurnWithoutStartingItAgain() throws Exception {
+        runBattle((battle, map, stage) -> {
+            var tracker = (com.dnd.model.combat.InitiativeTracker) field(battle, "initiative");
+            button(stage, "Next Turn ▸").fire();
+            button(stage, "Next Turn ▸").fire();
+            button(stage, "Next Turn ▸").fire();
+            button(stage, "Next Turn ▸").fire();
+            var position = tracker.position();
+            assertEquals(2, position.round());
+            assertNotEquals(tracker.order().getFirst(), tracker.current());
+            TokenSupport.combatOf(tracker.current()).setMovementUsed(10);
+            stage.close();
+
+            var base = (BaseScene) field(battle, "owner");
+            var session = (UiSession) field(battle, "uiSession");
+            var reopened = new BattleMapWindow(base, session, "arena");
+            reopened.show();
+            var reopenedStage = Window.getWindows().stream()
+                .filter(w -> w instanceof Stage s && s.getTitle().equals("Battle: Arena"))
+                .map(w -> (Stage) w).findFirst().orElseThrow();
+            try {
+                var resumed = (com.dnd.model.combat.InitiativeTracker) field(reopened, "initiative");
+                assertEquals(position, resumed.position());
+                assertEquals(10, TokenSupport.combatOf(resumed.current()).getMovementUsed());
+                button(reopenedStage, "End initiative").fire();
+            } finally {
+                reopenedStage.close();
+            }
+            assertNull(new CampaignRepositories(session.campaignRoot()).maps().getById("arena").getInitiativePosition());
         });
     }
 

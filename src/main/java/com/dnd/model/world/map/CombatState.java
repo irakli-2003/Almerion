@@ -37,6 +37,22 @@ public class CombatState {
     private int deathSaveFailures;
     private boolean downed;
     private boolean dead;
+    private String xpRewardId;
+    private int killXp;
+    private int sharedXp;
+    private String downedByPlayerId;
+    private boolean xpRewardResolved;
+
+    public String getXpRewardId() { return xpRewardId; }
+    public void setXpRewardId(String id) { xpRewardId = id; }
+    public int getKillXp() { return killXp; }
+    public void setKillXp(int xp) { killXp = Math.max(0, xp); }
+    public int getSharedXp() { return sharedXp; }
+    public void setSharedXp(int xp) { sharedXp = Math.max(0, xp); }
+    public String getDownedByPlayerId() { return downedByPlayerId; }
+    public void setDownedByPlayerId(String id) { downedByPlayerId = id; }
+    public boolean isXpRewardResolved() { return xpRewardResolved; }
+    public void setXpRewardResolved(boolean resolved) { xpRewardResolved = resolved; }
     private List<String> conditions = new ArrayList<>();
     private String notes;
     /** False for tokens that are scenery or loot rather than participants in turn order. */
@@ -86,6 +102,7 @@ public class CombatState {
 
     public void setCurrentHitPoints(int currentHitPoints) {
         this.currentHitPoints = clampHitPoints(currentHitPoints);
+        if (this.currentHitPoints > 0) downedByPlayerId = null;
     }
 
     /**
@@ -179,6 +196,7 @@ public class CombatState {
 
     /** Fully restores a creature: alive, unhurt, and with its death saves cleared. */
     public void revive() {
+        downedByPlayerId = null;
         dead = false;
         downed = false;
         deathSaveFailures = 0;
@@ -546,6 +564,11 @@ public class CombatState {
         c.deathSaveSuccesses = deathSaveSuccesses;
         c.downed = downed;
         c.dead = dead;
+        c.xpRewardId = xpRewardId;
+        c.killXp = killXp;
+        c.sharedXp = sharedXp;
+        c.downedByPlayerId = downedByPlayerId;
+        c.xpRewardResolved = xpRewardResolved;
         c.conditions = new ArrayList<>(getConditions());
         c.notes = notes;
         c.inInitiative = inInitiative;

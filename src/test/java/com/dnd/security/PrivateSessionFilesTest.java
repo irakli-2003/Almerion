@@ -209,6 +209,55 @@ public class PrivateSessionFilesTest {
         assertThrows(SecurityException.class, () -> service(author).readText(file));
     }
 
+    @Test public void readOnlyGrantAllowsReadingButBlocksTextAndRosterEdits() throws Exception {
+        StorylineService secured = service(owner);
+        Path file = secured.createFile(secured.getRoot(), "read-only.txt");
+        secured.writeText(file, "Hidden notes");
+        secured.setAccess(file, List.of(friend.identity()));
+        assertEquals(PrivateSessionFiles.Access.WRITE, secured.permissions(file).access(friend.uid()));
+        secured.setAccess(file, Map.of(friend.identity(), PrivateSessionFiles.Access.READ), secured.permissions(file));
+        StorylineService reader = service(friend);
+        assertEquals("Hidden notes", reader.readText(file));
+        String before = Files.readString(file);
+        assertThrows(SecurityException.class, () -> reader.writeText(file, "Not allowed"));
+        assertThrows(SecurityException.class, () -> reader.writeRoster(file, content().roster()));
+        assertThrows(SecurityException.class, () -> reader.setAccess(file, List.of(friend.identity())));
+        assertEquals(before, Files.readString(file));
+        assertEquals(PrivateSessionFiles.Access.OWNER, secured.permissions(file).access(owner.uid()));
+
+        secured.setAccess(file, Map.of(friend.identity(), PrivateSessionFiles.Access.WRITE), secured.permissions(file));
+        service(friend).writeText(file, "Allowed edit");
+        assertEquals("Allowed edit", secured.readText(file));
+    }
+
+    @Test public void coOwnersCanManageAccessAndTheCreatorCanHandOffOwnership() throws Exception {
+        StorylineService secured = service(owner);
+        Path file = secured.createFile(secured.getRoot(), "handoff.txt");
+        secured.writeText(file, "Secret encounter");
+        var coOwner = service(friend);
+        var writer = service(author);
+        var roles = PrivateSessionFiles.Access.OWNER;
+        secured.replaceAccess(file, Map.of(owner.identity(), roles, friend.identity(), roles,
+            author.identity(), PrivateSessionFiles.Access.WRITE), secured.permissions(file));
+        assertEquals(java.util.Set.of(owner.uid(), friend.uid()), coOwner.verifiedPermissions(file).owners());
+        writer.writeText(file, "Updated encounter");
+        assertThrows(SecurityException.class, () -> writer.replaceAccess(file, Map.of(author.identity(), roles),
+            writer.permissions(file)));
+        coOwner.replaceAccess(file, Map.of(owner.identity(), roles, friend.identity(), roles,
+            author.identity(), PrivateSessionFiles.Access.READ), coOwner.permissions(file));
+        assertEquals("Updated encounter", writer.readText(file));
+        assertThrows(SecurityException.class, () -> service(author).writeText(file, "Not allowed"));
+        assertThrows(IllegalArgumentException.class, () -> secured.replaceAccess(file, Map.of(), secured.permissions(file)));
+        secured.replaceAccess(file, Map.of(friend.identity(), roles), secured.permissions(file));
+        assertEquals("Updated encounter", coOwner.readText(file));
+        assertThrows(SecurityException.class, () -> secured.readText(file));
+        assertThrows(SecurityException.class, () -> secured.delete(file));
+        coOwner.writeText(file, "New owner's notes");
+        coOwner.replaceAccess(file, Map.of(friend.identity(), roles, author.identity(), PrivateSessionFiles.Access.READ),
+            coOwner.permissions(file));
+        assertEquals("New owner's notes", writer.readText(file));
+    }
+
     @Test public void nonOwnerCannotDeleteMoveOrReorderFileOrContainingFolder() throws Exception {
         StorylineService secured = service(owner);
         Path folder = secured.createFolder(secured.getRoot(), "Arc");

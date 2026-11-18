@@ -81,11 +81,15 @@ public class SessionChatUiTest {
                 assertTrue(root.lookupAll(".text-area").stream().anyMatch(n -> ((TextArea) n).getText().contains("Player-only secret")));
                 assertTrue(button(root, "Send").isDisabled());
                 assertNotNull(button(root, "New conversation"));
-                ((TitledPane) root.lookup(".titled-pane")).setExpanded(true);
-                root.applyCss();
-                root.layout();
-                root.lookupAll(".check-box").stream().map(n -> (CheckBox) n)
-                    .filter(box -> "pc:alice".equals(box.getUserData())).forEach(box -> box.setSelected(true));
+                Platform.runLater(() -> {
+                    var pane = Window.getWindows().stream().filter(Window::isShowing)
+                        .map(w -> w.getScene().getRoot()).filter(DialogPane.class::isInstance)
+                        .map(DialogPane.class::cast).findFirst().orElseThrow();
+                    pane.applyCss();
+                    pane.lookupAll(".check-box").stream().map(n -> (CheckBox) n)
+                        .filter(box -> "pc:alice".equals(box.getUserData())).findFirst().orElseThrow().setSelected(true);
+                    button(pane, "Open conversation").fire();
+                });
                 button(root, "New conversation").fire();
                 assertFalse(button(root, "Send").isDisabled());
                 TextArea compose = root.lookupAll(".text-area").stream().map(n -> (TextArea) n)
@@ -98,6 +102,17 @@ public class SessionChatUiTest {
                 assertEquals("Secret from the GM", chat.execute("pc:alice", SessionChat.Command.poll(direct)).messages().getFirst().text());
                 assertTrue(chat.execute("pc:bob", SessionChat.Command.poll(null)).conversations().stream().noneMatch(c -> c.id().equals(direct)));
                 assertEquals("", compose.getText());
+                var aliceButton = root.lookupAll(".button").stream().filter(Button.class::isInstance)
+                    .map(Button.class::cast).filter(b -> "pc:alice".equals(b.getUserData())).findFirst().orElseThrow();
+                aliceButton.fire();
+                assertFalse(button(root, "Send").isDisabled());
+                assertEquals(direct, chat.execute(SessionChat.HOST, SessionChat.Command.poll(null)).conversations()
+                    .stream().filter(c -> c.members().equals(List.of("gm", "pc:alice"))).findFirst().orElseThrow().id());
+                var bobButton = root.lookupAll(".button").stream().filter(Button.class::isInstance)
+                    .map(Button.class::cast).filter(b -> "pc:bob".equals(b.getUserData())).findFirst().orElseThrow();
+                bobButton.fire();
+                assertTrue(chat.execute(SessionChat.HOST, SessionChat.Command.poll(null)).conversations()
+                    .stream().anyMatch(c -> c.members().equals(List.of("gm", "pc:bob"))));
                 session.setDm(false);
                 primary.setScene(new Scene(new StackPane()));
                 assertFalse(window.isShowing());

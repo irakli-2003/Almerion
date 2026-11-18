@@ -45,7 +45,6 @@ public class UiSession {
     public void setDm(boolean dm) {
         if (this.dm != dm) {
             roleGeneration++;
-            lockPrivateAccount();
         }
         this.dm = dm;
     }
@@ -80,7 +79,6 @@ public class UiSession {
 
     private void clearRoleContext() {
         com.dnd.sync.CampaignSyncService.shared().closed();
-        lockPrivateAccount();
         roleGeneration++;
         session.setFirebaseSync(null);
         session.setCampaignContext(null);
@@ -102,7 +100,7 @@ public class UiSession {
         }
         this.currentUser = currentUser;
     }
-    public com.dnd.security.PrivateAccount getPrivateAccount() { return privateAccount; }
+    public com.dnd.security.PrivateAccount getPrivateAccount() { return dm ? privateAccount : null; }
     public void setPrivateAccount(com.dnd.security.PrivateAccount account) {
         if (account != null && (currentUser == null || currentUser.getEmail() == null
             || !currentUser.getEmail().equalsIgnoreCase(account.identity().email()))) {

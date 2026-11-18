@@ -30,6 +30,12 @@ public class GameMap implements Printable {
     private boolean worldMap;
     /** Music playlist (from the campaign's music.json) that starts when this map is opened; null = none. */
     private String musicPlaylistId;
+    private InitiativePosition initiativePosition;
+
+    public record InitiativePosition(String actorId, int round) { }
+
+    public InitiativePosition getInitiativePosition() { return initiativePosition; }
+    public void setInitiativePosition(InitiativePosition value) { initiativePosition = value; }
 
     public String getMusicPlaylistId() {
         return musicPlaylistId;

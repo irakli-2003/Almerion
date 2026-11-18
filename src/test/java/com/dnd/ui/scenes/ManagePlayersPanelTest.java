@@ -195,7 +195,11 @@ public class ManagePlayersPanelTest {
         spell.setId("light"); spell.setName("Light"); spell.setDescription("A bright light shines for one hour.");
         repos.spells().save(spell);
         var learned = new PlayerCharacter.PlayerSpell(); learned.setSpellId("light");
-        pc.setSpells(new ArrayList<>(List.of(learned)));
+        var aid = new com.dnd.model.magic.Spell();
+        aid.setId("z-aid"); aid.setName("Aid");
+        repos.spells().save(aid);
+        var learnedAid = new PlayerCharacter.PlayerSpell(); learnedAid.setSpellId("z-aid");
+        pc.setSpells(new ArrayList<>(List.of(learned, learnedAid)));
         repos.players().save(pc);
         onFx(() -> {
             var panel = new ManagePlayersPanel(new CharacterCreationWizard(null, repos), repos, root.resolve("Session.md"), s -> { });
@@ -209,6 +213,9 @@ public class ManagePlayersPanelTest {
             assertNotNull(details);
             assertTrue(((javafx.scene.control.TextArea) details.getContent()).getText().contains("one hour"));
             assertNotNull(details.getTooltip());
+            assertTrue(((javafx.scene.control.TitledPane) ((javafx.scene.layout.VBox) details.getParent())
+                .getChildren().getFirst()).getText().startsWith("Aid"));
+            assertNotNull(find(panel.node(), n -> n instanceof Button b && "Award XP".equals(b.getText())));
         });
     }
 

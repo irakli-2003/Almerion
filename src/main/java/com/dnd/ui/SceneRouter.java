@@ -118,7 +118,7 @@ public class SceneRouter {
         // machines and lose the campaign id that membership checks need.
         var context = session.getCampaignContext();
         try {
-            session.getFirebaseSync().push(com.dnd.data.SessionSnapshot.capture(context.getPath(), context.getName()));
+            session.getFirebaseSync().pushCampaign(context.getPath(), context.getName());
         } catch (Exception e) {
             System.err.println("Online session push failed: " + e.getMessage());
         }

@@ -59,6 +59,7 @@ public class PlayerOnlineSessionScene extends BaseScene {
 
         VBox mine = new VBox(8, body("Loading your campaigns..."));
         VBox pending = new VBox(6);
+        VBox invites = new VBox(6);
 
         TextField codeField = textField("Join code, e.g. K7QM2X");
         codeField.setMaxWidth(260);
@@ -73,7 +74,24 @@ public class PlayerOnlineSessionScene extends BaseScene {
                 uiSession.getRouter().goTo(SceneType.PLAYER_ONLINE_SESSION);
             }, failure -> error.setText(friendlyError(failure)));
         };
-        codeField.setOnAction(e -> apply.run());
+        Runnable joinCampaign = () -> {
+            Dialog<ButtonType> dialog = new Dialog<>();
+            dialog.setTitle("Join Campaign");
+            TextField account = textField(CampaignDirectory.accountCode(user()));
+            account.setText(CampaignDirectory.accountCode(user()));
+            account.setEditable(false);
+            Button copy = btn("Copy", () -> {
+                var clipboard = new javafx.scene.input.ClipboardContent();
+                clipboard.putString(account.getText());
+                javafx.scene.input.Clipboard.getSystemClipboard().setContent(clipboard);
+            });
+            ButtonType request = new ButtonType("Apply with campaign code", ButtonBar.ButtonData.OK_DONE);
+            dialog.getDialogPane().setContent(new VBox(10, body("Share this account code with a GM to receive an invitation."),
+                new HBox(8, account, copy), body("Or enter a campaign join code to apply directly."), codeField));
+            dialog.getDialogPane().getButtonTypes().setAll(request, ButtonType.CLOSE);
+            styleDialog(dialog);
+            if (dialog.showAndWait().orElse(ButtonType.CLOSE) == request) apply.run();
+        };
 
         TextField tokenField = textField("Paste session token from GM");
         tokenField.setMaxWidth(600);
@@ -86,11 +104,8 @@ public class PlayerOnlineSessionScene extends BaseScene {
         content.getChildren().addAll(
             title("My Campaigns"),
             body("Campaigns you've been accepted into. When the GM starts a live session, join it from here."),
-            mine, error,
-            sectionLabel("Join a Campaign"),
-            body("Ask your GM for the campaign's join code. They have to accept you before you can see it."),
-            new HBox(10, codeField, btn("Apply", apply)),
-            pending,
+            mine, error, invites, new HBox(10, btn("Join Campaign", joinCampaign),
+                btn("Refresh", () -> uiSession.getRouter().goTo(SceneType.PLAYER_ONLINE_SESSION))), pending,
             tokenPane
         );
 
@@ -127,6 +142,25 @@ public class PlayerOnlineSessionScene extends BaseScene {
         }, failure -> {
             mine.getChildren().setAll(body(friendlyError(failure)));
         });
+        background(() -> directory.invitationsOf(user()), invitations -> {
+            if (invitations.isEmpty()) return;
+            invites.getChildren().add(sectionLabel("Campaign invitations"));
+            for (var invitation : invitations) {
+                var label = body(invitation.name() + " — " + (invitation.role() == CampaignRecord.Role.DM ? "GM" : "Player")
+                    + " (" + invitation.inviter() + ")");
+                invites.getChildren().add(new HBox(8, label,
+                    btn("Accept", () -> respond(directory, invitation, true)),
+                    btn("Decline", () -> respond(directory, invitation, false))));
+            }
+        }, failure -> invites.getChildren().setAll(body("Couldn't load campaign invitations: " + friendlyError(failure))));
+    }
+
+    private void respond(CampaignDirectory directory, CampaignDirectory.Invitation invitation, boolean accept) {
+        background(() -> {
+            directory.respondToInvitation(invitation.campaignId(), user(), accept);
+            return true;
+        }, result -> uiSession.getRouter().goTo(SceneType.PLAYER_ONLINE_SESSION),
+            failure -> showError("Couldn't respond to invitation", failure));
     }
 
     private void join(String token, Label error) {

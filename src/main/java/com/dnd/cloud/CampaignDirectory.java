@@ -20,7 +20,7 @@ import java.util.LinkedHashMap;
  * <p>Rules: every campaign has an author DM. Only the author can make someone a DM, demote a
  * DM, or delete the campaign. Any DM can accept players, reject applications, remove players
  * and change the join code. Accounts join by applying with the campaign's join code and wait
- * for a DM to accept them.</p>
+ * for a DM to accept them, or accept a targeted invitation themselves.</p>
  *
  * <p>Layout: {@code campaigns/<id>} is the {@link CampaignRecord}; {@code joinCodes/<code>}
  * points at the id; {@code userCampaigns/<user>/<id>} and {@code userApplications/<user>/<id>}
@@ -47,6 +47,85 @@ public class CampaignDirectory {
         public MembershipException(String message) {
             super(message);
         }
+    }
+
+    public record Invitation(String campaignId, String name, String inviter, String inviterKey, Role role) { }
+
+    /** A public account locator, not a password or authorization token. */
+    public static String accountCode(String username) {
+        return "ALM-" + CloudKeys.of(username);
+    }
+
+    public Invitation invite(String campaignId, String actor, String accountCode, Role role) {
+        CampaignRecord record = require(campaignId);
+        requireDm(record, actor);
+        if (role == null) throw new MembershipException("Choose a campaign role.");
+        if (role == Role.DM) requireAuthor(record, actor, "Only the campaign owner can invite a Game Master.");
+        String key = accountKeyFromCode(accountCode);
+        JsonNode profile = store.get("profiles/" + key);
+        if (profile == null || !profile.path("username").isTextual() || !profile.path("uid").isTextual())
+            throw new MembershipException("No verified account uses that code.");
+        if (record.members.containsKey(key)) throw new MembershipException("That account is already a campaign member.");
+        String inviterKey = CloudKeys.of(actor);
+        Invitation invite = new Invitation(record.id, record.name, record.members.get(inviterKey).username, inviterKey, role);
+        store.put("campaignInvites/" + key + "/" + campaignId, invite);
+        return invite;
+    }
+
+    public void revokeInvitation(String campaignId, String actor, String accountCode) {
+        requireDm(require(campaignId), actor);
+        store.delete("campaignInvites/" + accountKeyFromCode(accountCode) + "/" + campaignId);
+    }
+
+    private static String accountKeyFromCode(String accountCode) {
+        String code = accountCode == null ? "" : accountCode.strip().toLowerCase(java.util.Locale.ROOT);
+        if (!code.matches("alm-[a-z0-9_-]{1,768}")) {
+            throw new MembershipException("Enter the account code shown in the recipient's Join Campaign panel.");
+        }
+        return code.substring(4);
+    }
+
+    public List<Invitation> invitationsOf(String username) {
+        JsonNode index = store.get("campaignInvites/" + CloudKeys.of(username));
+        if (index == null) return List.of();
+        List<Invitation> result = new ArrayList<>();
+        index.fields().forEachRemaining(entry -> result.add(readInvitation(entry.getKey(), entry.getValue())));
+        result.sort(java.util.Comparator.comparing(Invitation::name, String.CASE_INSENSITIVE_ORDER));
+        return result;
+    }
+
+    public void respondToInvitation(String campaignId, String actor, boolean accept) {
+        String key = CloudKeys.of(actor);
+        String path = "campaignInvites/" + key + "/" + campaignId;
+        JsonNode value = store.get(path);
+        if (value == null) throw new MembershipException("That invitation is no longer available.");
+        if (!accept) {
+            store.delete(path);
+            return;
+        }
+        Invitation invite = readInvitation(campaignId, value);
+        JsonNode profile = store.get("profiles/" + key);
+        if (profile == null || !profile.path("username").isTextual())
+            throw new MembershipException("Sign in with a verified account to accept invitations.");
+        Map<String, Object> updates = new LinkedHashMap<>();
+        updates.put("campaigns/" + campaignId + "/members/" + key,
+            new CampaignRecord.Member(profile.path("username").asText(), invite.role()));
+        updates.put("userCampaigns/" + key + "/" + campaignId, invite.role().name());
+        updates.put("campaigns/" + campaignId + "/applications/" + key, null);
+        updates.put("userApplications/" + key + "/" + campaignId, null);
+        updates.put(path, null);
+        store.update(updates);
+    }
+
+    private Invitation readInvitation(String campaignId, JsonNode value) {
+        try {
+            Invitation invite = mapper.treeToValue(value, Invitation.class);
+            if (invite != null && campaignId.equals(invite.campaignId()) && invite.name() != null
+                    && invite.inviter() != null && invite.inviterKey() != null && invite.role() != null) return invite;
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+            throw new CloudStore.CloudException("The campaign invitation is malformed.", false, e);
+        }
+        throw new MembershipException("The campaign invitation is malformed.");
     }
 
     public Optional<CampaignRecord> find(String campaignId) {
@@ -196,6 +275,21 @@ public class CampaignDirectory {
         return record;
     }
 
+    public CampaignRecord transferOwnership(String campaignId, String actor, String successor) {
+        CampaignRecord record = require(campaignId);
+        requireAuthor(record, actor, "Only the current campaign owner can transfer ownership.");
+        if (record.isAuthor(successor) || !record.isDm(successor)) {
+            throw new MembershipException("Choose another Game Master who is already in this campaign.");
+        }
+        String nextKey = CloudKeys.of(successor);
+        record.author = record.members.get(nextKey).username;
+        record.authorKey = nextKey;
+        store.update(Map.of("campaigns/" + campaignId + "/author", record.author,
+            "campaigns/" + campaignId + "/authorKey", nextKey,
+            "joinCodes/" + record.joinCode, invitation(record)));
+        return record;
+    }
+
     /** Removes a member. The author can remove anyone else; other DMs can remove players. */
     public CampaignRecord remove(String campaignId, String actor, String member) {
         CampaignRecord record = require(campaignId);
@@ -222,6 +316,7 @@ public class CampaignDirectory {
         Map<String, Object> changes = new LinkedHashMap<>();
         changes.put("campaigns/" + record.id + "/members/" + key, null);
         changes.put("userCampaigns/" + key + "/" + record.id, null);
+        changes.put("campaignInvites/" + key + "/" + record.id, null);
         store.update(changes);
     }
 

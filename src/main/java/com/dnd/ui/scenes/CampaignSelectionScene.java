@@ -50,7 +50,7 @@ public class CampaignSelectionScene extends BaseScene {
         content.setPadding(new Insets(30, 60, 40, 60));
         content.getChildren().addAll(
             title("Campaign Selection"),
-            body("Your campaigns as Game Master. Players join from the Player side with a join code.")
+            body("Open a campaign you manage, or use Join Campaign to find your account code and invitations.")
         );
 
         Label status = body("Loading campaigns...");
@@ -155,11 +155,23 @@ public class CampaignSelectionScene extends BaseScene {
         openBtn.disableProperty().bind(mine.getSelectionModel().selectedItemProperty().isNull().or(mine.disableProperty()));
         syncBtn.disableProperty().bind(mine.getSelectionModel().selectedItemProperty().isNull());
         deleteBtn.disableProperty().bind(mine.getSelectionModel().selectedItemProperty().isNull());
-        FlowPane campaignActions = new FlowPane(10, 8, openBtn, createBtn);
+        Button invite = btn("Invite to campaign", () -> {
+            Entry selected = mine.getSelectionModel().getSelectedItem();
+            if (selected != null) MembersWindow.invite(this, selected.record(), user(), () -> {});
+        });
+        Button members = btn("Manage members", () -> {
+            Entry selected = mine.getSelectionModel().getSelectedItem();
+            if (selected != null) MembersWindow.open(this, selected.local().path(), user());
+        });
+        invite.disableProperty().bind(openBtn.disableProperty());
+        members.disableProperty().bind(openBtn.disableProperty());
+        FlowPane campaignActions = new FlowPane(10, 8, openBtn, createBtn, invite, members,
+            btn("Join Campaign", () -> showCampaignInvitations(reload)));
         VBox transferGroup = toolGroup("Backups & transfer", exportBtn, importBtn, restoreBtn);
         VBox management = toolGroup("Campaign management", deleteBtn);
+        VBox remoteMemberships = new VBox(8);
 
-        content.getChildren().addAll(status, mine, campaignActions, githubGroup, transferGroup, management,
+        content.getChildren().addAll(status, mine, campaignActions, remoteMemberships, githubGroup, transferGroup, management,
             unclaimedBox);
         ScrollPane scroll = new ScrollPane(content);
         scroll.setFitToWidth(true);
@@ -184,8 +196,57 @@ public class CampaignSelectionScene extends BaseScene {
             status.setManaged(!status.getText().isEmpty());
             fillUnclaimed(unclaimedBox, listing.unclaimed());
         }, error -> status.setText(friendlyError(error)));
+        background(() -> directory.campaignsOf(user()), records -> {
+            var installedIds = local.stream().map(LocalCampaign::id).collect(java.util.stream.Collectors.toSet());
+            var remoteGm = records.stream().filter(r -> r.isDm(user()) && !installedIds.contains(r.id)).toList();
+            if (remoteGm.isEmpty()) return;
+            remoteMemberships.getChildren().addAll(sectionLabel("Campaign memberships without local files"),
+                body("You can manage membership here. The campaign files are not on this device."));
+            for (CampaignRecord record : remoteGm) {
+                remoteMemberships.getChildren().add(new HBox(10, body(record.name),
+                    btn("Manage members", () -> MembersWindow.openRegistered(this, record.id, user())),
+                    btn("Invite to campaign", () -> MembersWindow.invite(this, record, user(), reload))));
+            }
+        }, error -> remoteMemberships.getChildren().setAll(body("Couldn't load online memberships: " + friendlyError(error))));
 
         return wrapInScene(root);
+    }
+
+    private void showCampaignInvitations(Runnable reload) {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Join Campaign");
+        String accountName = user();
+        TextField account = textField("");
+        account.setText(CampaignDirectory.accountCode(accountName));
+        account.setEditable(false);
+        Button copy = btn("Copy", () -> {
+            var clipboard = new javafx.scene.input.ClipboardContent();
+            clipboard.putString(account.getText());
+            javafx.scene.input.Clipboard.getSystemClipboard().setContent(clipboard);
+        });
+        VBox invites = new VBox(8, body("Loading invitations..."));
+        dialog.getDialogPane().setContent(new VBox(10, body("Share this account code with a GM to receive an invitation."),
+            new HBox(8, account, copy), invites));
+        dialog.getDialogPane().getButtonTypes().setAll(ButtonType.CLOSE);
+        styleDialog(dialog);
+        background(() -> directory.invitationsOf(accountName), results -> {
+            invites.getChildren().clear();
+            if (results.isEmpty()) invites.getChildren().add(body("No pending invitations."));
+            for (var invite : results) {
+                var name = body(invite.name() + " (" + (invite.role() == CampaignRecord.Role.DM ? "GM" : "Player")
+                    + ", invited by " + invite.inviter() + ")");
+                java.util.function.Consumer<Boolean> respond = accept -> background(() -> {
+                    directory.respondToInvitation(invite.campaignId(), accountName, accept);
+                    return true;
+                }, result -> {
+                    dialog.close();
+                    reload.run();
+                }, error -> showError("Couldn't respond to invitation", error));
+                invites.getChildren().add(new HBox(8, name, btn("Accept", () -> respond.accept(true)),
+                    btn("Decline", () -> respond.accept(false))));
+            }
+        }, error -> invites.getChildren().setAll(body("Couldn't load invitations: " + friendlyError(error))));
+        dialog.showAndWait();
     }
 
     private void fillUnclaimed(VBox box, List<LocalCampaign> unclaimed) {

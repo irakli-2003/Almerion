@@ -3,6 +3,8 @@ package com.dnd.model.combat;
 import com.dnd.model.world.map.CombatState;
 import com.dnd.model.world.map.MapObject;
 import com.dnd.model.world.map.PlayerToken;
+import com.dnd.model.world.map.MapActor;
+import com.dnd.model.world.map.GameMap;
 import com.dnd.model.world.map.TokenSupport;
 
 import java.util.ArrayList;
@@ -44,7 +46,8 @@ public class InitiativeTracker {
                 var stats = TokenSupport.statsOf(t);
                 return stats == null ? 0 : -stats.getDexterity();
             })
-            .thenComparing(TokenSupport::nameOf));
+            .thenComparing(TokenSupport::nameOf)
+            .thenComparing(t -> t instanceof MapActor actor ? java.util.Objects.toString(actor.getInstanceId(), "") : ""));
         if (current == null || !roster.contains(current)) current = firstLiving();
     }
 
@@ -105,7 +108,7 @@ public class InitiativeTracker {
         if (start < 0) return current = firstLiving();
         for (int step = 1; step <= roster.size(); step++) {
             int index = (start + step) % roster.size();
-            if (index <= start) round++;
+            if (index == 0) round++;
             MapObject candidate = roster.get(index);
             if (alive(candidate)) {
                 beginTurn(candidate);
@@ -167,6 +170,33 @@ public class InitiativeTracker {
     public void restore(MapObject actor, int round) {
         this.current = actor;
         this.round = Math.max(1, round);
+    }
+
+    public GameMap.InitiativePosition position() {
+        return new GameMap.InitiativePosition(current() instanceof MapActor actor ? actor.getInstanceId() : null, round);
+    }
+
+    public void restorePosition(GameMap.InitiativePosition position) {
+        if (position == null) return;
+        var saved = roster.stream().filter(t -> t instanceof MapActor actor && position.actorId() != null
+            && position.actorId().equals(actor.getInstanceId())).findFirst().orElse(null);
+        restore(saved == null ? firstLiving() : saved, position.round());
+    }
+
+    public java.util.Map<String, Integer> playerDistances() {
+        var result = new java.util.LinkedHashMap<String, Integer>();
+        int start = roster.indexOf(current());
+        if (start < 0) return result;
+        int distance = 0;
+        for (int step = 0; step < roster.size(); step++) {
+            var token = roster.get((start + step) % roster.size());
+            if (!alive(token)) continue;
+            if (token instanceof PlayerToken pc && pc.getCharacter() != null && pc.getCharacter().getId() != null) {
+                result.putIfAbsent(pc.getCharacter().getId(), distance);
+            }
+            distance++;
+        }
+        return result;
     }
 
     private MapObject firstLiving() {

@@ -130,6 +130,11 @@ details p { margin: 6px 0 2px; color: var(--dim); white-space: pre-wrap; }
       </div>
       <div class="vitals" id="vitals"></div>
       <div id="ended" class="banner hidden" data-t="The session has ended."></div>
+      <div id="sessionCountdown" class="banner hidden">
+        <span data-t="Session timer"></span>: <strong id="countdownValue" role="timer"></strong>
+      </div>
+      <div id="battleTurn" class="banner hidden" role="status"></div>
+      <button type="button" class="btn ghost" id="countdownSound" data-t="Enable session sounds"></button>
       <div class="tabs" id="tabs"></div>
     </div>
     <div id="body"></div>
@@ -145,8 +150,13 @@ details p { margin: 6px 0 2px; color: var(--dim); white-space: pre-wrap; }
     <button class="btn ghost" id="chatToggle" style="margin-top:12px" data-t="Session chat"></button>
     <section id="chatPanel" class="card hidden" style="margin-top:10px">
       <p class="small dim" id="chatDisclosure">The current hosting GM can read every session conversation, including private and group chats. Chats are erased when hosting ends; only the latest 500 messages per conversation are kept.</p>
+      <details open>
+        <summary data-t="Direct messages"></summary>
+        <div id="chatDirectPeers" class="chat-controls"></div>
+      </details>
       <div class="chat-controls">
         <select id="chatThreads" aria-label="Session chat"></select>
+        <button class="btn hidden" id="chatRename" data-t="Rename group"></button>
         <div id="chatMessages"></div>
         <textarea id="chatText" maxlength="2000" rows="3"></textarea>
         <button class="btn" id="chatSend" data-t="Send"></button>
@@ -236,14 +246,83 @@ async function openSheet() {
   return true;
 }
 
+let countdownState = null, timerAudio = null, timerSoundEnabled = false;
+
+function renderCountdown(next) {
+  const previous = countdownState;
+  countdownState = next;
+  $("sessionCountdown").classList.toggle("hidden", !next);
+  if (!next) return;
+  $("countdownValue").textContent = String(Math.floor(next.seconds / 60)).padStart(2, "0")
+    + ":" + String(next.seconds % 60).padStart(2, "0");
+  if (!timerSoundEnabled || timerAudio?.state !== "running" || !next.sound || next.seconds > 10
+      || previous?.id !== next.id || !previous.running || previous.seconds <= next.seconds) return;
+  playCountdownTone();
+  if (next.seconds === 0) setTimeout(() => {
+    if (timerSoundEnabled && countdownState?.id === next.id && countdownState.sound) playCountdownTone();
+  }, 250);
+}
+
+function playCountdownTone(frequency = 660) {
+  if (timerAudio?.state !== "running") return;
+  const oscillator = timerAudio.createOscillator(), gain = timerAudio.createGain();
+  const now = timerAudio.currentTime;
+  oscillator.frequency.value = frequency;
+  gain.gain.setValueAtTime(0.12, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+  oscillator.connect(gain); gain.connect(timerAudio.destination);
+  oscillator.start(now); oscillator.stop(now + 0.12);
+  oscillator.onended = () => { oscillator.disconnect(); gain.disconnect(); };
+}
+
+$("countdownSound").onclick = async () => {
+  const button = $("countdownSound");
+  if (timerSoundEnabled) {
+    timerSoundEnabled = false;
+    button.textContent = t("Enable session sounds");
+    return;
+  }
+  try {
+    const Audio = window.AudioContext || window.webkitAudioContext;
+    timerAudio ??= new Audio();
+    await timerAudio.resume();
+    timerSoundEnabled = timerAudio.state === "running";
+  } catch (error) {
+    timerSoundEnabled = false;
+  }
+  button.textContent = t(timerSoundEnabled ? "Mute session sounds" : "Timer sound unavailable");
+};
+
+let turnStreamReady = false, previousTurn = null;
+function showBattleTurn(hint) {
+  const banner = $("battleTurn");
+  banner.classList.toggle("hidden", !hint);
+  const text = !hint ? "" : hint.remaining === 0 ? t("Your turn!")
+    : hint.remaining === 1 ? t("My turn in 1 turn") : t("My turn in {A} turns").replace("{A}", hint.remaining);
+  if (banner.textContent !== text) banner.textContent = text;
+}
+
 function startStream() {
   stopStream();
   es = new EventSource("api/events?token=" + encodeURIComponent(token));
   es.onopen = () => setStatus(true);
-  es.onmessage = e => { data = JSON.parse(e.data); render(); setStatus(true); };
+  es.onmessage = e => {
+    data = JSON.parse(e.data);
+    const hint = data.battleTurn;
+    if (turnStreamReady && timerSoundEnabled && hint?.remaining === 0
+        && (previousTurn?.remaining !== 0 || previousTurn.turn !== hint.turn)) playCountdownTone(880);
+    previousTurn = hint;
+    turnStreamReady = true;
+    render(); setStatus(true);
+  };
+  es.addEventListener("timer", e => renderCountdown(JSON.parse(e.data)));
   es.addEventListener("gone", () => showLogin());
   es.addEventListener("ended", () => { stopStream(); stopChat(); setStatus(false); $("ended").classList.remove("hidden"); });
   es.onerror = () => {
+    renderCountdown(null);
+    turnStreamReady = false;
+    previousTurn = null;
+    showBattleTurn(null);
     setStatus(false);
     if (es && es.readyState === EventSource.CLOSED) setTimeout(recover, 3000);
   };
@@ -256,7 +335,13 @@ async function recover() {
   } catch (e) { /* host unreachable, keep trying */ }
   setTimeout(recover, 3000);
 }
-function stopStream() { if (es) { es.close(); es = null; } }
+function stopStream() {
+  if (es) { es.close(); es = null; }
+  renderCountdown(null);
+  turnStreamReady = false;
+  previousTurn = null;
+  showBattleTurn(null);
+}
 function setStatus(live) {
   const s = $("status");
   s.textContent = live ? "● " + t("Live") : t("Reconnecting…");
@@ -275,6 +360,10 @@ function stopChat() {
   chatBusy = false; $("chatPanel").classList.add("hidden");
   $("chatMessages").replaceChildren(); $("chatPeers").replaceChildren(); $("chatThreads").replaceChildren();
   delete $("chatPeers").dataset.peers;
+  delete $("chatMessages").dataset.history;
+  delete $("chatThreads").dataset.threads;
+  $("chatDirectPeers").replaceChildren();
+  delete $("chatDirectPeers").dataset.roster;
   $("chatText").value = ""; $("chatTitle").value = ""; $("chatError").textContent = "";
 }
 function startChat() {
@@ -310,6 +399,8 @@ async function chatRequest(command, generation = chatGeneration) {
     if (command) {
       chatPending = null; chatSelected = response.selected;
       if (command.operation === "send") $("chatText").value = "";
+    } else if (chatSelected && !response.conversations.some(c => c.id === chatSelected)) {
+      chatSelected = null;
     }
     function upgradeStatus(inbox) {
       if (!inbox) return;
@@ -461,20 +552,24 @@ async function chatRequest(command, generation = chatGeneration) {
     renderChat();
   } catch (e) {
     if (generation === chatGeneration) {
-      if (!command) {
-        chatView = null; chatSelected = null;
-        $("chatMessages").replaceChildren(); $("chatThreads").replaceChildren(); $("chatPeers").replaceChildren();
-        delete $("chatPeers").dataset.peers;
-      }
       $("chatError").textContent = e.message || t("Chat unavailable");
     }
   } finally {
     if (generation === chatGeneration) { chatBusy = false; updateChatControls(); }
   }
 }
+function currentChatThread() {
+  return chatView?.conversations.find(c => c.id === chatSelected);
+}
 function updateChatControls() {
-  $("chatSend").disabled = chatBusy || !!chatPending || !chatSelected;
-  $("chatCreate").disabled = $("chatThreads").disabled = chatBusy || !!chatPending;
+  const blocked = chatBusy || !!chatPending;
+  const thread = currentChatThread();
+  const member = !!thread?.members.includes(chatView?.peer);
+  $("chatSend").disabled = blocked || !member;
+  $("chatCreate").disabled = $("chatThreads").disabled = blocked;
+  $("chatRename").classList.toggle("hidden", !member || thread.members.length < 3);
+  $("chatRename").disabled = blocked;
+  $("chatMessages").querySelectorAll("button").forEach(button => { button.disabled = blocked; });
   $("chatRetry").classList.toggle("hidden", !chatPending);
   $("chatDiscard").classList.toggle("hidden", !chatPending);
   $("chatRetry").disabled = $("chatDiscard").disabled = chatBusy;
@@ -484,28 +579,68 @@ function renderChat() {
   const unread = chatView.conversations.reduce((n,c) => n + c.unread, 0);
   $("chatToggle").textContent = t("Session chat") + (unread ? " (" + unread + ")" : "");
   const select = $("chatThreads");
-  select.replaceChildren(new Option(t("Session chat"), ""));
-  chatView.conversations.forEach(c => select.add(new Option(c.title + (c.unread ? " ("+c.unread+")" : ""), c.id)));
+  const threads = JSON.stringify(chatView.conversations);
+  if (select.dataset.threads !== threads) {
+    select.replaceChildren(new Option(t("Session chat"), ""));
+    chatView.conversations.forEach(c => select.add(new Option(c.title + (c.unread ? " ("+c.unread+")" : ""), c.id)));
+    select.dataset.threads = threads;
+  }
   select.value = chatSelected || "";
-  const names = new Map(chatView.peers.map(p => [p.id, p.id === "gm" ? t("Game Master") : p.name]));
+  const names = new Map(chatView.peers.map(p => [p.id, p.id === "gm" && p.name === "Game Master" ? t("Game Master") : p.name]));
+  const direct = $("chatDirectPeers");
+  const peers = chatView.peers.filter(p => p.id !== chatView.peer)
+    .sort((a,b) => names.get(a.id).localeCompare(names.get(b.id), undefined, { sensitivity: "base" }));
+  const directByPeer = new Map(chatView.conversations
+    .filter(c => c.members.length === 2 && c.members.includes(chatView.peer))
+    .map(c => [c.members.find(id => id !== chatView.peer), c]));
+  const directRows = peers.map(p => [p.id, names.get(p.id), directByPeer.get(p.id)?.id, directByPeer.get(p.id)?.unread]);
+  const rosterKey = JSON.stringify(directRows);
+  if (direct.dataset.roster !== rosterKey) {
+    direct.dataset.roster = rosterKey;
+    direct.replaceChildren(...directRows.map(([peer, name, conversation, unread]) => {
+      const button = document.createElement("button");
+      button.type = "button"; button.className = "btn ghost";
+      button.textContent = name + (unread ? " (" + unread + ")" : "");
+      button.onclick = () => {
+        if (chatBusy || chatPending) return;
+        if (conversation) { chatSelected = conversation; chatRequest(null); return; }
+        chatPending = {id:chatId(), operation:"create", conversation:null, recipients:[peer], title:"", text:""};
+        chatRequest(chatPending);
+      };
+      return button;
+    }));
+  }
   const fingerprint = JSON.stringify(chatView.peers);
   if ($("chatPeers").dataset.peers !== fingerprint) {
     $("chatPeers").replaceChildren(); $("chatPeers").dataset.peers = fingerprint;
-    chatView.peers.filter(p => p.id !== chatView.peer).forEach(p => {
+    peers.forEach(p => {
       const label = document.createElement("label"), box = document.createElement("input");
       box.type = "checkbox"; box.value = p.id;
       label.append(box, document.createTextNode(" "+names.get(p.id))); $("chatPeers").append(label);
     });
   }
-  if (chatView.selected === chatSelected) {
-    const list = $("chatMessages"), atBottom = list.scrollHeight - list.scrollTop - list.clientHeight < 40;
+  const messages = chatView.selected === chatSelected ? chatView.messages : [];
+  const list = $("chatMessages");
+  const history = JSON.stringify([chatSelected, chatView.peer, fingerprint, messages]);
+  if (list.dataset.history !== history) {
+    const scrollTop = list.scrollTop, atBottom = list.scrollHeight - scrollTop - list.clientHeight < 40;
+    list.dataset.history = history;
     list.replaceChildren();
-    chatView.messages.forEach(m => {
+    messages.forEach(m => {
       const p = document.createElement("p");
       p.textContent = new Date(m.at).toLocaleTimeString() + " · " + (names.get(m.sender) || m.sender) + "\n" + m.text;
+      if (m.sender === chatView.peer) {
+        const remove = document.createElement("button");
+        remove.className = "btn";
+        remove.textContent = t("Delete message");
+        remove.onclick = () => {
+          if (confirm(t("Delete this message?"))) submitChatChange("delete-message", "", String(m.sequence));
+        };
+        p.append(document.createElement("br"), remove);
+      }
       list.append(p);
     });
-    if (atBottom) list.scrollTop = list.scrollHeight;
+    list.scrollTop = atBottom ? list.scrollHeight : scrollTop;
   }
   updateChatControls();
 }
@@ -514,6 +649,17 @@ $("chatToggle").onclick = () => {
   if (!$("chatPanel").classList.contains("hidden")) chatRequest(null);
 };
 $("chatThreads").onchange = () => { chatSelected = $("chatThreads").value || null; chatRequest(null); };
+function submitChatChange(operation, title, text) {
+  if (chatBusy || chatPending || !chatSelected) return;
+  chatPending = {id:chatId(), operation, conversation:chatSelected, recipients:[], title, text};
+  chatRequest(chatPending);
+}
+$("chatRename").onclick = () => {
+  const thread = currentChatThread();
+  if (!thread) return;
+  const title = prompt(t("Rename group"), thread.title)?.trim();
+  if (title && title !== thread.title) submitChatChange("rename", title, "");
+};
 $("chatSend").onclick = () => {
   chatPending = {id:chatId(), operation:"send", conversation:chatSelected, recipients:[], title:"", text:$("chatText").value};
   chatRequest(chatPending);
@@ -534,6 +680,7 @@ $("chatDiscard").onclick = () => {
 const TABS = ["Sheet", "Combat", "Magic", "Gear"];
 function render() {
   const d = data;
+  showBattleTurn(d.battleTurn);
   $("name").textContent = d.name;
   $("sub").textContent = [d.race, d.className + (d.subclass ? " (" + d.subclass + ")" : ""),
     t("Level") + " " + d.level, t("XP") + " " + d.xp].filter(Boolean).join(" · ");

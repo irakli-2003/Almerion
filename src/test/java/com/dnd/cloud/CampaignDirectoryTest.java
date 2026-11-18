@@ -10,10 +10,12 @@ import static org.junit.Assert.*;
 public class CampaignDirectoryTest {
     private CampaignDirectory dir;
     private CampaignRecord campaign;
+    private LocalCloudStore store;
 
     @Before
     public void setUp() {
-        dir = new CampaignDirectory(new LocalCloudStore());
+        store = new LocalCloudStore();
+        dir = new CampaignDirectory(store);
         campaign = dir.register("zurabaach", "Zurabaach", "Irakli");
     }
 
@@ -53,6 +55,33 @@ public class CampaignDirectoryTest {
         assertThrows(MembershipException.class, () -> dir.setRole("zurabaach", "coDm", "shako", Role.DM));
         dir.setRole("zurabaach", "Irakli", "shako", Role.DM);
         assertTrue(dir.find("zurabaach").orElseThrow().isDm("shako"));
+    }
+
+    @Test
+    public void targetedInvitationRequiresAcceptanceAndClearsPriorApplication() {
+        String recipient = "Co GM";
+        String code = CampaignDirectory.accountCode(recipient);
+        store.put("profiles/" + CloudKeys.of(recipient), java.util.Map.of("username", recipient, "uid", "recipient"));
+        dir.apply(campaign.joinCode, recipient);
+        dir.invite(campaign.id, "Irakli", code, Role.DM);
+        assertTrue(dir.campaignsOf(recipient).isEmpty());
+        assertEquals(Role.DM, dir.invitationsOf(recipient).getFirst().role());
+        dir.respondToInvitation(campaign.id, recipient, true);
+        assertEquals(Role.DM, dir.campaignsOf(recipient).getFirst().roleOf(recipient));
+        assertTrue(dir.invitationsOf(recipient).isEmpty());
+        assertTrue(dir.pendingApplicationsOf(recipient).isEmpty());
+    }
+
+    @Test
+    public void ownershipTransfersToAnExistingGmWithoutRemovingEitherMembership() {
+        join("coDm", Role.DM);
+        join("player", Role.PLAYER);
+        assertThrows(MembershipException.class, () -> dir.transferOwnership(campaign.id, "Irakli", "player"));
+        var result = dir.transferOwnership(campaign.id, "Irakli", "coDm");
+        assertTrue(result.isAuthor("coDm"));
+        assertTrue(result.isDm("Irakli"));
+        assertEquals("coDm", store.get("joinCodes/" + campaign.joinCode).path("author").asText());
+        assertThrows(MembershipException.class, () -> dir.transferOwnership(campaign.id, "Irakli", "coDm"));
     }
 
     @Test

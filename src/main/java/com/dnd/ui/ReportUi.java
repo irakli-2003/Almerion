@@ -80,11 +80,12 @@ public final class ReportUi {
         Button bug = new Button("\uD83D\uDC1E");
         configureButton(bug);
         bug.setOnAction(e -> show(scene));
-        HBox footer = new HBox(bug);
+        var language = new com.dnd.ui.i18n.LanguagePicker();
+        HBox footer = new HBox(6, language, bug);
         if (scene.getProperties().get(OWNER) instanceof com.dnd.ui.scenes.BaseScene owner) {
             Region spacer = new Region();
             HBox.setHgrow(spacer, Priority.ALWAYS);
-            footer.getChildren().setAll(com.dnd.ui.scenes.OperationHistoryUi.footer(owner, scene), spacer, bug);
+            footer.getChildren().setAll(com.dnd.ui.scenes.OperationHistoryUi.footer(owner, scene), spacer, language, bug);
         }
         footer.setAlignment(Pos.CENTER_RIGHT);
         footer.setPadding(new Insets(2, 8, 2, 8));

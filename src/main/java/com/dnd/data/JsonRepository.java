@@ -150,6 +150,15 @@ public class JsonRepository<T, W> {
         return WRITE_LOCKS.computeIfAbsent(filePath.toAbsolutePath().normalize(), p -> new Object());
     }
 
+    boolean changeCatalogue(java.util.function.Predicate<W> change) {
+        synchronized (writeLock()) {
+            W wrapper = readWrapper();
+            if (!change.test(wrapper)) return false;
+            writeWrapper(wrapper);
+            return true;
+        }
+    }
+
     private void checkUpgradeReceipts(T previous, T replacement) {
         if (!(previous instanceof com.dnd.model.character.PlayerCharacter oldPc)
                 || !(replacement instanceof com.dnd.model.character.PlayerCharacter newPc)

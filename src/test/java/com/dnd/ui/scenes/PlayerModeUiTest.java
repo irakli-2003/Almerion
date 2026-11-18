@@ -54,7 +54,7 @@ public class PlayerModeUiTest {
         Cloud.override(null, oldConfig);
     }
 
-    @Test public void transitionClosesGmWindowsLocksKeysClearsContextAndBlocksGmRoutes() throws Exception {
+    @Test public void transitionHidesAccountKeysAndGmWindowsUntilReturningToGmMode() throws Exception {
         PrivateAccount account = PrivateAccount.finishSetup(new LocalCloudStore(),
             PrivateAccount.prepare("gm", "gm@example.test", "GM", "password"), "password");
         onFx(() -> {
@@ -75,7 +75,7 @@ public class PlayerModeUiTest {
             assertTrue(closeRequested.get());
             assertFalse(notes.isShowing());
             assertFalse(session.isDm());
-            assertFalse(account.isUnlocked());
+            assertTrue(account.isUnlocked());
             assertNull(session.getPrivateAccount());
             assertNull(session.campaignRoot());
             assertNull(session.getActiveEntityId());
@@ -92,6 +92,10 @@ public class PlayerModeUiTest {
             stale.setScene(owner.themedScene(new VBox(new Label("Old GM preview")), 300, 200));
             stale.show();
             assertFalse(stale.isShowing());
+            session.setDm(true);
+            assertSame(account, session.getPrivateAccount());
+            session.setCurrentUser(null);
+            assertFalse(account.isUnlocked());
         });
         account.close();
     }

@@ -180,12 +180,17 @@ public class StorylineService {
 
     /** Creates a new empty text file named {@code name} under {@code parent}. */
     public Path createFile(Path parent, String name) {
+        return createFile(parent, name, List.of());
+    }
+
+    public Path createFile(Path parent, String name, List<PrivateAccount.Identity> editors) {
         Path target = resolveNewChild(parent, name);
         try {
             if (accounts == null) {
+                if (!editors.isEmpty()) throw new IllegalStateException("Private-file keys are required for shared access.");
                 Files.createFile(target);
             } else {
-                String encrypted = PrivateSessionFiles.create(new PrivateSessionFiles.Content("", List.of()), account());
+                String encrypted = PrivateSessionFiles.create(new PrivateSessionFiles.Content("", List.of()), account(), editors);
                 Files.writeString(target, encrypted, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
             }
             return target;
@@ -391,14 +396,36 @@ public class StorylineService {
     }
 
     public void setAccess(Path file, List<PrivateAccount.Identity> recipients, PrivateSessionFiles.Header expected) {
+        Map<PrivateAccount.Identity, PrivateSessionFiles.Access> permissions = new java.util.LinkedHashMap<>();
+        recipients.forEach(identity -> permissions.put(identity, PrivateSessionFiles.Access.WRITE));
+        setAccess(file, permissions, expected);
+    }
+
+    public void setAccess(Path file, Map<PrivateAccount.Identity, PrivateSessionFiles.Access> recipients,
+                          PrivateSessionFiles.Header expected) {
+        updateAccess(file, recipients, expected, false);
+    }
+
+    public void replaceAccess(Path file, Map<PrivateAccount.Identity, PrivateSessionFiles.Access> recipients,
+                              PrivateSessionFiles.Header expected) {
+        updateAccess(file, recipients, expected, true);
+    }
+
+    private void updateAccess(Path file, Map<PrivateAccount.Identity, PrivateSessionFiles.Access> recipients,
+                              PrivateSessionFiles.Header expected, boolean replaceOwners) {
         synchronized (SESSION_WRITES) {
             String current = raw(file);
             if (!PrivateSessionFiles.parse(current).header().equals(expected)) {
                 throw new IllegalStateException("Session-file permissions changed elsewhere. Review access again.");
             }
-            String encrypted = PrivateSessionFiles.grant(current, account(), recipients);
+            String encrypted = replaceOwners ? PrivateSessionFiles.replaceAccess(current, account(), recipients)
+                : PrivateSessionFiles.grant(current, account(), recipients);
             atomicWrite(file, encrypted);
         }
+    }
+
+    public PrivateSessionFiles.Header verifiedPermissions(Path file) {
+        return PrivateSessionFiles.verified(raw(file), account()).header();
     }
 
     public Path findPrivateFile(String fileId) {

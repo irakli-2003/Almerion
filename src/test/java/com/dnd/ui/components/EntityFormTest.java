@@ -334,6 +334,39 @@ public class EntityFormTest {
         return null;
     }
 
+    @Test public void savedCharacterRowsHaveHoverDescriptionsWithoutOpeningThePicker() throws Exception {
+        var repos = new CampaignRepositories(Files.createTempDirectory("dnd-saved-sheet-hover"));
+        var spell = new com.dnd.model.magic.Spell();
+        spell.setId("light"); spell.setName("Light"); spell.setDescription("Shines for one hour.");
+        var item = new com.dnd.model.item.crafting.Fuel();
+        item.setId("coal"); item.setName("Coal"); item.setDescription("Burns in a workshop furnace.");
+        var pc = new PlayerCharacter();
+        var known = new PlayerCharacter.PlayerSpell(); known.setSpellId("light");
+        var carried = new PlayerCharacter.PlayerItem(); carried.setItemId("coal");
+        pc.setSpells(List.of(known)); pc.setItems(List.of(carried));
+        onFxThread(() -> {
+            var form = EntityForm.of(PlayerCharacter.class, pc, Set.of(), Map.of(
+                "spellId", List.of(new EntityForm.Ref("light", "Light", spell)),
+                "itemId", List.of(new EntityForm.Ref("coal", "Coal", item)),
+                "_repositories", List.of(new EntityForm.Ref("repositories", "repositories", repos))));
+            assertSavedDescription(form, "light", "Shines for one hour.");
+            assertSavedDescription(form, "coal", "Burns in a workshop furnace.");
+        });
+    }
+
+    private static void assertSavedDescription(EntityForm form, String id, String description) {
+        var picker = (javafx.scene.control.Button) findPickerWithOption(form.getNode(), id);
+        assertNotNull(picker);
+        assertNotNull(picker.getTooltip());
+        var row = (javafx.scene.layout.HBox) picker.getParent();
+        var preview = (javafx.scene.control.Label) row.getChildren().get(1);
+        assertTrue(preview.isVisible());
+        assertNotNull(preview.getTooltip());
+        var graphic = (javafx.scene.layout.VBox) preview.getTooltip().getGraphic();
+        assertTrue(graphic.getChildren().stream().anyMatch(n -> n instanceof javafx.scene.text.Text text
+            && text.getText().contains(description)));
+    }
+
     @Test public void searchedSpellRowsHaveFullHoverDescriptions() throws Exception {
         var repos = new CampaignRepositories(Files.createTempDirectory("dnd-spell-hover"));
         var spell = new com.dnd.model.magic.Spell();
@@ -352,6 +385,11 @@ public class EntityFormTest {
                 root.applyCss(); root.layout();
                 var button = form.getNode().lookupAll(".button").stream()
                     .filter(n -> SearchPicker.options(n) != null).map(n -> (javafx.scene.control.Button) n).findFirst().orElseThrow();
+                var selectedRef = (EntityForm.Ref) SearchPicker.options(button).getFirst();
+                SearchPicker.choose(button, selectedRef);
+                assertNotNull("The selected spell also has a description on hover", button.getTooltip());
+                SearchPicker.choose(button, null);
+                assertTrue("Clearing the selection removes its old description", button.getTooltip() == null);
                 button.fire();
                 var popup = javafx.stage.Window.getWindows().stream().filter(w -> w instanceof javafx.stage.Popup)
                     .map(w -> (javafx.stage.Popup) w).findFirst().orElseThrow();

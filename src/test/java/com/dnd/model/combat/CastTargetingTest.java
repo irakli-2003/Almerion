@@ -1,6 +1,7 @@
 package com.dnd.model.combat;
 
 import com.dnd.model.creature.Monster;
+import com.dnd.model.magic.Spell;
 import com.dnd.model.world.map.CombatState;
 import com.dnd.model.world.map.MonsterToken;
 import com.dnd.model.world.map.TokenSupport;
@@ -75,6 +76,28 @@ public class CastTargetingTest {
         Ability touch = ability("claw", 0, 0);
         touch.setDamage(new Damage(new ArrayList<>(List.of(new DiceRoll("d6", 1))), "slashing"));
         assertEquals(CastResolver.Targeting.SINGLE, castable(touch).getTargeting());
+    }
+
+    @Test
+    public void areaTargetPolicyPreservesLegacyDefaultsAndWorksWithUpcastSpells() {
+        Spell spell = new Spell();
+        spell.setId("prayer-of-healing");
+        spell.setRange(30);
+        spell.setRadius(30);
+        var healing = CastResolver.of(spell).onCharge(3);
+        assertTrue(healing.choosesAreaTargets());
+        assertTrue(healing.initiallySelectsAreaTarget(true));
+        assertFalse(healing.initiallySelectsAreaTarget(false));
+
+        spell.setAreaTargets(Spell.AreaTargets.CHOOSE_ENEMIES_FIRST);
+        var offensive = CastResolver.of(spell);
+        assertTrue(offensive.choosesAreaTargets());
+        assertFalse(offensive.initiallySelectsAreaTarget(true));
+        assertTrue(offensive.initiallySelectsAreaTarget(false));
+
+        spell.setId("fireball");
+        spell.setAreaTargets(null);
+        assertFalse(CastResolver.of(spell).choosesAreaTargets());
     }
 
     @Test

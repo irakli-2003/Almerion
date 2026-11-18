@@ -1,7 +1,6 @@
 package com.dnd.ui.scenes;
 
 import com.dnd.chat.SessionChat;
-import com.dnd.data.SessionSnapshot;
 import com.dnd.model.character.UpgradeRequests;
 import com.dnd.model.character.UpgradeRequests.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -118,12 +117,17 @@ public final class UpgradeRequestsUi {
         retry.setVisible(false);
         retry.setManaged(false);
         retry.setOnAction(e -> execute(pending, pendingDone));
-        Button check = owner.btn("Check request status", () -> {
+        Button check = owner.btn("Reload after connection error", () -> {
             if (busy) return;
             pending = null; pendingDone = null;
             retry.setVisible(false); retry.setManaged(false);
             refresh();
         });
+        check.visibleProperty().bind(retry.visibleProperty());
+        check.managedProperty().bind(check.visibleProperty());
+        retry.getStyleClass().add("dnd-button");
+        retry.setTooltip(new Tooltip("Resend the same request without applying it twice."));
+        check.setTooltip(new Tooltip("Check whether the last action succeeded without resending it."));
         VBox root = new VBox(12, body, error, retry, check);
         root.setPadding(new Insets(18));
         ScrollPane scroll = new ScrollPane(root);
@@ -164,6 +168,8 @@ public final class UpgradeRequestsUi {
                 body.getChildren().add(details);
                 if (owner.uiSession.isDm() && request.status().equals("pending")) {
                     body.getChildren().add(new HBox(10,
+                        owner.btn("Accept request", () -> execute(command("upgrade-accept", request.id(), request.submitted()),
+                            ignored -> refresh())),
                         owner.btn("Review & edit", () -> loadWizard(request, request.submitted())),
                         owner.btn("Decline", () -> execute(command("upgrade-decline", request.id(), null), ignored -> refresh()))));
                 }
@@ -269,7 +275,7 @@ public final class UpgradeRequestsUi {
         owner.background(() -> {
             SessionChat.View view = connection.execute(command);
             if (command.operation().equals("upgrade-accept")) {
-                if (sync != null && sync.isHost()) sync.push(SessionSnapshot.capture(campaign, campaignName));
+                if (sync != null && sync.isHost()) sync.pushCampaign(campaign, campaignName);
             }
             return view;
         }, view -> {

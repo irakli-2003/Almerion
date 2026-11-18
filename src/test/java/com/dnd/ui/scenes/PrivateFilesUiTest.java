@@ -4,7 +4,11 @@ import com.dnd.auth.User;
 import com.dnd.cli.core.CampaignContext;
 import com.dnd.cli.core.CliSession;
 import com.dnd.cli.storage.CampaignStorage;
+import com.dnd.cloud.CampaignDirectory;
+import com.dnd.cloud.CampaignRecord;
 import com.dnd.cloud.CampaignMeta;
+import com.dnd.cloud.Cloud;
+import com.dnd.cloud.CloudKeys;
 import com.dnd.cloud.LocalCloudStore;
 import com.dnd.data.StorylineService;
 import com.dnd.security.PrivateAccount;
@@ -22,6 +26,8 @@ import org.junit.rules.TemporaryFolder;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -38,6 +44,48 @@ public class PrivateFilesUiTest {
         Runnable start = () -> { Platform.setImplicitExit(false); ready.countDown(); };
         try { Platform.startup(start); } catch (IllegalStateException running) { Platform.runLater(start); }
         assertTrue(ready.await(20, TimeUnit.SECONDS));
+    }
+
+    @Test public void newSessionGrantsOnlyReadyCampaignGmsAndReportsMissingGms() throws Exception {
+        var directoryStore = new LocalCloudStore();
+        var identities = new LocalCloudStore();
+        var oldConfig = Cloud.config();
+        var campaign = temp.newFolder("new-session").toPath();
+        String id = CampaignMeta.ensureId(campaign);
+        new CampaignDirectory(directoryStore).register(id, "Campaign", "Creator");
+        seedMember(directoryStore, id, "Co-GM", "co-gm", "cogm@example.test", CampaignRecord.Role.DM);
+        seedMember(directoryStore, id, "Not ready", "not-ready", "waiting@example.test", CampaignRecord.Role.DM);
+        seedMember(directoryStore, id, "Player", "player", "player@example.test", CampaignRecord.Role.PLAYER);
+        directoryStore.put("profiles/" + CloudKeys.of("Creator"),
+            Map.of("uid", "creator", "username", "Creator", "email", "creator@example.test"));
+        try (var creator = privateAccount(identities, "creator", "creator@example.test");
+             var coGm = privateAccount(identities, "co-gm", "cogm@example.test");
+             var player = privateAccount(identities, "player", "player@example.test")) {
+            Cloud.override(directoryStore, oldConfig);
+            var defaults = PrivateFilesUi.newSessionAccess(campaign, "Creator", creator);
+            assertEquals(List.of(coGm.identity()), defaults.editors());
+            assertEquals(List.of("Not ready"), defaults.missing());
+            var creatorFiles = new StorylineService(campaign, () -> creator);
+            creatorFiles.ensureRoot();
+            var file = creatorFiles.createFile(creatorFiles.getRoot(), "new.txt", defaults.editors());
+            assertEquals(creator.uid(), creatorFiles.permissions(file).ownerUid());
+            new StorylineService(campaign, () -> coGm).writeText(file, "Co-GM edit");
+            assertEquals("Co-GM edit", creatorFiles.readText(file));
+            assertThrows(SecurityException.class, () -> new StorylineService(campaign, () -> player).readText(file));
+        } finally {
+            Cloud.override(null, oldConfig);
+        }
+    }
+
+    private static void seedMember(LocalCloudStore store, String campaign, String name, String uid, String email,
+                                   CampaignRecord.Role role) {
+        String key = CloudKeys.of(name);
+        store.put("campaigns/" + campaign + "/members/" + key, new CampaignRecord.Member(name, role));
+        store.put("profiles/" + key, Map.of("uid", uid, "username", name, "email", email));
+    }
+
+    private static PrivateAccount privateAccount(LocalCloudStore identities, String uid, String email) {
+        return PrivateAccount.finishSetup(identities, PrivateAccount.prepare(uid, email, uid, "password"), "password");
     }
 
     @Test public void storyPanelRequestsAndOwnerInboxDeniesWithoutOpeningPrivateContent() throws Exception {
@@ -72,9 +120,9 @@ public class PrivateFilesUiTest {
                 Parent root = stage.getScene().getRoot();
                 root.applyCss();
                 root.layout();
-                assertNotNull(button(root, "Unlock private files"));
-                assertNotNull(button(root, "Lock private files"));
-                Button access = button(root, "Session-file access");
+                assertNull(button(root, "Unlock private files"));
+                assertNull(button(root, "Lock private files"));
+                Button access = button(root, "Manage access");
                 assertTrue(access.isDisabled());
                 TreeView<?> tree = (TreeView<?>) root.lookup(".tree-view");
                 selectFirstChild(tree);
@@ -86,7 +134,8 @@ public class PrivateFilesUiTest {
                 assertEquals(encrypted, Files.readString(privateFile));
 
                 user(session, owner);
-                button(root, "Notifications").fire();
+                assertNull(button(root, "Notifications"));
+                PrivateFilesUi.notifications(scene);
                 Stage inbox = Window.getWindows().stream().filter(window -> window instanceof Stage s
                     && "Notifications".equals(s.getTitle())).map(window -> (Stage) window).findFirst().orElseThrow();
                 Parent inboxRoot = inbox.getScene().getRoot();
@@ -101,7 +150,7 @@ public class PrivateFilesUiTest {
                     .map(node -> ((javafx.scene.control.Label) node).getText())
                     .anyMatch(text -> text != null && text.contains("hidden villain")));
                 inbox.close();
-                button(root, "Lock private files").fire();
+                session.setCurrentUser(null);
                 assertNull(session.getPrivateAccount());
                 assertFalse(owner.isUnlocked());
             } finally {
@@ -623,7 +672,9 @@ public class PrivateFilesUiTest {
         CampaignStorage storage = new CampaignStorage(temp.getRoot().toPath());
         CliSession cli = new CliSession(storage, null);
         cli.setCampaignContext(new CampaignContext("Test campaign", campaign));
-        return new UiSession(cli, storage, stage);
+        UiSession session = new UiSession(cli, storage, stage);
+        session.setDm(true);
+        return session;
     }
 
     private static void user(UiSession session, PrivateAccount account) {

@@ -7,6 +7,8 @@ import com.dnd.ui.i18n.UiTranslator;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.GridPane;
+import com.dnd.security.PrivateSessionFiles.Access;
 import javafx.stage.Stage;
 
 import java.nio.file.Path;
@@ -30,12 +32,16 @@ final class PrivateFilesUi {
             owner.showInfo("Private files", "Sign in with your own verified account first.");
             return;
         }
+        if (owner.uiSession.getCurrentUser().getProviderUid() != null) {
+            owner.showInfo("Private files",
+                "Private-file keys are loaded at sign-in. If they are unavailable, sign out and sign in again online.");
+            return;
+        }
         unlockDialog(owner).showAndWait().ifPresent(request -> {
-            String password = request.password();
             if (request.verifyEmail()) {
                 var user = owner.uiSession.getCurrentUser();
                 owner.background(() -> {
-                    FirebasePrivateStore.sendVerification(Cloud.config(), user, password);
+                    FirebasePrivateStore.sendVerification(Cloud.config(), user, request.password());
                     return true;
                 }, ignored -> owner.showInfo("Verify your Firebase email",
                     "Open the verification link in your email, then choose Unlock private files again with the same password."
@@ -43,18 +49,43 @@ final class PrivateFilesUi {
                     error -> owner.showError("Could not send Firebase verification email", error));
                 return;
             }
-            owner.background(() -> prepare(owner, password), prepared -> {
+            openAccount(owner, request.password(), action);
+        });
+    }
+
+    static void openAtSignIn(BaseScene owner, String password, Runnable done) {
+        var user = owner.uiSession.getCurrentUser();
+        if (user == null || user.getProviderUid() == null) {
+            done.run();
+            return;
+        }
+        openAccount(owner, password, done, done);
+    }
+
+    private static void openAccount(BaseScene owner, String password, Runnable action) {
+        openAccount(owner, password, action, () -> {});
+    }
+
+    private static void openAccount(BaseScene owner, String password, Runnable action, Runnable unavailable) {
+            var user = owner.uiSession.getCurrentUser();
+            owner.background(() -> prepare(user, password), prepared -> {
+                if (owner.uiSession.getCurrentUser() != user) {
+                    if (prepared.account() != null) prepared.account().close();
+                    else if (prepared.store() != null) prepared.store().close();
+                    return;
+                }
                 if (prepared.account() != null) {
-                    finish(owner, prepared.account(), prepared.vault(), action);
+                    finish(owner, user, prepared.account(), prepared.vault(), action, unavailable);
                 } else if (prepared.setup() != null) {
                     if (!saveRecovery(owner, prepared.setup().recoveryKey())) {
                         prepared.store().close();
+                        unavailable.run();
                         return;
                     }
                     owner.background(() -> PrivateAccount.finishSetup(prepared.store(), prepared.setup(), password),
-                        account -> finish(owner, account, prepared.setup().vault(), action), error -> {
+                        account -> finish(owner, user, account, prepared.setup().vault(), action, unavailable), error -> {
                             prepared.store().close();
-                            owner.showError("Could not create private-file keys", error);
+                            privateAccountError(owner, user, "Could not create private-file keys", error, unavailable);
                         });
                 } else {
                     password(owner, "Recover private-file keys",
@@ -64,14 +95,23 @@ final class PrivateFilesUi {
                                 prepared.vault(), recovery, password);
                             return new Prepared(prepared.store(), PrivateAccount.load(prepared.store(), recovered.uid()),
                                 null, recovered);
-                        }, result -> finish(owner, result.account(), result.vault(), action),
+                        }, result -> finish(owner, user, result.account(), result.vault(), action, unavailable),
                             error -> {
                                 prepared.store().close();
-                                owner.showError("Could not recover private-file keys", error);
-                            }), prepared.store()::close);
+                                privateAccountError(owner, user, "Could not recover private-file keys", error, unavailable);
+                            }), () -> {
+                                prepared.store().close();
+                                unavailable.run();
+                            });
                 }
-            }, error -> owner.showError("Could not unlock private files", error));
-        });
+            }, error -> privateAccountError(owner, user, "Could not load private-file keys", error, unavailable));
+    }
+
+    private static void privateAccountError(BaseScene owner, com.dnd.auth.User user, String title,
+                                            Throwable error, Runnable unavailable) {
+        if (owner.uiSession.getCurrentUser() != user) return;
+        owner.showError(title, error);
+        unavailable.run();
     }
 
     static Dialog<UnlockRequest> unlockDialog(BaseScene owner) {
@@ -91,8 +131,7 @@ final class PrivateFilesUi {
         return dialog;
     }
 
-    private static Prepared prepare(BaseScene owner, String password) {
-        var user = owner.uiSession.getCurrentUser();
+    private static Prepared prepare(com.dnd.auth.User user, String password) {
         if (Cloud.isOffline()) {
             if (user.getProviderUid() == null) {
                 throw new SecurityException("Sign in online and unlock private files on this device first.");
@@ -122,22 +161,27 @@ final class PrivateFilesUi {
         return com.dnd.data.AppHome.resolve("data", "auth", "private-account-cache");
     }
 
-    private static void finish(BaseScene owner, PrivateAccount account, PrivateAccount.Vault vault, Runnable action) {
+    private static void finish(BaseScene owner, com.dnd.auth.User user, PrivateAccount account,
+                               PrivateAccount.Vault vault, Runnable action, Runnable unavailable) {
         owner.background(() -> {
             var identities = account.identities();
             if (vault != null) OfflinePrivateAccounts.save(offlineCache(), vault, identities);
             return identities;
         }, ignored -> {
+            if (owner.uiSession.getCurrentUser() != user) {
+                account.close();
+                return;
+            }
             try {
                 owner.uiSession.setPrivateAccount(account);
                 runAction(owner, action);
             } catch (RuntimeException error) {
                 account.close();
-                owner.showError("Could not unlock private files", error);
+                privateAccountError(owner, user, "Could not load private-file keys", error, unavailable);
             }
         }, error -> {
             account.close();
-            owner.showError("Could not load private-file identities", error);
+            privateAccountError(owner, user, "Could not load private-file identities", error, unavailable);
         });
     }
 
@@ -179,6 +223,47 @@ final class PrivateFilesUi {
         return dialog.showAndWait().orElse(false);
     }
 
+    record NewSessionAccess(List<PrivateAccount.Identity> editors, List<String> missing, boolean offline) {
+        NewSessionAccess {
+            editors = List.copyOf(editors);
+            missing = List.copyOf(missing);
+        }
+    }
+
+    static NewSessionAccess newSessionAccess(Path campaignRoot, String username, PrivateAccount account) {
+        String id = CampaignMeta.idOf(campaignRoot).orElse(null);
+        if (id == null) return new NewSessionAccess(List.of(), List.of(), false);
+        if (Cloud.isOffline()) return new NewSessionAccess(List.of(), List.of(), true);
+        CampaignDirectory directory = CampaignDirectory.shared();
+        boolean registered = directory.isRegistered(id);
+        if (Cloud.isOffline()) return new NewSessionAccess(List.of(), List.of(), true);
+        if (!registered) return new NewSessionAccess(List.of(), List.of(), false);
+        CampaignRecord campaign = directory.findForMember(id, username).filter(record -> record.isDm(username))
+            .orElseThrow(() -> new SecurityException("Only campaign GMs can manage session files."));
+        CloudProfiles profiles = new CloudProfiles(Cloud.store());
+        var creator = profiles.find(username).orElseThrow(() -> new SecurityException("Cannot verify the file creator."));
+        if (!account.uid().equals(creator.getProviderUid()) || !account.identity().email().equalsIgnoreCase(creator.getEmail())) {
+            throw new SecurityException("The private-file account does not match the signed-in campaign GM.");
+        }
+        Map<String, PrivateAccount.Identity> identities = new HashMap<>();
+        List<PrivateAccount.Identity> editors = new ArrayList<>();
+        List<String> missing = new ArrayList<>();
+        var coGms = campaign.members.values().stream()
+            .filter(member -> member.role == CampaignRecord.Role.DM
+                && !CloudKeys.of(member.username).equals(CloudKeys.of(username)))
+            .sorted(Comparator.comparing(member -> member.username, String.CASE_INSENSITIVE_ORDER))
+            .toList();
+        if (!coGms.isEmpty()) account.identities().forEach(identity -> identities.put(identity.uid(), identity));
+        for (var member : coGms) {
+            var profile = profiles.find(member.username).orElse(null);
+            var identity = profile == null ? null : identities.get(profile.getProviderUid());
+            if (identity == null || !identity.email().equalsIgnoreCase(profile.getEmail())) missing.add(member.username);
+            else editors.add(identity);
+        }
+        if (Cloud.isOffline()) return new NewSessionAccess(List.of(), List.of(), true);
+        return new NewSessionAccess(editors, missing, false);
+    }
+
     static void access(BaseScene owner, StorylineService service, Path file, Runnable changed) {
         unlocked(owner, () -> {
             if (!service.isPrivate(file)) {
@@ -193,44 +278,76 @@ final class PrivateFilesUi {
                 }
                 return;
             }
-            var header = service.permissions(file);
             PrivateAccount account = owner.uiSession.getPrivateAccount();
-            if (!account.uid().equals(header.ownerUid())) {
+            var header = service.verifiedPermissions(file);
+            if (!header.owners().contains(account.uid())) {
                 if (header.grants().containsKey(account.uid())) {
-                    owner.showInfo("Session-file access", "You can read and edit this file. Only its owner can manage access, move, or delete it.");
+                    owner.showInfo("Session-file access", header.access(account.uid()) == Access.READ
+                        ? "You have read-only access to this file."
+                        : "You can read and edit this file. Only its owner can manage access, move, or delete it.");
                 } else {
                     request(owner, service, file);
                 }
                 return;
             }
             owner.background(() -> gmIdentities(owner, account), identities -> {
-                Dialog<List<PrivateAccount.Identity>> dialog = new Dialog<>();
+                Dialog<Map<PrivateAccount.Identity, Access>> dialog = new Dialog<>();
                 dialog.setTitle("Session-file access");
-                dialog.setHeaderText("Only selected GMs may read and edit this file. Removing access protects future versions,"
-                    + " not copies already read. Verify each GM's email with them before granting access."
-                    + " Only you can manage access, move, or delete it.");
-                VBox choices = new VBox(8);
-                Map<PrivateAccount.Identity, CheckBox> selected = new LinkedHashMap<>();
-                for (PrivateAccount.Identity identity : identities) {
-                    if (identity.uid().equals(account.uid())) continue;
-                    CheckBox choice = owner.checkBox(identity.toString());
-                    UiTranslator.skip(choice);
-                    choice.setSelected(header.grants().containsKey(identity.uid()));
-                    choices.getChildren().add(choice);
-                    selected.put(identity, choice);
+                dialog.setHeaderText("Owners can change access, move, or delete the file. At least one owner must remain."
+                    + " Removing access does not erase existing copies.");
+                GridPane choices = new GridPane();
+                choices.setHgap(16);
+                choices.setVgap(8);
+                choices.addRow(0, owner.body("Account"), owner.body("Read"), owner.body("Write"), owner.body("Owner"));
+                record Selection(CheckBox read, CheckBox write, CheckBox owns) { }
+                Map<PrivateAccount.Identity, Selection> selected = new LinkedHashMap<>();
+                int row = 1;
+                var displayed = new LinkedHashMap<String, PrivateAccount.Identity>();
+                displayed.put(account.uid(), account.identity());
+                identities.forEach(identity -> displayed.putIfAbsent(identity.uid(), identity));
+                for (PrivateAccount.Identity identity : displayed.values()) {
+                    CheckBox read = owner.checkBox("");
+                    CheckBox write = owner.checkBox("");
+                    CheckBox owns = owner.checkBox("");
+                    read.setSelected(header.access(identity.uid()) != null);
+                    owns.setSelected(header.owners().contains(identity.uid()));
+                    write.setSelected(owns.isSelected() || header.access(identity.uid()) == Access.WRITE);
+                    read.setAccessibleText(UiTranslator.text("Read") + " " + identity);
+                    write.setAccessibleText(UiTranslator.text("Write") + " " + identity);
+                    owns.setAccessibleText(UiTranslator.text("Owner") + " " + identity);
+                    read.disableProperty().bind(owns.selectedProperty());
+                    write.disableProperty().bind(owns.selectedProperty().or(read.selectedProperty().not()));
+                    read.selectedProperty().addListener((o, old, enabled) -> { if (!enabled) write.setSelected(false); });
+                    owns.selectedProperty().addListener((o, old, enabled) -> {
+                        if (enabled) { read.setSelected(true); write.setSelected(true); }
+                    });
+                    choices.addRow(row++, UiTranslator.skip(owner.body(identity.toString())), read, write, owns);
+                    selected.put(identity, new Selection(read, write, owns));
                 }
-                if (choices.getChildren().isEmpty()) choices.getChildren().add(owner.body(
-                    "Other campaign GMs must enable their private-file account before they can receive access."));
+                if (selected.size() == 1) choices.add(owner.body(
+                    "Other campaign GMs must enable their private-file account before they can receive access."), 0, row, 4, 1);
                 ScrollPane scroll = new ScrollPane(choices);
                 scroll.setFitToWidth(true);
                 scroll.setPrefViewportHeight(240);
                 dialog.getDialogPane().setContent(scroll);
                 dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-                dialog.setResultConverter(button -> button == ButtonType.OK
-                    ? selected.entrySet().stream().filter(entry -> entry.getValue().isSelected()).map(Map.Entry::getKey).toList() : null);
+                var apply = dialog.getDialogPane().lookupButton(ButtonType.OK);
+                Runnable updateApply = () -> apply.setDisable(selected.values().stream().noneMatch(choice -> choice.owns().isSelected()));
+                selected.values().forEach(choice -> choice.owns().selectedProperty().addListener((o, old, value) -> updateApply.run()));
+                updateApply.run();
+                dialog.setResultConverter(button -> {
+                    if (button != ButtonType.OK) return null;
+                    Map<PrivateAccount.Identity, Access> grants = new LinkedHashMap<>();
+                    selected.forEach((identity, choice) -> {
+                        if (choice.read().isSelected()) grants.put(identity, choice.owns().isSelected() ? Access.OWNER
+                            : choice.write().isSelected() ? Access.WRITE : Access.READ);
+                    });
+                    return grants;
+                });
                 owner.styleDialog(dialog);
                 dialog.showAndWait().ifPresent(recipients -> owner.background(() -> {
-                    service.setAccess(file, recipients, header);
+                    if (owner.uiSession.getPrivateAccount() != account) throw new IllegalStateException("The private-file account changed.");
+                    service.replaceAccess(file, recipients, header);
                     return true;
                 }, ignored -> changed.run(), error -> owner.showError("Could not change session-file access", error)));
             }, error -> owner.showError("Could not load campaign GMs", error));
@@ -258,10 +375,11 @@ final class PrivateFilesUi {
 
     static void request(BaseScene owner, StorylineService service, Path file) {
         unlocked(owner, () -> {
-            var header = service.permissions(file);
             PrivateAccount account = owner.uiSession.getPrivateAccount();
             owner.background(() -> {
-                account.requestAccess(header.ownerUid(), header.fileId(), campaignId(owner), file.getFileName().toString());
+                var policy = service.verifiedPermissions(file);
+                String recipient = policy.owners().contains(policy.ownerUid()) ? policy.ownerUid() : policy.owners().iterator().next();
+                account.requestAccess(recipient, policy.fileId(), campaignId(owner), file.getFileName().toString());
                 return true;
             }, ignored -> owner.showInfo("Access requested", "The session-file owner will see your request in Notifications."
                 + " After approval, sync the campaign again to receive the updated encrypted file."),
@@ -324,7 +442,7 @@ final class PrivateFilesUi {
             StorylineService service = new StorylineService(owner.uiSession.campaignRoot(), owner.uiSession::getPrivateAccount);
             Path file = service.findPrivateFile(request.fileId());
             if (file == null) throw new IllegalStateException("Sync this campaign first; the requested file is not on this device.");
-            if (!service.permissions(file).ownerUid().equals(account.uid())) {
+            if (!service.verifiedPermissions(file).owners().contains(account.uid())) {
                 throw new SecurityException("You are not the owner of the requested file.");
             }
             PrivateAccount.Identity requester = gmIdentities(owner, account).stream()
@@ -337,10 +455,11 @@ final class PrivateFilesUi {
             owner.styleDialog(confirm);
             if (confirm.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) return;
             owner.background(() -> {
-                List<PrivateAccount.Identity> recipients = new ArrayList<>();
-                for (String uid : approval.service().permissions(approval.file()).grants().keySet()) recipients.add(account.identity(uid));
-                recipients.add(approval.requester());
-                approval.service().setAccess(approval.file(), recipients);
+                var header = approval.service().permissions(approval.file());
+                Map<PrivateAccount.Identity, Access> recipients = new LinkedHashMap<>();
+                for (String uid : header.grants().keySet()) recipients.put(account.identity(uid), header.access(uid));
+                recipients.put(approval.requester(), Access.WRITE);
+                approval.service().setAccess(approval.file(), recipients, header);
                 account.answer(request, true);
                 return true;
             }, ignored -> changed.run(), error -> owner.showError("Could not approve access. Check the file before retrying.", error));

@@ -1,7 +1,6 @@
 package com.dnd.ui.scenes;
 
 import com.dnd.data.CampaignRepositories;
-import com.dnd.data.SessionSnapshot;
 import com.dnd.lan.LanSessionServer;
 import com.dnd.model.character.PlayerCharacter;
 import com.dnd.security.FirebaseSessionSync;
@@ -46,7 +45,18 @@ public class OnlineSessionScene extends BaseScene {
         } else {
             buildStartView(internet);
         }
-        content.getChildren().addAll(lan, internet);
+        VBox members = section("Campaign membership");
+        var context = uiSession.getSession().getCampaignContext();
+        String username = chatHostName();
+        Button manage = btn("Manage members", () -> {
+            if (context != null && username != null) MembersWindow.open(this, context.getPath(), username);
+        });
+        manage.setDisable(context == null || username == null);
+        members.getChildren().addAll(
+            body("Invite by account code or manage existing members. Membership stays after the session ends. "
+                + "Members can join an internet session from Player → My Campaigns."),
+            manage);
+        content.getChildren().addAll(lan, internet, members);
 
         ScrollPane scroll = new ScrollPane(content);
         scroll.setFitToWidth(true);
@@ -82,7 +92,7 @@ public class OnlineSessionScene extends BaseScene {
                 btn("Start local session", () -> {
                     if (context == null) { error.setText("No campaign selected."); return; }
                     try {
-                        LanSessionServer.startShared(context.getPath(), context.getName(), UiTranslator::text);
+                        LanSessionServer.startShared(context.getPath(), context.getName(), UiTranslator::text, chatHostName());
                     } catch (IOException e) {
                         error.setText("Could not start the local session: " + e.getMessage());
                         return;
@@ -90,25 +100,19 @@ public class OnlineSessionScene extends BaseScene {
                     uiSession.getRouter().goTo(SceneType.DM_ONLINE_SESSION);
                 }));
         } else {
-            Label live = body("● Running. Players open one of these addresses in their browser:");
+            Label live = body("● Local session running");
             live.setStyle("-fx-text-fill: #80ff80;");
             VBox addresses = new VBox(6);
-            for (String url : server.addresses()) {
-                TextField field = new TextField(url);
-                field.setEditable(false);
-                field.getStyleClass().add("dnd-text-field");
-                field.setPrefColumnCount(28);
-                Button copy = btn("Copy", () -> {
-                    ClipboardContent clip = new ClipboardContent();
-                    clip.putString(url);
-                    Clipboard.getSystemClipboard().setContent(clip);
-                });
-                HBox row = new HBox(8, UiTranslator.skip(field), copy);
-                row.setAlignment(Pos.CENTER_LEFT);
-                addresses.getChildren().add(row);
-            }
-            content.getChildren().addAll(live, addresses,
-                body("If Windows asks, allow Almerion on private networks, or players won't be able to connect."),
+            fillJoinAddresses(addresses, server);
+            content.getChildren().addAll(live,
+                body("Share the link for the host adapter connected to the same network as your players."), addresses,
+                new FlowPane(8, 8, btn("Refresh network links", () -> fillJoinAddresses(addresses, server)),
+                    btn("Open host preview", () -> openHostPreview(server))),
+                body("The host preview only tests this computer. If it opens but phones time out, check that everyone "
+                    + "is on the same trusted network, not guest Wi-Fi or a VPN, and allow Almerion through Windows "
+                    + "Firewall on private networks."),
+                body("These links use HTTP. If a browser changes the address to HTTPS, re-enter the full http:// link. "
+                    + "Use local hosting only on a trusted network."),
                 sectionLabel("Character passwords"),
                 body("Each player picks their character and types its password. A character without a password can't be opened."));
             CampaignRepositories repos = new CampaignRepositories(context.getPath());
@@ -118,6 +122,47 @@ public class OnlineSessionScene extends BaseScene {
                 LanSessionServer.stopShared();
                 uiSession.getRouter().goTo(SceneType.DM_ONLINE_SESSION);
             }));
+        }
+    }
+
+    private void fillJoinAddresses(VBox addresses, LanSessionServer server) {
+        addresses.getChildren().clear();
+        List<LanSessionServer.JoinAddress> links;
+        try {
+            links = server.joinAddresses();
+        } catch (IOException e) {
+            addresses.getChildren().add(body("Could not read the network adapters. Refresh network links to retry."));
+            return;
+        }
+        if (links.isEmpty()) {
+            addresses.getChildren().add(body("No shareable IPv4 link found. Connect the host to Wi-Fi or Ethernet and refresh."));
+        }
+        for (var link : links) {
+            TextField field = new TextField(link.url());
+            field.setEditable(false);
+            field.getStyleClass().add("dnd-text-field");
+            field.setPrefColumnCount(28);
+            field.setMinWidth(0);
+            HBox.setHgrow(field, Priority.ALWAYS);
+            Button copy = btn("Copy", () -> {
+                ClipboardContent clip = new ClipboardContent();
+                clip.putString(link.url());
+                if (!Clipboard.getSystemClipboard().setContent(clip)) {
+                    showInfo("Could not copy the link", "Select and copy the address from the text field.");
+                }
+            });
+            HBox row = new HBox(8, UiTranslator.skip(field), copy);
+            row.setAlignment(Pos.CENTER_LEFT);
+            addresses.getChildren().add(new VBox(2, UiTranslator.skip(body(link.adapter())), row));
+        }
+    }
+
+    private void openHostPreview(LanSessionServer server) {
+        try {
+            java.awt.Desktop.getDesktop().browse(java.net.URI.create(server.hostPreviewUrl()));
+        } catch (IOException | UnsupportedOperationException e) {
+            showInfo("Could not open the host preview", UiTranslator.text("Open this address on the host computer:")
+                + "\n" + server.hostPreviewUrl());
         }
     }
 
@@ -165,9 +210,9 @@ public class OnlineSessionScene extends BaseScene {
                 String campaignId = com.dnd.cloud.CampaignMeta.idOf(context.getPath()).orElseThrow(
                     () -> new IllegalStateException("Register the campaign before hosting it online."));
                 FirebaseSessionSync sync = FirebaseSessionSync.host(campaignId);
-                sync.push(SessionSnapshot.capture(context.getPath(), context.getName()));
+                sync.pushCampaign(context.getPath(), context.getName());
                 try {
-                    sync.startChat(context.getPath());
+                    sync.startChat(context.getPath(), chatHostName());
                 } catch (RuntimeException failure) {
                     try { sync.delete(); } catch (RuntimeException cleanup) { failure.addSuppressed(cleanup); }
                     throw failure;
@@ -229,7 +274,8 @@ public class OnlineSessionScene extends BaseScene {
 
         Button pushBtn = btn("Push State Now", () -> {
             background(() -> {
-                uiSession.getSession().getFirebaseSync().push(buildSnapshot());
+                var context = uiSession.getSession().getCampaignContext();
+                uiSession.getSession().getFirebaseSync().pushCampaign(context.getPath(), context.getName());
                 return true;
             }, ignored -> error.setText(""), failure -> error.setText("Session push failed: " + failure.getMessage()));
         });
@@ -248,6 +294,10 @@ public class OnlineSessionScene extends BaseScene {
      * Lets the campaign's members join from their "My Campaigns" list without pasting the
      * token. Best effort: the token shown on screen still works if this can't be published.
      */
+    private String chatHostName() {
+        return uiSession.getCurrentUser() == null ? null : uiSession.getCurrentUser().getUsername();
+    }
+
     private void publishLiveToken(String token) {
         var context = uiSession.getSession().getCampaignContext();
         String id = context == null ? null : com.dnd.cloud.CampaignMeta.idOf(context.getPath()).orElse(null);
@@ -259,9 +309,4 @@ public class OnlineSessionScene extends BaseScene {
         }, ok -> { }, error -> showError("Could not update the campaign's live token. Players can use the token shown on screen.", error));
     }
 
-    private String buildSnapshot() {
-        // Players get their characters and whatever those use, never the GM's secrets.
-        var context = uiSession.getSession().getCampaignContext();
-        return SessionSnapshot.capture(context.getPath(), context.getName());
-    }
 }

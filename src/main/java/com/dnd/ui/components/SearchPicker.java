@@ -64,7 +64,11 @@ public final class SearchPicker {
                                     boolean allowNone, Consumer<T> onChange, BiConsumer<javafx.scene.Node, T> hover) {
         Button field = field();
         Object none = new Object();
-        Consumer<T> show = t -> field.setText((t == null ? "(none)" : label.apply(t)) + "   \u25BE");
+        Consumer<T> show = t -> {
+            field.setText((t == null ? "(none)" : label.apply(t)) + "   \u25BE");
+            field.setTooltip(null);
+            if (t != null) hover.accept(field, t);
+        };
         show.accept(initial);
         Consumer<T> choose = t -> {
             show.accept(t);

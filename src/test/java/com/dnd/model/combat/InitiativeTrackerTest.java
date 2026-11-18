@@ -60,6 +60,39 @@ public class InitiativeTrackerTest {
     }
 
     @Test
+    public void savedInitiativeResumesOnTheSameTokenAndRound() throws Exception {
+        tracker.restore(middle, 4);
+        var mapper = com.dnd.data.JsonMappers.create();
+        var map = new com.dnd.model.world.map.GameMap("arena", "Arena", 1, 1);
+        map.setInitiativePosition(tracker.position());
+        var reopened = mapper.readValue(mapper.writeValueAsString(map), map.getClass());
+        var reopenedToken = monster("Middle again", 12);
+        reopenedToken.setInstanceId(middle.getInstanceId());
+        var restored = new InitiativeTracker();
+        restored.setCombatants(List.of(fast, reopenedToken, slow));
+        restored.restorePosition(reopened.getInitiativePosition());
+        assertSame(reopenedToken, restored.current());
+        assertEquals(4, restored.round());
+    }
+
+    @Test
+    public void playerDistancesSkipDeadTokensAndWrapAround() {
+        var pc = new com.dnd.model.character.PlayerCharacter();
+        pc.setId("hero");
+        pc.setName("Hero");
+        var hero = new com.dnd.model.world.map.PlayerToken(pc);
+        pc.setMaxHitPoints(10);
+        pc.setCurrentHitPoints(10);
+        TokenSupport.combatOf(hero).setInitiative(30);
+        TokenSupport.combatOf(slow).setDead(true);
+        tracker.setCombatants(List.of(hero, fast, middle, slow));
+        tracker.restore(fast, 3);
+        assertEquals(java.util.Map.of("hero", 2), tracker.playerDistances());
+        tracker.restore(hero, 4);
+        assertEquals(java.util.Map.of("hero", 0), tracker.playerDistances());
+    }
+
+    @Test
     public void deadCombatantsAreSkippedButStayInTheRoster() {
         TokenSupport.combatOf(middle).setDead(true);
         assertEquals(slow, tracker.next());

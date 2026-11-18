@@ -49,7 +49,11 @@ public class LoginScene extends BaseScene {
                 }
                 passwordField.clear();
                 uiSession.setCurrentUser(result.user());
-                uiSession.getRouter().goTo(SceneType.LANDING);
+                root.setDisable(true);
+                PrivateFilesUi.openAtSignIn(this, password, () -> {
+                    root.setDisable(false);
+                    uiSession.getRouter().goTo(SceneType.LANDING);
+                });
             }, failure -> {
                 root.setDisable(false);
                 login.setDisable(false);

@@ -2,9 +2,11 @@ package com.dnd.ui.components;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
+import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.Tooltip;
@@ -23,14 +25,23 @@ public class SessionTimer extends HBox {
     private final Label display = new Label("00:00");
     private final Spinner<Integer> minutesSpinner = new Spinner<>(0, 240, 1);
     private final Button startPause = new Button("Start");
+    private final CheckBox sound = new CheckBox("Sound");
+    private final PauseTransition finalBeep = new PauseTransition(Duration.millis(250));
     private final Timeline ticker;
+    private final java.nio.file.Path campaign;
+    private String countdownId;
 
     private int elapsedSeconds;
     private boolean countingDown;
     private boolean running;
 
     public SessionTimer() {
+        this(null);
+    }
+
+    public SessionTimer(java.nio.file.Path campaign) {
         super(6);
+        this.campaign = campaign;
         setAlignment(Pos.CENTER_LEFT);
 
         display.getStyleClass().add("timer-display");
@@ -51,6 +62,9 @@ public class SessionTimer extends HBox {
 
         Button reset = themed("Reset", "Stop and clear the timer");
         reset.setOnAction(e -> reset());
+        sound.setTooltip(new Tooltip("Play sounds for the last ten seconds and at zero, including on LAN player sheets with sound enabled."));
+        sound.selectedProperty().addListener((o, before, after) -> publish(false, false));
+        finalBeep.setOnFinished(e -> beep());
 
         // A one-second tick is accurate enough for a table timer and costs nothing; using a
         // Timeline (rather than a background thread) keeps every update on the FX thread.
@@ -59,7 +73,7 @@ public class SessionTimer extends HBox {
 
         Label caption = new Label("Timer:");
         caption.getStyleClass().add("body-label");
-        getChildren().addAll(caption, display, startPause, up, down, minutesSpinner, reset);
+        getChildren().addAll(caption, display, startPause, up, down, minutesSpinner, reset, sound);
         refreshDisplay();
     }
 
@@ -71,6 +85,8 @@ public class SessionTimer extends HBox {
     }
 
     public void startCountUp() {
+        publish(false, true);
+        countdownId = null;
         countingDown = false;
         elapsedSeconds = 0;
         start();
@@ -79,10 +95,13 @@ public class SessionTimer extends HBox {
     public void startCountDown(int seconds) {
         countingDown = true;
         elapsedSeconds = Math.max(0, seconds);
+        countdownId = java.util.UUID.randomUUID().toString();
         start();
+        publish(true, false);
     }
 
     private void start() {
+        finalBeep.stop();
         running = true;
         startPause.setText("Pause");
         display.getStyleClass().remove("timer-expired");
@@ -100,9 +119,14 @@ public class SessionTimer extends HBox {
             ticker.play();
             startPause.setText("Pause");
         }
+        publish(false, false);
     }
 
     public void reset() {
+        publish(false, true);
+        countdownId = null;
+        countingDown = false;
+        finalBeep.stop();
         running = false;
         ticker.stop();
         elapsedSeconds = 0;
@@ -113,14 +137,19 @@ public class SessionTimer extends HBox {
 
     /** Stops the underlying animation so a closed window doesn't leave a timer running. */
     public void dispose() {
+        publish(false, true);
+        countdownId = null;
+        finalBeep.stop();
         ticker.stop();
     }
 
     private void tick() {
         if (countingDown) {
-            elapsedSeconds--;
-            if (elapsedSeconds <= 0) {
-                elapsedSeconds = 0;
+            boolean wasPositive = elapsedSeconds > 0;
+            elapsedSeconds = Math.max(0, elapsedSeconds - 1);
+            if (wasPositive && elapsedSeconds <= 10) beep();
+            if (elapsedSeconds == 0) {
+                if (wasPositive && sound.isSelected()) finalBeep.playFromStart();
                 running = false;
                 ticker.stop();
                 startPause.setText("Start");
@@ -132,6 +161,20 @@ public class SessionTimer extends HBox {
             elapsedSeconds++;
         }
         refreshDisplay();
+        publish(false, false);
+    }
+
+    private void publish(boolean start, boolean clear) {
+        if (campaign == null || countdownId == null) return;
+        var host = com.dnd.lan.LanSessionServer.current();
+        if (host != null) host.publishCountdown(campaign, countdownId, clear ? -1 : elapsedSeconds,
+            running, sound.isSelected(), start);
+    }
+
+    private void beep() {
+        if (sound.isSelected() && !java.awt.GraphicsEnvironment.isHeadless()) {
+            java.awt.Toolkit.getDefaultToolkit().beep();
+        }
     }
 
     private void refreshDisplay() {

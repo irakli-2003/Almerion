@@ -12,6 +12,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Spell implements Printable {
+    public enum AreaTargets {
+        EVERYONE, CHOOSE_ALLIES_FIRST, CHOOSE_ENEMIES_FIRST, CHOOSE_EVERYONE_FIRST
+    }
+
+    private AreaTargets areaTargets;
+
+    public AreaTargets getAreaTargets() {
+        if (areaTargets != null) return areaTargets;
+        if (id == null) return AreaTargets.EVERYONE;
+        return switch (id) {
+            case "bless", "prayer-of-healing", "mass-healing-word", "mass-cure-wounds" -> AreaTargets.CHOOSE_ALLIES_FIRST;
+            case "bane", "slow" -> AreaTargets.CHOOSE_ENEMIES_FIRST;
+            default -> AreaTargets.EVERYONE;
+        };
+    }
+
+    public void setAreaTargets(AreaTargets value) { areaTargets = value; }
     private com.dnd.model.combat.CastChecks checks = new com.dnd.model.combat.CastChecks();
     public com.dnd.model.combat.CastChecks getChecks() { return checks; }
     public void setChecks(com.dnd.model.combat.CastChecks value) {

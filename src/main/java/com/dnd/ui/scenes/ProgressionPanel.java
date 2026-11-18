@@ -52,11 +52,27 @@ final class ProgressionPanel {
         String slots = SpellSlots.describe(pc.getSpellSlots(), resource);
         if (!slots.isBlank()) facts.add((resource == CastingResource.ENERGY_CHARGES ? "Charges " : "Slots ") + slots);
         facts.add("Casts with: " + resource);
-        if (!pc.getCooldowns().isEmpty()) facts.add("Cooling down: " + pc.getCooldowns());
         if (!pc.getActiveEffects().isEmpty()) facts.add("Effects: " + pc.getActiveEffects());
         Label summary = owner.body(String.join("   ·   ", facts));
         summary.setWrapText(true);
         box.getChildren().add(summary);
+        var cooldowns = pc.getCooldowns().entrySet().stream()
+            .filter(entry -> entry.getValue() != null && entry.getValue() > 0)
+            .map(entry -> {
+                var spell = repos.spells().getById(entry.getKey());
+                String name = spell == null
+                    ? com.dnd.ui.components.EntityForm.humanize(entry.getKey().replace('_', ' ').replace('-', ' '))
+                    : spell.getName();
+                return name + ": " + entry.getValue();
+            })
+            .sorted(String.CASE_INSENSITIVE_ORDER).toList();
+        if (!cooldowns.isEmpty()) {
+            Label help = owner.body("Turns until ready (counts down on this character's turn):");
+            help.setWrapText(true);
+            Label actions = owner.body(String.join(" · ", cooldowns));
+            actions.setWrapText(true);
+            box.getChildren().addAll(help, actions);
+        }
 
         Button levelUp = owner.btn("Level Up ▲", () -> openLevelUpDialog(owner, repos, pc, cls, onChanged));
         levelUp.setDisable(!Progression.canLevelUp(pc));
@@ -96,8 +112,38 @@ final class ProgressionPanel {
         Button upgrades = owner.btn("Class Upgrade Tree", () -> UpgradeTreeWindow.showCharacter(owner, repos, pc, onChanged));
         upgrades.setTooltip(new Tooltip(com.dnd.ui.i18n.UiTranslator.text("Available unlocks:") + " "
             + com.dnd.model.character.UpgradeRules.available(pc)));
-        box.getChildren().add(new FlowPane(8, 8, levelUp, upgrades, shortRest, longRest));
+        Button award = owner.btn("Award XP", () -> awardXp(owner, repos, pc, onChanged));
+        box.getChildren().add(new FlowPane(8, 8, award, levelUp, upgrades, shortRest, longRest));
         return box;
+    }
+
+    private static void awardXp(BaseScene owner, CampaignRepositories repos, PlayerCharacter pc, Runnable onChanged) {
+        TextInputDialog dialog = new TextInputDialog("100");
+        dialog.setTitle("Award XP");
+        dialog.setHeaderText(pc.getName());
+        dialog.setContentText("XP to award:");
+        owner.styleDialog(dialog);
+        dialog.showAndWait().ifPresent(text -> {
+            try {
+                int amount = Integer.parseInt(text.trim());
+                if (amount <= 0) throw new IllegalArgumentException("Enter a positive whole number of XP.");
+                PlayerCharacter before = repos.players().getById(pc.getId());
+                if (before == null) throw new IllegalStateException("Character no longer exists.");
+                if (amount > Integer.MAX_VALUE - before.getXp()) {
+                    throw new IllegalArgumentException("The resulting XP exceeds the supported total.");
+                }
+                var after = com.dnd.data.JsonMappers.create().convertValue(before, PlayerCharacter.class);
+                after.addXp(amount);
+                repos.players().updateIfUnchanged(before, after);
+            } catch (NumberFormatException e) {
+                owner.showError("Couldn't award XP", new IllegalArgumentException("Enter a positive whole number of XP."));
+                return;
+            } catch (IllegalArgumentException | IllegalStateException | com.dnd.data.DataAccessException e) {
+                owner.showError("Couldn't award XP", e);
+                return;
+            }
+            onChanged.run();
+        });
     }
 
     /** Shows everything the next level brings, lets the DM override any number, then applies it. */

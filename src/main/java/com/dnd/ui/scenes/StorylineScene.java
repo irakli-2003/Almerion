@@ -5,6 +5,7 @@ import com.dnd.ui.SceneType;
 import com.dnd.ui.UiSession;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import com.dnd.ui.i18n.UiTranslator;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
@@ -36,12 +37,7 @@ public class StorylineScene extends BaseScene {
 
         VBox content = new VBox(12);
         content.setPadding(new Insets(10, 20, 20, 20));
-        FlowPane header = new FlowPane(10, 10, title("Storyline"),
-            btn("GM lore book", () -> LoreBookUi.open(this)),
-            btn("Unlock private files", () -> PrivateFilesUi.unlocked(this, this::refreshAll)),
-            btn("Notifications", () -> PrivateFilesUi.notifications(this)),
-            btn("Lock private files", () -> { uiSession.lockPrivateAccount(); refreshAll(); }));
-        content.getChildren().add(header);
+        content.getChildren().add(title("Storyline"));
 
         SplitPane split = new SplitPane();
         split.getItems().addAll(buildTreePane(), buildArcPane());
@@ -85,7 +81,7 @@ public class StorylineScene extends BaseScene {
         upBtn.setTooltip(new Tooltip("Move the selected item up among its siblings"));
         downBtn.setTooltip(new Tooltip("Move the selected item down among its siblings"));
         Button deleteBtn = dangerBtn("Delete", this::onDelete);
-        Button accessBtn = btn("Session-file access", () -> {
+        Button accessBtn = btn("Manage access", () -> {
             Path selected = selectedPath();
             if (selected != null && service.isSessionFile(selected)) {
                 PrivateFilesUi.access(this, service, selected, this::refreshAll);
@@ -306,12 +302,34 @@ public class StorylineScene extends BaseScene {
     private void onNewFile() {
         Path parent = selectedFolder();
         if (parent == null) return;
-        PrivateFilesUi.unlocked(this, () -> promptName("New File", "File name:").ifPresent(name ->
-            background(() -> service.createFile(parent, name), created -> {
+        PrivateFilesUi.unlocked(this, () -> promptName("New File", "File name:").ifPresent(name -> {
+            var account = uiSession.getPrivateAccount();
+            var user = uiSession.getCurrentUser();
+            Path campaign = service.getRoot().getParent();
+            var creationService = new StorylineService(campaign, () -> account);
+            background(() -> {
+                var access = PrivateFilesUi.newSessionAccess(campaign, user.getUsername(), account);
+                Path activeCampaign = uiSession.campaignRoot();
+                if (account != uiSession.getPrivateAccount() || user != uiSession.getCurrentUser()
+                    || activeCampaign == null || !campaign.equals(activeCampaign.toAbsolutePath().normalize())) {
+                    throw new IllegalStateException("The active campaign or account changed. Try again.");
+                }
+                return new PrivateFileCreated(creationService.createFile(parent, name, access.editors()), access);
+            }, created -> {
                 refreshAll();
-                selectPath(created);
-            }, error -> showError("Could not create private session file", error))));
+                selectPath(created.path());
+                if (created.access().offline()) {
+                    showInfo("Session-file access", "The file was created with access for you only because the campaign directory was offline. Use Manage access after reconnecting.");
+                } else if (!created.access().missing().isEmpty()) {
+                    showInfo("Session-file access", UiTranslator.text("These GMs did not receive access because their private-file keys could not be verified:")
+                        + "\n" + String.join("\n", created.access().missing()) + "\n\n"
+                        + UiTranslator.text("After they set up their keys, use Manage access to add them."));
+                }
+            }, error -> showError("Could not create private session file", error));
+        }));
     }
+
+    private record PrivateFileCreated(Path path, PrivateFilesUi.NewSessionAccess access) { }
 
     /** Repeatedly prompts until a non-blank name is entered, or the user cancels. */
     private Optional<String> promptName(String dialogTitle, String prompt) {
@@ -395,14 +413,37 @@ public class StorylineScene extends BaseScene {
         if (service.isPrivate(file)) {
             PrivateFilesUi.unlocked(this, () -> {
                 var account = uiSession.getPrivateAccount();
-                if (!service.permissions(file).grants().containsKey(account.uid())) {
+                var access = service.permissions(file).access(account.uid());
+                if (access == null) {
                     PrivateFilesUi.request(this, service, file);
+                    return;
+                }
+                if (access == com.dnd.security.PrivateSessionFiles.Access.READ) {
+                    showReadOnly(file);
                     return;
                 }
                 showEditor(file);
             });
         } else {
             showEditor(file);
+        }
+    }
+
+    private void showReadOnly(Path file) {
+        try {
+            TextArea text = UiTranslator.skip(new TextArea(service.readText(file)));
+            text.setEditable(false);
+            text.setWrapText(true);
+            text.setPrefSize(650, 420);
+            Dialog<Void> dialog = new Dialog<>();
+            dialog.setTitle(file.getFileName().toString());
+            dialog.setHeaderText("Read-only session file");
+            dialog.getDialogPane().setContent(text);
+            dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+            styleDialog(dialog);
+            dialog.showAndWait();
+        } catch (RuntimeException e) {
+            showError(e.getMessage());
         }
     }
 

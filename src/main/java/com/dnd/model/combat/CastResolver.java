@@ -58,7 +58,21 @@ public final class CastResolver {
         /** Exact charge/slot level to spend; 0 = the lowest available at or above the spell level. */
         private int chargeLevel;
         private CastChecks checks = new CastChecks();
+        private Spell.AreaTargets areaTargets = Spell.AreaTargets.EVERYONE;
         public CastChecks getChecks() { return checks; }
+        public Spell.AreaTargets getAreaTargets() { return areaTargets; }
+
+        public boolean choosesAreaTargets() {
+            return isArea() && areaTargets != Spell.AreaTargets.EVERYONE;
+        }
+
+        public boolean initiallySelectsAreaTarget(boolean sameSide) {
+            return switch (areaTargets) {
+                case CHOOSE_ALLIES_FIRST -> sameSide;
+                case CHOOSE_ENEMIES_FIRST -> !sameSide;
+                default -> true;
+            };
+        }
 
         private Castable(String id, String name, String description, boolean spell, int manaCost,
                          double rangeFeet, double radiusFeet, int cooldownRounds,
@@ -115,6 +129,7 @@ public final class CastResolver {
                 effects, powers, boosted, consumables, spellLevel, hpCost);
             c.chargeLevel = Math.max(0, level);
             c.checks = checks;
+            c.areaTargets = areaTargets;
             return c;
         }
 
@@ -244,6 +259,7 @@ public final class CastResolver {
             spell.getManaCost(), spell.getRange(), spell.getRadius(), spell.getCooldownRounds(),
             resolved, powers, spell.getDamage(), spell.getRequiredConsumables(), spell.getLevel(), 0);
         action.checks = spell.getChecks();
+        action.areaTargets = spell.getAreaTargets();
         return action;
     }
 

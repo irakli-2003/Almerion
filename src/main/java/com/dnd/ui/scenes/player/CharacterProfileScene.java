@@ -50,6 +50,7 @@ public class CharacterProfileScene extends BaseScene {
 
         String name = pc.getName() != null ? pc.getName() : pc.getId();
         content.getChildren().add(title("Profile: " + name));
+        content.getChildren().add(new PlayerTurnPanel(uiSession, pc.getId()));
 
         ImageView portrait = new ImageView();
         portrait.setFitWidth(200);

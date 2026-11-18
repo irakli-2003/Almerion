@@ -93,7 +93,7 @@ public final class StorylineDrafts {
                 }
                 String raw = Files.readString(candidate, StandardCharsets.UTF_8);
                 var header = PrivateSessionFiles.parse(raw).header();
-                if (!account.uid().equals(header.ownerUid()) || header.grants().size() != 1) {
+                if (!header.owners().contains(account.uid()) || header.grants().size() != 1) {
                     throw new SecurityException("Recovery draft account mismatch.");
                 }
                 String plain = PrivateSessionFiles.read(raw, account).text();

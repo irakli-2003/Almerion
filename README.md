@@ -120,8 +120,9 @@ fight.
 7. **Run a battle.** Double-click the map link in your notes (or open **Maps** in
    Worldbuilding, then **View Map → Run Battle**). Add tokens, click **Roll Initiative**, and use
    **Next Turn** to step through the fight.
-8. **Invite your players.** Click **👥 Members** and share the **join code**. Accept each player
-   when their application arrives.
+8. **Invite your players.** In Campaign Selection, select the campaign and click **Invite to campaign**.
+   Enter the recipient's account code. You can also share the campaign join code from **Manage members**
+   and approve applications there. Only the owner can invite a GM or transfer ownership to another GM.
 
 ---
 
@@ -129,9 +130,10 @@ fight.
 
 1. **Create an account** and log in (see [Accounts and sign-in](#7-accounts-and-sign-in)).
 2. Click **Player**. The **My Campaigns** screen opens.
-3. Under **Join a Campaign**, type the join code your GM gave you (for example `K7QM2X`) and
-   click **Apply**. The campaign appears under *Waiting for a GM to accept you*.
-4. Once the GM accepts you, the campaign is listed with your role. When the GM is running a live
+3. Open **Join Campaign** and share your account code with the GM. Accept their invitation in
+   **My Campaigns**. If the GM gave you a campaign join code instead, use **Apply with campaign code**
+   and wait for approval.
+4. Once you join, the campaign is listed with your role. When the GM is running a live
    session, click **Join Live Session**.
 5. Choose your character and click **Play This Character**. If the GM protected it with a
    password, enter that first.
@@ -155,7 +157,7 @@ as part of a role switch. Pending actions must finish first.
 
 The switch closes secondary windows through their normal close requests, preserving
 save/discard/cancel prompts. If a window refuses to close, you remain a GM. After a
-successful switch, private-file keys lock, campaign/character/map selections clear, and
+successful switch, Player Mode cannot use private-file keys, campaign/character/map selections clear, and
 GM routes and stale GM previews are blocked. The player screens display a **Player Mode**
 banner. Join your co-GM's hosted session normally; this uses the player-safe snapshot,
 not the old GM campaign folder.
@@ -588,7 +590,8 @@ Besides weapons, armour and potions, items can be a **Blueprint**, **Device**, *
 
 Hover a spell or item almost anywhere to see a card with its full description, sized to
 fit. This works in character sheets, Manage Players, the wizard, pickers and battle maps, and on
-spell or item names written in your session notes.
+spell or item names written in your session notes. In the GM character editor, hover over a saved
+selection or its info icon to read its description without opening the picker.
 
 ---
 
@@ -605,9 +608,13 @@ Open it with **📜 Open Storyline**.
 
 ### Private session files and access requests
 
-**New File** creates an encrypted session owned by the GM creating it. Enable **Unlock
-private files** with your verified account password first, and save the recovery key outside
-the campaign/GitHub. The same account password unlocks your keys on a second device; after
+**New File** creates an encrypted session owned by the GM creating it. Other current campaign
+GMs with verified private-file keys get **Read** and **Write** automatically. If some GMs
+aren't ready, Almerion creates the file and lists who still needs access. If you're offline,
+the file starts with access for you only. Use **Manage access** to add the other GMs later.
+These grants do not sync the file itself. Keys load when
+you sign in to a verified account. On first setup, save the recovery key outside the
+campaign/GitHub. The same login unlocks your keys on a second device; after
 a password reset, use the recovery key. Losing both your keys and recovery key can make
 private files unrecoverable. This requires administrator-deployed private Firebase rules
 (see [DEVELOPER.md](DEVELOPER.md)); shared session tokens cannot unlock private files.
@@ -617,14 +624,18 @@ unlock again. This registers/verifies the same email with Firebase, not another 
 profile. If Firebase already has that email with another password, use its password or
 the normal password-reset flow; do not create a duplicate profile.
 
-Existing files remain shared. Select one and use **Session-file access** to explicitly
-encrypt it and become its owner. Only that owner can grant other campaign GMs read/edit
-access, change access, move, or delete the file. The campaign author has no automatic
+Existing shared files remain shared. Select one and use **Manage access** to explicitly
+encrypt it and become its owner. Under **Manage access**, check **Read** to let another
+GM open the note without changing it, or check **Read** and **Write** to let them edit.
+Check **Owner** to also let that GM change grants, move, or delete the file. You can have
+more than one owner or hand off ownership, but at least one must remain. The campaign author has no automatic
 override. Other GMs must enable their own private-file account before being selected;
-verify their displayed email with them before granting access.
+verify their displayed email with them before granting access. Existing grants remain
+read/write unless changed. All GMs opening a file that has used read-only grants or
+changed ownership need a version of Almerion that supports those permissions.
 
 A denied GM can request access through the same panel, or by opening the private file.
-The owner receives a request in **Notifications** in Storyline and the GM panel. Use
+The owner receives a request in **Notifications** in the GM panel. Use
 **Refresh**, review the verified recipient email, and approve or deny. Approval updates
 the local encrypted file: the owner must sync it, then the requester must sync to receive
 the grant. Requests and responses persist online while the app is closed.
@@ -633,7 +644,7 @@ Text and the session encounter roster are encrypted together. Sync/import/export
 ciphertext, not decrypted session text. File names, folder placement, owner IDs, and grant
 IDs are not concealed. Encryption cannot erase previously synced plaintext Git history,
 old exports, or copies already read. Revoking access rotates the file key for future
-versions; it cannot revoke old copies. Explicit **Player View**, clipboard sharing, global
+versions; it cannot revoke old copies. Clipboard sharing, global
 catalogue changes, and the campaign-wide **Notes** scratchpad are still shared actions.
 Chat and mobile/token-player notifications are the next implementation stage.
 
@@ -641,7 +652,7 @@ Chat and mobile/token-player notifications are the next implementation stage.
 
 Open a saved character and select **GM character note**. These notes are encrypted separately
 from character sheets; they are not included in player snapshots, hosted sheets, or PDFs.
-Every campaign GM must first unlock private files online. Save a note online to encrypt it
+Every campaign GM must first sign in online and finish private-key setup. Save a note online to encrypt it
 for the current GM roster, then sync the campaign. When a GM joins or is removed, an existing
 GM must reopen and save each note online and sync it to refresh its access. Previously obtained
 copies cannot be revoked. A note last signed by a removed GM requires administrator review
@@ -653,7 +664,7 @@ refused rather than overwriting the newer copy; preserve your text and reopen th
 
 ### GM lore book
 
-Open **GM lore book** from the GM panel or Storyline. Organize lore into sections and articles,
+Open **GM lore book** from the GM panel. Organize lore into sections and articles,
 search titles or text, and add, edit, or delete entries. The book is encrypted for campaign GMs
 and excluded from player snapshots and sheets. It has the same online-save, offline-read,
 GM-key setup, roster-refresh, sync, and old-copy limitations as GM character notes. The whole
@@ -664,13 +675,13 @@ saving your changes.
 
 Double-click a file to open it. The editor fills the window.
 
-With your private-file keys unlocked, **Recovery & Autosave** saves an encrypted draft
+When your private-file keys are available, the editor saves an encrypted draft
 after a two-second typing pause, or every ten seconds during continuous editing. Drafts
 are account-only copies under the device's `data/auth/storyline-drafts`, outside campaign
 folders, GitHub sync, campaign archives, and hosted snapshots. Other GMs granted the
 original file cannot decrypt your drafts. No draft is uploaded or copied to another device.
 
-After a crash, reopen the same session file with the same account and unlock its keys.
+After a crash, sign in with the same account, reopen the session file, and select **Recover unsaved edits**.
 Review the recovery preview alongside the current text before choosing **Recover into
 editor**. A changed-source warning prompts review; recovery never writes the session file
 automatically. Normal Save still rejects an externally changed file or permissions.
@@ -681,8 +692,8 @@ Other recovery copies remain until explicitly deleted. Drafts are keyed to the o
 absolute file path, so moving a campaign/file does not relocate its recovery copies.
 
 If account keys are locked or unavailable, ordinary editing still works and the editor
-clearly shows **Encrypted autosave is off**. Use **Recovery & Autosave** to enable/unlock
-keys, or save manually. Initial key setup/unlock currently requires verified online access;
+clearly shows **Encrypted autosave is off**. Sign in online to load your keys, or save manually.
+Initial key setup currently requires verified online access;
 already-unlocked keys can save drafts offline. Keep the independent account recovery key:
 encrypted drafts cannot recover lost encryption keys, and an abrupt crash can still lose
 the edits made since the last completed draft.
@@ -764,6 +775,16 @@ reports that the data was already saved.
 | **Timer** | Counts up, or down from a set number of minutes |
 | **Save** / **Save & Close** | Saves the file (also **Ctrl+S**) |
 
+Countdowns started while hosting on LAN appear on player sheets, from either the session editor or
+battle map. With the GM's **Sound** switch on, players who tap **Enable session sounds** hear beeps in
+the last ten seconds and a double beep at zero. Players can mute the sound on their own device.
+
+Once the GM starts initiative, desktop Player Mode and the LAN browser sheet show
+**My turn in … turns** or **Your turn!**. LAN players who enable session sounds hear a chime
+when their turn begins while the sheet is connected. Closing the Battle Map hides the live
+indicator but saves the current combatant and round; reopening resumes them. **End initiative**
+clears the saved position. In LAN chat, open **Direct messages** and tap a player to message them.
+
 ### Manage Players
 
 This panel runs the session from inside your notes:
@@ -775,7 +796,8 @@ This panel runs the session from inside your notes:
   **+ Add Item** and **+ Add Effect** open a searchable list. **✚ New item...** creates a new
   item and gives it at once.
 - **★ XP** (or **Award XP** in the toolbar) gives experience to the whole party or the ticked
-  players.
+  players. To award just one character, use **Award XP** in **Progression & Rest** on their
+  GM sheet or in Manage Players. In battle, look under **Level & XP** above **Stats**.
 
 ---
 
@@ -865,6 +887,11 @@ Open it from a map link in your notes, or with **Run Battle**.
   As GM, select a token and right-click any empty square to relocate it, ignoring movement
   range and terrain without spending its movement. Drag the divider beside the left panel
   to resize the turn order and character details.
+- **Defeat rewards:** Set a token's **Finisher XP** and optional **Shared XP**. These are separate
+  from a character's own XP. Rewards are paid once per token, after it dies, not when it reaches
+  0 HP. If the battle map cannot identify a finishing character, the GM chooses one. Each distinct
+  player character on the map receives the same whole-number share, rounded down, and the
+  finisher also receives the Finisher XP. A postponed award can be resolved from the dead token.
 - **Active effects:** every creature's details have **Add Effect...**, even when no effects
   are active. Choose a Worldbuilding effect and set its duration, damage and healing per round.
   **Remove** ends an active effect immediately; changes also update linked character sheets.
@@ -935,7 +962,8 @@ editor.
 ## 15. Hosting a session
 
 Click **📡 Host Session** in the GM menu. There are two ways to share the game; you can use
-either or both at once.
+either or both at once. **Manage members** on this screen lets you invite by account code or
+manage existing campaign members. Membership stays in place after hosting ends.
 
 Players only ever receive what belongs to them: their character, the party, and the items,
 spells and effects they actually have. Monsters, NPCs, maps, places, books, other GMs' notes
@@ -948,8 +976,9 @@ Best when everyone sits at the same table. Players need no account and no app.
 1. Give each character a password. The Host Session screen lists every character with a
    **Set password** / **Change password** button. Characters without a password can't be
    opened.
-2. Click **Start local session**. The screen shows one or more addresses such as
-   `http://192.168.1.20:8765`. Use **Copy** and send one to your players.
+2. Click **Start local session**. Under the adapter connected to your players' network, use
+   **Copy** to share its link, such as `http://192.168.1.20:8765`. If you change networks,
+   click **Refresh network links**.
 3. Players open the address on any phone, tablet or computer on the **same network**, choose
    their character and enter its password.
 4. The sheet is view only. Whenever you change something in the app (damage, spell slots, XP,
@@ -957,10 +986,12 @@ Best when everyone sits at the same table. Players need no account and no app.
 5. Click **Stop local session** when you're done. Closing the app or switching campaigns stops
    it as well.
 
-If players can't connect, allow Almerion through the Windows firewall for **private networks**
-(Windows asks the first time you start a local session), and make sure everyone is on the same
-Wi-Fi rather than a guest network. After five wrong passwords a device is locked out for a
-minute.
+If players can't connect, use **Open host preview** to check whether the sheet loads on the
+host computer. A working preview does not prove that other devices can connect. Check that
+everyone is on the same trusted network (not isolated guest Wi-Fi or a VPN), and allow Almerion
+through Windows Firewall for **private networks**. If the browser upgrades the link to HTTPS,
+re-enter the full `http://` address. LAN hosting does not serve HTTPS. After five wrong
+passwords a device is locked out for a minute.
 
 ### Over the internet (players use the app)
 
@@ -991,11 +1022,16 @@ campaign membership; do not create a replacement campaign.
 
 ### Private and group session chat
 
-Open **Session chat** from the GM menu, Notifications, your desktop character home, or
-your hosted browser sheet. Choose recipients under **New conversation**, optionally name
-the conversation, then send messages. Groups keep their original members; create another
-conversation to change the audience. The badge counts unread messages; opening a
+Open **Session chat** from the GM menu, battle map, Notifications, your desktop character home, or
+your hosted browser sheet. Chat uses the host's signed-in username and the username assigned to
+each character, falling back to the character name when no account is assigned.
+In desktop chat, click a name under **Direct messages** to open a one-to-one chat. For a group,
+choose recipients under **New conversation**, optionally name
+the conversation, then send messages. Opening a conversation with the same members reuses it;
+choose different members to change the audience. The badge counts unread messages; opening a
 conversation marks it read.
+On the hosted browser sheet, group members can rename their group and players can delete their own
+messages. The host can moderate any conversation from desktop chat.
 
 **The current hosting GM can read every conversation, including player-only private and
 group chats.** This is disclosed in every chat panel. Monitoring does not let the GM send
@@ -1167,8 +1203,8 @@ To open it, press **Win+R**, type `%APPDATA%\Almerion` and press Enter.
   holds imported audio, and `music\cache\` holds downloaded audio, which can be deleted safely
   (it downloads again when needed).
 
-Membership, join codes and accounts are stored online. Campaign content stays on the GM's
-computer, so back it up.
+Membership, invitations, join codes and accounts are stored online. Invitations do not require a GitHub
+account, but membership alone does not download the GM campaign files. Back up your local files.
 
 ---
 

@@ -47,7 +47,7 @@ public class PlayerHomeScene extends BaseScene {
         content.getChildren().add(header);
 
         if (pc != null) {
-            content.getChildren().add(buildStatsBox(pc, repos));
+            content.getChildren().addAll(new PlayerTurnPanel(uiSession, pc.getId()), buildStatsBox(pc, repos));
         }
 
         content.getChildren().addAll(

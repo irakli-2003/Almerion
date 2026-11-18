@@ -16,6 +16,27 @@ public class SessionChatTest {
         return new SessionChat.Command(UUID.randomUUID().toString(), "send", thread, List.of(), "", text);
     }
 
+    @Test public void hostedRosterUsesAccountNamesAndFallsBackToCharacterNames() throws Exception {
+        var root = java.nio.file.Files.createTempDirectory("almerion-chat-roster");
+        var players = new com.dnd.data.CampaignRepositories(root).players();
+        var assigned = new com.dnd.model.character.PlayerCharacter();
+        assigned.setId("assigned"); assigned.setName("Aria"); assigned.setOwnerUsername("PlayerOne");
+        var unassigned = new com.dnd.model.character.PlayerCharacter();
+        unassigned.setId("unassigned"); unassigned.setName("Bard");
+        players.save(assigned); players.save(unassigned);
+        var chat = SessionChat.acquire(root, "Eru");
+        try {
+            var poll = new SessionChat.Command(UUID.randomUUID().toString(), "poll", null, List.of(), "", "");
+            var names = chat.execute("pc:assigned", poll).peers().stream()
+                .collect(java.util.stream.Collectors.toMap(SessionChat.Peer::id, SessionChat.Peer::name));
+            assertEquals("Eru", names.get(SessionChat.HOST));
+            assertEquals("PlayerOne", names.get("pc:assigned"));
+            assertEquals("Bard", names.get("pc:unassigned"));
+        } finally {
+            SessionChat.release(root, chat);
+        }
+    }
+
     @Test public void privateAndGroupConversationsAreFilteredButCurrentHostCanMonitorWithoutImpersonation() {
         try (var chat = chat()) {
             String direct = chat.execute("a", create("b")).selected();
@@ -62,5 +83,26 @@ public class SessionChatTest {
         chat.close();
         assertThrows(IllegalStateException.class, () -> chat.execute("a", SessionChat.Command.poll(null)));
         try (var fresh = chat()) { assertTrue(fresh.execute("a", SessionChat.Command.poll(null)).conversations().isEmpty()); }
+    }
+
+    @Test public void reopensSameGroupAndEnforcesModerationPermissions() {
+        try (var chat = chat()) {
+            String group = chat.execute("a", create("c", "b")).selected();
+            assertEquals(group, chat.execute("b", create("a", "c")).selected());
+            var rename = new SessionChat.Command(UUID.randomUUID().toString(), "rename", group, List.of(), "New title", "");
+            assertThrows(SecurityException.class, () -> chat.execute(SessionChat.HOST, rename));
+            assertEquals("New title", chat.execute("c", rename).conversations().getFirst().title());
+            long message = chat.execute("b", send(group, "One message")).messages().getFirst().sequence();
+            var remove = new SessionChat.Command(UUID.randomUUID().toString(), "delete-message", group, List.of(), "", Long.toString(message));
+            assertThrows(SecurityException.class, () -> chat.execute("c", remove));
+            assertTrue(chat.execute(SessionChat.HOST, remove).messages().isEmpty());
+            long own = chat.execute("c", send(group, "Own message")).messages().getFirst().sequence();
+            assertTrue(chat.execute("c", new SessionChat.Command(UUID.randomUUID().toString(),
+                "delete-message", group, List.of(), "", Long.toString(own))).messages().isEmpty());
+            var close = new SessionChat.Command(UUID.randomUUID().toString(), "delete-conversation", group, List.of(), "", "");
+            assertThrows(SecurityException.class, () -> chat.execute("a", close));
+            assertTrue(chat.execute(SessionChat.HOST, close).conversations().isEmpty());
+            assertNull(chat.execute("b", SessionChat.Command.poll(group)).selected());
+        }
     }
 }

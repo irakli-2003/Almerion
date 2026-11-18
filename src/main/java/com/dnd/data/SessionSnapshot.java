@@ -87,6 +87,8 @@ public final class SessionSnapshot {
         CampaignPaths paths = new CampaignPaths(campaignRoot);
         ObjectNode root = mapper.createObjectNode();
         root.put("campaign", campaignName);
+        var battleTurns = BattleTurns.view(campaignRoot);
+        if (battleTurns != null) root.set("battleTurns", mapper.valueToTree(battleTurns));
         root.set("statSchema", mapper.valueToTree(StatSchemas.load(campaignRoot)));
         com.dnd.cloud.CampaignMeta.idOf(campaignRoot).ifPresent(id -> root.put("campaignId", id));
 
@@ -185,6 +187,18 @@ public final class SessionSnapshot {
     }
 
     /** Campaign name carried in a snapshot, or a neutral fallback. */
+    public static BattleTurns.Hint turnOf(String json, String playerId) {
+        if (json == null || playerId == null) return null;
+        try {
+            var battle = JsonMappers.create().readTree(json).path("battleTurns");
+            var remaining = battle.path("distances").path(playerId);
+            if (!battle.path("turn").isTextual() || !remaining.isInt() || remaining.asInt() < 0) return null;
+            return new BattleTurns.Hint(battle.path("turn").asText(), remaining.asInt());
+        } catch (IOException e) {
+            throw new DataAccessException("Could not read the battle turn from the session snapshot", e);
+        }
+    }
+
     public static String campaignNameOf(String json) {
         try {
             JsonNode node = JsonMappers.create().readTree(json).get("campaign");

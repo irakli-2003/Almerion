@@ -124,7 +124,7 @@ final class StorylineEditorWindow {
         statusLabel.getStyleClass().add("body-label");
         statsLabel = new Label();
         statsLabel.getStyleClass().add("body-label");
-        timer = new SessionTimer();
+        timer = new SessionTimer(repos.campaignRoot());
         draftDelay.setOnFinished(e -> autosave());
         draftPulse.setCycleCount(javafx.animation.Animation.INDEFINITE);
         draftStatus.getStyleClass().add("body-label");
@@ -271,19 +271,18 @@ final class StorylineEditorWindow {
             toolGroup("🔍 FIND & NOTES",
                 toolButton("Find", "Find text in this file (Ctrl+F)", this::openFind),
                 toolButton("Notes", "Campaign-wide scratch notes shared by every session file", this::openNotes)),
-            toolGroup("🎲 AT THE TABLE",
-                toolButton("Player View", "Show only the read-aloud passages, for reading at the table",
-                    this::openPlayerView)),
             toolGroup("🎵 MUSIC", buildMusicControls()),
             toolGroup("☻ PLAYERS",
-                UpgradeRequestsUi.button(owner),
                 toolButton("Award XP", "Give a player character experience without leaving this file",
                     this::openAwardXp),
+                toolButton("Rest…", "Apply short or long rests to selected characters",
+                    () -> PartyRestUi.show(owner, new CampaignRepositories(owner.uiSession.campaignRoot()),
+                        message -> owner.showInfo("Party rest", message))),
                 toolButton("Manage Players", "Show or hide the panel with every player and this session's creatures:"
                     + " HP, mana, items and effects", this::toggleManagePlayers)),
             toolGroup("⏱ TIMER", timer),
             toolGroup("💾 FILE",
-                toolButton("Recovery & Autosave", "Unlock encrypted device-local drafts and review recovery copies",
+                toolButton("Recover unsaved edits", "Restore an encrypted draft from this device. The session file changes only when you click Save.",
                     () -> PrivateFilesUi.unlocked(owner, this::enableDrafts)),
                 toolButton("Save", "Save this file (Ctrl+S)", this::save),
                 toolButton("Save & Close", "Save and close the editor",
@@ -1048,7 +1047,7 @@ final class StorylineEditorWindow {
             draftPending = false;
             if (closed || generation != draftGeneration) return;
             draftFailure = error;
-            draftStatus.setText("Encrypted autosave failed. Use Save and open Recovery & Autosave for details.");
+            draftStatus.setText("Encrypted autosave failed. Save the session or open Recover unsaved edits for details.");
         });
     }
 

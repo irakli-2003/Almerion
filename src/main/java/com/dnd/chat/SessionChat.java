@@ -30,7 +30,7 @@ public final class SessionChat implements AutoCloseable {
     private static final Map<Path, SessionChat> HOSTED = new HashMap<>();
     private static final class ThreadState {
         final String id = UUID.randomUUID().toString();
-        final String title;
+        String title;
         final List<String> members;
         final Deque<Message> messages = new ArrayDeque<>();
         final Map<String, Long> read = new HashMap<>();
@@ -46,13 +46,23 @@ public final class SessionChat implements AutoCloseable {
     private com.dnd.model.character.UpgradeRequests upgrades;
 
     public SessionChat(Supplier<List<Peer>> roster) { this.roster = Objects.requireNonNull(roster); }
+    private volatile String hostName = "Game Master";
     public static String peerId(PlayerCharacter pc) { return "pc:" + pc.getId(); }
 
+    private static String displayName(String name, String fallback) {
+        return name == null || name.isBlank() ? fallback : name.strip();
+    }
+
     public static synchronized SessionChat acquire(Path campaign) {
+        return acquire(campaign, null);
+    }
+
+    public static synchronized SessionChat acquire(Path campaign, String hostName) {
         Path root = campaign.toAbsolutePath().normalize();
         SessionChat chat = HOSTED.computeIfAbsent(root, p -> new SessionChat(() ->
             new CampaignRepositories(p).players().list().stream().map(pc -> new Peer(peerId(pc),
-                pc.getName() == null ? pc.getId() : pc.getName())).toList()));
+                displayName(pc.getOwnerUsername(), displayName(pc.getName(), pc.getId())))).toList()));
+        chat.hostName = displayName(hostName, chat.hostName);
         chat.references++;
         chat.upgrades = com.dnd.model.character.UpgradeRequests.at(root);
         return chat;
@@ -83,12 +93,15 @@ public final class SessionChat implements AutoCloseable {
             View state = view(actor, null, peers);
             return new View(state.peer(), state.peers(), state.conversations(), state.selected(), state.messages(), inbox);
         }
-        if ("poll".equals(command.operation())) return view(actor, selected, peers);
+        if ("poll".equals(command.operation())) {
+            return view(actor, selected != null && !threads.containsKey(selected) ? null : selected, peers);
+        }
         var previous = accepted.computeIfAbsent(actor, p -> new LinkedHashMap<>());
         Command duplicate = previous.get(command.id());
         if (duplicate != null) {
             if (!duplicate.equals(command)) throw new IllegalArgumentException("A chat request identifier was reused.");
-            return view(actor, created.getOrDefault(actor + "/" + command.id(), selected), peers);
+            String previousSelection = created.getOrDefault(actor + "/" + command.id(), selected);
+            return view(actor, previousSelection != null && threads.containsKey(previousSelection) ? previousSelection : null, peers);
         }
         if ("create".equals(command.operation())) {
             if (command.recipients() == null || command.recipients().isEmpty() || command.recipients().size() > 32) {
@@ -99,12 +112,13 @@ public final class SessionChat implements AutoCloseable {
             if (members.size() < 2 || !peers.keySet().containsAll(members)) throw new IllegalArgumentException("Choose valid chat recipients.");
             String title = command.title() == null ? "" : command.title().strip();
             if (title.length() > 100) throw new IllegalArgumentException("Chat titles are limited to 100 characters.");
-            ThreadState thread = members.size() == 2 ? threads.values().stream()
-                .filter(t -> t.members.equals(List.copyOf(members))).findFirst().orElse(null) : null;
+            List<String> participants = List.copyOf(members);
+            ThreadState thread = threads.values().stream()
+                .filter(t -> t.members.equals(participants)).findFirst().orElse(null);
             if (thread == null) {
                 if (threads.size() >= 100) throw new IllegalStateException("This session has reached its 100-conversation safety limit.");
                 if (title.isEmpty()) title = members.stream().map(p -> peers.get(p).name()).collect(java.util.stream.Collectors.joining(", "));
-                thread = new ThreadState(title, List.copyOf(members));
+                thread = new ThreadState(title, participants);
                 threads.put(thread.id, thread);
             }
             selected = thread.id;
@@ -116,6 +130,31 @@ public final class SessionChat implements AutoCloseable {
             if (text.isEmpty() || text.length() > 2000) throw new IllegalArgumentException("Messages must contain between 1 and 2000 characters.");
             thread.messages.addLast(new Message(++sequence, System.currentTimeMillis(), actor, text));
             while (thread.messages.size() > MESSAGE_LIMIT) thread.messages.removeFirst();
+        } else if ("rename".equals(command.operation())) {
+            ThreadState thread = threads.get(selected);
+            if (thread == null || !thread.members.contains(actor) || thread.members.size() < 3)
+                throw new SecurityException("Only a group member can rename this conversation.");
+            String title = command.title() == null ? "" : command.title().strip();
+            if (title.isEmpty() || title.length() > 100)
+                throw new IllegalArgumentException("Chat titles must contain between 1 and 100 characters.");
+            thread.title = title;
+        } else if ("delete-conversation".equals(command.operation())) {
+            if (!HOST.equals(actor)) throw new SecurityException("Only the hosting GM can delete a conversation.");
+            threads.remove(selected);
+            selected = null;
+        } else if ("delete-message".equals(command.operation())) {
+            ThreadState thread = threads.get(selected);
+            if (thread == null || !HOST.equals(actor) && !thread.members.contains(actor))
+                throw new SecurityException("This conversation is not available to you.");
+            long messageId;
+            try { messageId = Long.parseLong(command.text()); }
+            catch (NumberFormatException e) { throw new IllegalArgumentException("Invalid message identifier.", e); }
+            var message = thread.messages.stream().filter(m -> m.sequence() == messageId).findFirst().orElse(null);
+            if (message != null) {
+                if (!HOST.equals(actor) && !actor.equals(message.sender()))
+                    throw new SecurityException("You can only delete your own messages.");
+                thread.messages.remove(message);
+            }
         } else throw new IllegalArgumentException("Unknown chat operation.");
         previous.put(command.id(), command);
         while (previous.size() > 500) {
@@ -129,7 +168,7 @@ public final class SessionChat implements AutoCloseable {
     private Map<String, Peer> peers() {
         if (closed) throw new IllegalStateException("The chat session has ended.");
         Map<String, Peer> result = new LinkedHashMap<>();
-        result.put(HOST, new Peer(HOST, "Game Master"));
+        result.put(HOST, new Peer(HOST, hostName));
         for (Peer peer : roster.get()) {
             if (peer == null || peer.id() == null || peer.id().equals(HOST) || result.putIfAbsent(peer.id(), peer) != null) {
                 throw new IllegalStateException("Ambiguous chat participant.");

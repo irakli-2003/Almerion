@@ -44,6 +44,7 @@ public final class FirebaseSessionSync {
     private final AtomicReference<String> latestSnapshot = new AtomicReference<>(null);
     /** Background SSE listener thread; {@code null} when not listening. */
     private volatile Thread listenerThread;
+    private boolean ended;
 
     public FirebaseSessionSync(String databaseUrl, String sessionId, String passphrase) {
         this(databaseUrl, sessionId, passphrase, null, null, null);
@@ -84,9 +85,13 @@ public final class FirebaseSessionSync {
     }
 
     public void startChat(java.nio.file.Path campaign) {
+        startChat(campaign, null);
+    }
+
+    public void startChat(java.nio.file.Path campaign, String hostName) {
         requireHost();
         if (chatRelay != null) return;
-        var acquired = com.dnd.chat.SessionChat.acquire(campaign);
+        var acquired = com.dnd.chat.SessionChat.acquire(campaign, hostName);
         com.dnd.chat.SessionChatRelay relay = null;
         com.dnd.chat.SessionChatRelay guestRelay = null;
         try {
@@ -198,8 +203,13 @@ public final class FirebaseSessionSync {
      * @param plainJson raw (unencrypted) JSON to persist
      * @throws SyncException on network or HTTP errors
      */
-    public void push(String plainJson) {
+    public synchronized void pushCampaign(java.nio.file.Path root, String name) {
+        if (!ended) push(com.dnd.data.SessionSnapshot.capture(root, name));
+    }
+
+    public synchronized void push(String plainJson) {
         requireHost();
+        if (ended) throw new SyncException("The online session has ended.");
         String ciphertext = SessionCipher.encrypt(plainJson, passphrase);
         try {
             writer.put(sessionId, java.util.Map.of("hostUid", hostUid, "campaignId", campaignId,
@@ -239,7 +249,9 @@ public final class FirebaseSessionSync {
         try {
             var node = com.dnd.data.JsonMappers.create().readTree(body);
             if (node == null || !node.isTextual()) throw new IOException("Not a snapshot");
-            return SessionCipher.decrypt(node.asText(), passphrase);
+            String plaintext = SessionCipher.decrypt(node.asText(), passphrase);
+            latestSnapshot.set(plaintext);
+            return plaintext;
         } catch (IOException e) {
             throw new SyncException("The online snapshot is malformed.", e);
         }
@@ -250,7 +262,7 @@ public final class FirebaseSessionSync {
      *
      * @throws SyncException on network or HTTP errors
      */
-    public void delete() {
+    public synchronized void delete() {
         requireHost();
         try {
             if (chatRelay != null) chatRelay.close();
@@ -258,6 +270,7 @@ public final class FirebaseSessionSync {
             com.dnd.cloud.Cloud.account().scope("almerion-chat").delete(sessionId);
             closeChat();
             writer.delete(sessionId);
+            ended = true;
         } catch (com.dnd.cloud.CloudStore.CloudException | IllegalStateException e) {
             throw new SyncException("Could not end the online session. Check your connection and account permissions.", e);
         }
@@ -305,6 +318,7 @@ public final class FirebaseSessionSync {
                 } catch (Exception e) {
                     LOGGER.log(Level.FINE, "SSE connection lost, reconnecting in 5 s", e);
                 }
+                if (listenerThread == Thread.currentThread()) latestSnapshot.set(null);
                 // Back-off before reconnect — skip if interrupted
                 try {
                     Thread.sleep(5_000);
@@ -400,7 +414,12 @@ public final class FirebaseSessionSync {
     private void handlePutEvent(String eventData, Consumer<String> onUpdate) {
         try {
             var event = com.dnd.data.JsonMappers.create().readTree(eventData);
-            if (!"/".equals(event.path("path").asText()) || !event.path("data").isTextual()) return;
+            if (!"/".equals(event.path("path").asText())) return;
+            if (event.path("data").isNull()) {
+                latestSnapshot.set(null);
+                return;
+            }
+            if (!event.path("data").isTextual()) return;
             String ciphertext = event.path("data").asText();
 
             String plaintext = SessionCipher.decrypt(ciphertext, passphrase);

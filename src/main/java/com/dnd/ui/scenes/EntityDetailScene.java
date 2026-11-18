@@ -287,8 +287,11 @@ public class EntityDetailScene extends BaseScene {
      */
     static Set<String> skippedProperties(EntityCategory cat) {
         Set<String> skipped = new LinkedHashSet<>(Set.of("imagePath", "passwordHash", "passwordSalt"));
+        if (cat == EntityCategory.PLAYER) {
+            skipped.addAll(Set.of("featureUses", "cooldowns"));
+        }
         if (cat == EntityCategory.MAP) {
-            skipped.addAll(Set.of("grid", "layers", "drawings", "groups", "mapLinks", "partyPosition"));
+            skipped.addAll(Set.of("grid", "layers", "drawings", "groups", "mapLinks", "partyPosition", "initiativePosition"));
         }
         return skipped;
     }

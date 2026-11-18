@@ -1,6 +1,8 @@
 package com.dnd.ui.scenes;
 
 import com.dnd.data.CampaignRepositories;
+import com.dnd.data.BattleTurns;
+import com.dnd.model.character.PlayerCharacter;
 import com.dnd.model.combat.Ability;
 import com.dnd.model.combat.CastResolver;
 import com.dnd.model.combat.InitiativeTracker;
@@ -13,6 +15,7 @@ import com.dnd.ui.ImageStore;
 import com.dnd.ui.MapRenderer;
 import com.dnd.ui.UiSession;
 import com.dnd.ui.components.SessionTimer;
+import com.dnd.ui.i18n.UiTranslator;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -57,6 +60,16 @@ public class BattleMapWindow {
     private final MapRenderer.Decorations decorations = new MapRenderer.Decorations();
     private ProjectorWindow projector;
     private final InitiativeTracker initiative = new InitiativeTracker();
+    private boolean battleOpen;
+    private boolean initiativeActive;
+    private String turnId;
+    private GameMap.InitiativePosition lastPublishedPosition;
+    private BattleTurns.View lastTurnView;
+    private static final java.util.concurrent.Executor TURN_PUSHES = java.util.concurrent.Executors.newSingleThreadExecutor(task -> {
+        Thread thread = new Thread(task, "almerion-turn-updates");
+        thread.setDaemon(true);
+        return thread;
+    });
 
     private Canvas canvas;
     private StackPane panelHost;
@@ -215,6 +228,8 @@ public class BattleMapWindow {
         syncFromSheets();
         seedSpeeds();
         rebuildInitiative();
+        initiative.restorePosition(map.getInitiativePosition());
+        initiativeActive = map.getInitiativePosition() != null;
         if (initiative.current() != null) history.record(map, initiative.current(), initiative.round());
 
         Stage stage = new Stage();
@@ -299,13 +314,17 @@ public class BattleMapWindow {
         // close-request handlers).
         com.dnd.sync.CampaignSyncService.shared().battle(true);
         stage.setOnHidden(e -> {
+            battleOpen = false;
+            if (BattleTurns.clear(repos.campaignRoot(), this)) notifyTurnChange();
             com.dnd.sync.CampaignSyncService.shared().battle(false);
             if (timer != null) timer.dispose();
             if (projector != null) projector.close();
             if (dirty) saveMap();
             com.dnd.ui.music.MusicPlayer.get().endCombat(musicLibrary(), null);
         });
+        battleOpen = true;
         stage.show();
+        publishTurns();
         com.dnd.ui.music.MusicPlayer.get().playMapMusic(musicLibrary(), map.getMusicPlaylistId());
     }
 
@@ -319,7 +338,7 @@ public class BattleMapWindow {
         roundLabel = new Label();
         roundLabel.getStyleClass().add("section-label");
 
-        timer = new SessionTimer();
+        timer = new SessionTimer(repos.campaignRoot());
 
         wallButton = new Button("Walls: off");
         wallButton.getStyleClass().add("dnd-button");
@@ -333,6 +352,8 @@ public class BattleMapWindow {
             toolGroup("⚔ COMBAT",
             tool("Roll NPCs", "Roll initiative for every creature the GM runs, leaving player rolls alone", () -> {
                 int rolled = initiative.rollNonPlayers();
+                initiativeActive = true;
+                turnId = null;
                 refreshAll();
                 status(rolled == 0
                     ? "No non-player combatants to roll for."
@@ -343,6 +364,7 @@ public class BattleMapWindow {
                 this::openInitiativeEntryDialog),
             tool("Next Turn ▸", "Advance to the next living combatant", () -> {
                 MapObject next = initiative.next();
+                initiativeActive = true;
                 if (next != null) history.record(map, next, initiative.round());
                 dirty = true;
                 pushAllToSheets();
@@ -354,6 +376,14 @@ public class BattleMapWindow {
                     logLines("Now acting: " + TokenSupport.nameOf(next)
                         + (ticked.isEmpty() ? "" : "  ·  " + ticked.get(0)), ticked);
                 }
+            }),
+            tool("End initiative", "Clear the live turn display and end this initiative queue", () -> {
+                initiativeActive = false;
+                initiative.restore(null, 1);
+                map.setInitiativePosition(null);
+                dirty = true;
+                publishTurns();
+                refreshAll();
             }),
             roundLabel),
             toolGroup("♟ TOKENS",
@@ -372,6 +402,7 @@ public class BattleMapWindow {
             tool("📽 Projector", "Show only the map (no GM panels or health bars) on the second screen,"
                 + " for a projector. Set Windows to Extend with Win+P first.", this::toggleProjector)),
             toolGroup("🛏 PARTY",
+            tool("Chat", "Open session chat", () -> SessionChatUi.show(owner)),
             tool("Rest...", "Give every player on the map a short or long rest", this::openPartyRestDialog)),
             toolGroup("🎵 MUSIC", buildMusicControls()),
             toolGroup("⏱ TIMER", timer),
@@ -782,6 +813,8 @@ public class BattleMapWindow {
     private MenuButton buildTerrainMenu() {
         MenuButton menu = new MenuButton("Terrain");
         menu.getStyleClass().add("dnd-button");
+        menu.setMinWidth(Region.USE_PREF_SIZE);
+        menu.setMaxWidth(Region.USE_PREF_SIZE);
         menu.setTooltip(new Tooltip("Paint difficult, water or climbable ground onto the map"));
         menu.setOnShowing(e -> {
             menu.getItems().clear();
@@ -887,6 +920,8 @@ public class BattleMapWindow {
         }
         dirty = true;
         refreshAll();
+        initiativeActive = true;
+        publishTurns();
         status("Initiative updated for " + combatants.size() + " combatant"
             + (combatants.size() == 1 ? "" : "s") + ".");
         if (!combatants.isEmpty()) startCombatMusic();
@@ -942,6 +977,7 @@ public class BattleMapWindow {
 
     private void renderNow() {
         if (canvas == null) return;
+        publishTurns();
         decorations.currentTurn = initiative.current();
         if (roundLabel != null) roundLabel.setText("Round " + initiative.round());
         renderer.render(canvas, map, decorations);
@@ -1154,15 +1190,16 @@ public class BattleMapWindow {
         panel.getChildren().addAll(new Separator(), owner.sectionLabel("Movement"));
         panel.getChildren().add(buildMovementEditor(token, state));
 
-        panel.getChildren().addAll(new Separator(), owner.sectionLabel("Stats"));
-        panel.getChildren().add(buildInitiativeEditor(state));
-        panel.getChildren().add(buildStatsGrid(token));
-        panel.getChildren().add(buildSkillsList(token));
-
         if (TokenSupport.hasSettableLevel(token) || TokenSupport.xpOf(token) >= 0) {
             panel.getChildren().addAll(new Separator(), owner.sectionLabel("Level & XP"));
             panel.getChildren().add(buildLevelXpEditor(token));
         }
+        panel.getChildren().addAll(new Separator(), owner.sectionLabel("Defeat rewards"), buildRewardEditor(token, state));
+
+        panel.getChildren().addAll(new Separator(), owner.sectionLabel("Stats"));
+        panel.getChildren().add(buildInitiativeEditor(state));
+        panel.getChildren().add(buildStatsGrid(token));
+        panel.getChildren().add(buildSkillsList(token));
 
         List<Spell> spells = resolveSpells(token);
         if (!spells.isEmpty()) {
@@ -1289,6 +1326,7 @@ public class BattleMapWindow {
         fail.setTooltip(new Tooltip("Count a failed death save; the third one kills"));
         fail.setOnAction(e -> {
             state.failDeathSave();
+            if (state.isDead()) awardDefeatXp(token);
             afterVitalsChange(token);
         });
 
@@ -1310,6 +1348,7 @@ public class BattleMapWindow {
         kill.getStyleClass().add("danger-button");
         kill.setOnAction(e -> {
             state.setDead(true);
+            awardDefeatXp(token);
             afterVitalsChange(token);
         });
 
@@ -1324,8 +1363,15 @@ public class BattleMapWindow {
 
         fail.setDisable(state.getCurrentHitPoints() > 0 || state.isDead());
         succeed.setDisable(state.getCurrentHitPoints() > 0 || state.isDead());
+        kill.setDisable(state.isDead());
         for (Button button : List.of(fail, succeed, kill, revive)) button.setMinWidth(Region.USE_PREF_SIZE);
         FlowPane row = new FlowPane(6, 6, fail, succeed, kill, revive);
+        if (state.isDead() && !state.isXpRewardResolved() && (state.getKillXp() > 0 || state.getSharedXp() > 0)) {
+            row.getChildren().add(owner.btn("Resolve defeat XP", () -> {
+                awardDefeatXp(token);
+                showDetail(token);
+            }));
+        }
         return new VBox(6, owner.body("Death saves: " + state.getDeathSaveSuccesses()
             + " successes / " + state.getDeathSaveFailures() + " failures"), row);
     }
@@ -1492,12 +1538,11 @@ public class BattleMapWindow {
 
         int xp = TokenSupport.xpOf(token);
         if (xp >= 0) {
-            Spinner<Integer> xpSpinner = new Spinner<>(0, 9_999_999, xp);
+            Spinner<Integer> xpSpinner = new Spinner<>(0, Integer.MAX_VALUE, xp);
             xpSpinner.setPrefWidth(110);
             xpSpinner.setEditable(true);
             xpSpinner.valueProperty().addListener((obs, o, n) -> {
-                TokenSupport.addXpOf(token, n - o);
-                saveTokenToRoster(token);
+                changeTokenXp(token, (long) n - o);
                 dirty = true;
             });
 
@@ -1507,8 +1552,8 @@ public class BattleMapWindow {
             Button addXpBtn = new Button("Award XP");
             addXpBtn.getStyleClass().add("dnd-button");
             addXpBtn.setOnAction(e -> {
-                TokenSupport.addXpOf(token, award.getValue());
-                saveTokenToRoster(token);
+                if (!commitXpAmount(award, 1, 999999)) return;
+                changeTokenXp(token, award.getValue());
                 dirty = true;
                 showDetail(token);
             });
@@ -1517,6 +1562,127 @@ public class BattleMapWindow {
             grid.addRow(row, award, addXpBtn);
         }
         return grid;
+    }
+
+    private void changeTokenXp(MapObject token, long delta) {
+        if (token instanceof PlayerToken player && player.getCharacter() != null) {
+            var before = repos.players().getById(player.getCharacter().getId());
+            if (before == null) return;
+            var after = com.dnd.data.JsonMappers.create().convertValue(before, PlayerCharacter.class);
+            after.setXp((int) Math.clamp(before.getXp() + delta, 0, Integer.MAX_VALUE));
+            try {
+                repos.players().updateIfUnchanged(before, after);
+                updateTokenXp(java.util.Map.of(after.getId(), after.getXp()));
+            } catch (IllegalStateException | com.dnd.data.DataAccessException e) {
+                owner.showError("Couldn't update XP", e);
+            }
+        } else {
+            TokenSupport.addXpOf(token, (int) delta);
+            saveTokenToRoster(token);
+        }
+    }
+
+    private Node buildRewardEditor(MapObject token, CombatState state) {
+        Spinner<Integer> kill = new Spinner<>(0, Integer.MAX_VALUE, state.getKillXp());
+        Spinner<Integer> shared = new Spinner<>(0, Integer.MAX_VALUE, state.getSharedXp());
+        for (var input : List.of(kill, shared)) {
+            input.setEditable(true);
+            input.setPrefWidth(110);
+        }
+        Button apply = owner.btn("Save XP values", () -> {
+            if (!commitXpAmount(kill, 0, Integer.MAX_VALUE) || !commitXpAmount(shared, 0, Integer.MAX_VALUE)) return;
+            state.setKillXp(kill.getValue());
+            state.setSharedXp(shared.getValue());
+            if (state.getXpRewardId() == null && (state.getKillXp() > 0 || state.getSharedXp() > 0))
+                state.setXpRewardId(java.util.UUID.randomUUID().toString());
+            dirty = true;
+            showDetail(token);
+        });
+        GridPane grid = new GridPane();
+        grid.setHgap(8);
+        grid.setVgap(5);
+        grid.addRow(0, owner.body("Finisher XP:"), kill);
+        grid.addRow(1, owner.body("Shared XP:"), shared);
+        grid.add(apply, 1, 2);
+        apply.setDisable(state.isXpRewardResolved());
+        if (state.isXpRewardResolved()) grid.add(owner.body("Reward already recorded"), 0, 3, 2, 1);
+        return grid;
+    }
+
+    private boolean commitXpAmount(Spinner<Integer> input, int min, int max) {
+        try {
+            int amount = Integer.parseInt(input.getEditor().getText().strip());
+            if (amount < min || amount > max) throw new NumberFormatException();
+            input.getValueFactory().setValue(amount);
+            return true;
+        } catch (NumberFormatException e) {
+            status("Enter a whole XP amount from " + min + " to " + max + ".");
+            return false;
+        }
+    }
+
+    private void awardDefeatXp(MapObject defeated) {
+        var state = TokenSupport.combatOf(defeated);
+        if (!state.isDead() || state.isXpRewardResolved() || state.getKillXp() == 0 && state.getSharedXp() == 0) return;
+        var party = new java.util.LinkedHashMap<String, String>();
+        for (var actor : allCreatures()) {
+            if (actor instanceof PlayerToken pc && pc.getCharacter() != null) {
+                party.putIfAbsent(pc.getCharacter().getId(), TokenSupport.nameOf(actor));
+            }
+        }
+        if (party.isEmpty()) {
+            status("Defeat XP is pending: no player characters are on the map.");
+            return;
+        }
+        String finisher = state.getDownedByPlayerId();
+        if (state.getKillXp() > 0 && !party.containsKey(finisher)) {
+            var choices = new java.util.LinkedHashMap<String, String>();
+            party.forEach((id, name) -> choices.put(name + " (" + id + ")", id));
+            var labels = choices.keySet().stream().sorted(String.CASE_INSENSITIVE_ORDER).toList();
+            ChoiceDialog<String> dialog = new ChoiceDialog<>(null, labels);
+            dialog.setTitle("Finishing XP");
+            dialog.setHeaderText("Choose who finished " + TokenSupport.nameOf(defeated));
+            dialog.setContentText("Finishing character:");
+            owner.styleDialog(dialog);
+            finisher = dialog.showAndWait().map(choices::get).orElse(null);
+            if (finisher == null) {
+                status("Defeat XP is pending. Use Resolve defeat XP to choose a finisher.");
+                return;
+            }
+        }
+        if (state.getXpRewardId() == null) state.setXpRewardId(java.util.UUID.randomUUID().toString());
+        dirty = true;
+        try {
+            // Persist the reward identity before the roster write so a retry after reopening reuses it.
+            saveMap();
+            var award = com.dnd.data.BattleXp.award(repos, map.getId() + "/" + state.getXpRewardId(), state.getKillXp(),
+                state.getSharedXp(), finisher, party.keySet());
+            updateTokenXp(award.totals());
+            state.setXpRewardResolved(true);
+            dirty = true;
+            if (award.applied()) status("Defeat XP recorded for " + TokenSupport.nameOf(defeated)
+                + (state.getSharedXp() == 0 ? "." : ": " + award.share() + " shared XP each"
+                    + (award.remainder() == 0 ? "." : " (" + award.remainder() + " left over).")));
+            else status("Defeat XP was already recorded.");
+        } catch (IllegalArgumentException | IllegalStateException | com.dnd.data.DataAccessException e) {
+            owner.showError("Couldn't award defeat XP", e);
+        }
+    }
+
+    private void updateTokenXp(java.util.Map<String, Integer> totals) {
+        for (var actor : allCreatures()) {
+            if (actor instanceof PlayerToken pc && pc.getCharacter() != null) {
+                var total = totals.get(pc.getCharacter().getId());
+                if (total != null) pc.getCharacter().setXp(total);
+            }
+        }
+    }
+
+    private void recordDowning(MapObject target, MapObject source, int hpBefore) {
+        var state = TokenSupport.combatOf(target);
+        if (hpBefore <= 0 || state.getCurrentHitPoints() > 0) return;
+        state.setDownedByPlayerId(source instanceof PlayerToken pc && pc.getCharacter() != null
+            ? pc.getCharacter().getId() : null);
     }
 
     /**
@@ -1542,7 +1708,7 @@ public class BattleMapWindow {
         CombatState state = TokenSupport.combatOf(token);
         boolean energy = state.effectiveCastingResource() == com.dnd.model.magic.CastingResource.ENERGY_CHARGES;
         java.util.Map<String, com.dnd.model.item.crafting.Device> devices = carriedDevices(token);
-        for (Spell spell : spells) {
+        for (Spell spell : com.dnd.ui.components.DisplayOrder.named(spells, Spell::getName)) {
             String label = spell.getName() + "  ·  lvl " + spell.getLevel()
                 + (spell.getManaCost() > 0 ? "  ·  " + spell.getManaCost() + " mana" : "")
                 + (spell.getRange() > 0 ? "  ·  " + spell.getRange() + " ft" : "")
@@ -1574,7 +1740,7 @@ public class BattleMapWindow {
     private Node buildAbilityList(MapObject token, List<Ability> abilities) {
         VBox box = new VBox(2);
         CombatState state = TokenSupport.combatOf(token);
-        for (Ability ability : abilities) {
+        for (Ability ability : com.dnd.ui.components.DisplayOrder.named(abilities, Ability::getName)) {
             String label = ability.getName()
                 + (ability.getRange() > 0 ? "  ·  " + (int) ability.getRange() + " ft" : "")
                 + (ability.getRadius() > 0 ? "  ·  " + (int) ability.getRadius() + " ft blast" : "");
@@ -1648,7 +1814,7 @@ public class BattleMapWindow {
     private Node buildFeatureList(MapObject token, CombatState state, FeatureRules.Kit kit) {
         VBox box = new VBox(4);
         String name = TokenSupport.nameOf(token);
-        for (FeatureRules.Action action : kit.getActions()) {
+        for (FeatureRules.Action action : com.dnd.ui.components.DisplayOrder.named(kit.getActions(), FeatureRules.Action::getName)) {
             int left = action.usesLeft(state.getFeatureUses());
             Label label = new Label(action.getName() + "  ·  " + action.usesLabel(state.getFeatureUses()));
             label.getStyleClass().add(left > 0 ? "body-label" : "muted-label");
@@ -1699,7 +1865,7 @@ public class BattleMapWindow {
         int rageBonus = state.meleeDamageBonus();
         if (rageBonus > 0) box.getChildren().add(owner.body("+" + rageBonus + " damage on Strength melee attacks"));
 
-        for (FeatureRules.Passive passive : kit.getPassives()) {
+        for (FeatureRules.Passive passive : com.dnd.ui.components.DisplayOrder.named(kit.getPassives(), FeatureRules.Passive::name)) {
             Label p = new Label("• " + passive.name());
             p.getStyleClass().add("muted-label");
             p.setWrapText(true);
@@ -1809,7 +1975,8 @@ public class BattleMapWindow {
         if (!(token instanceof PlayerToken pt) || pt.getCharacter() == null) return box;
         CombatState state = TokenSupport.combatOf(token);
         int rage = state.meleeDamageBonus();
-        for (FeatureRules.Attack attack : FeatureRules.attacks(pt.getCharacter(), kit, repos.items()::getById)) {
+        for (FeatureRules.Attack attack : com.dnd.ui.components.DisplayOrder.named(
+                FeatureRules.attacks(pt.getCharacter(), kit, repos.items()::getById), FeatureRules.Attack::name)) {
             boolean raging = rage > 0 && attack.melee() && attack.strengthBased();
             Label row = new Label(attack.name() + "  ·  " + signed(attack.toHit()) + " to hit  ·  "
                 + attack.damageLabel() + (raging ? " (+" + rage + " rage)" : "")
@@ -1959,7 +2126,9 @@ public class BattleMapWindow {
             int furyBonus = furyBox.isSelected() && fury != null
                 && FeatureRules.spend(attackerState.getFeatureUses(), fury, 1) ? level : 0;
             int total = Math.max(0, diceTotal + sneakTotal + attack.damageBonus() + rage + furyBonus);
+            int hpBefore = targetState.getCurrentHitPoints();
             CombatRules.Hit landed = CombatRules.damage(targetState, total, attack.damageType());
+            recordDowning(target, attacker, hpBefore);
             List<String> detail = new ArrayList<>();
             if (attack.dice() != null) detail.add(attack.dice() + (crit.isSelected() ? " (crit)" : "") + ": " + diceTotal);
             if (sneakTotal > 0) detail.add("Sneak Attack: " + sneakTotal);
@@ -2126,7 +2295,9 @@ public class BattleMapWindow {
             rolledEffectDice.add(entered);
         }
 
-        CastResolver.Outcome outcome = CastResolver.cast(caster, action, targets, distanceFeet, rolledDamage,
+        var hpBefore = new java.util.IdentityHashMap<MapObject, Integer>();
+        for (var target : defence.targets()) hpBefore.put(target, TokenSupport.combatOf(target).getCurrentHitPoints());
+        CastResolver.Outcome outcome = CastResolver.cast(caster, action, defence.targets(), distanceFeet, rolledDamage,
             rolledEffectDice, defence.rules(), defence.rolls());
         if (!outcome.isSuccess()) {
             if (!action.needsTarget()) {
@@ -2153,18 +2324,20 @@ public class BattleMapWindow {
         refreshAll();
         showDetail(caster);
         logLines(outcome.getMessage(), outcome.getLog());
+        hpBefore.forEach((target, hp) -> recordDowning(target, caster, hp));
     }
 
     private record CastRolls(com.dnd.model.combat.CastChecks rules,
-                             java.util.Map<MapObject, com.dnd.model.combat.CastChecks.Rolls> rolls) { }
+                             java.util.Map<MapObject, com.dnd.model.combat.CastChecks.Rolls> rolls,
+                             List<MapObject> targets) { }
 
     private CastRolls promptCastChecks(MapObject caster, CastResolver.Castable action, List<MapObject> targets) {
         var defaults = action.getChecks();
-        if (targets.isEmpty() || (!defaults.needsRolls() && action.getDamage() == null
+        if (targets.isEmpty() || (!action.choosesAreaTargets() && !defaults.needsRolls() && action.getDamage() == null
                 && action.getEffects().isEmpty())) {
-            return new CastRolls(defaults, java.util.Map.of());
+            return new CastRolls(defaults, java.util.Map.of(), targets);
         }
-        CheckBox attack = new CheckBox("Caster attack roll");
+        CheckBox attack = new CheckBox("Caster rolls to hit against Armor Class");
         attack.setSelected(defaults.isAttackRoll());
         ComboBox<String> save = new ComboBox<>();
         save.getItems().add("none");
@@ -2188,11 +2361,31 @@ public class BattleMapWindow {
         attackBonus.setId("cast-attack-bonus");
         Spinner<Integer> dc = new Spinner<>(0, 1000, defaults.getSaveDc() == null ? dcValue : defaults.getSaveDc());
         dc.setId("cast-save-dc");
-        VBox form = new VBox(8, owner.body("Override these rules for this cast only."), attack,
-            owner.body("Attack bonus"), attackBonus, owner.body("Target saving throw"), save,
-            owner.body("Save DC"), dc, owner.body("Damage on successful save"), damage);
+        var savingThrowOff = save.valueProperty().isEqualTo("none");
+        attackBonus.disableProperty().bind(attack.selectedProperty().not());
+        dc.disableProperty().bind(savingThrowOff);
+        damage.disableProperty().bind(savingThrowOff);
+        Label explanation = owner.body("Enter the raw d20 rolls. AC, bonuses and save DC are filled in for you and can be overridden for this cast.");
+        explanation.setWrapText(true);
+        Label sequence = owner.body("");
+        sequence.setWrapText(true);
+        Runnable explain = () -> sequence.setText(attack.isSelected()
+            ? (savingThrowOff.get() ? "Roll to hit: caster's d20 + attack bonus vs. target's AC. A miss does nothing."
+                : "First roll to hit against AC. On a hit, the target rolls its saving throw against the save DC. On a miss, skip the save.")
+            : (savingThrowOff.get() ? "No attack roll or saving throw: the spell applies directly."
+                : "Each target rolls d20 + its saving throw bonus against the save DC. No attack roll is needed."));
+        attack.selectedProperty().addListener((o, a, b) -> explain.run());
+        save.valueProperty().addListener((o, a, b) -> explain.run());
+        explain.run();
+        VBox form = new VBox(8, explanation, sequence, attack,
+            owner.body("Caster's attack bonus"), attackBonus, owner.body("Ability each target saves with"), save,
+            owner.body("Save DC (number to meet or beat)"), dc, owner.body("Damage on a successful save"), damage);
         List<Spinner<Integer>> inputs = new ArrayList<>(List.of(attackBonus, dc));
         java.util.Map<MapObject, List<Spinner<Integer>>> fields = new java.util.LinkedHashMap<>();
+        java.util.Map<MapObject, CheckBox> targetChoices = new java.util.LinkedHashMap<>();
+        if (action.choosesAreaTargets()) {
+            form.getChildren().add(owner.body("Only checked creatures in the area will be affected."));
+        }
         for (MapObject target : targets) {
             Spinner<Integer> attackDie = new Spinner<>(1, 20, 10);
             Spinner<Integer> armor = new Spinner<>(0, 1000, armorClassOf(target).total());
@@ -2227,9 +2420,22 @@ public class BattleMapWindow {
             inputs.addAll(fields.get(target));
             Label name = owner.body(TokenSupport.nameOf(target));
             name.setWrapText(true);
-            form.getChildren().addAll(new Separator(), name, owner.body("Caster d20 / target AC"),
-                new FlowPane(6, 6, attackDie, armor), owner.body("Target save d20 / save bonus"),
-                new FlowPane(6, 6, saveDie, saveBonus));
+            VBox hitNumbers = new VBox(4, owner.body("Caster's d20 / Target's AC"), new FlowPane(6, 6, attackDie, armor));
+            hitNumbers.visibleProperty().bind(attack.selectedProperty());
+            hitNumbers.managedProperty().bind(hitNumbers.visibleProperty());
+            VBox saveNumbers = new VBox(4, owner.body("Target's d20 / Target's save bonus"), new FlowPane(6, 6, saveDie, saveBonus));
+            saveNumbers.visibleProperty().bind(savingThrowOff.not());
+            saveNumbers.managedProperty().bind(saveNumbers.visibleProperty());
+            Node targetLabel = name;
+            if (action.choosesAreaTargets()) {
+                CheckBox include = UiTranslator.skip(new CheckBox(TokenSupport.nameOf(target)));
+                include.setSelected(action.initiallySelectsAreaTarget((caster instanceof PlayerToken) == (target instanceof PlayerToken)));
+                targetChoices.put(target, include);
+                hitNumbers.disableProperty().bind(include.selectedProperty().not());
+                saveNumbers.disableProperty().bind(include.selectedProperty().not());
+                targetLabel = include;
+            }
+            form.getChildren().addAll(new Separator(), targetLabel, hitNumbers, saveNumbers);
         }
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Attack and saving throws");
@@ -2240,6 +2446,11 @@ public class BattleMapWindow {
         scroll.setPrefViewportHeight(500);
         dialog.getDialogPane().setContent(scroll);
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        if (!targetChoices.isEmpty()) {
+            dialog.getDialogPane().lookupButton(ButtonType.OK).disableProperty().bind(javafx.beans.binding.Bindings.createBooleanBinding(
+                () -> targetChoices.values().stream().noneMatch(CheckBox::isSelected),
+                targetChoices.values().stream().map(CheckBox::selectedProperty).toArray(javafx.beans.Observable[]::new)));
+        }
         editableNumbers(dialog, form, inputs);
         owner.styleDialog(dialog);
         if (dialog.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) return null;
@@ -2248,10 +2459,15 @@ public class BattleMapWindow {
         rules.setSavingThrow(save.getValue());
         rules.setSuccessfulSaveDamage(damage.getValue());
         java.util.Map<MapObject, com.dnd.model.combat.CastChecks.Rolls> rolls = new java.util.LinkedHashMap<>();
-        fields.forEach((target, values) -> rolls.put(target, new com.dnd.model.combat.CastChecks.Rolls(
-            values.get(0).getValue(), attackBonus.getValue(), values.get(1).getValue(),
-            values.get(2).getValue(), values.get(3).getValue(), dc.getValue())));
-        return new CastRolls(rules, rolls);
+        List<MapObject> chosen = targets.stream()
+            .filter(target -> !targetChoices.containsKey(target) || targetChoices.get(target).isSelected()).toList();
+        for (MapObject target : chosen) {
+            var values = fields.get(target);
+            rolls.put(target, new com.dnd.model.combat.CastChecks.Rolls(
+                values.get(0).getValue(), attackBonus.getValue(), values.get(1).getValue(),
+                values.get(2).getValue(), values.get(3).getValue(), dc.getValue()));
+        }
+        return new CastRolls(rules, rolls, chosen);
     }
     /**
      * Asks the DM for the damage they actually rolled on the table for this cast (one total,
@@ -2444,7 +2660,7 @@ public class BattleMapWindow {
             }
         }
         java.util.Set<String> shown = new java.util.HashSet<>();
-        for (Item item : items) {
+        for (Item item : com.dnd.ui.components.DisplayOrder.named(items, Item::getName)) {
             if (!shown.add(item.getId())) continue;
             int n = counts.getOrDefault(item.getId(), 1);
             Label row = new Label("• " + item.getName() + (n > 1 ? "  ×" + n : ""));
@@ -2626,11 +2842,54 @@ public class BattleMapWindow {
     }
 
     private void saveMap() {
+        map.setInitiativePosition(initiativeActive ? initiative.position() : null);
         var current = repos.maps().getById(map.getId());
         if (current != null) map.setName(current.getName());
         pushAllToSheets();
         repos.maps().save(map);
         dirty = false;
+    }
+
+    private void publishTurns() {
+        if (!battleOpen) return;
+        var current = initiativeActive ? initiative.position() : null;
+        if (!java.util.Objects.equals(map.getInitiativePosition(), current)) {
+            map.setInitiativePosition(current);
+            dirty = true;
+        }
+        if (current == null || current.actorId() == null) {
+            turnId = null;
+            lastTurnView = null;
+            if (BattleTurns.clear(repos.campaignRoot(), this)) notifyTurnChange();
+            return;
+        }
+        if (turnId == null || !current.equals(lastPublishedPosition)) turnId = BattleTurns.newTurn();
+        lastPublishedPosition = current;
+        var view = new BattleTurns.View(turnId, current.round(), initiative.playerDistances());
+        if (view.equals(lastTurnView)) return;
+        lastTurnView = view;
+        if (BattleTurns.publish(repos.campaignRoot(), this, view)) notifyTurnChange();
+    }
+
+    private void notifyTurnChange() {
+        var root = repos.campaignRoot().toAbsolutePath().normalize();
+        var lan = com.dnd.lan.LanSessionServer.current();
+        if (lan != null && root.equals(lan.campaignRoot().toAbsolutePath().normalize())) lan.notifyChanged();
+        var session = uiSession.getSession();
+        if (session == null) return;
+        var sync = session.getFirebaseSync();
+        var context = session.getCampaignContext();
+        if (sync == null || !sync.isHost() || context == null || !root.equals(context.getPath().toAbsolutePath().normalize())) return;
+        var queued = BattleTurns.view(root);
+        TURN_PUSHES.execute(() -> {
+            if (BattleTurns.view(root) != queued || session.getFirebaseSync() != sync) return;
+            try {
+                sync.pushCampaign(root, context.getName());
+            } catch (RuntimeException error) {
+                java.util.logging.Logger.getLogger(BattleMapWindow.class.getName())
+                    .log(java.util.logging.Level.WARNING, "Could not publish the battle turn.", error);
+            }
+        });
     }
 
     // ── Character sheet sync ────────────────────────────────────────────────
@@ -2662,7 +2921,7 @@ public class BattleMapWindow {
         }
     }
 
-    /** Writes one player token's live vitals, slots, effects, level and XP back to the sheet. */
+    /** Writes live combat values without overwriting roster XP. */
     private void pushToSheet(MapObject token) {
         if (!(token instanceof PlayerToken pt) || pt.getCharacter() == null) return;
         var onToken = pt.getCharacter();
@@ -2672,7 +2931,7 @@ public class BattleMapWindow {
         TokenSupport.pushVitals(state, sheet);
         TokenSupport.pushVitals(state, onToken);
         sheet.setLevel(onToken.getLevel());
-        sheet.setXp(onToken.getXp());
+        onToken.setXp(sheet.getXp());
         sheet.setItems(onToken.getItems());
         repos.players().save(sheet);
     }

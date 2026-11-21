@@ -40,26 +40,25 @@ public class CampaignRestorePointsTest {
         assertEquals("machine credential fixture", Files.readString(git.resolve("config")));
     }
 
-    @Test public void retainsExactlyLatestTwentyAndRejectsChangedSource() throws Exception {
+    @Test public void retainsExactlyLatestThreeAndRejectsChangedSource() throws Exception {
         Path campaign = temp.newFolder("campaign").toPath();
         Path file = campaign.resolve("notes.txt");
         Files.writeString(file, "notes");
         var points = new CampaignRestorePoints(temp.newFolder("device").toPath(), campaign);
-        for (int i = 0; i < 22; i++) points.capture("Snapshot " + i);
-        assertEquals(20, points.list().size());
-        assertEquals("Snapshot 21", points.list().getFirst().reason());
-        assertEquals("Snapshot 2", points.list().getLast().reason());
+        for (int i = 0; i < 5; i++) points.capture("Snapshot " + i);
+        assertEquals(List.of("Snapshot 4", "Snapshot 3", "Snapshot 2"),
+            points.list().stream().map(CampaignRestorePoints.Point::reason).toList());
         var plan = points.plan(points.list().getFirst().id());
         Files.writeString(file, "Changed after preview");
         assertThrows(IOException.class, () -> points.restore(plan, List.of("notes.txt"), null));
         assertEquals("Changed after preview", Files.readString(file));
-        assertEquals(20, points.list().size());
+        assertEquals(3, points.list().size());
         assertThrows(IllegalArgumentException.class, () -> points.plan("../another-campaign"));
         assertThrows(IllegalArgumentException.class, () -> new CampaignRestorePoints(campaign.resolve("backups"), campaign));
         String oldest = points.list().getLast().id();
         points.restore(points.plan(oldest), List.of("notes.txt"), null);
         assertEquals("notes", Files.readString(file));
-        assertEquals(20, points.list().size());
+        assertEquals(3, points.list().size());
         assertFalse(points.list().stream().anyMatch(point -> point.id().equals(oldest)));
     }
 

@@ -207,13 +207,10 @@ final class LoreBookUi {
                     return;
                 }
                 PrivateFilesUi.editAccess(owner, account, PrivateSessionFiles.parse(opened.version()).header(),
-                    "Lore book access", grants -> {
+                    "Lore book access", "Sync with GitHub after saving, then have the other GM sync to receive the updated book.", grants -> {
                         requireCurrent(owner, root, account);
                         store.replaceAccess(opened, account, grants);
-                    }, () -> {
-                        dialog.close();
-                        owner.showInfo("Lore book access updated", "Sync with GitHub, then have the other GM sync to receive the updated book.");
-                    });
+                    }, dialog::close);
             }), owner.btn("Make shared", () -> {
                 if (dirty[0]) {
                     owner.showInfo("Lore book", "Save your changes before changing access.");

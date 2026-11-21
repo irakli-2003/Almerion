@@ -26,7 +26,7 @@ public final class CampaignRestorePoints {
     }
     private record Change(String path, Path payload, Path original, String expected) { }
     private static final Object LOCK = new Object();
-    private static final int LIMIT = 20;
+    private static final int LIMIT = 3;
     private static final long TEXT_LIMIT = 16L * 1024 * 1024;
     private static final String MISSING = "missing";
     private final Path campaign;

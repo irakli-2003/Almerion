@@ -2146,6 +2146,7 @@
  "Sync this campaign first; the requested file is not on this device.": "ჯერ მოახდინეთ კამპანიის სინქრონიზაცია; მოთხოვნილი ფაილი ამ მოწყობილობაზე არ არის.",
  "Sync with GitHub...": "სინქრონიზაცია GitHub-თან...",
  "GitHub Sync": "GitHub სინქრონიზაცია",
+ "Sync with GitHub after saving, then have the other GM sync to receive the updated book.": "შენახვის შემდეგ მოახდინეთ სინქრონიზაცია GitHub-თან. განახლებული წიგნის მისაღებად სხვა წამყვანმაც უნდა მოახდინოს სინქრონიზაცია.",
  "Show portrait full screen": "პორტრეტის სრულ ეკრანზე ჩვენება",
  "Syncing saved campaign changes before closing...": "დახურვამდე მიმდინარეობს კამპანიის შენახული ცვლილებების სინქრონიზაცია...",
  "Wait for pending campaign actions before closing. Then try again.": "დახურვამდე დაელოდეთ კამპანიის მიმდინარე მოქმედებების დასრულებას და სცადეთ ხელახლა.",

@@ -636,6 +636,18 @@ final class StorylineEditorWindow {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         HBox bar = new HBox(10, statusLabel, spacer, statsLabel, close);
+        Path campaign = repos.campaignRoot();
+        if (owner.uiSession.isDm() && campaign.equals(owner.uiSession.campaignRoot())) {
+            Button sync = toolButton("GitHub Sync", "Sync saved campaign changes with GitHub", () -> {
+                if (!owner.isCurrentRole() || !owner.uiSession.isDm()
+                    || !campaign.equals(owner.uiSession.campaignRoot()) || owner.uiSession.hasBackgroundActions()) return;
+                if (dirty) statusLabel.setText(com.dnd.ui.i18n.UiTranslator.text("Unsaved changes - Ctrl+S to save."));
+                GitHubSyncUi.configureCampaign(owner, campaign.getFileName().toString(), campaign, () -> {});
+            });
+            sync.setId("session-github-sync");
+            sync.disableProperty().bind(owner.uiSession.backgroundActionsProperty().greaterThan(0));
+            bar.getChildren().add(bar.getChildren().indexOf(close), sync);
+        }
         bar.setAlignment(Pos.CENTER_LEFT);
         bar.setPadding(new Insets(6, 10, 8, 10));
         return bar;

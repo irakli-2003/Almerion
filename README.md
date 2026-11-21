@@ -677,8 +677,8 @@ are shared among GMs by default and require no private-file keys. Shared books a
 on disk, but neither shared nor private books are included in player snapshots or sheets.
 Choose **Make private** to encrypt the book. Owners can use **Manage access** to give other
 campaign GMs **Read**, **Write**, or **Owner** access, just like a private session file.
-Private access requires private-file keys. Sync the campaign after changing access, then have
-the other GM sync to receive the updated book.
+Private access requires private-file keys. Saving access changes returns you to the campaign.
+Use **GitHub Sync**, then have the other GM sync to receive the updated book.
 
 Existing encrypted books stay private. A GM who can already open the old book can choose
 **Upgrade private access**, then use **Manage access** to add GMs who could not open it.
@@ -715,7 +715,7 @@ the edits made since the last completed draft.
 ### Local restore points
 
 Open **Restore points** from the GM menu or campaign selection. Almerion keeps the latest
-20 points per campaign on this device under `data/auth/restore-points`, outside campaign
+three points per campaign on this device under `data/auth/restore-points`, outside campaign
 folders and GitHub sync. Renaming a campaign keeps its history. Use **Create restore point**
 for a manual snapshot; automatic snapshots precede campaign imports, incoming GitHub
 merges, catalogue/storyline deletion, whole-campaign deletion, and app update downloads.
@@ -725,7 +725,7 @@ Snapshots contain the files available locally, not missing manual-transfer asset
 are not a substitute for complete exports or an off-device backup. Compare saved/current
 text, select files, then **Restore selected files**. Other current files remain unchanged.
 Storyline files also restore their encounter rosters. Existing campaigns get a safety
-point before restoration, subject to the same 20-point retention.
+point before restoration, subject to the same three-point retention.
 
 Only current campaign GMs may use its history. After online registration is deleted,
 only points explicitly captured with your account identity (including campaign deletion)
@@ -748,7 +748,8 @@ particularly NPC/monster/beast battle changes. Player-character battle changes u
 character sheet as their authority.
 
 Use **GitHub Sync** beside **Undo** and **Redo** on GM campaign screens to open the
-current campaign's sync controls. Save any open edits first; sync works with files on disk.
+current campaign's sync controls. In the session editor, **GitHub Sync** is in the bottom bar
+next to **Close**. Save any open edits first; sync works with files on disk.
 
 Compare **Before action** and **After action**, then **Undo selected action**. Damage,
 healing, resources, character inventory, effects and mechanical GM corrections are recorded.

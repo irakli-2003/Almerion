@@ -181,6 +181,93 @@ public class PrivateFilesUiTest {
         });
     }
 
+    @Test public void grantingLoreCoOwnershipSavesAndReturnsToCampaignWithoutAnotherPopup() throws Exception {
+        var cloud = new LocalCloudStore();
+        var author = PrivateAccount.finishSetup(cloud,
+            PrivateAccount.prepare("author", "author@example.test", "Author", "password"), "password");
+        var coGm = privateAccount(cloud, "co-gm", "cogm@example.test");
+        var campaign = temp.newFolder("private-lore").toPath();
+        var id = CampaignMeta.ensureId(campaign);
+        new CampaignDirectory(cloud).register(id, "Campaign", "Author");
+        seedMember(cloud, id, "Author", author.uid(), author.identity().email(), CampaignRecord.Role.DM);
+        seedMember(cloud, id, "Co-GM", coGm.uid(), coGm.identity().email(), CampaignRecord.Role.DM);
+        var lore = new com.dnd.data.LoreBookStore(campaign, id);
+        lore.protect(lore.open(null, java.util.List.of()), author, java.util.List.of());
+        var oldConfig = Cloud.config();
+        Cloud.override(cloud, null);
+        try {
+            onFx(() -> {
+                Stage stage = new Stage();
+                UiSession session = session(stage, campaign);
+                session.setDm(true);
+                user(session, author);
+                var failure = new AtomicReference<Throwable>();
+                var owner = new StorylineScene(session) {
+                    @Override protected <T> void background(Supplier<T> work, Consumer<T> done, Consumer<Throwable> failed) {
+                        try { done.accept(work.get()); } catch (Throwable error) { failure.set(error); }
+                    }
+                    @Override protected void showInfo(String header, String text) {
+                        failure.set(new AssertionError("Unexpected modal confirmation: " + header));
+                    }
+                };
+                stage.setScene(owner.build());
+                stage.show();
+                try {
+                    Platform.runLater(() -> {
+                        try {
+                            var book = namedWindow("GM lore book");
+                            Platform.runLater(() -> {
+                                try {
+                                    var access = namedWindow("Lore book access");
+                                    var pane = (javafx.scene.control.DialogPane) access.getScene().getRoot();
+                                    pane.applyCss();
+                                    pane.layout();
+                                    var check = pane.lookupAll(".check-box").stream()
+                                        .filter(n -> n instanceof javafx.scene.control.CheckBox b
+                                            && ("Owner " + coGm.identity()).equals(b.getAccessibleText()))
+                                        .map(javafx.scene.control.CheckBox.class::cast).findFirst().orElseThrow();
+                                    check.fire();
+                                    ((Button) pane.lookupButton(javafx.scene.control.ButtonType.OK)).fire();
+                                } catch (Throwable error) {
+                                    failure.set(error);
+                                    closeLoreWindows(stage);
+                                }
+                            });
+                            button(book.getScene().getRoot(), "Manage access").fire();
+                            if (failure.get() != null) closeLoreWindows(stage);
+                        } catch (Throwable error) {
+                            failure.set(error);
+                            closeLoreWindows(stage);
+                        }
+                    });
+                    LoreBookUi.open(owner);
+                    if (failure.get() != null) throw new AssertionError(failure.get());
+                    assertTrue(stage.isShowing());
+                    assertFalse(Window.getWindows().stream().anyMatch(w -> w instanceof Stage s
+                        && ("GM lore book".equals(s.getTitle()) || "Lore book access".equals(s.getTitle()))));
+                } finally {
+                    stage.close();
+                }
+            });
+            assertEquals(com.dnd.security.PrivateSessionFiles.Access.OWNER,
+                lore.open(coGm, java.util.List.of()).access());
+        } finally {
+            Cloud.override(null, oldConfig);
+        }
+    }
+
+    private static Stage namedWindow(String title) {
+        return Window.getWindows().stream().filter(w -> w instanceof Stage s && title.equals(s.getTitle()))
+            .map(Stage.class::cast).findFirst().orElseThrow();
+    }
+
+    private static void closeLoreWindows(Stage campaign) {
+        new java.util.ArrayList<>(Window.getWindows()).stream()
+            .filter(w -> w != campaign && w instanceof Stage s
+                && ("GM lore book".equals(s.getTitle()) || "Lore book access".equals(s.getTitle())))
+            .forEach(Window::hide);
+    }
+
     @Test public void gmCanBrowseSharedLoreAndPlayersCannotOpenIt() throws Exception {
         LocalCloudStore identities = new LocalCloudStore();
         PrivateAccount account = PrivateAccount.finishSetup(identities,
@@ -303,9 +390,26 @@ public class PrivateFilesUiTest {
                 watchdog.play();
                 Platform.runLater(() -> {
                     try {
+                        Stage editorWindow = (Stage) field(editor, "editorStage");
+                        var footer = editorWindow.getScene().getRoot();
+                        var sync = (Button) footer.lookup("#session-github-sync");
+                        assertNotNull(sync);
+                        assertTrue(sync.isVisible());
+                        assertSame(button(footer, "Close").getParent(), sync.getParent());
+                        assertFalse(sync.isDisabled());
+                        session.beginBackgroundAction();
+                        try {
+                            assertTrue(sync.isDisabled());
+                        } finally {
+                            session.endBackgroundAction();
+                        }
+                        assertFalse(sync.isDisabled());
                         ((org.fxmisc.richtext.CodeArea) field(editor, "area")).replaceText("Unfinished secret.");
-                    } catch (Exception problem) {
+                    } catch (Throwable problem) {
                         error.set(problem);
+                        ((Stage) Window.getWindows().stream()
+                            .filter(w -> w instanceof Stage s && "session.txt".equals(s.getTitle()))
+                            .findFirst().orElseThrow()).close();
                     }
                 });
                 try {

@@ -290,12 +290,14 @@ final class PrivateFilesUi {
                 }
                 return;
             }
-            editAccess(owner, account, header, "Session-file access", recipients -> service.replaceAccess(file, recipients, header), changed);
+            editAccess(owner, account, header, "Session-file access", null,
+                recipients -> service.replaceAccess(file, recipients, header), changed);
         });
     }
 
     static void editAccess(BaseScene owner, PrivateAccount account, com.dnd.security.PrivateSessionFiles.Header header,
-                           String title, java.util.function.Consumer<Map<PrivateAccount.Identity, Access>> save, Runnable changed) {
+                           String title, String syncHint,
+                           java.util.function.Consumer<Map<PrivateAccount.Identity, Access>> save, Runnable changed) {
             owner.background(() -> gmIdentities(owner, account), identities -> {
                 Dialog<Map<PrivateAccount.Identity, Access>> dialog = new Dialog<>();
                 dialog.setTitle(title);
@@ -335,7 +337,13 @@ final class PrivateFilesUi {
                 ScrollPane scroll = new ScrollPane(choices);
                 scroll.setFitToWidth(true);
                 scroll.setPrefViewportHeight(240);
-                dialog.getDialogPane().setContent(scroll);
+                if (syncHint != null) {
+                    var hint = owner.body(syncHint);
+                    hint.setWrapText(true);
+                    dialog.getDialogPane().setContent(new VBox(8, scroll, hint));
+                } else {
+                    dialog.getDialogPane().setContent(scroll);
+                }
                 dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
                 var apply = dialog.getDialogPane().lookupButton(ButtonType.OK);
                 Runnable updateApply = () -> apply.setDisable(selected.values().stream().noneMatch(choice -> choice.owns().isSelected()));

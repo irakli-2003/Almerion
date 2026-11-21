@@ -1144,6 +1144,7 @@ public class BattleMapWindow {
         full.fitWidthProperty().bind(background.widthProperty());
         full.fitHeightProperty().bind(background.heightProperty());
         Scene scene = new Scene(background, 800, 600, Color.BLACK);
+        com.dnd.ui.ReportUi.markPresentation(scene);
         scene.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ESCAPE) presentation.close();
         });

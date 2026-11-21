@@ -368,6 +368,7 @@ public class BattleMapWindowTest {
 
     @Test public void tokenDetailPresentsOnlyTheUncroppedImageInAnOwnedWindow() throws Exception {
         runBattle((battle, map, stage) -> {
+            com.dnd.ui.ReportUi.install();
             var png = temp.getRoot().toPath().resolve("rabbit.png");
             javax.imageio.ImageIO.write(new java.awt.image.BufferedImage(94, 60,
                 java.awt.image.BufferedImage.TYPE_INT_RGB), "png", png.toFile());

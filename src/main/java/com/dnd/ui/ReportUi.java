@@ -31,6 +31,11 @@ public final class ReportUi {
     private static final String CSS = "/com/dnd/ui/styles/dnd-theme.css";
     private static boolean installed;
     private static final String OWNER = "almerion.report.owner";
+    private static final String PRESENTATION = "almerion.report.presentation";
+
+    public static void markPresentation(Scene scene) {
+        scene.getProperties().put(PRESENTATION, true);
+    }
 
     private ReportUi() {}
 
@@ -66,8 +71,9 @@ public final class ReportUi {
     }
 
     private static void decorate(Scene scene) {
-        if (scene != null) TextClipboard.install(scene);
-        if (scene == null || scene.getProperties().containsKey(REPORT)) return;
+        if (scene == null || scene.getProperties().containsKey(PRESENTATION)) return;
+        TextClipboard.install(scene);
+        if (scene.getProperties().containsKey(REPORT)) return;
         scene.getProperties().put(REPORT, true);
         Parent content = scene.getRoot();
         if (content instanceof DialogPane pane) {

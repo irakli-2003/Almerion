@@ -149,25 +149,34 @@ public final class SessionSnapshot {
      * @return the directory the campaign was written to
      */
     public static Path hydrate(String json, String sessionId) {
+        return hydrate(json, sessionId, null);
+    }
+
+    /** Update only changed catalogs after a successful initial hydration. */
+    public static Path hydrate(String json, String sessionId, String previousJson) {
         ObjectMapper mapper = JsonMappers.create();
         Path root = JOINED_ROOT.resolve(sanitize(sessionId));
         CampaignPaths paths = new CampaignPaths(root);
 
         JsonNode snapshot;
+        JsonNode previous;
         try {
             snapshot = mapper.readTree(json);
+            if (snapshot == null || !snapshot.isObject()) throw new IOException("Expected a session snapshot object");
+            previous = previousJson == null ? null : mapper.readTree(previousJson);
         } catch (IOException e) {
             throw new DataAccessException("The session data from the GM could not be read", e);
         }
 
         try {
-            deleteRecursively(root);
+            if (previous == null) deleteRecursively(root);
             Files.createDirectories(paths.worldDir());
             Files.createDirectories(paths.playersDir());
 
             for (Map.Entry<String, Catalog> entry : CATALOGS.entrySet()) {
                 Catalog catalog = entry.getValue();
                 JsonNode array = snapshot.get(entry.getKey());
+                if (previous != null && java.util.Objects.equals(array, previous.get(entry.getKey()))) continue;
                 ObjectNode wrapper = mapper.createObjectNode();
                 // An absent catalog is written as an empty one, so every file the campaign
                 // repositories expect exists and a partial snapshot still opens.
@@ -176,7 +185,8 @@ public final class SessionSnapshot {
                 Files.createDirectories(file.getParent());
                 Files.writeString(file, mapper.writerWithDefaultPrettyPrinter().writeValueAsString(wrapper));
             }
-            if (snapshot.has("statSchema")) {
+            if (snapshot.has("statSchema") && (previous == null
+                    || !snapshot.get("statSchema").equals(previous.get("statSchema")))) {
                 StatSchemas.save(root, mapper.treeToValue(snapshot.get("statSchema"),
                     com.dnd.model.character.stats.StatSchema.class));
             }

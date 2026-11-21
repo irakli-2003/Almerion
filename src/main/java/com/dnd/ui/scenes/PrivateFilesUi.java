@@ -290,10 +290,16 @@ final class PrivateFilesUi {
                 }
                 return;
             }
+            editAccess(owner, account, header, "Session-file access", recipients -> service.replaceAccess(file, recipients, header), changed);
+        });
+    }
+
+    static void editAccess(BaseScene owner, PrivateAccount account, com.dnd.security.PrivateSessionFiles.Header header,
+                           String title, java.util.function.Consumer<Map<PrivateAccount.Identity, Access>> save, Runnable changed) {
             owner.background(() -> gmIdentities(owner, account), identities -> {
                 Dialog<Map<PrivateAccount.Identity, Access>> dialog = new Dialog<>();
-                dialog.setTitle("Session-file access");
-                dialog.setHeaderText("Owners can change access, move, or delete the file. At least one owner must remain."
+                dialog.setTitle(title);
+                dialog.setHeaderText("Owners can change access. At least one owner must remain."
                     + " Removing access does not erase existing copies.");
                 GridPane choices = new GridPane();
                 choices.setHgap(16);
@@ -347,11 +353,10 @@ final class PrivateFilesUi {
                 owner.styleDialog(dialog);
                 dialog.showAndWait().ifPresent(recipients -> owner.background(() -> {
                     if (owner.uiSession.getPrivateAccount() != account) throw new IllegalStateException("The private-file account changed.");
-                    service.replaceAccess(file, recipients, header);
+                    save.accept(recipients);
                     return true;
-                }, ignored -> changed.run(), error -> owner.showError("Could not change session-file access", error)));
+                }, ignored -> changed.run(), error -> owner.showError(title, error)));
             }, error -> owner.showError("Could not load campaign GMs", error));
-        });
     }
 
     private static List<PrivateAccount.Identity> gmIdentities(BaseScene owner, PrivateAccount account) {

@@ -232,6 +232,21 @@ public class CampaignRepositories {
         return players;
     }
 
+    /** Change only the owner on the latest saved sheet, never replacing someone else's link. */
+    public void setPlayerAssignment(String characterId, String username, boolean assign) {
+        if (username == null || username.isBlank()) throw new IllegalArgumentException("Choose a player account.");
+        players().changeCatalogue(roster -> {
+            PlayerCharacter pc = roster.getPlayers().stream().filter(p -> characterId.equals(p.getId()))
+                .findFirst().orElseThrow(() -> new IllegalStateException("That character no longer exists."));
+            if (assign && pc.isOwnedBy(username)) return false;
+            if (assign ? pc.getOwnerUsername() != null && !pc.getOwnerUsername().isBlank() : !pc.isOwnedBy(username)) {
+                throw new IllegalStateException("The character's assignment changed. Refresh the member list and try again.");
+            }
+            pc.setOwnerUsername(assign ? username : null);
+            return true;
+        });
+    }
+
     public JsonRepository<Language, LanguageCatalog> languages() {
         if (languages == null) {
             languages = new JsonRepository<>(

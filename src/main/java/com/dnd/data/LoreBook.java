@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Structured contents of a GM-only encrypted lore book. */
+/** Structured contents of a GM-only lore book. */
 public final class LoreBook {
     private static final ObjectMapper MAPPER = JsonMappers.create()
         .enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
@@ -42,7 +42,7 @@ public final class LoreBook {
             book.validate();
             return book;
         } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("The encrypted lore book is unreadable.", e);
+            throw new IllegalArgumentException("The lore book is unreadable.", e);
         }
     }
 

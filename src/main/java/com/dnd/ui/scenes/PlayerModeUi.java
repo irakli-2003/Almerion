@@ -39,8 +39,10 @@ public final class PlayerModeUi {
             return;
         }
         if (!ready(owner)) return;
-        session.enterPlayerMode();
-        session.getRouter().goTo(SceneType.PLAYER_ONLINE_SESSION);
+        session.getRouter().leaveCampaign(() -> {
+            session.enterPlayerMode();
+            session.getRouter().goTo(SceneType.PLAYER_ONLINE_SESSION);
+        });
     }
 
     static void enterGm(BaseScene owner) {
@@ -61,7 +63,7 @@ public final class PlayerModeUi {
         return false;
     }
 
-    static boolean closeSecondaryWindows(Stage primary) {
+    public static boolean closeSecondaryWindows(Stage primary) {
         var windows = new ArrayList<>(Window.getWindows());
         Collections.reverse(windows);
         for (Window window : windows) {

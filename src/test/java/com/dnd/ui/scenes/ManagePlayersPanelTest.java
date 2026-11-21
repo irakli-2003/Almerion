@@ -29,6 +29,37 @@ import static org.junit.Assert.*;
 
 public class ManagePlayersPanelTest {
 
+    @Test
+    public void gmCharacterNotesFitWhenTheDialogIsNarrowed() throws Exception {
+        var check = new java.util.concurrent.FutureTask<Void>(() -> {
+            var dialog = new javafx.scene.control.Dialog<Void>();
+            String draft = "A long note with words to wrap. ".repeat(20) + "unbroken".repeat(90);
+            var text = CharacterNotesUi.configureEditor(dialog, draft);
+            var pane = dialog.getDialogPane();
+            pane.getButtonTypes().add(javafx.scene.control.ButtonType.CANCEL);
+            dialog.show();
+            try {
+                assertTrue(dialog.isResizable());
+                pane.resize(560, 400);
+                pane.applyCss();
+                pane.layout();
+                double initialWidth = text.getWidth();
+                pane.resize(340, 400);
+                pane.layout();
+                assertTrue(text.getWidth() < initialWidth);
+                assertTrue(pane.sceneToLocal(text.localToScene(text.getBoundsInLocal())).getMaxX() <= pane.getWidth());
+                var scroll = (javafx.scene.control.ScrollPane) text.lookup(".scroll-pane");
+                assertTrue(scroll.getContent().getLayoutBounds().getWidth() <= scroll.getViewportBounds().getWidth() + 1);
+                assertEquals(draft, text.getText());
+            } finally {
+                dialog.close();
+            }
+            return null;
+        });
+        Platform.runLater(check);
+        check.get(20, TimeUnit.SECONDS);
+    }
+
     @BeforeClass
     public static void startToolkit() throws Exception {
         CountDownLatch ready = new CountDownLatch(1);

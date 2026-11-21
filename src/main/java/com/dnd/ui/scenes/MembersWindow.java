@@ -4,6 +4,8 @@ import com.dnd.cloud.CampaignDirectory;
 import com.dnd.cloud.CampaignMeta;
 import com.dnd.cloud.CampaignRecord;
 import com.dnd.cloud.CampaignRecord.Role;
+import com.dnd.data.CampaignRepositories;
+import com.dnd.model.character.PlayerCharacter;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -25,14 +27,16 @@ public final class MembersWindow {
     private final BaseScene owner;
     private final String campaignId;
     private final String user;
+    private final Path campaignRoot;
     private final CampaignDirectory directory = CampaignDirectory.shared();
     private final VBox content = new VBox(14);
     private Stage stage;
 
-    private MembersWindow(BaseScene owner, String campaignId, String user) {
+    private MembersWindow(BaseScene owner, String campaignId, String user, Path campaignRoot) {
         this.owner = owner;
         this.campaignId = campaignId;
         this.user = user;
+        this.campaignRoot = campaignRoot;
     }
 
     public static void open(BaseScene owner, Path campaignRoot, String user) {
@@ -42,11 +46,11 @@ public final class MembersWindow {
                 "Go back to Campaign Selection and claim it first; then you can invite players.");
             return;
         }
-        openRegistered(owner, id, user);
+        new MembersWindow(owner, id, user, campaignRoot).show();
     }
 
     static void openRegistered(BaseScene owner, String campaignId, String user) {
-        new MembersWindow(owner, campaignId, user).show();
+        new MembersWindow(owner, campaignId, user, null).show();
     }
 
     static void invite(BaseScene owner, CampaignRecord record, String user, Runnable finished) {
@@ -157,11 +161,17 @@ public final class MembersWindow {
         }
 
         content.getChildren().add(owner.sectionLabel("Members (" + record.members.size() + ")"));
+        content.getChildren().add(owner.body(campaignRoot == null
+            ? "Open Members from a local copy of this campaign to link existing characters."
+            : "After a player accepts, use Characters beside their account to link their existing sheet."));
         for (CampaignRecord.Member member : record.members.values().stream()
                 .sorted(java.util.Comparator.comparing(m -> m.username, String.CASE_INSENSITIVE_ORDER)).toList()) {
             boolean isAuthor = record.isAuthor(member.username);
             String label = member.username + "  -  " + (isAuthor ? "Author GM" : member.role == Role.DM ? "GM" : "Player");
             HBox row = row(owner.body(label));
+            if (campaignRoot != null && member.role == Role.PLAYER) {
+                row.getChildren().add(owner.btn("Characters", () -> chooseAssignment(member.username)));
+            }
             if (author && !isAuthor) {
                 Role other = member.role == Role.DM ? Role.PLAYER : Role.DM;
                 row.getChildren().add(owner.btn(other == Role.DM ? "Make GM" : "Make Player",
@@ -190,6 +200,50 @@ public final class MembersWindow {
             content.getChildren().add(owner.body("Only " + record.author + " (the author) can add or remove Game Masters."));
         }
         content.getChildren().add(owner.btn("Refresh", this::reload));
+    }
+
+    private void chooseAssignment(String username) {
+        owner.background(() -> new CampaignRepositories(campaignRoot).players().list().stream()
+            .filter(pc -> pc.isOwnedBy(username) || pc.getOwnerUsername() == null || pc.getOwnerUsername().isBlank())
+            .toList(), choices -> {
+            if (choices.isEmpty()) {
+                owner.showInfo("No available characters", "Create a character or unlink it from its current player first.");
+                return;
+            }
+            record Choice(PlayerCharacter pc, boolean linked) {
+                @Override public String toString() {
+                    return (pc.getName() == null ? pc.getId() : pc.getName()) + " [" + pc.getId() + "]"
+                        + (linked ? " (linked)" : " (unassigned)");
+                }
+            }
+            ChoiceDialog<Choice> dialog = new ChoiceDialog<>(null, choices.stream()
+                .map(pc -> new Choice(pc, pc.isOwnedBy(username))).toList());
+            dialog.setTitle("Link a character");
+            dialog.setHeaderText("Characters for " + username);
+            dialog.setContentText("Choose an unassigned character to link, or a linked character to unlink:");
+            owner.styleDialog(dialog);
+            dialog.showAndWait().ifPresent(choice -> {
+                boolean assign = !choice.linked();
+                if (!assign) {
+                    Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+                        "Unlink this character from " + username + "?", ButtonType.OK, ButtonType.CANCEL);
+                    owner.styleDialog(confirm);
+                    if (confirm.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) return;
+                }
+                owner.background(() -> {
+                    CampaignRecord current = directory.find(campaignId).orElse(null);
+                    if (com.dnd.cloud.Cloud.isOffline() || current == null || !current.isDm(user)
+                        || current.roleOf(username) != Role.PLAYER
+                        || CampaignMeta.idOf(campaignRoot).filter(campaignId::equals).isEmpty()) {
+                        throw new IllegalStateException("Could not verify current campaign membership. Refresh and try again online.");
+                    }
+                    new CampaignRepositories(campaignRoot).setPlayerAssignment(choice.pc().getId(), username, assign);
+                    return assign;
+                }, linked -> owner.showInfo(linked ? "Character linked" : "Character unlinked",
+                    linked ? username + " can open the character from the live session." : "The character is now unassigned."),
+                    failure -> owner.showError("Couldn't change character assignment", failure));
+            });
+        }, failure -> owner.showError("Couldn't load characters", failure));
     }
 
     private static HBox row(Node... nodes) {

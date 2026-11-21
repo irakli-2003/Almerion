@@ -31,7 +31,7 @@ public class GuiApp extends Application {
         // "Windowed full screen": maximized with the OS chrome still visible, not true
         // (chromeless) full-screen mode - matches what the user asked for on every launch.
         primaryStage.setMaximized(true);
-        primaryStage.setOnCloseRequest(e -> {
+        Runnable close = () -> {
             if (session.isOnline()) {
                 if (session.getFirebaseSync().isHost()) {
                     try {
@@ -44,15 +44,30 @@ public class GuiApp extends Application {
             }
             uiSession.lockPrivateAccount();
             com.dnd.cloud.Cloud.signOut();
+            primaryStage.close();
+        };
+        primaryStage.setOnCloseRequest(e -> {
+            e.consume();
+            uiSession.getRouter().leaveCampaign(close);
         });
         uiSession.getRouter().goTo(SceneType.LOGIN);
         primaryStage.show();
-        UpdatePrompt.checkInBackground(primaryStage);
+        UpdatePrompt.checkInBackground(primaryStage, () -> uiSession.getRouter().leaveCampaign(() -> {
+            if (com.dnd.update.UpdateChecker.restart()) {
+                close.run();
+            } else {
+                if (uiSession.isDm() && uiSession.getRouter().isCampaignOpen() && uiSession.campaignRoot() != null) {
+                    com.dnd.sync.CampaignSyncService.shared().opened(uiSession.campaignRoot());
+                }
+                new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.WARNING,
+                    "The app could not restart. The update will be applied next time.").showAndWait();
+            }
+        }));
     }
 
     @Override
     public void stop() {
-        // Upload the open campaign's last changes to GitHub (bounded, so quitting never hangs).
+        // Fallback for JavaFX shutdowns that did not go through the primary window's close request.
         com.dnd.sync.CampaignSyncService.shared().shutdown(20_000);
         com.dnd.ui.music.MusicPlayer.get().shutdown();
         com.dnd.lan.LanSessionServer.stopShared();

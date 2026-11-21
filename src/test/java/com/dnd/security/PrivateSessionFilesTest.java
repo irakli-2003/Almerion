@@ -104,6 +104,38 @@ public class PrivateSessionFilesTest {
             () -> CharacterNotes.loreBook(root, "campaign", author).read("@gm-lore-book", gms));
     }
 
+    @Test public void legacyLoreStaysPrivateAndCanGrantSessionStyleAccessToNewGms() throws Exception {
+        var root = temp.newFolder("legacy-lore").toPath();
+        var lore = new com.dnd.data.LoreBookStore(root, "campaign");
+        var legacy = CharacterNotes.loreBook(root, "campaign", owner);
+        var id = com.dnd.data.LoreBookStore.DOCUMENT;
+        var gms = List.of(owner.identity(), friend.identity());
+        String draft = "{\"title\":\"Secret lore\",\"sections\":[]}";
+        legacy.save(id, legacy.read(id, gms), draft, gms);
+        assertThrows(SecurityException.class, () -> lore.open(author, gms));
+        var opened = lore.open(owner, gms);
+        assertFalse(opened.editable());
+        lore.protect(opened, owner, gms);
+        assertEquals(PrivateSessionFiles.Access.WRITE, lore.open(friend, List.of()).access());
+        assertThrows(SecurityException.class, () -> lore.open(author, List.of()));
+        var protectedBook = lore.open(owner, List.of());
+        lore.replaceAccess(protectedBook, owner, java.util.Map.of(owner.identity(), PrivateSessionFiles.Access.OWNER,
+            friend.identity(), PrivateSessionFiles.Access.OWNER, author.identity(), PrivateSessionFiles.Access.READ));
+        var readOnly = lore.open(author, List.of());
+        assertEquals("Secret lore", readOnly.book().title);
+        assertFalse(readOnly.editable());
+        assertThrows(SecurityException.class, () -> lore.save(readOnly, draft, author));
+        assertThrows(SecurityException.class, () -> lore.share(readOnly, author));
+        assertThrows(IllegalStateException.class, () -> lore.save(protectedBook, draft, owner));
+        lore.replaceAccess(lore.open(friend, List.of()), friend, java.util.Map.of(friend.identity(), PrivateSessionFiles.Access.OWNER,
+            author.identity(), PrivateSessionFiles.Access.WRITE));
+        lore.save(lore.open(author, List.of()), "{\"title\":\"Edited lore\",\"sections\":[]}", author);
+        assertThrows(SecurityException.class, () -> lore.open(owner, List.of()));
+        lore.share(lore.open(friend, List.of()), friend);
+        assertEquals("Edited lore", lore.open(null, List.of()).book().title);
+        assertFalse(SessionSnapshot.capture(root, "Campaign").contains("Edited lore"));
+    }
+
     @Test public void campaignAuthorCannotReadCoGmFileEvenWithSyncedBytes() {
         String file = PrivateSessionFiles.create(content(), owner);
         assertFalse(file.contains("secret villain"));

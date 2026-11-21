@@ -181,7 +181,7 @@ public class PrivateFilesUiTest {
         });
     }
 
-    @Test public void gmCanBrowseAndSearchEncryptedLoreWithoutExposingItToPlayers() throws Exception {
+    @Test public void gmCanBrowseSharedLoreAndPlayersCannotOpenIt() throws Exception {
         LocalCloudStore identities = new LocalCloudStore();
         PrivateAccount account = PrivateAccount.finishSetup(identities,
             PrivateAccount.prepare("owner", "owner@example.test", "Owner", "password"), "password");
@@ -197,9 +197,8 @@ public class PrivateFilesUiTest {
         section.articles.add(new com.dnd.data.LoreBook.Article("War", "The Moon is a secret."));
         section.articles.add(new com.dnd.data.LoreBook.Article("Peace", "Another story."));
         book.sections.add(section);
-        var notes = com.dnd.data.CharacterNotes.loreBook(campaign, campaignId, account);
-        var gms = java.util.List.of(account.identity());
-        notes.save(LoreBookUi.DOCUMENT, notes.read(LoreBookUi.DOCUMENT, gms), book.serialize(), gms);
+        var lore = new com.dnd.data.LoreBookStore(campaign, campaignId);
+        lore.save(lore.open(null, java.util.List.of()), book.serialize(), null);
         AtomicReference<Throwable> error = new AtomicReference<>();
         try {
             onFx(() -> {

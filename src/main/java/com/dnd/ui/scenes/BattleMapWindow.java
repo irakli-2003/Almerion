@@ -1063,7 +1063,7 @@ public class BattleMapWindow {
         kind.getStyleClass().add("subtitle-label");
 
         VBox text = new VBox(1, name, kind, healthBar(state, 190));
-        HBox row = new HBox(8, portrait(token, 34), text);
+        HBox row = new HBox(8, portrait(token, 34, false), text);
         row.setAlignment(Pos.CENTER_LEFT);
         row.setPadding(new Insets(4));
         row.getStyleClass().add("roster-row");
@@ -1099,7 +1099,7 @@ public class BattleMapWindow {
         return bar;
     }
 
-    private Node portrait(MapObject token, double size) {
+    private Node portrait(MapObject token, double size, boolean canPresent) {
         String path = TokenSupport.imagePathOf(token);
         if (path != null && uiSession.campaignRoot() != null) {
             Image img = ImageStore.load(uiSession.campaignRoot(), path);
@@ -1110,6 +1110,16 @@ public class BattleMapWindow {
                 view.setPreserveRatio(false);
                 Circle clip = new Circle(size / 2, size / 2, size / 2);
                 view.setClip(clip);
+                if (canPresent) {
+                    Button show = new Button("", view);
+                    show.setId("battle-present-portrait");
+                    show.setStyle("-fx-padding: 0; -fx-min-width: 0; -fx-cursor: hand;");
+                    String label = UiTranslator.text("Show portrait full screen");
+                    show.setAccessibleText(label);
+                    show.setTooltip(new Tooltip(label));
+                    show.setOnAction(event -> presentPortrait(show, img));
+                    return show;
+                }
                 return view;
             }
         }
@@ -1119,6 +1129,33 @@ public class BattleMapWindow {
         initials.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
         fallback.getChildren().addAll(circle, initials);
         return fallback;
+    }
+
+    private static void presentPortrait(Node source, Image image) {
+        Stage presentation = new Stage();
+        var battle = source.getScene().getWindow();
+        presentation.initOwner(battle);
+        presentation.initModality(Modality.WINDOW_MODAL);
+        presentation.setTitle(UiTranslator.text("Portrait"));
+        ImageView full = new ImageView(image);
+        full.setPreserveRatio(true);
+        StackPane background = new StackPane(full);
+        background.setStyle("-fx-background-color: black;");
+        full.fitWidthProperty().bind(background.widthProperty());
+        full.fitHeightProperty().bind(background.heightProperty());
+        Scene scene = new Scene(background, 800, 600, Color.BLACK);
+        scene.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ESCAPE) presentation.close();
+        });
+        presentation.setScene(scene);
+        presentation.setX(battle.getX());
+        presentation.setY(battle.getY());
+        presentation.setFullScreenExitHint("");
+        presentation.fullScreenProperty().addListener((obs, previous, active) -> {
+            if (!active) presentation.close();
+        });
+        presentation.setFullScreen(true);
+        presentation.show();
     }
 
     // ── Detail panel ────────────────────────────────────────────────────────
@@ -1155,7 +1192,7 @@ public class BattleMapWindow {
         Label acLabel = new Label("🛡 AC " + ac.total());
         acLabel.getStyleClass().add("subtitle-label");
         acLabel.setTooltip(new Tooltip(ac.breakdown()));
-        panel.getChildren().add(new HBox(10, portrait(token, 56), new VBox(2, name, kind, acLabel)));
+        panel.getChildren().add(new HBox(10, portrait(token, 56, true), new VBox(2, name, kind, acLabel)));
 
         String description = TokenSupport.descriptionOf(token);
         if (description != null && !description.isBlank()) {

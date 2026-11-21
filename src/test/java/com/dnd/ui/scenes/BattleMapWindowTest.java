@@ -366,6 +366,43 @@ public class BattleMapWindowTest {
         });
     }
 
+    @Test public void tokenDetailPresentsOnlyTheUncroppedImageInAnOwnedWindow() throws Exception {
+        runBattle((battle, map, stage) -> {
+            var png = temp.getRoot().toPath().resolve("rabbit.png");
+            javax.imageio.ImageIO.write(new java.awt.image.BufferedImage(94, 60,
+                java.awt.image.BufferedImage.TYPE_INT_RGB), "png", png.toFile());
+            var token = (MonsterToken) map.getCell(0, 0).getOccupants().getFirst();
+            token.getMonster().setImagePath("rabbit.png");
+            Canvas canvas = (Canvas) field(battle, "canvas");
+            canvas.getOnMousePressed().handle(mouse(MouseButton.PRIMARY, 12, 12));
+            canvas.getOnMouseReleased().handle(mouse(MouseButton.PRIMARY, 12, 12));
+            stage.getScene().getRoot().applyCss();
+            stage.getScene().getRoot().layout();
+            var button = (Button) stage.getScene().lookup("#battle-present-portrait");
+            assertNotNull(button);
+            button.fire();
+            var presentation = Window.getWindows().stream()
+                .filter(w -> w instanceof Stage child && child.getOwner() == stage && child.isFullScreen())
+                .map(Stage.class::cast).findFirst().orElseThrow();
+            try {
+                assertTrue(stage.isShowing());
+                var content = (javafx.scene.layout.StackPane) presentation.getScene().getRoot();
+                assertEquals(1, content.getChildren().size());
+                var image = (javafx.scene.image.ImageView) content.getChildren().getFirst();
+                assertTrue(image.isPreserveRatio());
+                assertNull(image.getClip());
+                assertEquals(94, image.getImage().getWidth(), 0);
+                presentation.getScene().getOnKeyPressed().handle(new javafx.scene.input.KeyEvent(
+                    javafx.scene.input.KeyEvent.KEY_PRESSED, "", "", javafx.scene.input.KeyCode.ESCAPE,
+                    false, false, false, false));
+                assertFalse(presentation.isShowing());
+                assertTrue(stage.isShowing());
+            } finally {
+                presentation.close();
+            }
+        });
+    }
+
     private interface Check { void run(BattleMapWindow battle, GameMap map, Stage stage) throws Exception; }
 
     private void runBattle(Check check) throws Exception {

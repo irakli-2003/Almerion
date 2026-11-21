@@ -34,9 +34,10 @@ public class PlayerCharacterSelectionScene extends BaseScene {
         // Only characters the DM hasn't already handed to someone else are offered, so this
         // fallback can't be used to walk into another player's sheet.
         String username = uiSession.isLoggedIn() ? uiSession.getCurrentUser().getUsername() : null;
-        List<PlayerCharacter> players = repos.players().list().stream()
-            .filter(pc -> pc.getOwnerUsername() == null || pc.getOwnerUsername().isBlank() || pc.isOwnedBy(username))
-            .toList();
+        List<PlayerCharacter> roster = repos.players().list();
+        List<PlayerCharacter> assigned = roster.stream().filter(pc -> pc.isOwnedBy(username)).toList();
+        List<PlayerCharacter> players = assigned.isEmpty() ? roster.stream()
+            .filter(pc -> pc.getOwnerUsername() == null || pc.getOwnerUsername().isBlank()).toList() : assigned;
 
         ListView<String> list = new ListView<>();
         list.getStyleClass().add("dnd-list-view");
@@ -52,8 +53,9 @@ public class PlayerCharacterSelectionScene extends BaseScene {
         Button selectBtn = btn("Play This Character", () -> {
             int idx = list.getSelectionModel().getSelectedIndex();
             if (idx < 0) { error.setText("Please select a character."); return; }
-            PlayerCharacter pc = players.get(idx);
-            if (pc.hasPassword()) {
+            PlayerCharacter pc = PlayerVitalsPanel.availableCharacter(repos, players.get(idx).getId(), username);
+            if (pc == null) { error.setText("That character is no longer available. Refresh the list."); return; }
+            if (!pc.isOwnedBy(username) && pc.hasPassword()) {
                 if (!pc.checkPassword(passField.getText())) {
                     error.setText("Incorrect password.");
                     return;
@@ -68,8 +70,11 @@ public class PlayerCharacterSelectionScene extends BaseScene {
             subtitle("Campaign: " + uiSession.getSession().getCampaignContext().getName()),
             body(players.isEmpty()
                 ? "No characters are available to you in this session. Ask your GM to assign one to your account."
-                : "Your GM hasn't assigned a character to your account yet, so pick the one you're playing."),
-            list, passHint, passField, error, selectBtn
+                : assigned.isEmpty() ? "Waiting for a link? Ask your GM to assign your sheet, then refresh. "
+                    + "You can also pick an unassigned character you're playing."
+                    : "Choose one of the characters your GM linked to your account."),
+            list, passHint, passField, error, selectBtn,
+            btn("Refresh characters", () -> uiSession.getRouter().goTo(SceneType.PLAYER_CHARACTER_SELECTION))
         );
         root.getChildren().add(content);
         return wrapInScene(root);

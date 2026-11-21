@@ -1680,11 +1680,18 @@ public class MapEditorScene extends BaseScene {
     }
 
     @Override public boolean prepareHistoryChange() {
+        return confirmDiscard("Undo or redo reloads this map editor. Discard unsaved map edits and continue?"
+            + " Choose Cancel to return and save them first.");
+    }
+
+    @Override public boolean prepareCampaignClose() {
+        return confirmDiscard("Discard unsaved map edits and close the campaign? Choose Cancel to return and save them first.");
+    }
+
+    private boolean confirmDiscard(String message) {
         if (map == null || com.dnd.data.JsonMappers.create().valueToTree(map)
             .equals(com.dnd.data.JsonMappers.create().valueToTree(repos.maps().getById(map.getId())))) return true;
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
-            "Undo or redo reloads this map editor. Discard unsaved map edits and continue?"
-                + " Choose Cancel to return and save them first.", ButtonType.OK, ButtonType.CANCEL);
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, message, ButtonType.OK, ButtonType.CANCEL);
         styleDialog(confirm);
         return confirm.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK;
     }

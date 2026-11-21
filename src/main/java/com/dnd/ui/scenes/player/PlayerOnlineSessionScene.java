@@ -204,13 +204,17 @@ public class PlayerOnlineSessionScene extends BaseScene {
         uiSession.getSession().setFirebaseSync(sync);
         uiSession.setSessionToken(token);
 
-        // A later push from the DM refreshes the local copy in place, so the player sees
-        // the updated campaign without having to rejoin.
+        sync.markSnapshotApplied(json);
         sync.startListening(update -> Platform.runLater(() -> {
+            if (uiSession.getSession().getFirebaseSync() != sync) return;
+            String previous = sync.getAppliedSnapshot();
+            if (update.equals(previous)) return;
             try {
-                SessionSnapshot.hydrate(update, sync.getSessionId());
-            } catch (RuntimeException ignored) {
-                // A malformed update just leaves the last good copy in place.
+                SessionSnapshot.hydrate(update, sync.getSessionId(), previous);
+                sync.markSnapshotApplied(update);
+            } catch (com.dnd.data.DataAccessException failure) {
+                System.getLogger(getClass().getName()).log(System.Logger.Level.WARNING,
+                    "Could not apply the live session update.", failure);
             }
         }));
 
@@ -243,13 +247,13 @@ public class PlayerOnlineSessionScene extends BaseScene {
      */
     private SceneType destinationFor(Path campaignRoot) {
         String username = uiSession.isLoggedIn() ? uiSession.getCurrentUser().getUsername() : null;
+        uiSession.getSession().setActivePlayerCharacterId(null);
         if (username != null) {
-            List<PlayerCharacter> roster = new CampaignRepositories(campaignRoot).players().list();
-            for (PlayerCharacter pc : roster) {
-                if (pc.isOwnedBy(username)) {
-                    uiSession.getSession().setActivePlayerCharacterId(pc.getId());
-                    return SceneType.PLAYER_HOME;
-                }
+            List<PlayerCharacter> assigned = new CampaignRepositories(campaignRoot).players().list().stream()
+                .filter(pc -> pc.isOwnedBy(username)).toList();
+            if (assigned.size() == 1) {
+                uiSession.getSession().setActivePlayerCharacterId(assigned.getFirst().getId());
+                return SceneType.PLAYER_HOME;
             }
         }
         return SceneType.PLAYER_CHARACTER_SELECTION;
@@ -268,12 +272,10 @@ public class PlayerOnlineSessionScene extends BaseScene {
         content.getChildren().addAll(
             title("Live Session"),
             body("Campaign: " + (context != null ? context.getName() : "unknown")),
-            body("Your GM is hosting this session. Your character sheet follows what they push; "
+            body("Your GM is hosting this session. Saved character changes arrive automatically; "
                 + "your portrait, name and description are yours and stay on this machine."),
             btn("Go to My Character", () -> uiSession.getRouter().goTo(
-                uiSession.getSession().getActivePlayerCharacterId() != null
-                    ? SceneType.PLAYER_HOME
-                    : SceneType.PLAYER_CHARACTER_SELECTION)),
+                destinationFor(context.getPath()))),
             dangerBtn("Leave Session", () -> {
                 try { uiSession.getSession().getFirebaseSync().stopListening(); } catch (Exception ignored) {}
                 uiSession.getSession().setFirebaseSync(null);

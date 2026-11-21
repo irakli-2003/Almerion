@@ -172,9 +172,7 @@ public class SessionTimer extends HBox {
     }
 
     private void beep() {
-        if (sound.isSelected() && !java.awt.GraphicsEnvironment.isHeadless()) {
-            java.awt.Toolkit.getDefaultToolkit().beep();
-        }
+        if (sound.isSelected()) CountdownTone.play();
     }
 
     private void refreshDisplay() {

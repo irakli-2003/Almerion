@@ -132,6 +132,8 @@ public abstract class BaseScene {
 
     public boolean prepareHistoryChange() { return true; }
 
+    public boolean prepareCampaignClose() { return true; }
+
     protected Button btn(String text, Runnable action) {
         Button b = new Button(text);
         b.getStyleClass().add("dnd-button");

@@ -20,7 +20,10 @@ public class PlayerHomeScene extends BaseScene {
     public Scene build() {
         CampaignRepositories repos = new CampaignRepositories(
             uiSession.getSession().getCampaignContext().getPath());
-        PlayerCharacter pc = repos.players().getById(uiSession.getSession().getActivePlayerCharacterId());
+        String id = uiSession.getSession().getActivePlayerCharacterId();
+        String username = uiSession.isLoggedIn() ? uiSession.getCurrentUser().getUsername() : null;
+        java.util.function.Supplier<PlayerCharacter> current = () -> PlayerVitalsPanel.availableCharacter(repos, id, username);
+        PlayerCharacter pc = current.get();
         // The DM's sheet is the mechanical truth; the player's own name, portrait and
         // description are laid over it from local storage.
         if (pc != null && uiSession.isLoggedIn()) {
@@ -39,20 +42,16 @@ public class PlayerHomeScene extends BaseScene {
         HBox header = new HBox(12);
         header.setAlignment(Pos.CENTER_LEFT);
         header.getChildren().add(title("Player: " + name));
-        if (uiSession.getSession().isOnline()) {
-            Label badge = new Label("● LIVE");
-            badge.getStyleClass().add("success-badge");
-            header.getChildren().add(badge);
-        }
         content.getChildren().add(header);
+        content.getChildren().add(new PlayerVitalsPanel(uiSession, repos, id));
 
         if (pc != null) {
             content.getChildren().addAll(new PlayerTurnPanel(uiSession, pc.getId()), buildStatsBox(pc, repos));
         }
 
         content.getChildren().addAll(
-            btn("View Inventory", () -> showInventory(pc, repos)),
-            btn("View Abilities", () -> showAbilities(pc, repos)),
+            btn("View Inventory", () -> showInventory(current.get(), repos)),
+            btn("View Abilities", () -> showAbilities(current.get(), repos)),
             btn("My Profile", () -> uiSession.getRouter().goTo(SceneType.CHARACTER_PROFILE)),
             btn("Level up", () -> com.dnd.ui.scenes.UpgradeRequestsUi.show(this)),
             com.dnd.ui.scenes.SessionChatUi.button(this),
@@ -60,7 +59,10 @@ public class PlayerHomeScene extends BaseScene {
                 () -> uiSession.getRouter().goTo(SceneType.PLAYER_ONLINE_SESSION))
         );
 
-        root.getChildren().add(content);
+        ScrollPane scroll = new ScrollPane(content);
+        scroll.setFitToWidth(true);
+        VBox.setVgrow(scroll, Priority.ALWAYS);
+        root.getChildren().add(scroll);
         return wrapInScene(root);
     }
 
@@ -83,7 +85,8 @@ public class PlayerHomeScene extends BaseScene {
     }
 
     private void showInventory(PlayerCharacter pc, CampaignRepositories repos) {
-        if (pc == null || pc.getItems() == null || pc.getItems().isEmpty()) {
+        if (pc == null) { info("Character no longer available."); return; }
+        if (pc.getItems() == null || pc.getItems().isEmpty()) {
             info("Your inventory is empty."); return;
         }
         StringBuilder sb = new StringBuilder();
@@ -96,7 +99,8 @@ public class PlayerHomeScene extends BaseScene {
     }
 
     private void showAbilities(PlayerCharacter pc, CampaignRepositories repos) {
-        if (pc == null || pc.getSpells() == null || pc.getSpells().isEmpty()) {
+        if (pc == null) { info("Character no longer available."); return; }
+        if (pc.getSpells() == null || pc.getSpells().isEmpty()) {
             info("No spells or abilities."); return;
         }
         StringBuilder sb = new StringBuilder();

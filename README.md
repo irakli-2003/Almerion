@@ -192,7 +192,9 @@ clear the operating-system clipboard, or restrict access to files outside the ap
 Everyone needs an account. One account works for both GM and player roles.
 
 - **Log in** with your email and password. Username login also works after this device has
-  remembered the account's email.
+  remembered the account's email. Press **Enter** to submit the login form.
+- On Windows, select **Remember credentials** to fill in your login and password next time.
+  The saved credentials are encrypted for your Windows account. Uncheck the box to remove them.
 - **Create an account** needs a username, an email address and a password of at least 6
   characters.
 - **Verify your email.** Online accounts require Firebase's emailed verification link.
@@ -265,7 +267,10 @@ repository.
 
 After that, syncing is automatic. The latest changes are downloaded when you open the campaign,
 and your changes are uploaded while you play, when you leave the campaign and when you close
-Almerion. The badge in the GM screen shows **Synced**, **Syncing…**, **Offline – will retry**
+Almerion. A campaign with sync enabled stays open until the final sync of saved files succeeds,
+including when you switch to Player Mode or restart for an update. If GitHub is offline or reports
+a conflict, use **GitHub Sync** to resolve it, then try closing again. Forced termination or
+power loss cannot wait for a sync. The badge in the GM screen shows **Synced**, **Syncing…**, **Offline – will retry**
 (nothing is lost; it uploads when you are back online) or **Conflict**.
 While a battle map is open, changes are uploaded every 10 minutes instead of every 90 seconds,
 so the fight stays smooth. The normal pace resumes when the battle closes.
@@ -589,7 +594,9 @@ Besides weapons, armour and potions, items can be a **Blueprint**, **Device**, *
 ### Hover cards
 
 Hover a spell or item almost anywhere to see a card with its full description, sized to
-fit. This works in character sheets, Manage Players, the wizard, pickers and battle maps, and on
+fit. In the battle map's token details, click its portrait to open an image-only full-screen
+window for players. Press **Esc** to return to the battle. Cropping works in character sheets,
+Manage Players, the wizard, pickers and battle maps, and on
 spell or item names written in your session notes. In the GM character editor, hover over a saved
 selection or its info icon to read its description without opening the picker.
 
@@ -652,6 +659,7 @@ Chat and mobile/token-player notifications are the next implementation stage.
 
 Open a saved character and select **GM character note**. These notes are encrypted separately
 from character sheets; they are not included in player snapshots, hosted sheets, or PDFs.
+The note window is resizable, and the text wraps to fit its current width.
 Every campaign GM must first sign in online and finish private-key setup. Save a note online to encrypt it
 for the current GM roster, then sync the campaign. When a GM joins or is removed, an existing
 GM must reopen and save each note online and sync it to refresh its access. Previously obtained
@@ -664,12 +672,18 @@ refused rather than overwriting the newer copy; preserve your text and reopen th
 
 ### GM lore book
 
-Open **GM lore book** from the GM panel. Organize lore into sections and articles,
-search titles or text, and add, edit, or delete entries. The book is encrypted for campaign GMs
-and excluded from player snapshots and sheets. It has the same online-save, offline-read,
-GM-key setup, roster-refresh, sync, and old-copy limitations as GM character notes. The whole
-book is one conflict-checked encrypted document: if another GM changes it, reopen it before
-saving your changes.
+Open **GM lore book** from the GM panel to organize and search sections and articles. New books
+are shared among GMs by default and require no private-file keys. Shared books are not encrypted
+on disk, but neither shared nor private books are included in player snapshots or sheets.
+Choose **Make private** to encrypt the book. Owners can use **Manage access** to give other
+campaign GMs **Read**, **Write**, or **Owner** access, just like a private session file.
+Private access requires private-file keys. Sync the campaign after changing access, then have
+the other GM sync to receive the updated book.
+
+Existing encrypted books stay private. A GM who can already open the old book can choose
+**Upgrade private access**, then use **Manage access** to add GMs who could not open it.
+Existing grants to current GMs are kept as **Write**. Older app versions cannot open the new
+format. Changing privacy cannot erase earlier Git history, exports, or local copies.
 
 ### The session editor
 
@@ -733,6 +747,9 @@ GitHub sync. This is a saved-change journal: one save can group multiple changes
 particularly NPC/monster/beast battle changes. Player-character battle changes use the
 character sheet as their authority.
 
+Use **GitHub Sync** beside **Undo** and **Redo** on GM campaign screens to open the
+current campaign's sync controls. Save any open edits first; sync works with files on disk.
+
 Compare **Before action** and **After action**, then **Undo selected action**. Damage,
 healing, resources, character inventory, effects and mechanical GM corrections are recorded.
 Every recorded field must still match its after-value; otherwise nothing is undone.
@@ -776,8 +793,9 @@ reports that the data was already saved.
 | **Save** / **Save & Close** | Saves the file (also **Ctrl+S**) |
 
 Countdowns started while hosting on LAN appear on player sheets, from either the session editor or
-battle map. With the GM's **Sound** switch on, players who tap **Enable session sounds** hear beeps in
-the last ten seconds and a double beep at zero. Players can mute the sound on their own device.
+battle map. With the GM's **Sound** switch on, the GM hears short digital watch-style beeps in
+the last ten seconds and a double beep at zero. LAN players can hear the same countdown tones
+by tapping **Enable session sounds** on their own device.
 
 Once the GM starts initiative, desktop Player Mode and the LAN browser sheet show
 **My turn in … turns** or **Your turn!**. LAN players who enable session sounds hear a chime
@@ -1003,9 +1021,16 @@ The data is AES-256 encrypted.
    **Over the internet**. A strong random encryption key is generated automatically.
 2. Members can now click **Join Live Session**. You can also give the **Player Token** to
    someone who needs to join by token.
-3. The campaign is pushed automatically each time you return to the GM menu. **Push State Now**
-   sends it immediately.
+3. Saved changes to the character roster are sent automatically during play. Desktop Player Mode
+   shows the latest HP, mana, spell slots or energy charges, and active effects without rejoining.
+   **Push State Now** still sends the full player-visible update immediately.
 4. Click **Stop internet session** when you're done.
+
+For a new player who already has a character, have them verify their account and accept the
+campaign invitation under **Player → My Campaigns**. On the GM's local campaign, open
+**Members → Characters** beside that player's account and select their existing sheet.
+The next **Join Live Session** opens it directly when exactly one character is linked.
+Players with multiple linked characters choose which one to play.
 
 Only the verified host can write or delete the shared snapshot; the player token is read only
 for campaign state. Guest chat has its own limited mailbox access, not host permissions.
@@ -1228,7 +1253,7 @@ email application and send it there.
 
 | Problem | What to do |
 |---|---|
-| **No verification or reset email** | Check spam and the Firebase email/password setup. Online verification/reset uses emailed links, never an on-screen bypass. SMTP **Test email settings** applies only to local-code accounts and outgoing app reports. |
+| **No verification or reset email** | Check spam and the Firebase email/password setup. Online verification/reset uses emailed links, never an on-screen bypass. SMTP applies only to local-code accounts and outgoing app reports. |
 | **"You aren't part of ..."** | You aren't a member yet. Apply with the join code and wait for a GM to accept you. |
 | **A campaign I created is missing from my list** | Look under *On this device, not registered to anyone* and click **Claim**. If it's under *Yours, but not on this device*, its files are on another computer. |
 | **"Offline - showing the campaign list saved from your last connection."** | You aren't connected. Local campaigns still open; joining and members need the internet. |

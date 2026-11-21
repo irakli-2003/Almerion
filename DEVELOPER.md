@@ -415,8 +415,9 @@ credentials or custom provider addresses. To configure SMTP:
   Verification on). Spaces in the password are removed automatically.
 - Port `465` switches to implicit SSL. Office, university and VPN networks often block 587, 465
   and 25. No app setting can work around that.
-- **Test email settings** on the login screen sends a real message and reports the exact
-  error. When sending fails, the code is shown on screen instead.
+- For SMTP diagnostics, `EmailService.testConnection()` sends a test message to the configured
+  sender. It is not exposed on the sign-in screen. Device-local accounts can show a code
+  on screen when sending fails.
 
 ### Bug and suggestion reports
 

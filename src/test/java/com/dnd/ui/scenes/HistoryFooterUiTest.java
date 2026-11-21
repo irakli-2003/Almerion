@@ -79,6 +79,9 @@ public class HistoryFooterUiTest {
                 });
                 Parent menu = window.getScene().getRoot();
                 menu.applyCss(); menu.layout();
+                Button sync = button(menu, "campaign-github-sync");
+                assertTrue(sync.isVisible());
+                assertSame(button(menu, "undo-action").getParent(), sync.getParent());
                 assertNotNull(menu.lookupAll(".button").stream().filter(node -> node instanceof Button b
                     && b.getText().equals(com.dnd.ui.i18n.UiTranslator.text("World Map"))).findFirst().orElse(null));
                 assertFalse(menu.lookupAll(".button").stream().anyMatch(node -> node instanceof Button b && b.getText().contains("🧭")));
@@ -91,7 +94,11 @@ public class HistoryFooterUiTest {
                 }
             });
             undoReady.get(15, TimeUnit.SECONDS);
-            onFx(() -> button(stage.get().getScene().getRoot(), "undo-action").fire());
+            onFx(() -> {
+                Parent menu = stage.get().getScene().getRoot();
+                assertFalse(button(menu, "campaign-github-sync").isDisabled());
+                button(menu, "undo-action").fire();
+            });
             redoReady.get(15, TimeUnit.SECONDS);
             assertEquals(20, repos.players().getById("hero").getCurrentHitPoints());
             CompletableFuture<Void> nextUndo = new CompletableFuture<>();
@@ -111,6 +118,7 @@ public class HistoryFooterUiTest {
                 session.get().setActiveEntityId("hero");
                 session.get().getRouter().goTo(SceneType.ENTITY_DETAIL);
                 Button undo = button(stage.get().getScene().getRoot(), "undo-action");
+                assertTrue(button(stage.get().getScene().getRoot(), "campaign-github-sync").isVisible());
                 if (!undo.isDisabled()) editorReady.complete(null);
                 undo.disabledProperty().addListener((o, previous, disabled) -> { if (!disabled) editorReady.complete(null); });
             });
@@ -136,6 +144,7 @@ public class HistoryFooterUiTest {
                 session.get().getRouter().goTo(SceneType.CAMPAIGN_SELECTION);
                 assertTrue(button(stage.get().getScene().getRoot(), "undo-action").isDisabled());
                 assertTrue(button(stage.get().getScene().getRoot(), "redo-action").isDisabled());
+                assertFalse(button(stage.get().getScene().getRoot(), "campaign-github-sync").isVisible());
             });
         } finally {
             onFx(() -> { if (stage.get() != null) stage.get().close(); });

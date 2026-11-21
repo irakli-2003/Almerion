@@ -25,7 +25,9 @@ public class CharacterProfileScene extends BaseScene {
     @Override
     public Scene build() {
         CampaignRepositories repos = new CampaignRepositories(uiSession.campaignRoot());
-        PlayerCharacter pc = repos.players().getById(uiSession.getSession().getActivePlayerCharacterId());
+        PlayerCharacter pc = PlayerVitalsPanel.availableCharacter(repos,
+            uiSession.getSession().getActivePlayerCharacterId(),
+            uiSession.isLoggedIn() ? uiSession.getCurrentUser().getUsername() : null);
         PlayerProfileStore profiles = new PlayerProfileStore(
             uiSession.isLoggedIn() ? uiSession.getCurrentUser().getUsername() : null);
         if (pc != null) profiles.applyTo(pc);
@@ -51,6 +53,7 @@ public class CharacterProfileScene extends BaseScene {
         String name = pc.getName() != null ? pc.getName() : pc.getId();
         content.getChildren().add(title("Profile: " + name));
         content.getChildren().add(new PlayerTurnPanel(uiSession, pc.getId()));
+        content.getChildren().add(new PlayerVitalsPanel(uiSession, repos, pc.getId()));
 
         ImageView portrait = new ImageView();
         portrait.setFitWidth(200);

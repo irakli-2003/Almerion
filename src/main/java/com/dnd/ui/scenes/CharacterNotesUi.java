@@ -12,7 +12,13 @@ import com.dnd.ui.i18n.UiTranslator;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogEvent;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -45,14 +51,7 @@ final class CharacterNotesUi {
                              PrivateAccount account, Opened opened) {
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("GM character note");
-        dialog.setHeaderText("Encrypted for campaign GMs. Not included in player sheets, PDFs or hosted sessions."
-            + " Reading works offline after setup; saving requires online membership verification."
-            + " Changes reach other GMs through campaign sync.");
-        TextArea text = UiTranslator.skip(new TextArea(opened.loaded().text()));
-        text.setWrapText(true);
-        text.setPrefColumnCount(70);
-        text.setPrefRowCount(20);
-        dialog.getDialogPane().setContent(text);
+        TextArea text = configureEditor(dialog, opened.loaded().text());
         ButtonType save = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(save, ButtonType.CANCEL);
         owner.styleDialog(dialog);
@@ -86,8 +85,42 @@ final class CharacterNotesUi {
         dialog.showAndWait();
     }
 
+    static TextArea configureEditor(Dialog<?> dialog, String draft) {
+        dialog.setResizable(true);
+        Label notice = new Label("Encrypted for campaign GMs. Not included in player sheets, PDFs or hosted sessions."
+            + " Reading works offline after setup; saving requires online membership verification."
+            + " Changes reach other GMs through campaign sync.");
+        notice.getStyleClass().add("body-label");
+        notice.setWrapText(true);
+        notice.setMinHeight(Region.USE_PREF_SIZE);
+        notice.setMaxWidth(Double.MAX_VALUE);
+
+        TextArea text = UiTranslator.skip(new TextArea(draft));
+        text.setWrapText(true);
+        text.setMinSize(0, 100);
+        text.setPrefRowCount(14);
+        VBox.setVgrow(text, Priority.ALWAYS);
+
+        var pane = dialog.getDialogPane();
+        pane.setMinWidth(320);
+        pane.setPrefWidth(560);
+        pane.setContent(new VBox(10, notice, text));
+        dialog.addEventHandler(DialogEvent.DIALOG_SHOWN, event -> {
+            if (pane.getScene().getWindow() instanceof Stage stage) {
+                stage.setMinWidth(pane.minWidth(-1) + Math.max(0, stage.getWidth() - pane.getWidth()));
+                stage.setMinHeight(pane.minHeight(pane.minWidth(-1)) + Math.max(0, stage.getHeight() - pane.getHeight()));
+            }
+        });
+        return text;
+    }
+
     static List<PrivateAccount.Identity> recipients(BaseScene owner, PrivateAccount account, String campaign,
                                                      boolean saving) {
+        return recipients(owner, account, campaign, saving, false);
+    }
+
+    static List<PrivateAccount.Identity> recipients(BaseScene owner, PrivateAccount account, String campaign,
+                                                     boolean saving, boolean allowMissingKeys) {
         if (saving) requireOnline();
         CampaignRecord record = CampaignDirectory.shared().find(campaign).orElseThrow(
             () -> new SecurityException("The campaign membership is unavailable. Connect and open the campaign first."));
@@ -116,6 +149,7 @@ final class CharacterNotesUi {
             var matches = identities.stream().filter(identity -> identity.uid().equals(profile.getProviderUid())
                 && identity.email() != null && identity.email().equalsIgnoreCase(profile.getEmail())).toList();
             if (matches.size() != 1) {
+                if (allowMissingKeys && matches.isEmpty()) continue;
                 throw new IllegalStateException("Each campaign GM must enable private-file keys before notes can be shared.");
             }
             result.add(matches.getFirst());

@@ -1,21 +1,40 @@
 package com.dnd.ui;
 
 import com.dnd.cli.core.CliSession;
+import com.dnd.sync.CampaignRepo;
+import com.dnd.sync.CampaignSyncService;
 import com.dnd.ui.scenes.*;
 import com.dnd.ui.scenes.player.*;
+import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ProgressIndicator;
 import javafx.stage.Stage;
 
-import java.util.Map;
+import java.nio.file.Path;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class SceneRouter {
     private final UiSession uiSession;
     private final Stage stage;
+    private final Predicate<Path> syncEnabled;
+    private final Function<Path, CompletableFuture<CampaignRepo.Result>> sync;
     private SceneType currentType;
+    private boolean leaving;
 
     public SceneRouter(UiSession uiSession, Stage stage) {
+        this(uiSession, stage, CampaignRepo::isSynced, CampaignSyncService.shared()::syncNow);
+    }
+
+    SceneRouter(UiSession uiSession, Stage stage, Predicate<Path> syncEnabled,
+                Function<Path, CompletableFuture<CampaignRepo.Result>> sync) {
         this.uiSession = uiSession;
         this.stage = stage;
+        this.syncEnabled = syncEnabled;
+        this.sync = sync;
     }
 
     /** Scenes reachable without being logged in - everything else redirects to LOGIN. */
@@ -25,10 +44,20 @@ public class SceneRouter {
     }
 
     public void goTo(SceneType type) {
+        if (leaving) return;
         if (!isPublic(type) && !uiSession.isLoggedIn()) {
             type = SceneType.LOGIN;
         }
         if (!uiSession.isDm() && gmOnly(type)) type = SceneType.PLAYER_ONLINE_SESSION;
+        SceneType target = type;
+        if (isCampaignOpen() && !campaignScene(target)) {
+            leaveCampaign(() -> show(target));
+        } else {
+            show(target);
+        }
+    }
+
+    private void show(SceneType type) {
         if (type == SceneType.DM_MENU) {
             autoPush();
             if (uiSession.campaignRoot() != null) {
@@ -53,8 +82,75 @@ public class SceneRouter {
             alert.showAndWait();
             return;
         }
-        stage.setScene(scene);
         currentType = type;
+        stage.setScene(scene);
+    }
+
+    /** Run a navigation, role change or exit only after the linked GM campaign has synced. */
+    public void leaveCampaign(Runnable leave) {
+        if (leaving) return;
+        Path campaign = uiSession.campaignRoot();
+        if (!uiSession.isDm() || !isCampaignOpen() || campaign == null || !syncEnabled.test(campaign)) {
+            leave.run();
+            return;
+        }
+        leaving = true;
+        boolean ready = false;
+        try {
+            if (uiSession.hasBackgroundActions()) {
+                notice("Wait for pending campaign actions before closing. Then try again.");
+                return;
+            }
+            if (!ReportUi.prepareCampaignClose(stage.getScene()) || !PlayerModeUi.closeSecondaryWindows(stage)) return;
+            if (uiSession.hasBackgroundActions()) {
+                notice("Wait for pending campaign actions before closing. Then try again.");
+                return;
+            }
+            ready = true;
+        } finally {
+            if (!ready) leaving = false;
+        }
+        Alert progress = syncAlert(Alert.AlertType.INFORMATION, "Syncing saved campaign changes before closing...");
+        progress.setGraphic(new ProgressIndicator());
+        progress.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
+        progress.setOnCloseRequest(event -> event.consume());
+        progress.show();
+        CompletableFuture<CampaignRepo.Result> pending;
+        try {
+            pending = sync.apply(campaign);
+        } catch (RuntimeException failure) {
+            pending = CompletableFuture.failedFuture(failure);
+        }
+        pending.whenComplete((result, failure) -> Platform.runLater(() -> {
+            progress.setOnCloseRequest(null);
+            progress.close();
+            if (failure != null || result.outcome() != CampaignRepo.Outcome.SYNCED) {
+                leaving = false;
+                notice((failure == null ? result.message() : rootMessage(failure))
+                    + "\n\n" + com.dnd.ui.i18n.UiTranslator.text(
+                        "The campaign is still open. Use GitHub Sync to resolve the problem, then try closing again."));
+                return;
+            }
+            CampaignSyncService.shared().closedAfterSync(campaign);
+            leaving = false;
+            leave.run();
+        }));
+    }
+
+    private void notice(String message) {
+        syncAlert(Alert.AlertType.WARNING, message).show();
+    }
+
+    private Alert syncAlert(Alert.AlertType type, String message) {
+        Alert alert = new Alert(type, message, ButtonType.OK);
+        alert.initOwner(stage);
+        alert.initModality(javafx.stage.Modality.WINDOW_MODAL);
+        alert.setTitle(com.dnd.ui.i18n.UiTranslator.text("GitHub Sync"));
+        alert.setHeaderText(null);
+        var css = SceneRouter.class.getResource("/com/dnd/ui/styles/dnd-theme.css");
+        if (css != null) alert.getDialogPane().getStylesheets().add(css.toExternalForm());
+        alert.setContentText(com.dnd.ui.i18n.UiTranslator.text(message));
+        return alert;
     }
 
     public void reload() {
@@ -62,7 +158,11 @@ public class SceneRouter {
     }
 
     public boolean isCampaignOpen() {
-        return currentType != null && switch (currentType) {
+        return campaignScene(currentType);
+    }
+
+    private static boolean campaignScene(SceneType type) {
+        return type != null && switch (type) {
             case DM_MENU, DM_ONLINE_SESSION, ENTITY_LIST, ENTITY_DETAIL, MAP_VIEW, MAP_EDITOR, WORLD_MAP, STORYLINE -> true;
             default -> false;
         };

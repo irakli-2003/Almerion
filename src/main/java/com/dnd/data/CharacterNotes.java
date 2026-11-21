@@ -41,18 +41,28 @@ public final class CharacterNotes {
     }
 
     public Loaded read(String character, List<PrivateAccount.Identity> authorizedWriters) {
+        String raw = raw(character);
+        return raw == null ? new Loaded("", null)
+            : new Loaded(PrivateCharacterNotes.decrypt(raw, campaign, character, account, authorizedWriters), raw);
+    }
+
+    String raw(String character) {
         Path file = file(character);
-        if (!Files.exists(file, LinkOption.NOFOLLOW_LINKS)) return new Loaded("", null);
         try {
             rejectLinks(file);
-            String raw = Files.readString(file, StandardCharsets.UTF_8);
-            return new Loaded(PrivateCharacterNotes.decrypt(raw, campaign, character, account, authorizedWriters), raw);
+            return Files.readString(file, StandardCharsets.UTF_8);
+        } catch (java.nio.file.NoSuchFileException e) {
+            return null;
         } catch (IOException e) {
             throw new UncheckedIOException("Could not read the encrypted character note.", e);
         }
     }
 
     public void save(String character, Loaded expected, String text, List<PrivateAccount.Identity> recipients) {
+        replace(character, expected.version(), () -> PrivateCharacterNotes.encrypt(campaign, character, text, account, recipients));
+    }
+
+    void replace(String character, String expected, java.util.function.Supplier<String> replacement) {
         synchronized (WRITES) {
             Path file = file(character);
             Path temporary = null;
@@ -66,14 +76,14 @@ public final class CharacterNotes {
                     rejectLinks(file);
                     String current = Files.exists(file, LinkOption.NOFOLLOW_LINKS)
                         ? Files.readString(file, StandardCharsets.UTF_8) : null;
-                    if (!Objects.equals(expected.version(), current)) {
-                        throw new IllegalStateException("The note changed elsewhere. Reopen it before saving.");
+                    if (!Objects.equals(expected, current)) {
+                        throw new IllegalStateException("The document changed elsewhere. Reopen it before saving.");
                     }
-                    String encrypted = PrivateCharacterNotes.encrypt(campaign, character, text, account, recipients);
+                    String next = replacement.get();
                     Files.createDirectories(directory);
                     rejectLinks(file);
                     temporary = Files.createTempFile(directory, ".character-note-", ".tmp");
-                    Files.writeString(temporary, encrypted, StandardCharsets.UTF_8);
+                    Files.writeString(temporary, next, StandardCharsets.UTF_8);
                     Files.move(temporary, file, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
                 }
             } catch (IOException e) {

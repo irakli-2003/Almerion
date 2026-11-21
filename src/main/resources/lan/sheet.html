@@ -257,21 +257,23 @@ function renderCountdown(next) {
     + ":" + String(next.seconds % 60).padStart(2, "0");
   if (!timerSoundEnabled || timerAudio?.state !== "running" || !next.sound || next.seconds > 10
       || previous?.id !== next.id || !previous.running || previous.seconds <= next.seconds) return;
-  playCountdownTone();
+  playSessionTone();
   if (next.seconds === 0) setTimeout(() => {
-    if (timerSoundEnabled && countdownState?.id === next.id && countdownState.sound) playCountdownTone();
+    if (timerSoundEnabled && countdownState?.id === next.id && countdownState.sound) playSessionTone();
   }, 250);
 }
 
-function playCountdownTone(frequency = 660) {
+function playSessionTone(frequency = 2048, duration = 0.075) {
   if (timerAudio?.state !== "running") return;
   const oscillator = timerAudio.createOscillator(), gain = timerAudio.createGain();
   const now = timerAudio.currentTime;
   oscillator.frequency.value = frequency;
-  gain.gain.setValueAtTime(0.12, now);
-  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+  gain.gain.setValueAtTime(0, now);
+  gain.gain.linearRampToValueAtTime(0.12, now + 0.003);
+  gain.gain.setValueAtTime(0.12, now + duration - 0.012);
+  gain.gain.linearRampToValueAtTime(0, now + duration);
   oscillator.connect(gain); gain.connect(timerAudio.destination);
-  oscillator.start(now); oscillator.stop(now + 0.12);
+  oscillator.start(now); oscillator.stop(now + duration);
   oscillator.onended = () => { oscillator.disconnect(); gain.disconnect(); };
 }
 
@@ -310,7 +312,7 @@ function startStream() {
     data = JSON.parse(e.data);
     const hint = data.battleTurn;
     if (turnStreamReady && timerSoundEnabled && hint?.remaining === 0
-        && (previousTurn?.remaining !== 0 || previousTurn.turn !== hint.turn)) playCountdownTone(880);
+        && (previousTurn?.remaining !== 0 || previousTurn.turn !== hint.turn)) playSessionTone(880, 0.12);
     previousTurn = hint;
     turnStreamReady = true;
     render(); setStatus(true);

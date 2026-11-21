@@ -231,16 +231,30 @@ public final class OperationHistoryUi {
         HBox controls = new HBox(6, undo, redo);
         controls.setId("operation-history-controls");
         Path campaign = owner.uiSession == null ? null : owner.uiSession.campaignRoot();
+        java.util.function.BooleanSupplier campaignAvailable = () -> campaign != null
+            && owner.isCurrentRole() && owner.uiSession.isDm()
+            && campaign.equals(owner.uiSession.campaignRoot())
+            && owner.uiSession.getRouter() != null && owner.uiSession.getRouter().isCampaignOpen()
+            && scene.getWindow() != null && scene.getWindow().isShowing()
+            && !(scene.getWindow() instanceof Stage s && s.getModality() != Modality.NONE);
+        Button sync = owner.btn("GitHub Sync", () -> {
+            if (!campaignAvailable.getAsBoolean() || owner.uiSession.hasBackgroundActions()) return;
+            GitHubSyncUi.configureCampaign(owner, campaign.getFileName().toString(), campaign, () -> { });
+        });
+        sync.setId("campaign-github-sync");
+        sync.setTooltip(new Tooltip("Sync saved campaign changes with GitHub"));
+        sync.setVisible(false);
+        sync.managedProperty().bind(sync.visibleProperty());
+        controls.getChildren().add(sync);
         java.util.concurrent.atomic.AtomicBoolean reading = new java.util.concurrent.atomic.AtomicBoolean();
         Runnable refresh = () -> {
             undo.setDisable(true);
             redo.setDisable(true);
-            if (campaign == null || !owner.isCurrentRole() || !owner.uiSession.isDm()
-                || !campaign.equals(owner.uiSession.campaignRoot()) || owner.uiSession.hasBackgroundActions()
-                || owner.uiSession.getRouter() == null || !owner.uiSession.getRouter().isCampaignOpen()
-                || scene.getWindow() == null || !scene.getWindow().isShowing()
-                || scene.getWindow() instanceof Stage s && s.getModality() != Modality.NONE
-                || !reading.compareAndSet(false, true)) return;
+            boolean available = campaignAvailable.getAsBoolean();
+            sync.setVisible(available);
+            boolean busy = available && owner.uiSession.hasBackgroundActions();
+            sync.setDisable(!available || busy);
+            if (!available || busy || !reading.compareAndSet(false, true)) return;
             CampaignSyncService.shared().localFiles(() -> new OperationHistory(campaign).cursor())
                 .whenComplete((cursor, error) -> Platform.runLater(() -> {
                     reading.set(false);

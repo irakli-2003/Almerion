@@ -1,9 +1,12 @@
 package com.dnd.ui.scenes;
 
 import com.dnd.cloud.CampaignMeta;
-import com.dnd.data.CharacterNotes;
 import com.dnd.data.LoreBook;
+import com.dnd.data.LoreBookStore;
+import com.dnd.data.LoreBookStore.Visibility;
 import com.dnd.security.PrivateAccount;
+import com.dnd.security.PrivateSessionFiles;
+import com.dnd.security.PrivateSessionFiles.Access;
 import com.dnd.ui.i18n.UiTranslator;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -12,10 +15,8 @@ import javafx.scene.layout.*;
 import java.nio.file.Path;
 import java.util.Locale;
 
-/** Searchable GM-only lore, stored in the same encrypted format as GM character notes. */
+/** Searchable GM-only lore, optionally protected like a private session file. */
 final class LoreBookUi {
-    public static final String DOCUMENT = "@gm-lore-book";
-    private record Opened(CharacterNotes store, CharacterNotes.Loaded loaded, LoreBook book) { }
     private record Selection(LoreBook.Section section, LoreBook.Article article) {
         @Override public String toString() { return article == null ? section.title : article.title; }
     }
@@ -26,26 +27,46 @@ final class LoreBookUi {
         if (!owner.uiSession.isDm()) throw new SecurityException("Only a GM can open the lore book.");
         Path root = owner.uiSession.campaignRoot();
         if (root == null) throw new IllegalStateException("Open a campaign first.");
-        String campaign = CampaignMeta.idOf(root).orElseThrow(
-            () -> new IllegalStateException("Register the campaign before using the shared lore book."));
-        PrivateFilesUi.unlocked(owner, () -> {
-            PrivateAccount account = owner.uiSession.getPrivateAccount();
-            owner.background(() -> {
-                var recipients = CharacterNotesUi.recipients(owner, account, campaign, false);
-                var store = CharacterNotes.loreBook(root, campaign, account);
-                var loaded = store.read(DOCUMENT, recipients);
-                return new Opened(store, loaded, LoreBook.parse(loaded.text()));
-            }, opened -> edit(owner, root, campaign, account, opened),
-                error -> owner.showError("Could not open the GM lore book", error));
-        });
+        String campaign = CampaignMeta.idOf(root).orElse(null);
+        var store = new LoreBookStore(root, campaign);
+        try {
+            if (store.visibility() == Visibility.SHARED) {
+                var opened = store.open(null, java.util.List.of());
+                edit(owner, root, campaign, null, store, opened);
+            } else {
+                PrivateFilesUi.unlocked(owner, () -> {
+                    PrivateAccount account = owner.uiSession.getPrivateAccount();
+                    owner.background(() -> {
+                        requireCurrent(owner, root, account);
+                        return store.open(account, store.visibility() == Visibility.LEGACY_PRIVATE
+                            ? CharacterNotesUi.recipients(owner, account, campaign, false, true) : java.util.List.of());
+                    }, opened -> {
+                        if (root.equals(owner.uiSession.campaignRoot()) && account == owner.uiSession.getPrivateAccount()) {
+                            edit(owner, root, campaign, account, store, opened);
+                        }
+                    }, error -> owner.showError("Could not open the GM lore book", error));
+                });
+            }
+        } catch (java.io.UncheckedIOException | IllegalArgumentException | SecurityException error) {
+            owner.showError("Could not open the GM lore book", error);
+        }
     }
 
-    private static void edit(BaseScene owner, Path root, String campaign, PrivateAccount account, Opened opened) {
+    private static void edit(BaseScene owner, Path root, String campaign, PrivateAccount account,
+                             LoreBookStore store, LoreBookStore.Opened opened) {
         LoreBook book = opened.book();
+        boolean editable = opened.editable();
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("GM lore book");
-        dialog.setHeaderText("Private campaign lore. Reading works offline after setup; saving requires online access."
-            + " Sync the campaign to share changes with other GMs.");
+        dialog.setHeaderText(switch (opened.visibility()) {
+            case SHARED -> "Shared with campaign GMs. This book does not appear in Player Mode.";
+            case LEGACY_PRIVATE -> "Legacy private lore. Upgrade it to manage access like a private session file.";
+            case PRIVATE -> switch (opened.access()) {
+                case OWNER -> "Private lore book: Owner access.";
+                case WRITE -> "Private lore book: Read and Write access.";
+                case READ -> "Private lore book: Read-only access.";
+            };
+        });
         TreeView<Selection> tree = new TreeView<>();
         tree.setShowRoot(false);
         tree.setPrefWidth(300);
@@ -54,6 +75,8 @@ final class LoreBookUi {
         title.setPromptText("Section or article title");
         TextArea text = UiTranslator.skip(new TextArea());
         text.setWrapText(true);
+        title.setEditable(editable);
+        text.setEditable(editable);
         text.setPrefColumnCount(72);
         text.setPrefRowCount(24);
         Label empty = new Label("Select a section or article.");
@@ -153,11 +176,63 @@ final class LoreBookUi {
             dirty[0] = true;
             rebuild.run();
         });
-        VBox content = new VBox(10, split, new FlowPane(8, 8, section, article, delete));
+        FlowPane actions = new FlowPane(8, 8);
+        if (editable) actions.getChildren().addAll(section, article, delete);
+        if (opened.visibility() != Visibility.PRIVATE) {
+            boolean legacy = opened.visibility() == Visibility.LEGACY_PRIVATE;
+            Button protect = owner.btn(legacy ? "Upgrade private access" : "Make private", () -> {
+                if (dirty[0]) {
+                    owner.showInfo("Lore book", "Save your changes before changing access.");
+                    return;
+                }
+                if (!confirm(owner, legacy
+                    ? "Upgrade this encrypted book and become its owner? It will stay private. Current GMs who already have access keep read and write access."
+                    : "Make this book private and become its owner? Earlier Git history, exports and copies may still contain shared text.")) return;
+                PrivateFilesUi.unlocked(owner, () -> {
+                    var actor = owner.uiSession.getPrivateAccount();
+                    owner.background(() -> {
+                        requireCurrent(owner, root, actor);
+                        if (campaign == null) throw new IllegalStateException("Register the campaign before making its lore book private.");
+                        var writers = legacy ? CharacterNotesUi.recipients(owner, actor, campaign, true, true) : java.util.List.<PrivateAccount.Identity>of();
+                        store.protect(opened, actor, writers);
+                        return true;
+                    }, ignored -> reopen(owner, dialog), error -> owner.showError("Could not protect the lore book", error));
+                });
+            });
+            actions.getChildren().add(protect);
+        } else if (opened.access() == Access.OWNER) {
+            actions.getChildren().addAll(owner.btn("Manage access", () -> {
+                if (dirty[0]) {
+                    owner.showInfo("Lore book", "Save your changes before changing access.");
+                    return;
+                }
+                PrivateFilesUi.editAccess(owner, account, PrivateSessionFiles.parse(opened.version()).header(),
+                    "Lore book access", grants -> {
+                        requireCurrent(owner, root, account);
+                        store.replaceAccess(opened, account, grants);
+                    }, () -> {
+                        dialog.close();
+                        owner.showInfo("Lore book access updated", "Sync with GitHub, then have the other GM sync to receive the updated book.");
+                    });
+            }), owner.btn("Make shared", () -> {
+                if (dirty[0]) {
+                    owner.showInfo("Lore book", "Save your changes before changing access.");
+                    return;
+                }
+                if (!confirm(owner, "Make the lore book readable by anyone with a copy of the campaign files? This saves the book without encryption.")) return;
+                owner.background(() -> {
+                    requireCurrent(owner, root, account);
+                    store.share(opened, account);
+                    return true;
+                }, ignored -> reopen(owner, dialog), error -> owner.showError("Could not share the lore book", error));
+            }));
+        }
+        VBox content = new VBox(10, split, actions);
         content.setPadding(new Insets(8));
         dialog.getDialogPane().setContent(content);
         ButtonType save = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(save, ButtonType.CANCEL);
+        if (editable) dialog.getDialogPane().getButtonTypes().add(save);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
         owner.styleDialog(dialog);
         var saveButton = dialog.getDialogPane().lookupButton(save);
         var cancelButton = dialog.getDialogPane().lookupButton(ButtonType.CANCEL);
@@ -170,10 +245,10 @@ final class LoreBookUi {
                 if (confirmation.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK) event.consume();
             }
         });
-        saveButton.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
+        if (editable) saveButton.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
             event.consume();
             if (!owner.uiSession.isDm() || !root.equals(owner.uiSession.campaignRoot())
-                || account != owner.uiSession.getPrivateAccount()) {
+                || account != null && account != owner.uiSession.getPrivateAccount()) {
                 owner.showError("Could not save lore", new SecurityException("The GM context changed."));
                 return;
             }
@@ -189,8 +264,8 @@ final class LoreBookUi {
             cancelButton.setDisable(true);
             content.setDisable(true);
             owner.background(() -> {
-                var recipients = CharacterNotesUi.recipients(owner, account, campaign, true);
-                opened.store().save(DOCUMENT, opened.loaded(), draft, recipients);
+                requireCurrent(owner, root, account);
+                store.save(opened, draft, account);
                 return true;
             }, ignored -> {
                 dirty[0] = false;
@@ -205,6 +280,25 @@ final class LoreBookUi {
             });
         });
         dialog.showAndWait();
+    }
+
+    private static void requireCurrent(BaseScene owner, Path root, PrivateAccount account) {
+        if (!owner.isCurrentRole() || !owner.uiSession.isDm() || !root.equals(owner.uiSession.campaignRoot())
+            || account != null && account != owner.uiSession.getPrivateAccount()) {
+            throw new SecurityException("The GM context changed.");
+        }
+    }
+
+    private static void reopen(BaseScene owner, Dialog<?> dialog) {
+        if (!dialog.isShowing()) return;
+        dialog.close();
+        if (!dialog.isShowing()) open(owner);
+    }
+
+    private static boolean confirm(BaseScene owner, String text) {
+        Alert dialog = new Alert(Alert.AlertType.CONFIRMATION, text, ButtonType.OK, ButtonType.CANCEL);
+        owner.styleDialog(dialog);
+        return dialog.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK;
     }
 
     private static java.util.Optional<String> prompt(BaseScene owner, String header) {

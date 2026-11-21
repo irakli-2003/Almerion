@@ -17,6 +17,47 @@ public class SessionSnapshotTest {
 
     @Rule public TemporaryFolder temp = new TemporaryFolder();
 
+    @Test public void savedCombatChangesAndAssignmentReachAnAlreadyJoinedSheet() throws Exception {
+        var root = temp.newFolder("combat").toPath();
+        var host = new CampaignRepositories(root);
+        var pc = new com.dnd.model.character.PlayerCharacter();
+        pc.setId("hero");
+        pc.setMaxHitPoints(20);
+        pc.setCurrentHitPoints(20);
+        pc.setSpellSlots(java.util.List.of(new com.dnd.model.magic.SpellSlot(1, 2, 2)));
+        host.players().add(pc);
+        String id = "test-combat-" + System.nanoTime();
+        String initial = SessionSnapshot.capture(root, "Campaign");
+        var joined = SessionSnapshot.hydrate(initial, id);
+        try {
+            pc.applyDamage(8);
+            pc.setSpellSlots(java.util.List.of(new com.dnd.model.magic.SpellSlot(1, 2, 1)));
+            pc.setActiveEffects(java.util.List.of(new com.dnd.model.world.map.ActiveEffect("chill", "Chill", 2, 0, 0, null)));
+            host.players().save(pc);
+            host.setPlayerAssignment("hero", "Alice", true);
+            org.junit.Assert.assertThrows(IllegalStateException.class, () -> host.setPlayerAssignment("hero", "Bob", true));
+            String damaged = SessionSnapshot.capture(root, "Campaign");
+            SessionSnapshot.hydrate(damaged, id, initial);
+            var guest = new CampaignRepositories(joined);
+            var received = guest.players().getById("hero");
+            assertTrue(received.isOwnedBy("alice"));
+            assertEquals(12, received.getCurrentHitPoints());
+            assertEquals(1, received.getSpellSlots().getFirst().getCurrent());
+            assertEquals(2, received.getActiveEffects().getFirst().getRemainingRounds());
+            pc = host.players().getById("hero");
+            pc.setCurrentHitPoints(17);
+            pc.getActiveEffects().clear();
+            host.players().save(pc);
+            SessionSnapshot.hydrate(SessionSnapshot.capture(root, "Campaign"), id, damaged);
+            assertEquals(17, guest.players().getById("hero").getCurrentHitPoints());
+            assertTrue(guest.players().getById("hero").getActiveEffects().isEmpty());
+        } finally {
+            try (var files = java.nio.file.Files.walk(joined)) {
+                for (var path : files.sorted(java.util.Comparator.reverseOrder()).toList()) java.nio.file.Files.delete(path);
+            }
+        }
+    }
+
     @Test public void upgradeDefinitionsAndEarnedRewardsReachJoinedSheets() throws Exception {
         Path root = temp.newFolder("upgrades").toPath();
         var repos = new CampaignRepositories(root);

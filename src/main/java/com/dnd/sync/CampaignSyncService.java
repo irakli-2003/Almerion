@@ -156,10 +156,19 @@ public final class CampaignSyncService {
     /** The GM left the open campaign (if any): stop autosaving and do a full sync. */
     public synchronized void closed() {
         Path previous = open;
+        stopAutosave();
+        if (previous != null) syncNow(previous);
+    }
+
+    /** The UI has already completed the final full sync while the campaign was still open. */
+    public synchronized void closedAfterSync(Path folder) {
+        if (key(folder).equals(open)) stopAutosave();
+    }
+
+    private void stopAutosave() {
         open = null;
         if (autosave != null) autosave.cancel(false);
         autosave = null;
-        if (previous != null) syncNow(previous);
     }
 
     /** Called when the app quits: a final full sync of the open campaign, waiting at most {@code timeoutMillis}. */

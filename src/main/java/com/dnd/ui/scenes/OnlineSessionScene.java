@@ -226,6 +226,7 @@ public class OnlineSessionScene extends BaseScene {
                     return;
                 }
                 uiSession.getSession().setFirebaseSync(sync);
+                sync.startLiveRoster(context.getPath(), context.getName());
                 uiSession.setSessionToken(sync.token());
                 publishLiveToken(sync.token());
                 uiSession.getRouter().goTo(SceneType.DM_ONLINE_SESSION);

@@ -18,13 +18,13 @@ public final class UpdatePrompt {
 
     private UpdatePrompt() {}
 
-    public static void checkInBackground(Stage owner) {
+    public static void checkInBackground(Stage owner, Runnable requestRestart) {
         if (!UpdateChecker.enabled()) return;
         Thread t = new Thread(() -> {
             try {
                 UpdateChecker checker = new UpdateChecker();
                 UpdateChecker.Release release = checker.findNewer();
-                if (release != null) Platform.runLater(() -> offer(owner, checker, release));
+                if (release != null) Platform.runLater(() -> offer(owner, checker, release, requestRestart));
             } catch (Exception e) {
                 LOGGER.log(Level.FINE, "Update check failed (offline?)", e);
             }
@@ -33,7 +33,7 @@ public final class UpdatePrompt {
         t.start();
     }
 
-    private static void offer(Stage owner, UpdateChecker checker, UpdateChecker.Release release) {
+    private static void offer(Stage owner, UpdateChecker checker, UpdateChecker.Release release, Runnable requestRestart) {
         ButtonType download = new ButtonType("Download update", ButtonBar.ButtonData.OK_DONE);
         ButtonType later = new ButtonType("Later", ButtonBar.ButtonData.CANCEL_CLOSE);
         Alert ask = alert(owner, Alert.AlertType.INFORMATION, "Update available: version " + release.version(),
@@ -54,7 +54,7 @@ public final class UpdatePrompt {
                 }).join();
                 UpdateChecker.Outcome outcome = checker.download(release);
                 Platform.runLater(() -> {
-                    if (outcome == UpdateChecker.Outcome.READY_AFTER_RESTART) offerRestart(owner, release);
+                    if (outcome == UpdateChecker.Outcome.READY_AFTER_RESTART) offerRestart(owner, release, requestRestart);
                     else offerInstaller(owner, release);
                 });
             } catch (Exception e) {
@@ -68,15 +68,13 @@ public final class UpdatePrompt {
         t.start();
     }
 
-    private static void offerRestart(Stage owner, UpdateChecker.Release release) {
+    private static void offerRestart(Stage owner, UpdateChecker.Release release, Runnable requestRestart) {
         ButtonType restart = new ButtonType("Restart now", ButtonBar.ButtonData.OK_DONE);
         ButtonType later = new ButtonType("Next time", ButtonBar.ButtonData.CANCEL_CLOSE);
         Alert ready = alert(owner, Alert.AlertType.INFORMATION, "Version " + release.version() + " is ready",
             "Restart to use it now, or keep working: it starts automatically the next time you open the app.",
             restart, later);
-        if (ready.showAndWait().orElse(later) == restart && UpdateChecker.restart()) {
-            System.exit(0);
-        }
+        if (ready.showAndWait().orElse(later) == restart) requestRestart.run();
     }
 
     private static void offerInstaller(Stage owner, UpdateChecker.Release release) {

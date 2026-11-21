@@ -1,18 +1,22 @@
 package com.dnd.ui.scenes;
 
 import com.dnd.auth.AuthService;
-import com.dnd.auth.EmailService;
-import com.dnd.auth.SmtpConfig;
+import com.dnd.auth.RememberedLogin;
 import com.dnd.ui.SceneType;
 import com.dnd.ui.UiSession;
 import com.dnd.ui.i18n.LanguagePicker;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
 
 public class LoginScene extends BaseScene {
     private final AuthService authService = new AuthService();
@@ -26,20 +30,54 @@ public class LoginScene extends BaseScene {
 
         TextField identifierField = textField("Username or email");
         PasswordField passwordField = passwordField("Password");
+        RememberedLogin remembered = new RememberedLogin();
+        CheckBox remember = new CheckBox("Remember credentials");
+        remember.setDisable(!remembered.isSupported());
+        remember.setTooltip(new Tooltip(remembered.isSupported()
+            ? "Save your login on this Windows account. Uncheck to forget it."
+            : "Remembering credentials is only available on Windows."));
         Label error = body("");
         error.getStyleClass().add("error-label");
+        remember.setOnAction(event -> {
+            if (remember.isSelected()) return;
+            try {
+                remembered.clear();
+            } catch (IOException failure) {
+                remember.setSelected(true);
+                error.setText("Could not remove the saved credentials.");
+            }
+        });
         Button login = btn("Log In", () -> { });
+        login.setDefaultButton(true);
+        identifierField.setOnAction(event -> login.fire());
+        passwordField.setOnAction(event -> login.fire());
         login.setOnAction(event -> {
+            if (root.isDisabled()) return;
             String identifier = identifierField.getText();
             String password = passwordField.getText();
+            boolean saveCredentials = remember.isSelected();
+            error.setText("");
             root.setDisable(true);
-            login.setDisable(true);
-            background(() -> authService.login(identifier, password), result -> {
-                root.setDisable(false);
-                login.setDisable(false);
+            record Attempt(AuthService.LoginResult result, boolean saveFailed) {}
+            background(() -> {
+                var result = authService.login(identifier, password);
+                if (result.success() && saveCredentials) {
+                    try {
+                        remembered.save(identifier.trim(), password);
+                    } catch (IOException failure) {
+                        return new Attempt(result, true);
+                    }
+                }
+                return new Attempt(result, false);
+            }, attempt -> {
+                var result = attempt.result();
                 if (!result.success()) {
+                    root.setDisable(false);
                     error.setText(result.message());
                     return;
+                }
+                if (attempt.saveFailed()) {
+                    showInfo("Credentials not saved", "Windows could not securely save your credentials. You can still log in.");
                 }
                 if (result.offline()) {
                     Alert notice = new Alert(Alert.AlertType.WARNING, result.message());
@@ -49,14 +87,12 @@ public class LoginScene extends BaseScene {
                 }
                 passwordField.clear();
                 uiSession.setCurrentUser(result.user());
-                root.setDisable(true);
                 PrivateFilesUi.openAtSignIn(this, password, () -> {
                     root.setDisable(false);
                     uiSession.getRouter().goTo(SceneType.LANDING);
                 });
             }, failure -> {
                 root.setDisable(false);
-                login.setDisable(false);
                 error.setText(failure.getMessage());
             });
         });
@@ -66,38 +102,34 @@ public class LoginScene extends BaseScene {
             subtitle("Log in to continue"),
             identifierField,
             passwordField,
+            remember,
             error,
             login,
             btn("Create an account", () -> uiSession.getRouter().goTo(SceneType.REGISTER)),
-            btn("Forgot password?", () -> uiSession.getRouter().goTo(SceneType.FORGOT_PASSWORD)),
-            btn("Test email settings", this::testEmailSettings)
+            btn("Forgot password?", () -> uiSession.getRouter().goTo(SceneType.FORGOT_PASSWORD))
         );
         LanguagePicker.pinTopRight(root);
-
+        if (remembered.isSupported()) {
+            root.setDisable(true);
+            background(() -> {
+                try {
+                    return remembered.load();
+                } catch (IOException failure) {
+                    throw new UncheckedIOException(failure);
+                }
+            }, saved -> {
+                saved.ifPresent(credentials -> {
+                    identifierField.setText(credentials.identifier());
+                    passwordField.setText(credentials.password());
+                    remember.setSelected(true);
+                });
+                root.setDisable(false);
+            }, failure -> {
+                root.setDisable(false);
+                error.setText("Could not read saved credentials. Log in again to replace them.");
+            });
+        }
         return wrapInScene(root);
     }
 
-    /**
-     * Sends a test message to the configured from-address and reports the exact outcome,
-     * so SMTP problems can be diagnosed without going through a whole registration.
-     */
-    private void testEmailSettings() {
-        EmailService emailService = new EmailService();
-        Alert alert;
-        try {
-            emailService.testConnection();
-            alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Email works");
-            alert.setHeaderText(null);
-            alert.setContentText("A test email was sent successfully. Check your inbox.");
-        } catch (Exception e) {
-            alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Email settings problem");
-            alert.setHeaderText("Could not send a test email");
-            alert.setContentText(e.getMessage() + "\n\nSettings file: " + SmtpConfig.configPath().toAbsolutePath());
-        }
-        alert.getDialogPane().setPrefWidth(600);
-        styleDialog(alert);
-        alert.showAndWait();
-    }
 }

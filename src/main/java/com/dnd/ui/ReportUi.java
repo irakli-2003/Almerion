@@ -43,6 +43,11 @@ public final class ReportUi {
             || owner.prepareHistoryChange();
     }
 
+    public static boolean prepareCampaignClose(Scene scene) {
+        return scene == null || !(scene.getProperties().get(OWNER) instanceof com.dnd.ui.scenes.BaseScene owner)
+            || owner.prepareCampaignClose();
+    }
+
     public static void install() {
         if (installed) return;
         installed = true;

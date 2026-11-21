@@ -200,9 +200,17 @@ public class EntityDetailScene extends BaseScene {
     }
 
     @Override public boolean prepareHistoryChange() {
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
-            "Undo or redo reloads this character or entity editor. Discard any unsaved edits and continue?"
-                + " Choose Cancel to return and save them first.", ButtonType.OK, ButtonType.CANCEL);
+        return confirmDiscard("Undo or redo reloads this character or entity editor. Discard any unsaved edits and continue?"
+            + " Choose Cancel to return and save them first.");
+    }
+
+    @Override public boolean prepareCampaignClose() {
+        return confirmDiscard("GitHub sync includes saved files only. Discard any unsaved edits and close the campaign?"
+            + " Choose Cancel to return and save them first.");
+    }
+
+    private boolean confirmDiscard(String message) {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, message, ButtonType.OK, ButtonType.CANCEL);
         styleDialog(confirm);
         return confirm.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK;
     }

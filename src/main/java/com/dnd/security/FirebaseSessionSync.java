@@ -42,9 +42,12 @@ public final class FirebaseSessionSync {
 
     /** Latest decrypted snapshot received from the SSE stream. {@code null} until first event. */
     private final AtomicReference<String> latestSnapshot = new AtomicReference<>(null);
+    private volatile String appliedSnapshot;
     /** Background SSE listener thread; {@code null} when not listening. */
     private volatile Thread listenerThread;
     private boolean ended;
+    private final AtomicReference<LiveRosterPublisher> rosterPublisher = new AtomicReference<>();
+    private String lastPublishedSnapshot;
 
     public FirebaseSessionSync(String databaseUrl, String sessionId, String passphrase) {
         this(databaseUrl, sessionId, passphrase, null, null, null);
@@ -207,6 +210,24 @@ public final class FirebaseSessionSync {
         if (!ended) push(com.dnd.data.SessionSnapshot.capture(root, name));
     }
 
+    public synchronized void startLiveRoster(java.nio.file.Path root, String name) {
+        requireHost();
+        if (!ended && rosterPublisher.get() == null) {
+            rosterPublisher.set(new LiveRosterPublisher(root, () -> pushLiveRoster(root, name)));
+        }
+    }
+
+    private synchronized void pushLiveRoster(java.nio.file.Path root, String name) {
+        if (ended || rosterPublisher.get() == null || Thread.currentThread().isInterrupted()) return;
+        String snapshot = com.dnd.data.SessionSnapshot.capture(root, name);
+        if (!snapshot.equals(lastPublishedSnapshot) && !Thread.currentThread().isInterrupted()) push(snapshot);
+    }
+
+    public void stopLiveRoster() {
+        LiveRosterPublisher previous = rosterPublisher.getAndSet(null);
+        if (previous != null) previous.close();
+    }
+
     public synchronized void push(String plainJson) {
         requireHost();
         if (ended) throw new SyncException("The online session has ended.");
@@ -217,6 +238,7 @@ public final class FirebaseSessionSync {
         } catch (com.dnd.cloud.CloudStore.CloudException | IllegalStateException e) {
             throw new SyncException("Could not publish the session. Check your login, GM membership, and cloud rules.", e);
         }
+        lastPublishedSnapshot = plainJson;
         LOGGER.fine("Session pushed to Firebase [" + sessionId + "]");
     }
 
@@ -271,6 +293,7 @@ public final class FirebaseSessionSync {
             closeChat();
             writer.delete(sessionId);
             ended = true;
+            stopLiveRoster();
         } catch (com.dnd.cloud.CloudStore.CloudException | IllegalStateException e) {
             throw new SyncException("Could not end the online session. Check your connection and account permissions.", e);
         }
@@ -351,6 +374,10 @@ public final class FirebaseSessionSync {
     public String getLatestSnapshot() {
         return latestSnapshot.get();
     }
+
+    public String getAppliedSnapshot() { return appliedSnapshot; }
+
+    public void markSnapshotApplied(String snapshot) { appliedSnapshot = snapshot; }
 
     /** Node name this session lives under, used to name the player's local cache of it. */
     public String getSessionId() {

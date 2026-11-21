@@ -10,12 +10,12 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Encrypts the GitHub token with Windows DPAPI ("CurrentUser" scope), so the stored file is
+ * Encrypts secrets with Windows DPAPI ("CurrentUser" scope), so the stored file is
  * useless to other Windows accounts and on other computers. Java has no DPAPI binding, so this
  * runs the built-in Windows PowerShell; the secret travels over stdin/stdout, never the
- * command line. Any failure makes {@link TokenStore} fall back to its plain-text file.
+ * command line. Callers decide how to handle encryption failures.
  */
-final class WindowsDpapi implements TokenStore.Protector {
+public final class WindowsDpapi implements TokenStore.Protector {
     private static final String SCRIPT = "$ErrorActionPreference='Stop';"
         + "Add-Type -AssemblyName System.Security;"
         + "$in=[Console]::In.ReadToEnd().Trim();"
@@ -27,7 +27,7 @@ final class WindowsDpapi implements TokenStore.Protector {
         + "$b=[Security.Cryptography.ProtectedData]::Unprotect([Convert]::FromBase64String($in),$null,$s);"
         + "[Console]::Out.Write([Convert]::ToBase64String($b))}";
 
-    static boolean isWindows() {
+    public static boolean isWindows() {
         return System.getProperty("os.name", "").toLowerCase(Locale.ROOT).startsWith("windows");
     }
 

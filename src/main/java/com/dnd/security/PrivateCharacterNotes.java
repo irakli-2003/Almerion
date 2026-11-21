@@ -41,6 +41,13 @@ public final class PrivateCharacterNotes {
 
     public static String decrypt(String raw, String campaign, String character, PrivateAccount account,
                                  List<PrivateAccount.Identity> authorizedWriters) {
+        return decryptWithGrants(raw, campaign, character, account, authorizedWriters).text();
+    }
+
+    public record Decrypted(String text, java.util.Set<String> grantedUids) { }
+
+    public static Decrypted decryptWithGrants(String raw, String campaign, String character, PrivateAccount account,
+                                              List<PrivateAccount.Identity> authorizedWriters) {
         validateIds(campaign, character);
         if (account == null || !account.isUnlocked()) throw new SecurityException("Unlock private files first.");
         if (raw == null || !raw.startsWith(PREFIX)) throw new SecurityException("Invalid encrypted character note.");
@@ -63,7 +70,8 @@ public final class PrivateCharacterNotes {
         if (wrapped == null) throw new SecurityException("No key grant for this GM. Another GM must sync the note.");
         byte[] key = PrivateFileCrypto.unwrap(wrapped, account.encryptionKey());
         try {
-            return PrivateFileCrypto.decrypt(envelope.ciphertext(), key, context);
+            return new Decrypted(PrivateFileCrypto.decrypt(envelope.ciphertext(), key, context),
+                java.util.Set.copyOf(envelope.grants().keySet()));
         } finally {
             Arrays.fill(key, (byte) 0);
         }

@@ -245,7 +245,7 @@ public final class OperationHistoryUi {
         sync.setTooltip(new Tooltip("Sync saved campaign changes with GitHub"));
         sync.setVisible(false);
         sync.managedProperty().bind(sync.visibleProperty());
-        controls.getChildren().add(sync);
+        controls.getChildren().addAll(sync, new GitHubSyncProgress(campaign, sync));
         java.util.concurrent.atomic.AtomicBoolean reading = new java.util.concurrent.atomic.AtomicBoolean();
         Runnable refresh = () -> {
             undo.setDisable(true);

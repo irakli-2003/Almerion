@@ -26,6 +26,14 @@ public abstract class Item implements Printable, Pickable {
     private String name;
     private String type;
     private String description;
+    private double rangedAttackFeet;
+
+    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_DEFAULT)
+    public double getRangedAttackFeet() { return rangedAttackFeet; }
+
+    public void setRangedAttackFeet(double feet) {
+        rangedAttackFeet = Double.isFinite(feet) ? Math.max(0, feet) : 0;
+    }
     private int valueGold;
     private double weight;
     private ItemDamage damage;

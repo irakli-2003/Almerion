@@ -41,6 +41,12 @@ function Need($cmd, $hint) {
 Need "mvn" "Install Maven and add it to PATH."
 Need "jpackage" "Install JDK 21 and add its bin folder to PATH."
 
+$pomVersion = ([xml](Get-Content (Join-Path $repo "pom.xml"))).project.version
+if ($Version -and $Version -ne $pomVersion) {
+    throw "Installer version must match pom.xml ($pomVersion), so its bundled patch notes match."
+}
+if (-not $Version) { $Version = $pomVersion }
+
 if ($Type -eq "exe" -and -not (Get-Command candle.exe -ErrorAction SilentlyContinue)) {
     $wix = Join-Path $env:LOCALAPPDATA "wix314"
     if (-not (Test-Path (Join-Path $wix "candle.exe"))) {
@@ -77,7 +83,6 @@ if ($SkipTests) { $mvnArgs += "-DskipTests" }
 & mvn @mvnArgs
 if ($LASTEXITCODE -ne 0) { throw "Maven build failed." }
 
-if (-not $Version) { $Version = ([xml](Get-Content (Join-Path $repo "pom.xml"))).project.version }
 $jar = Get-ChildItem target -Filter "almerion-*.jar" | Select-Object -First 1
 $stage = Join-Path $repo "target\installer-input"
 if (Test-Path $stage) { Remove-Item $stage -Recurse -Force }

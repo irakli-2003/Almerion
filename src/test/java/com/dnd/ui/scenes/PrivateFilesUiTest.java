@@ -396,6 +396,7 @@ public class PrivateFilesUiTest {
                         assertNotNull(sync);
                         assertTrue(sync.isVisible());
                         assertSame(button(footer, "Close").getParent(), sync.getParent());
+                        assertSame(sync.getParent(), footer.lookup("#github-sync-progress").getParent());
                         assertFalse(sync.isDisabled());
                         session.beginBackgroundAction();
                         try {

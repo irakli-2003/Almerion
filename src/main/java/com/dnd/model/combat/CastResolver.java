@@ -55,6 +55,9 @@ public final class CastResolver {
         private final List<Item> consumables;
         private final int spellLevel;
         private final int hpCost;
+        private int encounterManaRestore;
+
+        public boolean isEncounterManaRecovery() { return encounterManaRestore > 0; }
         /** Exact charge/slot level to spend; 0 = the lowest available at or above the spell level. */
         private int chargeLevel;
         private CastChecks checks = new CastChecks();
@@ -130,6 +133,7 @@ public final class CastResolver {
             c.chargeLevel = Math.max(0, level);
             c.checks = checks;
             c.areaTargets = areaTargets;
+            c.encounterManaRestore = encounterManaRestore;
             return c;
         }
 
@@ -205,6 +209,7 @@ public final class CastResolver {
 
         /** How this picks who it affects - see {@link Targeting}. */
         public Targeting getTargeting() {
+            if (isEncounterManaRecovery()) return Targeting.SELF;
             boolean hasDamage = damage != null && damage.hasAmount();
             if (radiusFeet > 0) return rangeFeet > 0 ? Targeting.AREA : Targeting.AURA;
             if (rangeFeet <= 0 && !hasDamage) return Targeting.SELF;
@@ -260,6 +265,7 @@ public final class CastResolver {
             resolved, powers, spell.getDamage(), spell.getRequiredConsumables(), spell.getLevel(), 0);
         action.checks = spell.getChecks();
         action.areaTargets = spell.getAreaTargets();
+        action.encounterManaRestore = spell.getEncounterManaRestore();
         return action;
     }
 
@@ -324,6 +330,12 @@ public final class CastResolver {
         if (caster == null || action == null) return "Nothing selected.";
         CombatState state = TokenSupport.combatOf(caster);
         if (state.isDead()) return TokenSupport.nameOf(caster) + " is dead.";
+        if (action.isEncounterManaRecovery()) {
+            if (state.isDowned()) return TokenSupport.nameOf(caster) + " is downed.";
+            if (state.getEncounterCasts().contains(action.getId())) return action.getName() + " has already been used this combat.";
+            if (state.effectiveCastingResource() != CastingResource.MANA) return action.getName() + " requires a mana pool.";
+            if (state.getCurrentMana() >= state.getMaxMana()) return "Mana is already full.";
+        }
         int cooldown = state.cooldownFor(action.getId());
         if (cooldown > 0) {
             return action.getName() + " recharges in " + cooldown + (cooldown == 1 ? " round." : " rounds.");
@@ -428,6 +440,12 @@ public final class CastResolver {
             }
             log.addAll(applyTo(caster, target, action, rolledDamage, rolledEffectDice, saved));
         }
+        if (action.isEncounterManaRecovery()) {
+            int restored = Math.min(action.encounterManaRestore, Math.max(0, casterState.getMaxMana() - casterState.getCurrentMana()));
+            casterState.setCurrentMana(casterState.getCurrentMana() + restored);
+            casterState.getEncounterCasts().add(action.getId());
+            log.add(TokenSupport.nameOf(caster) + " recovers " + restored + " mana.");
+        }
         if (!hasMechanicalEffect(action)) {
             // Nothing the board can apply by itself: leave the rules where the DM is looking
             // and mark the caster so it is clear on the map that this is in play.
@@ -458,6 +476,7 @@ public final class CastResolver {
 
     /** True when it deals damage or carries at least one effect the board can track. */
     private static boolean hasMechanicalEffect(Castable action) {
+        if (action.isEncounterManaRecovery()) return true;
         if (action.getDamage() != null && action.getDamage().hasAmount()) return true;
         for (Effect effect : action.getEffects()) {
             if (effect != null) return true;

@@ -166,16 +166,26 @@ public final class CampaignRepo {
     private final CredentialsProvider credentials;
     private final Identity identity;
     private final Clock clock;
+    private final SyncProgress progress;
 
     public CampaignRepo(Path folder, CredentialsProvider credentials, Identity identity) {
         this(folder, credentials, identity, Clock.systemDefaultZone());
     }
 
     public CampaignRepo(Path folder, CredentialsProvider credentials, Identity identity, Clock clock) {
+        this(folder, credentials, identity, clock, null);
+    }
+
+    CampaignRepo(Path folder, CredentialsProvider credentials, Identity identity, Clock clock, SyncProgress progress) {
         this.folder = folder;
         this.credentials = credentials;
         this.identity = identity;
         this.clock = clock;
+        this.progress = progress;
+    }
+
+    private void phase(String phase) {
+        if (progress != null) progress.phase(phase);
     }
 
     // ---- settings -----------------------------------------------------------------------------
@@ -267,9 +277,14 @@ public final class CampaignRepo {
         }
     }
 
-    /** Commits local changes, merges GitHub's changes, and pushes. Used when a campaign is opened or closed. */
+    /** Commits local changes, merges GitHub's changes, and pushes. */
     public Result sync() {
         return resolve(Map.of());
+    }
+
+    /** Closing needn't check for incoming changes when there is nothing local to send. */
+    Result syncBeforeClose() {
+        return resolve(Map.of(), true);
     }
 
     public static boolean hasIndexLock(Path folder) {
@@ -325,15 +340,30 @@ public final class CampaignRepo {
      * Missing or stale field choices return reviewable conflicts without applying the merge.
      */
     public Result resolve(Map<String, Choice> choices) {
+        return resolve(choices, false);
+    }
+
+    private Result resolve(Map<String, Choice> choices, boolean closing) {
         try (Git git = Git.open(folder.toFile())) {
             configure(git);
             ensureGitignore();
             commitLocal(git);
+            if (closing && matchesLastKnownRemote(git)) {
+                return Result.of(Outcome.SYNCED, "No local changes to upload.");
+            }
             fetch(git);
             return mergeAndPush(git, choices);
         } catch (Exception e) {
             return failure(e);
         }
+    }
+
+    private boolean matchesLastKnownRemote(Git git) throws IOException, GitAPIException {
+        Repository repo = git.getRepository();
+        if (repo.getRepositoryState() != org.eclipse.jgit.lib.RepositoryState.SAFE || hasIndexLock(folder)) return false;
+        ObjectId head = repo.resolve(Constants.HEAD);
+        Ref remote = repo.exactRef(remoteRef(repo.getBranch()));
+        return head != null && remote != null && head.equals(remote.getObjectId()) && git.status().call().isClean();
     }
 
     /** Commits and pushes without touching the working files - safe while the campaign is open. */
@@ -368,9 +398,11 @@ public final class CampaignRepo {
     }
 
     private boolean commitLocal(Git git) throws GitAPIException, IOException {
+        phase("Checking local files");
         ManualFiles.prepare(folder, git);
         org.eclipse.jgit.api.Status status = git.status().call();
         if (status.isClean()) return false;
+        phase("Saving local changes");
         git.add().addFilepattern(".").call();
         git.add().addFilepattern(".").setUpdate(true).call();
         // Dated when the files were last edited, not when they happened to be synced, so a
@@ -405,7 +437,10 @@ public final class CampaignRepo {
     }
 
     private void fetch(Git git) throws GitAPIException {
-        git.fetch().setRemote(REMOTE).setCredentialsProvider(credentials).setTimeout(TIMEOUT_SECONDS).call();
+        phase("Fetching from GitHub");
+        var fetch = git.fetch().setRemote(REMOTE).setCredentialsProvider(credentials).setTimeout(TIMEOUT_SECONDS);
+        if (progress != null) fetch.setProgressMonitor(progress);
+        fetch.call();
     }
 
     /** A repository created elsewhere may use another default branch (e.g. master); follow it. */
@@ -437,7 +472,9 @@ public final class CampaignRepo {
                 }
                 fastForward = head == null || walk.isMergedInto(walk.parseCommit(head), walk.parseCommit(remote.getObjectId()));
             }
+            phase("Creating restore point");
             com.dnd.data.CampaignRestorePoints.beforeIdentifiedCampaign(folder, "Before GitHub update");
+            phase("Merging incoming changes");
             if (head == null) {
                 RefUpdate update = repo.updateRef(Constants.R_HEADS + repo.getBranch());
                 update.setNewObjectId(remote.getObjectId());
@@ -661,6 +698,7 @@ public final class CampaignRepo {
         if (freshlyFetched && remote != null && head.equals(remote.getObjectId())) {
             return Result.of(Outcome.SYNCED, "Synced.");
         }
+        phase("Checking files for upload");
         List<String> oversized = LargeFileHistory.oversized(repo);
         if (!oversized.isEmpty()) {
             String message = "Upload stopped before sending file data to GitHub: oversized files exist in"
@@ -669,8 +707,11 @@ public final class CampaignRepo {
             return Result.of(Outcome.HISTORY_REPAIR_REQUIRED, message);
         }
         String ref = Constants.R_HEADS + repo.getBranch();
-        Iterable<PushResult> results = git.push().setRemote(REMOTE).setRefSpecs(new RefSpec(ref + ":" + ref))
-            .setCredentialsProvider(credentials).setTimeout(TIMEOUT_SECONDS).call();
+        phase("Pushing to GitHub");
+        var push = git.push().setRemote(REMOTE).setRefSpecs(new RefSpec(ref + ":" + ref))
+            .setCredentialsProvider(credentials).setTimeout(TIMEOUT_SECONDS);
+        if (progress != null) push.setProgressMonitor(progress);
+        Iterable<PushResult> results = push.call();
         for (PushResult result : results) {
             for (RemoteRefUpdate update : result.getRemoteUpdates()) {
                 switch (update.getStatus()) {
@@ -710,6 +751,11 @@ public final class CampaignRepo {
 
     static Result failure(Exception e) {
         String text = messages(e).toLowerCase(Locale.ROOT);
+        if (text.contains("index.lock") || (!(e instanceof TransportException) && text.contains("cannot lock"))) {
+            return Result.of(Outcome.FAILED, "Git could not lock this campaign's index (index.lock). Close other Almerion"
+                + " windows and Git programs, then retry. If the lock remains, use Review index lock"
+                + " after confirming no Git process is running.");
+        }
         if (text.contains("not authorized") || text.contains("authentication is required")
                 || text.contains("authentication not supported") || text.contains("403")) {
             return Result.of(Outcome.AUTH_FAILED, "GitHub didn't accept the sign-in. Link your GitHub account again"
@@ -718,16 +764,28 @@ public final class CampaignRepo {
         if (text.contains("repository not found") || (e instanceof TransportException && text.contains("not found"))) {
             return Result.of(Outcome.FAILED, "The GitHub repository wasn't found, or your account can't access it.");
         }
-        if (e instanceof TransportException || hasNetworkCause(e)) {
-            return Result.of(Outcome.OFFLINE, "Can't reach GitHub right now. Your changes are kept and will be"
-                + " synced later.");
+        if (hasCause(e, javax.net.ssl.SSLException.class)) {
+            return Result.of(Outcome.FAILED, "GitHub's secure connection could not be verified. Check the system"
+                + " clock and any network proxy or security software, then retry. Local changes were kept.");
         }
-        if (text.contains("cannot lock") || text.contains("index.lock")) {
-            return Result.of(Outcome.FAILED, "Git could not lock this campaign's index. Close other Almerion"
-                + " windows and Git programs, then retry. If a previous process crashed, its index.lock may"
-                + " need to be removed after confirming no Git process is running.\n\n" + rootMessage(e));
+        if (hasCause(e, UnknownHostException.class)) {
+            return offline("The GitHub server address could not be resolved (DNS).");
+        }
+        if (hasCause(e, SocketTimeoutException.class) || (e instanceof TransportException && text.contains("timed out"))) {
+            return offline("The connection to GitHub timed out.");
+        }
+        if (hasCause(e, ConnectException.class) || hasCause(e, NoRouteToHostException.class)) {
+            return offline("A connection to GitHub could not be opened.");
+        }
+        if (e instanceof TransportException) {
+            return Result.of(Outcome.FAILED, "GitHub sync stopped with a Git transport error (not confirmed offline)."
+                + " Local changes were kept. Check repository access and retry.");
         }
         return Result.of(Outcome.FAILED, rootMessage(e));
+    }
+
+    private static Result offline(String reason) {
+        return Result.of(Outcome.OFFLINE, reason + " Local changes were kept. Almerion will retry while open.");
     }
 
     /** The most specific message in the cause chain ("add command failed" alone tells the user nothing). */
@@ -745,10 +803,9 @@ public final class CampaignRepo {
         return all.toString();
     }
 
-    private static boolean hasNetworkCause(Throwable e) {
+    private static boolean hasCause(Throwable e, Class<? extends Throwable> type) {
         for (Throwable t = e; t != null; t = t.getCause()) {
-            if (t instanceof UnknownHostException || t instanceof ConnectException
-                || t instanceof SocketTimeoutException || t instanceof NoRouteToHostException) return true;
+            if (type.isInstance(t)) return true;
         }
         return false;
     }

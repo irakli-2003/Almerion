@@ -93,8 +93,9 @@ final class ProgressionPanel {
                 } catch (NumberFormatException ex) {
                     hp = 0;
                 }
-                Progression.shortRest(pc, cls, hp, repos.items()::getById);
-                repos.players().save(pc);
+                PlayerCharacter sheet = latest(repos, pc);
+                Progression.shortRest(sheet, cls, hp, repos.items()::getById);
+                repos.players().save(sheet);
                 onChanged.run();
             });
         });
@@ -102,8 +103,9 @@ final class ProgressionPanel {
             + " The workshop furnace refills each energy charge type up to half of its maximum from the fuel in the pack."));
 
         Button longRest = owner.btn("Long Rest", () -> {
-            Progression.longRest(pc, repos.items()::getById);
-            repos.players().save(pc);
+            PlayerCharacter sheet = latest(repos, pc);
+            Progression.longRest(sheet, repos.items()::getById);
+            repos.players().save(sheet);
             onChanged.run();
         });
         longRest.setTooltip(new Tooltip("Full HP, mana and spell slots; every effect and cooldown cleared."
@@ -144,6 +146,11 @@ final class ProgressionPanel {
             }
             onChanged.run();
         });
+    }
+
+    private static PlayerCharacter latest(CampaignRepositories repos, PlayerCharacter shown) {
+        PlayerCharacter stored = shown.getId() == null ? null : repos.players().getById(shown.getId());
+        return stored != null ? stored : shown;
     }
 
     /** Shows everything the next level brings, lets the DM override any number, then applies it. */

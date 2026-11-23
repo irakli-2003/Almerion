@@ -646,7 +646,8 @@ final class StorylineEditorWindow {
             });
             sync.setId("session-github-sync");
             sync.disableProperty().bind(owner.uiSession.backgroundActionsProperty().greaterThan(0));
-            bar.getChildren().add(bar.getChildren().indexOf(close), sync);
+            bar.getChildren().addAll(bar.getChildren().indexOf(close),
+                java.util.List.of(sync, new GitHubSyncProgress(campaign, sync)));
         }
         bar.setAlignment(Pos.CENTER_LEFT);
         bar.setPadding(new Insets(6, 10, 8, 10));

@@ -69,6 +69,8 @@ public class ManagePlayersPanelTest {
             ready.countDown();
         }
         assertTrue(ready.await(20, TimeUnit.SECONDS));
+        // Closing a dialog must not shut the toolkit down for the remaining tests.
+        Platform.setImplicitExit(false);
     }
 
     private interface Work { void run() throws Exception; }
@@ -274,6 +276,74 @@ public class ManagePlayersPanelTest {
             button(card(panel, "Hero"), "−").fire();
             assertEquals(6, repos.players().getById("hero").getLevel());
             assertEquals(hp - 5, repos.players().getById("hero").getCurrentHitPoints());
+        });
+    }
+
+    @Test
+    public void openPlayerSheetDoesNotUndoARestOrDamageTakenOnTheBattleMap() throws Exception {
+        Path root = Files.createTempDirectory("dnd-manage-rest");
+        CampaignRepositories repos = new CampaignRepositories(root);
+        PlayerCharacter aria = new PlayerCharacter();
+        aria.setId("aria");
+        aria.setName("Aria");
+        aria.setMaxHitPoints(20);
+        aria.setCurrentHitPoints(5);
+        aria.getFeatureUses().put("second-wind", 1);
+        aria.getFeatureUses().put("feat-long:rage", 1);
+        repos.players().save(aria);
+        repos.items().save(ManagePlayersPanel.newItem("rope", "Rope", "gear", "50 ft"));
+        Path session = root.resolve("Session 1.md");
+        Files.writeString(session, "text");
+
+        onFx(() -> {
+            ManagePlayersPanel panel = new ManagePlayersPanel(new CharacterCreationWizard(null, repos), repos, session, s -> { });
+            panel.showPlayer(repos.players().getById("aria"));
+
+            // The battle map long-rests Aria while her sheet is open here.
+            PlayerCharacter onMap = repos.players().getById("aria");
+            com.dnd.model.character.Progression.longRest(onMap, repos.items()::getById);
+            repos.players().save(onMap);
+
+            button(panel.node(), "+ Add Item").fire();
+            TextField itemSearch = (TextField) find(panel.node(), n -> n instanceof TextField t && t.getPromptText() != null && t.getPromptText().startsWith("Search items"));
+            itemSearch.setText("rop");
+            itemSearch.getOnAction().handle(null);
+            PlayerCharacter stored = repos.players().getById("aria");
+            assertEquals(List.of("rope"), stored.getItems().stream().map(i -> i.getItemId()).toList());
+            assertEquals("giving an item keeps the rest's HP", 20, stored.getCurrentHitPoints());
+            assertTrue(stored.getFeatureUses().isEmpty());
+
+            // Then the map deals damage and spends a use; the panel catches up on focus.
+            onMap = repos.players().getById("aria");
+            onMap.setCurrentHitPoints(8);
+            onMap.getFeatureUses().put("second-wind", 1);
+            onMap.getFeatureUses().put("feat-long:rage", 1);
+            repos.players().save(onMap);
+            panel.refreshFromStore();
+            assertNotNull("the open sheet shows the map's HP", find(panel.node(),
+                n -> n instanceof javafx.scene.control.Spinner<?> s && Integer.valueOf(8).equals(s.getValue())));
+
+            // A short rest from the panel heals from the stored HP and recharges short-rest uses only.
+            onMap = repos.players().getById("aria");
+            onMap.setCurrentHitPoints(10);
+            repos.players().save(onMap);
+            Platform.runLater(() -> {
+                var pane = new ArrayList<>(javafx.stage.Window.getWindows()).stream()
+                    .filter(w -> w.getScene() != null && w.getScene().getRoot() instanceof javafx.scene.control.DialogPane)
+                    .map(w -> (javafx.scene.control.DialogPane) w.getScene().getRoot()).findFirst().orElseThrow();
+                ((TextField) pane.lookup(".text-field")).setText("3");
+                ((Button) pane.lookupButton(javafx.scene.control.ButtonType.OK)).fire();
+            });
+            button(panel.node(), "Short Rest").fire();
+            stored = repos.players().getById("aria");
+            assertEquals(13, stored.getCurrentHitPoints());
+            assertEquals(java.util.Map.of("feat-long:rage", 1), stored.getFeatureUses());
+            assertEquals(List.of("rope"), stored.getItems().stream().map(i -> i.getItemId()).toList());
+
+            button(panel.node(), "Long Rest").fire();
+            stored = repos.players().getById("aria");
+            assertEquals(20, stored.getCurrentHitPoints());
+            assertTrue(stored.getFeatureUses().isEmpty());
         });
     }
 

@@ -82,6 +82,7 @@ public class HistoryFooterUiTest {
                 Button sync = button(menu, "campaign-github-sync");
                 assertTrue(sync.isVisible());
                 assertSame(button(menu, "undo-action").getParent(), sync.getParent());
+                assertSame(sync.getParent(), menu.lookup("#github-sync-progress").getParent());
                 assertNotNull(menu.lookupAll(".button").stream().filter(node -> node instanceof Button b
                     && b.getText().equals(com.dnd.ui.i18n.UiTranslator.text("World Map"))).findFirst().orElse(null));
                 assertFalse(menu.lookupAll(".button").stream().anyMatch(node -> node instanceof Button b && b.getText().contains("🧭")));

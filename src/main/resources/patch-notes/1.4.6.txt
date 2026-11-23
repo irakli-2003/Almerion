@@ -1,0 +1,10 @@
+Online play
+- Player Mode now puts the shared map above your character's portrait, stats, abilities, spells, and inventory. In online sessions with projector sharing enabled, opening the GM's Projector shares its player-facing view.
+- GMs can link a character to any campaign member, including co-GMs and the campaign owner, without changing their role.
+
+Combat and campaign fixes
+- Rests now save healing and recharge eligible abilities across the battle map, GM panel, and session character panel.
+- Existing local restore points are trimmed on startup to the three newest per campaign.
+- GitHub Sync shows its progress and gives clearer feedback on lock and connection problems.
+- Bug reports can be sent from the app. If email isn't set up, you can configure and test it without losing your report.
+- This window appears once for each packaged version.

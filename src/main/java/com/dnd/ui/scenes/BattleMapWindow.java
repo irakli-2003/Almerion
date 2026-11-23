@@ -245,6 +245,7 @@ public class BattleMapWindow {
                     stage.setTitle("Battle: " + map.getName());
                 }
                 repos.maps().refreshPinNames(map);
+                refreshChangedSheets();
                 render();
             } catch (RuntimeException e) {
                 status("Map names could not be refreshed: " + e.getMessage());
@@ -363,6 +364,7 @@ public class BattleMapWindow {
             tool("Enter Initiative...", "Type the initiative each combatant rolled at the table",
                 this::openInitiativeEntryDialog),
             tool("Next Turn ▸", "Advance to the next living combatant", () -> {
+                pullChangedSheets();
                 MapObject next = initiative.next();
                 initiativeActive = true;
                 if (next != null) history.record(map, next, initiative.round());
@@ -380,6 +382,7 @@ public class BattleMapWindow {
             tool("End initiative", "Clear the live turn display and end this initiative queue", () -> {
                 initiativeActive = false;
                 initiative.restore(null, 1);
+                for (MapObject token : allCreatures()) TokenSupport.combatOf(token).getEncounterCasts().clear();
                 map.setInitiativePosition(null);
                 dirty = true;
                 publishTurns();
@@ -981,21 +984,18 @@ public class BattleMapWindow {
         decorations.currentTurn = initiative.current();
         if (roundLabel != null) roundLabel.setText("Round " + initiative.round());
         renderer.render(canvas, map, decorations);
-        if (projector != null) {
-            projector.update(map, decorations.currentTurn);
-            projector.showRange(decorations.rangeOrigin, decorations.rangeCells, decorations.rangeRadiusCells);
-        }
+        if (projector != null) projector.update(map, decorations);
     }
 
     private void toggleProjector() {
-        if (projector == null) projector = new ProjectorWindow(uiSession.campaignRoot());
+        if (projector == null) projector = new ProjectorWindow(uiSession.campaignRoot(),
+            () -> uiSession.getSession() == null ? null : uiSession.getSession().getFirebaseSync(), this::status);
         if (projector.isShowing()) {
             projector.close();
             status("Projector view closed.");
             return;
         }
-        projector.update(map, decorations.currentTurn);
-        projector.showRange(decorations.rangeOrigin, decorations.rangeCells, decorations.rangeRadiusCells);
+        projector.update(map, decorations);
         projector.show(canvas.getScene().getWindow());
         status(javafx.stage.Screen.getScreens().size() > 1
             ? "Projector view is on the second screen. Players see only the map; press Esc there or this button again to close."
@@ -1074,6 +1074,7 @@ public class BattleMapWindow {
 
     private void select(MapObject token) {
         decorations.selected = token;
+        updateReachable(token);
         showDetail(token);
         render();
     }
@@ -1730,7 +1731,8 @@ public class BattleMapWindow {
      */
     private void saveTokenToRoster(MapObject token) {
         if (token instanceof PlayerToken t && t.getCharacter() != null) {
-            repos.players().save(t.getCharacter());
+            // Merged onto the stored sheet; saving the embedded copy whole would undo edits made elsewhere.
+            pushToSheet(token);
         } else if (token instanceof NpcToken t && t.getNpc() != null) {
             repos.npcs().save(t.getNpc());
         }
@@ -1810,7 +1812,7 @@ public class BattleMapWindow {
             && action.getChargeLevel() == armedCast.getChargeLevel();
         if (armed) row.getStyleClass().add("selected-row");
 
-        String blocked = CastResolver.blockedReason(token, action);
+        String blocked = castBlockedReason(token, action);
         String tip = description == null || description.isBlank() ? "" : description + "\n\n";
         String hint = blocked != null ? blocked
             : switch (action.getTargeting()) {
@@ -2221,8 +2223,13 @@ public class BattleMapWindow {
     }
 
     /** As above; {@code feature} is the class/race feature spent once the cast lands. */
+    private String castBlockedReason(MapObject caster, CastResolver.Castable action) {
+        if (action != null && action.isEncounterManaRecovery() && !initiativeActive) return "Start initiative first.";
+        return CastResolver.blockedReason(caster, action);
+    }
+
     private void armCast(MapObject caster, CastResolver.Castable action, FeatureRules.Action feature) {
-        String blocked = CastResolver.blockedReason(caster, action);
+        String blocked = castBlockedReason(caster, action);
         if (blocked != null) {
             status(blocked);
             return;
@@ -2955,8 +2962,44 @@ public class BattleMapWindow {
             boolean hadVitals = sheet.getMaxHitPoints() > 0;
             TokenSupport.refreshFromSheet(pt, sheet);
             if (seeded || !hadVitals) repos.players().save(sheet);
+            markSynced(pt, sheet);
             dirty = true;
         }
+    }
+
+    private final java.util.Map<String, String> sheetSyncBase = new java.util.HashMap<>();
+    private final java.util.Map<String, String> tokenSyncBase = new java.util.HashMap<>();
+
+    private void markSynced(PlayerToken pt, PlayerCharacter sheet) {
+        sheetSyncBase.put(sheet.getId(), TokenSupport.sheetSyncKey(sheet));
+        tokenSyncBase.put(sheet.getId(), TokenSupport.tokenSyncKey(pt));
+    }
+
+    private boolean pullChangedSheet(PlayerToken pt, PlayerCharacter sheet) {
+        String base = sheetSyncBase.get(sheet.getId());
+        if (base == null || base.equals(TokenSupport.sheetSyncKey(sheet))) return false;
+        TokenSupport.refreshFromSheet(pt, sheet);
+        markSynced(pt, sheet);
+        dirty = true;
+        return true;
+    }
+
+    private boolean pullChangedSheet(MapObject token) {
+        if (!(token instanceof PlayerToken pt) || pt.getCharacter() == null) return false;
+        var sheet = repos.players().getById(pt.getCharacter().getId());
+        return sheet != null && pullChangedSheet(pt, sheet);
+    }
+
+    private boolean pullChangedSheets() {
+        boolean changed = false;
+        for (MapObject token : allCreatures()) changed |= pullChangedSheet(token);
+        return changed;
+    }
+
+    private void refreshChangedSheets() {
+        if (!pullChangedSheets()) return;
+        refreshAll();
+        if (detailToken != null) showDetail(detailToken);
     }
 
     /** Writes live combat values without overwriting roster XP. */
@@ -2965,13 +3008,17 @@ public class BattleMapWindow {
         var onToken = pt.getCharacter();
         var sheet = repos.players().getById(onToken.getId());
         if (sheet == null) return;
+        if (TokenSupport.tokenSyncKey(pt).equals(tokenSyncBase.get(onToken.getId()))
+            && pullChangedSheet(pt, sheet)) return;
         CombatState state = TokenSupport.combatOf(token);
         TokenSupport.pushVitals(state, sheet);
         TokenSupport.pushVitals(state, onToken);
         sheet.setLevel(onToken.getLevel());
         onToken.setXp(sheet.getXp());
         sheet.setItems(onToken.getItems());
+        sheet.setFurnaceFuel(onToken.getFurnaceFuel());
         repos.players().save(sheet);
+        markSynced(pt, sheet);
     }
 
     private void pushAllToSheets() {
@@ -3114,6 +3161,7 @@ public class BattleMapWindow {
         shortRest.setOnAction(e -> {
             Integer hp = askNumber("Short rest", TokenSupport.nameOf(token) + " - HP recovered from hit dice rolled:", 0);
             if (hp == null) return;
+            pullChangedSheet(token);
             com.dnd.model.character.Progression.shortRest(state, isPactCaster(token), hp, TokenSupport.levelOf(token));
             List<String> furnace = refuelOnRest(token, state, false);
             afterVitalsChange(token);
@@ -3125,6 +3173,7 @@ public class BattleMapWindow {
         longRest.getStyleClass().add("dnd-button");
         longRest.setTooltip(new Tooltip("Full HP, mana, spell slots and feature uses; every effect and cooldown cleared"));
         longRest.setOnAction(e -> {
+            pullChangedSheet(token);
             com.dnd.model.character.Progression.longRest(state);
             List<String> furnace = refuelOnRest(token, state, true);
             afterVitalsChange(token);
@@ -3209,20 +3258,34 @@ public class BattleMapWindow {
         dialog.getDialogPane().setContent(grid);
         ButtonType chosen = dialog.showAndWait().orElse(ButtonType.CANCEL);
         if (chosen == ButtonType.CANCEL) return;
+        java.util.Map<PlayerToken, Integer> rolled = new java.util.HashMap<>();
+        for (var entry : rolls.entrySet()) {
+            Spinner<Integer> hp = entry.getValue();
+            try {
+                // A value typed but not yet committed (no Enter / focus change) would otherwise be lost.
+                int typed = Integer.parseInt(hp.getEditor().getText().strip());
+                rolled.put(entry.getKey(), Math.max(0, Math.min(999, typed)));
+            } catch (NumberFormatException ex) {
+                rolled.put(entry.getKey(), hp.getValue());
+            }
+        }
         for (PlayerToken pt : players) {
+            pullChangedSheet(pt);
             CombatState state = TokenSupport.combatOf(pt);
             if (chosen == longType) {
                 com.dnd.model.character.Progression.longRest(state);
                 refuelOnRest(pt, state, true);
             } else {
-                com.dnd.model.character.Progression.shortRest(state, isPactCaster(pt), rolls.get(pt).getValue(),
+                com.dnd.model.character.Progression.shortRest(state, isPactCaster(pt), rolled.get(pt),
                     TokenSupport.levelOf(pt));
                 refuelOnRest(pt, state, false);
             }
         }
         dirty = true;
         pushAllToSheets();
+        rebuildInitiative();
         refreshAll();
+        if (detailToken != null) showDetail(detailToken);
         status(chosen == longType ? "The party takes a long rest." : "The party takes a short rest.");
     }
 

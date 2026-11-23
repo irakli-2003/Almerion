@@ -7,7 +7,7 @@
 
     <groupId>com.dnd</groupId>
     <artifactId>almerion</artifactId>
-    <version>1.4.5</version>
+    <version>1.4.6</version>
     <packaging>jar</packaging>
 
     <name>Almerion</name>
@@ -76,6 +76,36 @@
 
     <build>
         <plugins>
+            <!-- Enforce release notes even for package builds that skip tests. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>require-patch-notes</id>
+                        <phase>validate</phase>
+                        <goals><goal>run</goal></goals>
+                        <configuration>
+                            <target>
+                                <property name="notes.file" value="${project.basedir}/src/main/resources/patch-notes/${project.version}.txt"/>
+                                <fail message="Write patch notes for ${project.version} in ${notes.file} before building.">
+                                    <condition><not><available file="${notes.file}" type="file"/></not></condition>
+                                </fail>
+                                <loadfile property="notes.content" srcFile="${notes.file}" encoding="UTF-8">
+                                    <filterchain><striplinebreaks/><tokenfilter><trim/></tokenfilter></filterchain>
+                                </loadfile>
+                                <fail message="Patch notes for ${project.version} must not be empty.">
+                                    <condition><or>
+                                        <not><isset property="notes.content"/></not>
+                                        <equals arg1="${notes.content}" arg2=""/>
+                                    </or></condition>
+                                </fail>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- Maven Compiler Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

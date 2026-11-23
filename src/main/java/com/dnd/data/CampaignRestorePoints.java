@@ -65,26 +65,68 @@ public final class CampaignRestorePoints {
         List<Point> result = new ArrayList<>();
         try (var directories = Files.list(root)) {
             for (Path dir : directories.filter(p -> p.getFileName().toString().matches("[a-f0-9]{64}")).toList()) {
-                checkLinks(dir);
-                try (var entries = Files.list(dir)) {
-                    Path first = entries.filter(p -> p.getFileName().toString().endsWith(".point")).findFirst().orElse(null);
-                    if (first == null) continue;
-                    Path metadata = first.resolve("point.json");
-                    checkLinks(metadata);
-                    if (!Files.isRegularFile(metadata) || Files.size(metadata) > 1024 * 1024) {
-                        throw new IOException("Unreadable restore-point metadata.");
-                    }
-                    Point point = JsonMappers.create().readValue(metadata.toFile(), Point.class);
-                    if (point == null || point.campaignPath() == null || point.campaignId() == null) {
-                        throw new IOException("Unreadable restore-point metadata.");
-                    }
-                    var store = forPoint(root, Path.of(point.campaignPath()), point);
-                    if (!store.directory.equals(dir)) throw new IOException("Restore-point identity mismatch.");
-                    result.addAll(store.list());
-                }
+                var store = existingStore(root, dir);
+                if (store != null) result.addAll(store.list());
             }
         }
         return result.stream().sorted(Comparator.comparingLong(Point::createdAt).reversed()).toList();
+    }
+
+    private static CampaignRestorePoints existingStore(Path root, Path dir) throws IOException {
+        checkLinks(dir);
+        if (!Files.isDirectory(dir)) return null;
+        try (var entries = Files.list(dir)) {
+            Path first = entries.filter(p -> p.getFileName().toString().endsWith(".point")).findFirst().orElse(null);
+            if (first == null) return null;
+            Path metadata = first.resolve("point.json");
+            checkLinks(metadata);
+            if (!Files.isRegularFile(metadata) || Files.size(metadata) > 1024 * 1024) {
+                throw new IOException("Unreadable restore-point metadata.");
+            }
+            Point point = JsonMappers.create().readValue(metadata.toFile(), Point.class);
+            if (point == null || point.campaignPath() == null || point.campaignId() == null) {
+                throw new IOException("Unreadable restore-point metadata.");
+            }
+            var store = forPoint(root, Path.of(point.campaignPath()), point);
+            if (!store.directory.equals(dir)) throw new IOException("Restore-point identity mismatch.");
+            return store;
+        }
+    }
+
+    public static void enforceDeviceRetention(Path deviceRoot) throws IOException {
+        Path root = deviceRoot.toAbsolutePath().normalize();
+        synchronized (LOCK) {
+            checkLinks(root);
+            if (Files.notExists(root)) return;
+            try (var directories = Files.list(root)) {
+                for (Path dir : directories.filter(p -> p.getFileName().toString().matches("[a-f0-9]{64}")).toList()) {
+                    try {
+                        var store = existingStore(root, dir);
+                        if (store != null) store.pruneExistingPoints();
+                    } catch (IOException | IllegalArgumentException | SecurityException e) {
+                        System.getLogger(CampaignRestorePoints.class.getName()).log(System.Logger.Level.WARNING,
+                            "Could not enforce restore-point retention for " + dir.getFileName(), e);
+                    }
+                }
+            }
+        }
+    }
+
+    private void pruneExistingPoints() throws IOException {
+        List<Point> points = list();
+        if (points.size() <= LIMIT) return;
+        for (Point point : points) archive(point);
+        for (Point expired : points.subList(LIMIT, points.size())) {
+            Path path = pointPath(expired.id());
+            try (var entries = Files.list(path)) {
+                if (entries.anyMatch(p -> !Set.of("point.json", "campaign.zip").contains(p.getFileName().toString()))) {
+                    throw new IOException("Unexpected files in restore point; leaving it untouched.");
+                }
+            }
+            Files.delete(archive(expired));
+            Files.delete(path.resolve("point.json"));
+            Files.delete(path);
+        }
     }
 
     public static Path deviceRoot(Path campaign) {

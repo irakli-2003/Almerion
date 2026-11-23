@@ -48,12 +48,14 @@ public final class FirebaseSessionSync {
     private boolean ended;
     private final AtomicReference<LiveRosterPublisher> rosterPublisher = new AtomicReference<>();
     private String lastPublishedSnapshot;
+    static final int MAX_PROJECTOR_BYTES = 1_000_000;
+    static final long PROJECTOR_MAX_AGE_MS = 15_000;
 
     public FirebaseSessionSync(String databaseUrl, String sessionId, String passphrase) {
         this(databaseUrl, sessionId, passphrase, null, null, null);
     }
 
-    private FirebaseSessionSync(String databaseUrl, String sessionId, String passphrase,
+    FirebaseSessionSync(String databaseUrl, String sessionId, String passphrase,
                                com.dnd.cloud.CloudStore writer, String hostUid, String campaignId) {
         URI uri = URI.create(databaseUrl);
         if (!"https".equalsIgnoreCase(uri.getScheme()) || uri.getHost() == null || uri.getUserInfo() != null
@@ -233,8 +235,8 @@ public final class FirebaseSessionSync {
         if (ended) throw new SyncException("The online session has ended.");
         String ciphertext = SessionCipher.encrypt(plainJson, passphrase);
         try {
-            writer.put(sessionId, java.util.Map.of("hostUid", hostUid, "campaignId", campaignId,
-                "expiresAt", System.currentTimeMillis() + 43_200_000L, "snapshot", ciphertext));
+            writer.update(java.util.Map.of(sessionId + "/hostUid", hostUid, sessionId + "/campaignId", campaignId,
+                sessionId + "/expiresAt", System.currentTimeMillis() + 43_200_000L, sessionId + "/snapshot", ciphertext));
         } catch (com.dnd.cloud.CloudStore.CloudException | IllegalStateException e) {
             throw new SyncException("Could not publish the session. Check your login, GM membership, and cloud rules.", e);
         }
@@ -286,6 +288,7 @@ public final class FirebaseSessionSync {
      */
     public synchronized void delete() {
         requireHost();
+        ended = true;
         try {
             if (chatRelay != null) chatRelay.close();
             if (guestChatRelay != null) guestChatRelay.close();
@@ -302,6 +305,54 @@ public final class FirebaseSessionSync {
 
     private void requireHost() {
         if (!isHost()) throw new SyncException("Player tokens cannot write or delete hosted sessions.");
+    }
+
+    /** Publishes only a rendered, player-facing PNG, never map or token data. */
+    public synchronized void publishProjector(byte[] png) {
+        requireHost();
+        if (ended) throw new SyncException("The session has ended.");
+        if (png == null || png.length == 0 || png.length > MAX_PROJECTOR_BYTES)
+            throw new SyncException("The projector image is too large to share.");
+        String payload = System.currentTimeMillis() + ":" + Base64.getEncoder().encodeToString(png);
+        writer.put(sessionId + "/projector", SessionCipher.encrypt(payload, passphrase));
+    }
+
+    public synchronized void clearProjector() {
+        requireHost();
+        if (!ended) writer.delete(sessionId + "/projector");
+    }
+
+    /** Returns null for a closed, expired or stale projector. */
+    public byte[] pullProjector() {
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(databaseUrl + "/almerion-live/" + sessionId + "/projector.json"))
+            .timeout(TIMEOUT).GET().build();
+        HttpResponse<String> response = send(request);
+        if (response.statusCode() < 200 || response.statusCode() >= 300)
+            throw new SyncException("Projector connection failed with HTTP " + response.statusCode());
+        try {
+            var node = com.dnd.data.JsonMappers.create().readTree(response.body());
+            if (node == null || node.isNull()) return null;
+            if (!node.isTextual() || node.asText().length() > 2_000_000)
+                throw new SyncException("The projector frame is malformed.");
+            return decodeProjector(SessionCipher.decrypt(node.asText(), passphrase), System.currentTimeMillis());
+        } catch (IOException e) {
+            throw new SyncException("The projector frame is malformed.", e);
+        }
+    }
+
+    static byte[] decodeProjector(String payload, long now) {
+        try {
+            int separator = payload.indexOf(':');
+            long timestamp = Long.parseLong(payload.substring(0, separator));
+            if (timestamp > now + 5_000 || now - timestamp > PROJECTOR_MAX_AGE_MS) return null;
+            byte[] image = Base64.getDecoder().decode(payload.substring(separator + 1));
+            if (image.length == 0 || image.length > MAX_PROJECTOR_BYTES)
+                throw new IllegalArgumentException("Invalid image size");
+            return image;
+        } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
+            throw new SyncException("The projector frame is malformed.", e);
+        }
     }
 
     // -------------------------------------------------------------------------

@@ -1,0 +1,6 @@
+Almerion 1.4.0
+
+- Private session files and encrypted account recovery.
+- Restore points, operational undo, and field-level sync conflict handling.
+- Player Mode and encrypted session chat, including guest and local-network participation.
+- Improvements to cloud migration and collaboration.

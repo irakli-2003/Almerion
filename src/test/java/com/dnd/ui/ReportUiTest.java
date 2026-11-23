@@ -1,6 +1,5 @@
 package com.dnd.ui;
 
-import com.dnd.auth.EmailService;
 import com.dnd.ui.i18n.TranslationService;
 import com.dnd.ui.i18n.UiTranslator;
 import javafx.animation.KeyFrame;
@@ -93,6 +92,50 @@ public class ReportUiTest {
         verifyReportCompletion("en", true);
     }
 
+    @Test
+    public void missingEmailHasInlineSetupAndKeepsTheReport() throws Exception {
+        onFx(() -> {
+            Platform.setImplicitExit(false);
+            Stage stage = new Stage();
+            stage.setScene(new Scene(new VBox(new Label("Original screen")), 500, 300));
+            stage.show();
+            AtomicInteger setups = new AtomicInteger();
+            AtomicInteger sends = new AtomicInteger();
+            AtomicReference<Throwable> failure = new AtomicReference<>();
+            Platform.runLater(() -> {
+                var report = new ArrayList<>(Window.getWindows()).stream()
+                    .filter(w -> w instanceof Stage s && s.getOwner() == stage).findFirst().orElseThrow();
+                try {
+                    DialogPane pane = (DialogPane) report.getScene().getRoot();
+                    TextArea description = (TextArea) pane.lookup(".text-area");
+                    description.setText("Keep this report");
+                    ((Button) pane.lookupButton(pane.getButtonTypes().getFirst())).fire();
+                    assertEquals(0, sends.get());
+                    assertTrue(pane.lookupAll(".label").stream().filter(n -> n instanceof Label)
+                        .map(n -> ((Label) n).getText()).anyMatch(text -> text.contains("Email is not configured")));
+                    Button configure = (Button) pane.lookup("#configure-report-email");
+                    assertNotNull(configure);
+                    configure.fire();
+                    assertEquals(1, setups.get());
+                    assertEquals("Keep this report", description.getText());
+                    assertEquals(0, sends.get());
+                } catch (Throwable t) {
+                    failure.set(t);
+                } finally {
+                    report.hide();
+                }
+            });
+            try {
+                ReportUi.show(stage.getScene(), (category, body, screenshot) -> sends.incrementAndGet(),
+                    () -> setups.get() > 0, owner -> { setups.incrementAndGet(); return true; });
+                if (failure.get() != null) throw new AssertionError(failure.get());
+                assertEquals(1, setups.get());
+            } finally {
+                stage.close();
+            }
+        });
+    }
+
     private static void verifyReportCompletion(String language, boolean failFirst) throws Exception {
         onFx(() -> {
             Platform.setImplicitExit(false);
@@ -102,12 +145,11 @@ public class ReportUiTest {
             translator.setLanguage(language);
             ReportUi.install();
             AtomicInteger sends = new AtomicInteger();
-            EmailService email = new EmailService(null) {
-                @Override public boolean isConfigured() { return true; }
-                @Override public String reportRecipient() { return "support@example.com"; }
-                @Override public void send(String to, String subject, String body, byte[] screenshot) {
-                    if (sends.incrementAndGet() == 1 && failFirst) throw new IllegalStateException("Test failure");
-                }
+            ReportUi.Submission submission = (category, body, screenshot) -> {
+                assertEquals("bug", category);
+                assertEquals("Report completion regression", body);
+                assertNull(screenshot);
+                if (sends.incrementAndGet() == 1 && failFirst) throw new IllegalStateException("Test failure");
             };
             Stage stage = new Stage();
             stage.setScene(new Scene(new VBox(new Label("Original screen")), 500, 300));
@@ -131,24 +173,23 @@ public class ReportUiTest {
                     Label status = (Label) form.getChildren().getLast();
                     TextArea description = (TextArea) form.lookup(".text-area");
                     Button send = (Button) pane.lookupButton(pane.getButtonTypes().get(0));
-                    Button draft = (Button) pane.lookupButton(pane.getButtonTypes().get(1));
                     Button cancel = (Button) pane.lookupButton(ButtonType.CANCEL);
                     if (step.get() == 0) {
                         pane.applyCss();
                         pane.layout();
-                        for (Button button : new Button[] {send, draft, cancel}) {
+                        assertEquals(2, pane.getButtonTypes().size());
+                        for (Button button : new Button[] {send, cancel}) {
                             assertTrue("Full button text must fit: " + button.getText(),
                                 button.getWidth() + 1 >= button.prefWidth(-1));
                             assertTrue("Button must fit inside the dialog",
                                 button.localToScene(button.getBoundsInLocal()).getMaxX() <= pane.getWidth() + 1);
                         }
                         description.setText("Report completion regression");
-                        ((CheckBox) form.lookup(".check-box")).setSelected(false);
+                        assertFalse(((CheckBox) form.lookup(".check-box")).isSelected());
                         step.incrementAndGet();
                         send.fire();
                     } else if (failFirst && step.get() == 1 && status.getText().contains("Test failure")) {
                         assertFalse(send.isDisabled());
-                        assertFalse(draft.isDisabled());
                         assertFalse(cancel.isDisabled());
                         assertEquals("Report completion regression", description.getText());
                         step.incrementAndGet();
@@ -156,7 +197,6 @@ public class ReportUiTest {
                     } else if (status.getText().equals(UiTranslator.text("Your report was sent. Thank you!"))) {
                         assertTrue(reportWindow.isShowing());
                         assertTrue(send.isDisabled());
-                        assertTrue(draft.isDisabled());
                         assertFalse(cancel.isDisabled());
                         assertEquals(UiTranslator.text("Close"), cancel.getText());
                         assertEquals(failFirst ? 2 : 1, sends.get());
@@ -175,7 +215,7 @@ public class ReportUiTest {
             poll.setCycleCount(Timeline.INDEFINITE);
             try {
                 poll.play();
-                ReportUi.show(stage.getScene(), email);
+                ReportUi.show(stage.getScene(), submission);
                 if (failure.get() != null) throw new AssertionError(failure.get());
                 assertEquals("Success must leave an operable Close button", 3, step.get());
             } finally {
@@ -246,13 +286,15 @@ public class ReportUiTest {
                         assertEquals(0, reportWindow.getScene().getRoot().lookupAll(".button").stream()
                             .filter(n -> n instanceof Button b && "\uD83D\uDC1E".equals(b.getText())).count());
                         CheckBox include = (CheckBox) reportWindow.getScene().getRoot().lookup(".check-box");
-                        assertTrue(include.isSelected());
-                        include.setSelected(false);
+                        assertFalse(include.isSelected());
+                        include.setSelected(true);
                         DialogPane pane = (DialogPane) reportWindow.getScene().getRoot();
                         ScrollPane scroll = (ScrollPane) pane.getContent();
                         VBox form = (VBox) scroll.getContent();
                         ImageView preview = form.getChildren().stream().filter(n -> n instanceof ImageView)
                             .map(n -> (ImageView) n).findFirst().orElseThrow();
+                        assertTrue(preview.isVisible());
+                        include.setSelected(false);
                         assertFalse(preview.isVisible());
                         assertFalse(preview.isManaged());
                     } catch (Throwable t) {

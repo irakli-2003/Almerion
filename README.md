@@ -160,7 +160,8 @@ save/discard/cancel prompts. If a window refuses to close, you remain a GM. Afte
 successful switch, Player Mode cannot use private-file keys, campaign/character/map selections clear, and
 GM routes and stale GM previews are blocked. The player screens display a **Player Mode**
 banner. Join your co-GM's hosted session normally; this uses the player-safe snapshot,
-not the old GM campaign folder.
+not the old GM campaign folder. Link your character to your account under **Members → Characters**
+before switching, and make sure the hosting GM has the updated campaign roster. This does not change your campaign role.
 
 Use **Choose role → Game Master** to return, then open a campaign through the normal GM
 membership checks. Private files must be unlocked again and their owners' grants still
@@ -267,9 +268,12 @@ repository.
 
 After that, syncing is automatic. The latest changes are downloaded when you open the campaign,
 and your changes are uploaded while you play, when you leave the campaign and when you close
-Almerion. A campaign with sync enabled stays open until the final sync of saved files succeeds,
-including when you switch to Player Mode or restart for an update. If GitHub is offline or reports
-a conflict, use **GitHub Sync** to resolve it, then try closing again. Forced termination or
+Almerion. A campaign with sync enabled closes without contacting GitHub if its saved files and
+local commit already match the last known GitHub revision. Otherwise, closing requires a successful
+sync, including when switching to Player Mode or restarting for an update. The close dialog shows
+the current sync step and a progress bar, using a percentage only when Git reports one. After two
+minutes the dialog stops waiting and keeps the campaign open; sync may still be running in the background.
+If GitHub is offline or reports a conflict, use **GitHub Sync** to resolve it, then try closing again. Forced termination or
 power loss cannot wait for a sync. The badge in the GM screen shows **Synced**, **Syncing…**, **Offline – will retry**
 (nothing is lost; it uploads when you are back online) or **Conflict**.
 While a battle map is open, changes are uploaded every 10 minutes instead of every 90 seconds,
@@ -716,7 +720,8 @@ the edits made since the last completed draft.
 
 Open **Restore points** from the GM menu or campaign selection. Almerion keeps the latest
 three points per campaign on this device under `data/auth/restore-points`, outside campaign
-folders and GitHub sync. Renaming a campaign keeps its history. Use **Create restore point**
+folders and GitHub sync. On startup, the app also trims older local restore points left by
+previous versions, without creating a new backup. Renaming a campaign keeps its history. Use **Create restore point**
 for a manual snapshot; automatic snapshots precede campaign imports, incoming GitHub
 merges, catalogue/storyline deletion, whole-campaign deletion, and app update downloads.
 If a required snapshot fails, the operation stops before changing the campaign.
@@ -750,6 +755,9 @@ character sheet as their authority.
 Use **GitHub Sync** beside **Undo** and **Redo** on GM campaign screens to open the
 current campaign's sync controls. In the session editor, **GitHub Sync** is in the bottom bar
 next to **Close**. Save any open edits first; sync works with files on disk.
+Both buttons have a tracker that shows the current sync phase and Git's task percentage
+when available. **No progress reported** means no update has arrived for 30 seconds;
+the operation may still be working, especially while creating a restore point.
 
 Compare **Before action** and **After action**, then **Undo selected action**. Damage,
 healing, resources, character inventory, effects and mechanical GM corrections are recorded.
@@ -940,7 +948,10 @@ Open it from a map link in your notes, or with **Run Battle**.
 - **Rests:** **Short Rest** and **Long Rest** restore the party's features and resources.
 - **Terrain:** paint difficult ground, water or climbable areas. **Walls** toggles showing them.
 - **📽 Projector:** opens a clean copy of the map, without GM panels or health bars, for a
-  second screen. **Esc** closes it.
+  second screen. Selecting a player character in the GM view shares their blue remaining
+  movement grid; selecting a monster or NPC does not share its grid. In a hosted online
+  session, the same player-facing image appears above the character sheet. **Esc** closes
+  the projector and stops sharing.
 - **⚔ Combat Music** and **Map Music:** see [Music](#14-music-and-sound).
 
 ---
@@ -1029,7 +1040,8 @@ The data is AES-256 encrypted.
 
 For a new player who already has a character, have them verify their account and accept the
 campaign invitation under **Player → My Campaigns**. On the GM's local campaign, open
-**Members → Characters** beside that player's account and select their existing sheet.
+**Members → Characters** beside the account and select its existing sheet. This works for
+any campaign member, including co-GMs and the campaign owner, without changing their role.
 The next **Join Live Session** opens it directly when exactly one character is linked.
 Players with multiple linked characters choose which one to play.
 
@@ -1244,17 +1256,16 @@ only after confirming no other Git operation is running. Almerion backs up the l
 the campaign's `.git\almerion-lock-backups` folder and retries; it does not delete your
 campaign files. Never remove a lock just because it is old.
 
-The small **🐞** button is available on app screens and dialogs. Choose **Bug** or
-**Suggestion**, describe the issue, and review the automatically captured app screenshot.
-Uncheck **Include screenshot** to leave it out. Nothing is sent until you click **Send**.
-The recipient defaults to the configured password-recovery sender address and can be edited.
-SMTP credentials are never included in the report. If SMTP is unavailable, **Save email
-draft…** writes an `.eml` file with the optional screenshot attached; open it in a compatible
-email application and send it there.
+The small **🐞** button emails bug reports and suggestions to **almerion.d20@gmail.com**.
+Choose **Configure email** in the report window to set up your own outgoing email account.
+For Gmail use `smtp.gmail.com`, port `587` or `465`, and a Google App Password (requires
+2-Step Verification). **Test and save** sends a test to your own address; return to your
+report and click **Send**. Screenshots are optional and off by default. If sending fails,
+the form stays open so you can correct the settings or retry.
 
 | Problem | What to do |
 |---|---|
-| **No verification or reset email** | Check spam and the Firebase email/password setup. Online verification/reset uses emailed links, never an on-screen bypass. SMTP applies only to local-code accounts and outgoing app reports. |
+| **No verification or reset email** | Check spam and the Firebase email/password setup. Online verification/reset uses emailed links, never an on-screen bypass. SMTP applies to local-code accounts and outgoing app reports. |
 | **"You aren't part of ..."** | You aren't a member yet. Apply with the join code and wait for a GM to accept you. |
 | **A campaign I created is missing from my list** | Look under *On this device, not registered to anyone* and click **Claim**. If it's under *Yours, but not on this device*, its files are on another computer. |
 | **"Offline - showing the campaign list saved from your last connection."** | You aren't connected. Local campaigns still open; joining and members need the internet. |

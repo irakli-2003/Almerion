@@ -222,6 +222,10 @@
           ".read": "data.parent().child('expiresAt').val() > now && root.child('almerion-cloud/campaigns').child(data.parent().child('campaignId').val()).child('members').child(root.child('almerion-cloud/accountKeys').child(data.parent().child('hostUid').val()).val()).child('role').val() === 'DM'",
           ".validate": "newData.isString() && newData.val().length <= 16777216"
         },
+        "projector": {
+          ".read": "data.parent().child('expiresAt').val() > now && root.child('almerion-cloud/campaigns').child(data.parent().child('campaignId').val()).child('members').child(root.child('almerion-cloud/accountKeys').child(data.parent().child('hostUid').val()).val()).child('role').val() === 'DM'",
+          ".validate": "newData.isString() && newData.val().length <= 2000000"
+        },
         "$other": { ".validate": false }
       }
     }

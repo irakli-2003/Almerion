@@ -1,0 +1,6 @@
+Campaign updates
+- GitHub Sync is available from the campaign, and closing a campaign checks for pending changes.
+- Player sheets show live combat vitals during online sessions.
+- GMs can link existing characters to player accounts from Members.
+- GM lore can be shared with the group or restricted to selected players.
+- Almerion keeps the three most recent restore points to reduce disk usage.

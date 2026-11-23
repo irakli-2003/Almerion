@@ -112,6 +112,57 @@ public class RulesTest {
     }
 
     @Test
+    public void meditateRestoresManaOncePerEncounterAndCapsTheGain() throws Exception {
+        var mapper = com.dnd.data.JsonMappers.create();
+        Spell meditate = mapper.readValue("""
+            {"id":"meditate","name":"Meditate","level":0,"manaCost":0,"encounterManaRestore":3}
+            """, Spell.class);
+        var action = CastResolver.of(meditate);
+        var token = caster(20);
+        var state = TokenSupport.combatOf(token);
+        state.setMaxMana(10);
+        state.setCurrentMana(10);
+        assertFalse(CastResolver.cast(token, action, List.of(), 0, 0).isSuccess());
+        state.setCurrentMana(9);
+        assertTrue(CastResolver.cast(token, action, List.of(), 0, 0).isSuccess());
+        assertEquals(10, state.getCurrentMana());
+        assertTrue(state.getActiveEffects().isEmpty());
+
+        var resumed = mapper.readValue(mapper.writeValueAsBytes(state.copy()), CombatState.class);
+        TokenSupport.setCombat(token, resumed);
+        resumed.setCurrentMana(2);
+        assertFalse(CastResolver.cast(token, action, List.of(), 0, 0).isSuccess());
+        assertEquals(2, resumed.getCurrentMana());
+        resumed.getEncounterCasts().clear(); // End initiative.
+        assertTrue(CastResolver.cast(token, action, List.of(), 0, 0).isSuccess());
+        assertEquals(5, resumed.getCurrentMana());
+    }
+
+    @Test
+    public void oathstaffUsesNormalRangedDamageAndDownsInsteadOfKilling() throws Exception {
+        var mapper = com.dnd.data.JsonMappers.create();
+        var item = mapper.readValue("""
+            {"id":"oathstaff","name":"Oathstaff","type":"weapon","rangedAttackFeet":30,
+             "damage":{"dice":"1d6","type":"force"}}
+            """, com.dnd.model.item.Item.class);
+        var weapon = mapper.readValue(mapper.writeValueAsBytes(item), com.dnd.model.item.Item.class);
+        var pc = sheet();
+        pc.getStats().setDexterity(15);
+        pc.getItems().add(new PlayerCharacter.PlayerItem("oathstaff", new PlayerCharacter.ItemCondition(100), true));
+        var attack = com.dnd.model.rules.FeatureRules.attacks(pc, null, id -> weapon).getFirst();
+        assertEquals("oathstaff", attack.id());
+        assertFalse(attack.melee());
+        assertEquals(30, attack.reachFeet(), 0);
+        assertEquals("1d6 + 2 force", attack.damageLabel());
+        var enemy = TokenSupport.combatOf(caster(3));
+        com.dnd.model.rules.CombatRules.damage(enemy, 6 + attack.damageBonus(), attack.damageType());
+        assertEquals(0, enemy.getCurrentHitPoints());
+        assertTrue(enemy.isDowned());
+        assertFalse(enemy.isDead());
+        assertEquals(3, enemy.remainingDeathSaves());
+    }
+
+    @Test
     public void bloodCastersPayInHitPoints() {
         MonsterToken token = caster(100);
         CombatState state = TokenSupport.combatOf(token);

@@ -62,9 +62,28 @@ public class EmailService {
         }
         if (config.port <= 0) return "\"port\" must be a positive number (587 for STARTTLS, 465 for SSL).";
         if (isBlank(config.username)) return "\"username\" is empty. Use the full email address you send from.";
-        if (isBlank(normalizedPassword())) {
+        if (isBlank(config.password) && isBlank(config.protectedPassword)) {
             return "\"password\" is empty. For Gmail this must be a 16-character App Password, not your normal"
                 + " account password.";
+        }
+        return null;
+    }
+
+    /** Reports must never use a plaintext SMTP connection, including older configurations. */
+    public String reportConfigProblem() {
+        String problem = configProblem();
+        if (problem != null) return problem;
+        if (!config.useTls && config.port != 465) return "Enable a secure SMTP connection before sending reports.";
+        if (!AuthService.isValidEmail(config.username) || !AuthService.isValidEmail(reportRecipient())) {
+            return "Enter a valid sender email address.";
+        }
+        if (config.port > 65535) return "Enter an SMTP port between 1 and 65535.";
+        if (!config.host.matches("[A-Za-z0-9.-]+") || config.host.startsWith(".") || config.host.endsWith(".")) {
+            return "Enter the SMTP server hostname without a URL or port.";
+        }
+        if ("smtp.gmail.com".equalsIgnoreCase(config.host) && isBlank(config.protectedPassword)
+                && config.password.replaceAll("\\s+", "").length() != 16) {
+            return "For Gmail, use a 16-character Google App Password, not your normal password.";
         }
         return null;
     }
@@ -85,6 +104,14 @@ public class EmailService {
         if (problem != null) {
             throw new EmailNotConfiguredException(problem);
         }
+        final String password;
+        try {
+            String stored = config.smtpPassword();
+            password = "smtp.gmail.com".equalsIgnoreCase(config.host) ? stored.replaceAll("\\s+", "") : stored;
+        } catch (IOException | IllegalArgumentException e) {
+            throw new EmailNotConfiguredException("The saved email password could not be unlocked. Configure email again.");
+        }
+        if (isBlank(password)) throw new EmailNotConfiguredException("Enter an SMTP password or app password.");
 
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
@@ -93,18 +120,20 @@ public class EmailService {
         props.put("mail.smtp.connectiontimeout", TIMEOUT_MILLIS);
         props.put("mail.smtp.timeout", TIMEOUT_MILLIS);
         props.put("mail.smtp.writetimeout", TIMEOUT_MILLIS);
+        if (usesImplicitSsl() || config.useTls) props.put("mail.smtp.ssl.checkserveridentity", "true");
         if (usesImplicitSsl()) {
             // Port 465 speaks TLS from the first byte; STARTTLS (587) negotiates it mid-session.
             // Using the wrong one for the port hangs until timeout, so pick based on the port.
             props.put("mail.smtp.ssl.enable", "true");
         } else {
             props.put("mail.smtp.starttls.enable", String.valueOf(config.useTls));
+            props.put("mail.smtp.starttls.required", String.valueOf(config.useTls));
         }
 
         Session session = Session.getInstance(props, new jakarta.mail.Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(config.username, normalizedPassword());
+                return new PasswordAuthentication(config.username, password);
             }
         });
 
@@ -163,21 +192,11 @@ public class EmailService {
         }
         send(isBlank(config.fromAddress) ? config.username : config.fromAddress,
             "Almerion test email",
-            "If you're reading this, your SMTP settings work. Verification and password-reset"
-                + " emails will be delivered normally.");
+            "Almerion successfully sent this test message using your outgoing email settings.");
     }
 
     private boolean usesImplicitSsl() {
         return config.port == 465;
-    }
-
-    /**
-     * Gmail displays App Passwords in four space-separated groups ("abcd efgh ijkl mnop").
-     * Pasting them verbatim is the expected user behaviour, but the spaces are display-only
-     * and make SMTP AUTH fail, so they're stripped here.
-     */
-    private String normalizedPassword() {
-        return config.password == null ? "" : config.password.replaceAll("\\s+", "");
     }
 
     private String explain(MessagingException e) {

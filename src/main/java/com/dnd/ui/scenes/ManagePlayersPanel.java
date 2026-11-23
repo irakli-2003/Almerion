@@ -56,6 +56,13 @@ final class ManagePlayersPanel {
     private Node listPane;
     private Runnable xpToggle = () -> { };
     private int lastXp = 100;
+    /** The player sheet on screen, if any; refreshed when the window regains focus. */
+    private PlayerCharacter shownPlayer;
+    /** {@link #shownPlayer} as last loaded or saved, the base for merging edits made elsewhere. */
+    private String shownPlayerJson;
+    private final javafx.beans.value.ObservableValue<Boolean> windowFocused = root.sceneProperty()
+        .flatMap(javafx.scene.Scene::windowProperty)
+        .flatMap(javafx.stage.Window::focusedProperty);
 
     ManagePlayersPanel(BaseScene owner, CampaignRepositories repos, Path sessionFile, Consumer<String> status) {
         this(owner, repos, sessionFile, status, null);
@@ -73,6 +80,75 @@ final class ManagePlayersPanel {
         root.setPrefWidth(WIDTH);
         root.setMinWidth(WIDTH);
         root.setMaxWidth(WIDTH);
+        windowFocused.addListener((obs, old, focused) -> {
+            if (Boolean.TRUE.equals(focused)) refreshFromStore();
+        });
+    }
+
+    /**
+     * Catches up with sheets changed in another window (a battle map rest, say) so this
+     * panel neither shows nor later saves its older copy.
+     */
+    void refreshFromStore() {
+        try {
+            if (shownPlayer != null) {
+                PlayerCharacter stored = shownPlayer.getId() == null ? null : repos.players().getById(shownPlayer.getId());
+                if (stored != null && !sameSheet(stored, shownPlayer)) showPlayer(stored);
+            } else if (listShowing()) {
+                refreshCards();
+            }
+        } catch (RuntimeException ex) {
+            status.accept("Couldn't refresh the party: " + ex.getMessage());
+        }
+    }
+
+    private static boolean sameSheet(PlayerCharacter a, PlayerCharacter b) {
+        String left = json(a);
+        return left != null && left.equals(json(b));
+    }
+
+    private static final com.fasterxml.jackson.databind.ObjectMapper COMPARE = com.dnd.data.JsonMappers.create();
+
+    private static String json(PlayerCharacter pc) {
+        try {
+            return pc == null ? null : COMPARE.writeValueAsString(pc);
+        } catch (com.fasterxml.jackson.core.JsonProcessingException ex) {
+            return null;
+        }
+    }
+
+    /**
+     * Saves the open sheet without undoing what another window stored meanwhile: fields this
+     * panel changed since it loaded the sheet win, every other field takes the stored value
+     * (so giving an item does not bring back HP or feature uses a battle-map rest restored).
+     */
+    private void saveMerged(PlayerCharacter pc) {
+        PlayerCharacter stored = pc.getId() == null ? null : repos.players().getById(pc.getId());
+        String storedJson = json(stored);
+        if (stored != null && shownPlayerJson != null && storedJson != null && !storedJson.equals(shownPlayerJson)) {
+            try {
+                var base = COMPARE.readTree(shownPlayerJson);
+                var mine = COMPARE.valueToTree(pc);
+                var theirs = COMPARE.readTree(storedJson);
+                var patch = COMPARE.createObjectNode();
+                theirs.fieldNames().forEachRemaining(field -> {
+                    if (java.util.Objects.equals(mine.get(field), base.get(field))
+                        && !java.util.Objects.equals(theirs.get(field), base.get(field))) {
+                        patch.set(field, theirs.get(field));
+                    }
+                });
+                if (!patch.isEmpty()) {
+                    com.dnd.data.JsonMappers.forCampaign(repos.campaignRoot()).readerForUpdating(pc).readValue(patch);
+                    if (shownPlayer == pc) javafx.application.Platform.runLater(() -> {
+                        if (shownPlayer == pc) showPlayer(pc);
+                    });
+                }
+            } catch (java.io.IOException | RuntimeException ex) {
+                status.accept("Couldn't merge changes made elsewhere into " + pc.getName() + ": " + ex.getMessage());
+            }
+        }
+        repos.players().save(pc);
+        shownPlayerJson = json(pc);
     }
 
     Node node() {
@@ -95,6 +171,7 @@ final class ManagePlayersPanel {
     // ------------------------------------------------------------------ list
 
     void showList() {
+        shownPlayer = null;
         Label heading = owner.sectionLabel("Party & Creatures");
         VBox addHost = new VBox();
         VBox xpHost = new VBox();
@@ -386,9 +463,13 @@ final class ManagePlayersPanel {
         return content;
     }
 
-    void showPlayer(PlayerCharacter pc) {
+    void showPlayer(PlayerCharacter requested) {
+        PlayerCharacter stored = requested.getId() == null ? null : repos.players().getById(requested.getId());
+        PlayerCharacter pc = stored != null ? stored : requested;
+        shownPlayer = pc;
+        shownPlayerJson = json(pc);
         Runnable persist = () -> {
-            try { repos.players().save(pc); }
+            try { saveMerged(pc); }
             catch (IllegalStateException error) {
                 PlayerCharacter current = repos.players().getById(pc.getId());
                 if (current != null) showPlayer(current);
@@ -732,6 +813,7 @@ final class ManagePlayersPanel {
     }
 
     void showCreature(TrackedCreature c) {
+        shownPlayer = null;
         TextField name = new TextField(c.getName());
         name.getStyleClass().add("dnd-text-field");
         name.textProperty().addListener((o, old, v) -> { c.setName(v); saveCreatures(); });

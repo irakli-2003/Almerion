@@ -9,11 +9,12 @@ import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.ProgressIndicator;
 import javafx.stage.Stage;
 
 import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -22,19 +23,27 @@ public class SceneRouter {
     private final Stage stage;
     private final Predicate<Path> syncEnabled;
     private final Function<Path, CompletableFuture<CampaignRepo.Result>> sync;
+    private final long closeWaitMillis;
+    private CompletableFuture<CampaignRepo.Result> closeSync;
     private SceneType currentType;
     private boolean leaving;
 
     public SceneRouter(UiSession uiSession, Stage stage) {
-        this(uiSession, stage, CampaignRepo::isSynced, CampaignSyncService.shared()::syncNow);
+        this(uiSession, stage, CampaignRepo::isSynced, CampaignSyncService.shared()::syncBeforeClose);
     }
 
     SceneRouter(UiSession uiSession, Stage stage, Predicate<Path> syncEnabled,
                 Function<Path, CompletableFuture<CampaignRepo.Result>> sync) {
+        this(uiSession, stage, syncEnabled, sync, TimeUnit.MINUTES.toMillis(2));
+    }
+
+    SceneRouter(UiSession uiSession, Stage stage, Predicate<Path> syncEnabled,
+                Function<Path, CompletableFuture<CampaignRepo.Result>> sync, long closeWaitMillis) {
         this.uiSession = uiSession;
         this.stage = stage;
         this.syncEnabled = syncEnabled;
         this.sync = sync;
+        this.closeWaitMillis = closeWaitMillis;
     }
 
     /** Scenes reachable without being logged in - everything else redirects to LOGIN. */
@@ -64,7 +73,7 @@ public class SceneRouter {
                 com.dnd.sync.CampaignSyncService.shared().opened(uiSession.campaignRoot());
             }
         } else if (type == SceneType.CAMPAIGN_SELECTION || type == SceneType.LANDING || type == SceneType.LOGIN) {
-            // Leaving the campaign: upload what changed and fetch the other computer's changes.
+            // Stop campaign autosave when leaving the campaign.
             com.dnd.sync.CampaignSyncService.shared().closed();
         }
         // buildScene() can throw (e.g. a data file failed to load) - if that happens with no
@@ -94,6 +103,10 @@ public class SceneRouter {
             leave.run();
             return;
         }
+        if (closeSync != null && !closeSync.isDone()) {
+            notice("The previous sync is still running. Wait for it to finish before trying to close again.");
+            return;
+        }
         leaving = true;
         boolean ready = false;
         try {
@@ -111,21 +124,27 @@ public class SceneRouter {
             if (!ready) leaving = false;
         }
         Alert progress = syncAlert(Alert.AlertType.INFORMATION, "Syncing saved campaign changes before closing...");
-        progress.setGraphic(new ProgressIndicator());
+        var pane = progress.getDialogPane();
+        pane.setContent(new javafx.scene.layout.VBox(10,
+            new javafx.scene.control.Label(pane.getContentText()), new GitHubSyncProgress(campaign)));
         progress.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
         progress.setOnCloseRequest(event -> event.consume());
         progress.show();
-        CompletableFuture<CampaignRepo.Result> pending;
         try {
-            pending = sync.apply(campaign);
+            closeSync = sync.apply(campaign);
         } catch (RuntimeException failure) {
-            pending = CompletableFuture.failedFuture(failure);
+            closeSync = CompletableFuture.failedFuture(failure);
         }
-        pending.whenComplete((result, failure) -> Platform.runLater(() -> {
+        // Time out only the UI wait. Interrupting Git could leave an index or merge half-written.
+        closeSync.copy().orTimeout(closeWaitMillis, TimeUnit.MILLISECONDS).whenComplete((result, failure) -> Platform.runLater(() -> {
             progress.setOnCloseRequest(null);
             progress.close();
             if (failure != null || result.outcome() != CampaignRepo.Outcome.SYNCED) {
                 leaving = false;
+                if (failure instanceof TimeoutException) {
+                    notice("Stopped waiting for GitHub sync. The campaign is still open. Sync may still be running in the background.");
+                    return;
+                }
                 notice((failure == null ? result.message() : rootMessage(failure))
                     + "\n\n" + com.dnd.ui.i18n.UiTranslator.text(
                         "The campaign is still open. Use GitHub Sync to resolve the problem, then try closing again."));

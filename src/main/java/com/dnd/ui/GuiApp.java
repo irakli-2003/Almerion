@@ -52,6 +52,17 @@ public class GuiApp extends Application {
         });
         uiSession.getRouter().goTo(SceneType.LOGIN);
         primaryStage.show();
+        Thread.startVirtualThread(() -> {
+            try {
+                var root = com.dnd.data.CampaignRestorePoints.deviceRoot(
+                    storage.getCustomCampaignRoot().resolve("campaign"));
+                com.dnd.data.CampaignRestorePoints.enforceDeviceRetention(root);
+            } catch (java.io.IOException | SecurityException e) {
+                System.getLogger(GuiApp.class.getName()).log(System.Logger.Level.WARNING,
+                    "Could not enforce local restore-point retention.", e);
+            }
+        });
+        PatchNotesPrompt.showIfNeeded(primaryStage);
         UpdatePrompt.checkInBackground(primaryStage, () -> uiSession.getRouter().leaveCampaign(() -> {
             if (com.dnd.update.UpdateChecker.restart()) {
                 close.run();

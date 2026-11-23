@@ -272,6 +272,15 @@ public class Spell implements Printable {
      * keeps every spell written before cooldowns existed behaving exactly as it did.
      */
     private int cooldownRounds;
+    private int encounterManaRestore;
+
+    /** Mana restored to the caster once per encounter. */
+    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_DEFAULT)
+    public int getEncounterManaRestore() { return encounterManaRestore; }
+
+    public void setEncounterManaRestore(int amount) {
+        encounterManaRestore = Math.max(0, amount);
+    }
 
     public int getCooldownRounds() {
         return cooldownRounds;

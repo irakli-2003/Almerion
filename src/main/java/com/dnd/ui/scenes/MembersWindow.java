@@ -163,13 +163,13 @@ public final class MembersWindow {
         content.getChildren().add(owner.sectionLabel("Members (" + record.members.size() + ")"));
         content.getChildren().add(owner.body(campaignRoot == null
             ? "Open Members from a local copy of this campaign to link existing characters."
-            : "After a player accepts, use Characters beside their account to link their existing sheet."));
+            : "Use Characters beside any campaign member to link their existing sheet."));
         for (CampaignRecord.Member member : record.members.values().stream()
                 .sorted(java.util.Comparator.comparing(m -> m.username, String.CASE_INSENSITIVE_ORDER)).toList()) {
             boolean isAuthor = record.isAuthor(member.username);
             String label = member.username + "  -  " + (isAuthor ? "Author GM" : member.role == Role.DM ? "GM" : "Player");
             HBox row = row(owner.body(label));
-            if (campaignRoot != null && member.role == Role.PLAYER) {
+            if (campaignRoot != null && canAssignCharacter(record, user, member.username)) {
                 row.getChildren().add(owner.btn("Characters", () -> chooseAssignment(member.username)));
             }
             if (author && !isAuthor) {
@@ -202,12 +202,16 @@ public final class MembersWindow {
         content.getChildren().add(owner.btn("Refresh", this::reload));
     }
 
+    static boolean canAssignCharacter(CampaignRecord record, String gm, String member) {
+        return record != null && record.isDm(gm) && record.isMember(member);
+    }
+
     private void chooseAssignment(String username) {
         owner.background(() -> new CampaignRepositories(campaignRoot).players().list().stream()
             .filter(pc -> pc.isOwnedBy(username) || pc.getOwnerUsername() == null || pc.getOwnerUsername().isBlank())
             .toList(), choices -> {
             if (choices.isEmpty()) {
-                owner.showInfo("No available characters", "Create a character or unlink it from its current player first.");
+                owner.showInfo("No available characters", "Create a character or unlink it from its current account first.");
                 return;
             }
             record Choice(PlayerCharacter pc, boolean linked) {
@@ -232,8 +236,7 @@ public final class MembersWindow {
                 }
                 owner.background(() -> {
                     CampaignRecord current = directory.find(campaignId).orElse(null);
-                    if (com.dnd.cloud.Cloud.isOffline() || current == null || !current.isDm(user)
-                        || current.roleOf(username) != Role.PLAYER
+                    if (com.dnd.cloud.Cloud.isOffline() || !canAssignCharacter(current, user, username)
                         || CampaignMeta.idOf(campaignRoot).filter(campaignId::equals).isEmpty()) {
                         throw new IllegalStateException("Could not verify current campaign membership. Refresh and try again online.");
                     }

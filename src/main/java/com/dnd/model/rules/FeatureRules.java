@@ -791,11 +791,13 @@ public final class FeatureRules {
                     || item.getDamage().getDice() == null || isFirearm(item)) continue;
                 seen.add(carried.getItemId());
                 String key = (item.getId() + " " + item.getName()).toLowerCase(Locale.ROOT);
-                boolean ranged = key.matches(".*(bow|sling|dart|blowgun).*");
+                double rangedFeet = item.getRangedAttackFeet();
+                boolean ranged = rangedFeet > 0 || key.matches(".*(bow|sling|dart|blowgun).*");
                 boolean finesse = ranged || key.matches(".*(dagger|rapier|shortsword|scimitar|whip|katana|blade).*");
                 boolean useStr = !ranged && (!finesse || str >= dex);
                 int abilityMod = useStr ? str : dex;
-                double reach = ranged ? rangedReach(key) : key.matches(".*(glaive|halberd|pike|lance|whip).*") ? 10 : 5;
+                double reach = rangedFeet > 0 ? rangedFeet
+                    : ranged ? rangedReach(key) : key.matches(".*(glaive|halberd|pike|lance|whip).*") ? 10 : 5;
                 out.add(new Attack(item.getId(), item.getName(), item.getDamage().getDice(),
                     normaliseType(item.getDamage().getType()), !ranged, useStr, finesse, prof + abilityMod,
                     abilityMod, reach));

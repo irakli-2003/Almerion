@@ -127,6 +127,21 @@ public class CampaignRepoTest {
         assertFalse(Files.exists(first.resolve("storyline/chapter1.md")));
     }
 
+    @Test public void closeSkipsUnavailableRemoteOnlyWhenThereIsNothingToUpload() throws Exception {
+        Path first = campaign("first");
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(first).connect(remote).outcome());
+        Files.move(Path.of(java.net.URI.create(remote)), temp.getRoot().toPath().resolve("unavailable.git"));
+
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(first).syncBeforeClose().outcome());
+        assertTrue(repo(first).sync().outcome() != CampaignRepo.Outcome.SYNCED);
+
+        write(first, "storyline/chapter1.md", "# Saved edit");
+        assertTrue(repo(first).syncBeforeClose().outcome() != CampaignRepo.Outcome.SYNCED);
+        assertEquals("# Saved edit", read(first, "storyline/chapter1.md"));
+        // The first attempt committed the edit: a clean worktree still has an unpublished commit.
+        assertTrue(repo(first).syncBeforeClose().outcome() != CampaignRepo.Outcome.SYNCED);
+    }
+
     @Test public void freshFastForwardKeepsSafetyBackupAndUnchangedOpenCreatesNoMoreBackups() throws Exception {
         Path first = campaign("first");
         assertEquals(CampaignRepo.Outcome.SYNCED, repo(first).connect(remote).outcome());
@@ -461,6 +476,41 @@ public class CampaignRepoTest {
         CampaignRepo.Result result = repo(first).connect("https://127.0.0.1:1/nobody/nothing.git");
         assertEquals(result.message(), CampaignRepo.Outcome.OFFLINE, result.outcome());
         assertTrue("local work is committed even when offline", CampaignRepo.isRepository(first));
+    }
+
+    @Test
+    public void onlyKnownConnectivityFailuresAreRetriedAsOffline() {
+        var dns = new org.eclipse.jgit.api.errors.TransportException("fetch failed",
+            new java.net.UnknownHostException("internal.example"));
+        var dnsResult = CampaignRepo.failure(dns);
+        assertEquals(CampaignRepo.Outcome.OFFLINE, dnsResult.outcome());
+        assertTrue(dnsResult.message().contains("DNS"));
+        assertFalse(dnsResult.message().contains("internal.example"));
+        var tls = new org.eclipse.jgit.api.errors.TransportException("fetch failed",
+            new javax.net.ssl.SSLHandshakeException("certificate rejected"));
+        assertEquals(CampaignRepo.Outcome.FAILED, CampaignRepo.failure(tls).outcome());
+        assertTrue(CampaignRepo.failure(tls).message().contains("secure connection"));
+        assertEquals(CampaignRepo.Outcome.FAILED,
+            CampaignRepo.failure(new org.eclipse.jgit.api.errors.TransportException("unexpected")).outcome());
+    }
+
+    @Test
+    public void anotherAlmerionJobCannotRecoverAnIndexLockWhileSyncIsActive() throws Exception {
+        Path first = campaign("first");
+        assertEquals(CampaignRepo.Outcome.SYNCED, repo(first).connect(remote).outcome());
+        Path indexLock = first.resolve(".git/index.lock");
+        Files.writeString(indexLock, "in use");
+        try (var channel = java.nio.channels.FileChannel.open(first.resolve(".git/almerion-sync.lock"),
+                java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.WRITE);
+             var held = channel.lock()) {
+            var result = CampaignSyncService.withCampaignLock(first, () -> repo(first).recoverIndexLock());
+            assertEquals(CampaignRepo.Outcome.FAILED, result.outcome());
+            assertTrue(result.message().contains("Another Almerion instance"));
+            assertEquals("in use", Files.readString(indexLock));
+        }
+        assertEquals(CampaignRepo.Outcome.SYNCED,
+            CampaignSyncService.withCampaignLock(first, () -> repo(first).recoverIndexLock()).outcome());
+        assertFalse(Files.exists(indexLock));
     }
 
     @Test

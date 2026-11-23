@@ -243,6 +243,51 @@ public final class TokenSupport {
         pc.getSheet().setGold(state.getGold());
     }
 
+    private static final com.fasterxml.jackson.databind.ObjectMapper SYNC_MAPPER = com.dnd.data.JsonMappers.create();
+
+    /**
+     * Everything the battle map writes back to a sheet ({@link #pushVitals} plus level, XP,
+     * pack and furnace fuel) as one comparable value, so a window can tell whether a sheet
+     * was changed elsewhere since it last synced (a rest from the GM panel, say).
+     */
+    public static String sheetSyncKey(PlayerCharacter pc) {
+        if (pc == null) return "";
+        java.util.Map<String, Object> key = new java.util.LinkedHashMap<>();
+        key.put("maxHp", pc.getMaxHitPoints());
+        key.put("hp", pc.getCurrentHitPoints());
+        key.put("deathFailures", pc.getSheet().getDeathSaveFailures());
+        key.put("deathSuccesses", pc.getSheet().getDeathSaveSuccesses());
+        key.put("maxMana", pc.getMaxMana());
+        key.put("mana", pc.getCurrentMana());
+        key.put("effects", pc.getActiveEffects());
+        key.put("cooldowns", pc.getCooldowns());
+        key.put("featureUses", pc.getFeatureUses());
+        key.put("slots", pc.getSpellSlots());
+        key.put("gold", pc.getSheet().getGold());
+        key.put("level", pc.getLevel());
+        key.put("xp", pc.getXp());
+        key.put("items", pc.getItems());
+        key.put("fuel", pc.getFurnaceFuel());
+        try {
+            return SYNC_MAPPER.writeValueAsString(key);
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+            throw new IllegalStateException("Could not compare character sheet state", e);
+        }
+    }
+
+    /** {@link #sheetSyncKey} of what pushing this player token would write to its sheet. */
+    public static String tokenSyncKey(PlayerToken token) {
+        if (token == null || token.getCharacter() == null) return "";
+        PlayerCharacter onToken = token.getCharacter();
+        PlayerCharacter projected = new PlayerCharacter();
+        pushVitals(combatOf(token), projected);
+        projected.setLevel(onToken.getLevel());
+        projected.setXp(onToken.getXp());
+        projected.setItems(onToken.getItems());
+        projected.setFurnaceFuel(onToken.getFurnaceFuel());
+        return sheetSyncKey(projected);
+    }
+
     /**
      * Replaces a player token's embedded character copy with the latest sheet and pulls its
      * vitals in. A sheet with no hit points yet is instead seeded from the token.

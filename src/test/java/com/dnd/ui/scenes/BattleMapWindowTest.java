@@ -404,6 +404,160 @@ public class BattleMapWindowTest {
         });
     }
 
+    @Test public void projectorMirrorsOnlyTheSelectedPlayerMovementGrid() throws Exception {
+        runBattle((battle, map, stage) -> {
+            var renderer = (com.dnd.ui.MapRenderer) field(battle, "renderer");
+            var canvas = (Canvas) field(battle, "canvas");
+            var player = map.getCell(2, 2).getOccupants().getFirst();
+            TokenSupport.combatOf(player).setWalkSpeed(4 * CombatState.FEET_PER_SQUARE);
+            TokenSupport.combatOf(player).setMovementUsed(2);
+            double cell = renderer.getCellSize();
+            canvas.getOnMousePressed().handle(mouse(MouseButton.PRIMARY, 2.5 * cell, 2.5 * cell));
+
+            var toggle = BattleMapWindow.class.getDeclaredMethod("toggleProjector");
+            toggle.setAccessible(true);
+            toggle.invoke(battle);
+            var projected = (com.dnd.ui.MapRenderer.Decorations) field(field(battle, "projector"), "decorations");
+            assertEquals(1, projected.reachable[2][1]);
+            assertEquals(MovementCalculator.UNREACHABLE, projected.reachable[2][5]);
+            assertNull(projected.selected);
+            assertFalse(projected.showHealthBars);
+
+            var render = BattleMapWindow.class.getDeclaredMethod("renderNow");
+            render.setAccessible(true);
+            var gm = (com.dnd.ui.MapRenderer.Decorations) field(battle, "decorations");
+            canvas.getOnMousePressed().handle(mouse(MouseButton.PRIMARY, 0.5 * cell, 0.5 * cell));
+            render.invoke(battle);
+            assertNotNull(gm.reachable);
+            assertNull(projected.reachable);
+
+            canvas.getOnMousePressed().handle(mouse(MouseButton.PRIMARY, 2.5 * cell, 2.5 * cell));
+            render.invoke(battle);
+            assertNotNull(projected.reachable);
+            canvas.getOnMousePressed().handle(mouse(MouseButton.PRIMARY, 5.5 * cell, 5.5 * cell));
+            render.invoke(battle);
+            assertNull(projected.reachable);
+        });
+    }
+
+    @Test public void restTakenElsewhereWhileTheMapIsOpenIsPulledInNotOverwritten() throws Exception {
+        runBattle((battle, map, stage) -> {
+            var repos = (CampaignRepositories) field(battle, "repos");
+            Canvas canvas = (Canvas) field(battle, "canvas");
+            canvas.getOnMousePressed().handle(mouse(MouseButton.PRIMARY, 108, 108));
+            canvas.getOnMouseReleased().handle(mouse(MouseButton.PRIMARY, 108, 108));
+            var state = TokenSupport.combatOf(map.getCell(2, 2).getOccupants().getFirst());
+            state.getFeatureUses().put("second-wind", 1);
+            state.getCooldowns().put("flame", 2);
+            Spinner<?> amount = hpAmount(stage);
+            amount.getEditor().setText("12");
+            button(stage, "Damage").fire();
+            assertEquals(8, repos.players().getById("player-0").getCurrentHitPoints());
+            assertEquals(1, (int) repos.players().getById("player-0").getFeatureUses().get("second-wind"));
+
+            // The GM panel / character screen rests the stored sheet while the map stays open.
+            PlayerCharacter sheet = repos.players().getById("player-0");
+            com.dnd.model.character.Progression.longRest(sheet, repos.items()::getById);
+            repos.players().save(sheet);
+
+            button(stage, "Next Turn ▸").fire();
+            PlayerCharacter stored = repos.players().getById("player-0");
+            assertEquals(20, stored.getCurrentHitPoints());
+            assertTrue(stored.getFeatureUses().isEmpty());
+            assertTrue(stored.getCooldowns().isEmpty());
+            assertEquals(20, state.getCurrentHitPoints());
+            assertTrue(state.getFeatureUses().isEmpty());
+
+            // A later edit on the map builds on the rested sheet.
+            canvas.getOnMousePressed().handle(mouse(MouseButton.PRIMARY, 108, 108));
+            canvas.getOnMouseReleased().handle(mouse(MouseButton.PRIMARY, 108, 108));
+            amount = hpAmount(stage);
+            amount.getEditor().setText("3");
+            button(stage, "Damage").fire();
+            assertEquals(17, repos.players().getById("player-0").getCurrentHitPoints());
+
+            // A short rest elsewhere, then the map window closes (saveMap pushes every token).
+            sheet = repos.players().getById("player-0");
+            com.dnd.model.character.Progression.shortRest(sheet, null, 2, repos.items()::getById);
+            repos.players().save(sheet);
+            stage.hide();
+            assertEquals(19, repos.players().getById("player-0").getCurrentHitPoints());
+        });
+    }
+
+    @Test public void partyRestUsesTypedHpAndKeepsShortAndLongRestsDistinct() throws Exception {
+        runBattle((battle, map, stage) -> {
+            var repos = (CampaignRepositories) field(battle, "repos");
+            Canvas canvas = (Canvas) field(battle, "canvas");
+            canvas.getOnMousePressed().handle(mouse(MouseButton.PRIMARY, 108, 108));
+            canvas.getOnMouseReleased().handle(mouse(MouseButton.PRIMARY, 108, 108));
+            var state = TokenSupport.combatOf(map.getCell(2, 2).getOccupants().getFirst());
+            state.getFeatureUses().put("second-wind", 1);
+            state.getFeatureUses().put("feat-long:rage", 1);
+            Spinner<?> amount = hpAmount(stage);
+            amount.getEditor().setText("15");
+            button(stage, "Damage").fire();
+
+            Platform.runLater(() -> {
+                var pane = dialogPane(stage);
+                // Typed without pressing Enter: the value must still count.
+                ((Spinner<?>) pane.lookup(".spinner")).getEditor().setText("6");
+                ((Button) pane.lookupButton(pane.getButtonTypes().stream()
+                    .filter(t -> t.getText().equals("Short Rest")).findFirst().orElseThrow())).fire();
+            });
+            button(stage, "Rest...").fire();
+            PlayerCharacter stored = repos.players().getById("player-0");
+            assertEquals(11, state.getCurrentHitPoints());
+            assertEquals(11, stored.getCurrentHitPoints());
+            assertFalse(stored.getFeatureUses().containsKey("second-wind"));
+            assertEquals(1, (int) stored.getFeatureUses().get("feat-long:rage"));
+            var bars = (javafx.scene.Parent) field(battle, "detailBars");
+            assertNotNull("the token panel stays open", bars);
+            assertTrue("the open token panel shows the rested HP", bars.lookupAll(".bar-label").stream()
+                .anyMatch(n -> n instanceof Label l && l.getText().startsWith("11 / 20")));
+
+            Platform.runLater(() -> {
+                var pane = dialogPane(stage);
+                ((Button) pane.lookupButton(pane.getButtonTypes().stream()
+                    .filter(t -> t.getText().equals("Long Rest")).findFirst().orElseThrow())).fire();
+            });
+            button(stage, "Rest...").fire();
+            stored = repos.players().getById("player-0");
+            assertEquals(20, stored.getCurrentHitPoints());
+            assertTrue(stored.getFeatureUses().isEmpty());
+        });
+    }
+
+    @Test public void tokenRestButtonsHealAndRechargeTheSheet() throws Exception {
+        runBattle((battle, map, stage) -> {
+            var repos = (CampaignRepositories) field(battle, "repos");
+            Canvas canvas = (Canvas) field(battle, "canvas");
+            canvas.getOnMousePressed().handle(mouse(MouseButton.PRIMARY, 108, 108));
+            canvas.getOnMouseReleased().handle(mouse(MouseButton.PRIMARY, 108, 108));
+            var state = TokenSupport.combatOf(map.getCell(2, 2).getOccupants().getFirst());
+            state.getFeatureUses().put("action-surge", 1);
+            state.getFeatureUses().put("feat-long:rage", 1);
+            Spinner<?> amount = hpAmount(stage);
+            amount.getEditor().setText("10");
+            button(stage, "Damage").fire();
+
+            Platform.runLater(() -> {
+                var pane = dialogPane(stage);
+                ((TextField) pane.lookup(".text-field")).setText("4");
+                ((Button) pane.lookupButton(ButtonType.OK)).fire();
+            });
+            button(stage, "Short Rest").fire();
+            PlayerCharacter stored = repos.players().getById("player-0");
+            assertEquals(14, stored.getCurrentHitPoints());
+            assertEquals(java.util.Map.of("feat-long:rage", 1), stored.getFeatureUses());
+
+            button(stage, "Long Rest").fire();
+            stored = repos.players().getById("player-0");
+            assertEquals(20, stored.getCurrentHitPoints());
+            assertTrue(stored.getFeatureUses().isEmpty());
+        });
+    }
+
     private interface Check { void run(BattleMapWindow battle, GameMap map, Stage stage) throws Exception; }
 
     private void runBattle(Check check) throws Exception {
@@ -480,6 +634,12 @@ public class BattleMapWindowTest {
         Field field = target.getClass().getDeclaredField(name);
         field.setAccessible(true);
         return field.get(target);
+    }
+
+    private static Spinner<?> hpAmount(Stage stage) {
+        stage.getScene().getRoot().applyCss();
+        stage.getScene().getRoot().layout();
+        return (Spinner<?>) stage.getScene().lookup("#hp-change-amount");
     }
 
     private static Button button(Stage stage, String text) {

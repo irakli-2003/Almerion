@@ -4,7 +4,11 @@ import com.dnd.github.GitHubAccount;
 import com.dnd.github.GitHubLink;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
+import java.io.IOException;
+import java.nio.channels.FileChannel;
+import java.nio.channels.OverlappingFileLockException;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -27,7 +31,7 @@ import java.util.logging.Logger;
  *   <li>Opening a synced campaign pulls first ({@link #syncNow}).</li>
  *   <li>While it is open, changes are committed and pushed every {@link #AUTOSAVE_SECONDS} seconds
  *       (files on disk are never rewritten while the GM is working in them).</li>
- *   <li>Closing it, and quitting the app, run a full sync.</li>
+ *   <li>Closing it checks for local changes and syncs if needed.</li>
  *   <li>When GitHub can't be reached, the work is retried every {@link #RETRY_SECONDS} seconds.</li>
  * </ul>
  */
@@ -43,6 +47,12 @@ public final class CampaignSyncService {
     public record Status(State state, String message) {
     }
 
+    public record Progress(String phase, String task, long completed, int total, long lastActivityNanos) {
+        public double fraction() {
+            return total > 0 ? Math.min(1.0, (double) completed / total) : -1;
+        }
+    }
+
     private static final CampaignSyncService SHARED = new CampaignSyncService(GitHubLink.shared());
 
     private final GitHubLink link;
@@ -52,6 +62,8 @@ public final class CampaignSyncService {
         return t;
     });
     private final Map<Path, Status> statuses = new ConcurrentHashMap<>();
+    private final Map<Path, SyncProgress> activeProgress = new ConcurrentHashMap<>();
+    private final Map<Path, Integer> queued = new ConcurrentHashMap<>();
     private final Map<Path, ScheduledFuture<?>> retries = new ConcurrentHashMap<>();
     private final List<BiConsumer<Path, Status>> listeners = new CopyOnWriteArrayList<>();
     private volatile Path open;
@@ -71,6 +83,15 @@ public final class CampaignSyncService {
         return folder == null ? Optional.empty() : Optional.ofNullable(statuses.get(key(folder)));
     }
 
+    public Optional<Progress> progress(Path folder) {
+        SyncProgress active = activeProgress.get(key(folder));
+        return active == null ? Optional.empty() : Optional.of(active.snapshot());
+    }
+
+    public boolean isQueued(Path folder) {
+        return queued.containsKey(key(folder));
+    }
+
     /** Listeners are called on the sync thread; UI code must hop to the FX thread itself. */
     public void addListener(BiConsumer<Path, Status> listener) {
         listeners.add(listener);
@@ -83,6 +104,10 @@ public final class CampaignSyncService {
     /** Full sync (commit, pull, push) in the background. Completes with the outcome; never fails. */
     public CompletableFuture<CampaignRepo.Result> syncNow(Path folder) {
         return submit(folder, CampaignRepo::sync);
+    }
+
+    public CompletableFuture<CampaignRepo.Result> syncBeforeClose(Path folder) {
+        return submit(folder, CampaignRepo::syncBeforeClose);
     }
 
     /** User-confirmed leftover-lock recovery, serialized with all other sync operations. */
@@ -138,7 +163,7 @@ public final class CampaignSyncService {
                 return;
             }
             lastAutosaveMillis = System.currentTimeMillis();
-            run(key, CampaignRepo::commitAndPush);
+            run(key, CampaignRepo::commitAndPush, false);
         }, AUTOSAVE_SECONDS, AUTOSAVE_SECONDS, TimeUnit.SECONDS);
     }
 
@@ -153,11 +178,11 @@ public final class CampaignSyncService {
         else battles.updateAndGet(n -> Math.max(0, n - 1));
     }
 
-    /** The GM left the open campaign (if any): stop autosaving and do a full sync. */
+    /** The GM left the open campaign (if any): stop autosaving and check for unsynced changes. */
     public synchronized void closed() {
         Path previous = open;
         stopAutosave();
-        if (previous != null) syncNow(previous);
+        if (previous != null) syncBeforeClose(previous);
     }
 
     /** The UI has already completed the final full sync while the campaign was still open. */
@@ -171,7 +196,7 @@ public final class CampaignSyncService {
         autosave = null;
     }
 
-    /** Called when the app quits: a final full sync of the open campaign, waiting at most {@code timeoutMillis}. */
+    /** Called when the app quits: check for unsynced changes, waiting at most {@code timeoutMillis}. */
     public void shutdown(long timeoutMillis) {
         Path previous = open;
         synchronized (this) {
@@ -180,7 +205,7 @@ public final class CampaignSyncService {
         }
         if (previous == null) return;
         try {
-            syncNow(previous).get(timeoutMillis, TimeUnit.MILLISECONDS);
+            syncBeforeClose(previous).get(timeoutMillis, TimeUnit.MILLISECONDS);
         } catch (Exception e) {
             LOGGER.log(Level.INFO, "Final campaign sync didn't finish before exit", e);
         }
@@ -189,19 +214,34 @@ public final class CampaignSyncService {
     private CompletableFuture<CampaignRepo.Result> submit(Path folder, Function<CampaignRepo, CampaignRepo.Result> job) {
         Path key = key(folder);
         CompletableFuture<CampaignRepo.Result> future = new CompletableFuture<>();
+        queued.merge(key, 1, Integer::sum);
         update(key, new Status(State.SYNCING, "Syncing with GitHub..."));
-        executor.execute(() -> future.complete(run(key, job)));
+        executor.execute(() -> future.complete(run(key, job, true)));
         return future;
     }
 
-    private CampaignRepo.Result run(Path folder, Function<CampaignRepo, CampaignRepo.Result> job) {
+    private CampaignRepo.Result run(Path folder, Function<CampaignRepo, CampaignRepo.Result> job, boolean submitted) {
+        SyncProgress progress = new SyncProgress();
+        progress.phase("Preparing sync");
+        activeProgress.put(folder, progress);
+        if (submitted) queued.computeIfPresent(folder, (key, count) -> count == 1 ? null : count - 1);
+        update(folder, new Status(State.SYNCING, "Syncing with GitHub..."));
+        try {
+            return runJob(folder, job, progress);
+        } finally {
+            activeProgress.remove(folder);
+        }
+    }
+
+    private CampaignRepo.Result runJob(Path folder, Function<CampaignRepo, CampaignRepo.Result> job, SyncProgress progress) {
         CampaignRepo.Result result;
         try {
             Optional<GitHubAccount> account = link.account();
             if (account.isEmpty()) {
                 result = notLinked();
             } else {
-                result = job.apply(new CampaignRepo(folder, credentials(account.get()), identity(account.get())));
+                result = withCampaignLock(folder, () -> job.apply(new CampaignRepo(folder,
+                    credentials(account.get()), identity(account.get()), java.time.Clock.systemDefaultZone(), progress)));
             }
         } catch (RuntimeException e) {
             LOGGER.log(Level.WARNING, "Campaign sync failed", e);
@@ -212,9 +252,26 @@ public final class CampaignSyncService {
         if (pending != null) pending.cancel(false);
         if (result.outcome() == CampaignRepo.Outcome.OFFLINE) {
             retries.put(folder, executor.schedule(() -> run(folder, folder.equals(open)
-                ? CampaignRepo::commitAndPush : CampaignRepo::sync), RETRY_SECONDS, TimeUnit.SECONDS));
+                ? CampaignRepo::commitAndPush : CampaignRepo::sync, false), RETRY_SECONDS, TimeUnit.SECONDS));
         }
         return result;
+    }
+
+    static CampaignRepo.Result withCampaignLock(Path folder, java.util.function.Supplier<CampaignRepo.Result> job) {
+        if (!CampaignRepo.isRepository(folder)) return job.get();
+        Path lockFile = folder.resolve(".git/almerion-sync.lock");
+        try (FileChannel channel = FileChannel.open(lockFile, StandardOpenOption.CREATE, StandardOpenOption.WRITE,
+                java.nio.file.LinkOption.NOFOLLOW_LINKS);
+             var lock = channel.tryLock()) {
+            if (lock != null) return job.get();
+        } catch (OverlappingFileLockException e) {
+            // Another service in this JVM already holds the same OS lock.
+        } catch (IOException e) {
+            return CampaignRepo.Result.of(CampaignRepo.Outcome.FAILED,
+                "Could not open the campaign sync guard. Check whether the campaign folder is writable.");
+        }
+        return CampaignRepo.Result.of(CampaignRepo.Outcome.FAILED,
+            "Another Almerion instance is syncing this campaign. Wait for it to finish, then try again.");
     }
 
     static Status toStatus(CampaignRepo.Result result) {

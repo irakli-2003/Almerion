@@ -62,6 +62,44 @@ public class CampaignRestorePointsTest {
         assertFalse(points.list().stream().anyMatch(point -> point.id().equals(oldest)));
     }
 
+    @Test public void startupCleanupTrimsLegacyStoresWithoutCapturingOrTouchingCampaignFiles() throws Exception {
+        Path device = temp.newFolder("device").toPath();
+        Path live = temp.newFolder("live").toPath();
+        Path deleted = temp.newFolder("deleted").toPath();
+        Files.writeString(live.resolve("notes.txt"), "Keep my current notes");
+        var livePoints = new CampaignRestorePoints(device, live);
+        var deletedPoints = new CampaignRestorePoints(device, deleted);
+        var livePoint = livePoints.capture("Live");
+        var deletedPoint = deletedPoints.capture("Deleted");
+        for (var point : List.of(livePoint, deletedPoint)) {
+            Path store = device.resolve(StorylineDrafts.hash(point.campaignId()));
+            Path original = store.resolve(point.id() + ".point");
+            for (int i = 1; i < 20; i++) {
+                long timestamp = point.createdAt() - i;
+                String id = timestamp + "-" + java.util.UUID.randomUUID();
+                Path legacy = Files.createDirectory(store.resolve(id + ".point"));
+                Files.copy(original.resolve("campaign.zip"), legacy.resolve("campaign.zip"));
+                var metadata = new CampaignRestorePoints.Point(1, id, timestamp, "Legacy " + i,
+                    point.campaignPath(), point.campaignId(), point.name(), null);
+                JsonMappers.create().writeValue(legacy.resolve("point.json").toFile(), metadata);
+            }
+        }
+        Files.delete(deleted.resolve(CampaignMeta.FILE_NAME));
+        Files.delete(deleted);
+        Path unrelated = Files.writeString(device.resolve("keep.txt"), "Keep");
+
+        CampaignRestorePoints.enforceDeviceRetention(device);
+        CampaignRestorePoints.enforceDeviceRetention(device);
+
+        assertEquals(List.of("Live", "Legacy 1", "Legacy 2"),
+            livePoints.list().stream().map(CampaignRestorePoints.Point::reason).toList());
+        assertEquals(List.of("Deleted", "Legacy 1", "Legacy 2"),
+            deletedPoints.list().stream().map(CampaignRestorePoints.Point::reason).toList());
+        assertEquals("Keep my current notes", Files.readString(live.resolve("notes.txt")));
+        assertEquals("Keep", Files.readString(unrelated));
+        assertFalse(Files.exists(deleted));
+    }
+
     @Test public void missingCampaignRestoresIdentityWithoutRestoringGitInternals() throws Exception {
         Path campaign = temp.newFolder("campaign").toPath();
         Path file = campaign.resolve("notes.txt");

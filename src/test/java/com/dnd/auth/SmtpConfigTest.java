@@ -4,6 +4,8 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class SmtpConfigTest {
+    @org.junit.Rule public org.junit.rules.TemporaryFolder temp = new org.junit.rules.TemporaryFolder();
+
     @Test public void defaultsUseTheAlmerionAddressWithoutEnablingUnauthenticatedMail() {
         SmtpConfig config = new SmtpConfig();
         assertEquals("almerion.d20@gmail.com", config.username);
@@ -35,5 +37,37 @@ public class SmtpConfigTest {
         assertFalse(SmtpConfig.migrateServiceAddress(config));
         assertEquals("custom@example.test", config.username);
         assertEquals("support@example.test", config.fromAddress);
+    }
+
+    @Test public void reportSetupRequiresSecureSmtpAndAGmailAppPassword() {
+        SmtpConfig config = new SmtpConfig();
+        config.enabled = true;
+        config.username = "sender@example.com";
+        config.password = "ordinary-password";
+        EmailService service = new EmailService(config);
+        assertTrue(service.reportConfigProblem().contains("App Password"));
+        config.password = "abcd efgh ijkl mnop";
+        config.useTls = false;
+        assertTrue(service.reportConfigProblem().contains("secure SMTP"));
+        config.port = 465;
+        assertNull(service.reportConfigProblem());
+    }
+
+    @Test public void configuredPasswordIsNotWrittenInPlaintext() throws Exception {
+        SmtpConfig config = new SmtpConfig();
+        config.password = "abcd efgh ijkl mnop";
+        config.enabled = true;
+        var target = temp.getRoot().toPath().resolve("smtp-config.json");
+        config.saveWithProtectedPassword(target, new com.dnd.github.TokenStore.Protector() {
+            @Override public String name() { return "test"; }
+            @Override public String protect(String secret) { return "opaque-encrypted-payload"; }
+            @Override public String unprotect(String stored) { throw new UnsupportedOperationException(); }
+        });
+        String contents = java.nio.file.Files.readString(target);
+        assertFalse(contents.contains(config.password));
+        var stored = com.dnd.data.JsonMappers.create().readValue(contents, SmtpConfig.class);
+        assertTrue(stored.enabled);
+        assertTrue(stored.password.isEmpty());
+        assertEquals("opaque-encrypted-payload", stored.protectedPassword);
     }
 }

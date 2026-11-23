@@ -1,7 +1,7 @@
 package com.dnd.ui;
 
-import com.dnd.auth.AuthService;
 import com.dnd.auth.EmailService;
+import com.dnd.auth.SmtpConfig;
 import javafx.collections.ListChangeListener;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
@@ -13,7 +13,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.layout.*;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
@@ -21,7 +20,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 
 /** A compact report control on every app window, including modal dialogs. */
@@ -115,10 +113,29 @@ public final class ReportUi {
     }
 
     private static void show(Scene source) {
-        show(source, new EmailService());
+        show(source, (category, body, screenshot) -> {
+            EmailService email = new EmailService();
+            String problem = email.reportConfigProblem();
+            if (problem != null) throw new EmailService.EmailNotConfiguredException(problem);
+            String version = com.dnd.update.UpdateChecker.currentVersion();
+            email.send(SmtpConfig.SERVICE_ADDRESS, "Almerion - " + ("bug".equals(category) ? "Bug" : "Suggestion"),
+                "Almerion " + (version == null ? "(development build)" : version) + "\n"
+                    + "OS: " + System.getProperty("os.name") + " " + System.getProperty("os.version")
+                    + "\n\n" + body, screenshot);
+        }, () -> new EmailService().reportConfigProblem() == null, ReportUi::configureEmail);
     }
 
-    static void show(Scene source, EmailService email) {
+    @FunctionalInterface
+    interface Submission {
+        void send(String category, String description, byte[] screenshot);
+    }
+
+    static void show(Scene source, Submission submission) {
+        show(source, submission, () -> true, owner -> false);
+    }
+
+    static void show(Scene source, Submission submission, java.util.function.BooleanSupplier configured,
+                     java.util.function.Predicate<Window> configure) {
         Image capture = null;
         String captureError = null;
         try {
@@ -141,14 +158,11 @@ public final class ReportUi {
         bug.setToggleGroup(categories);
         suggestion.setToggleGroup(categories);
         bug.setSelected(true);
-        TextField recipient = new TextField(email.reportRecipient());
-        recipient.setPromptText("Support email address");
         TextArea description = new TextArea();
         description.setPromptText("Describe what happened, what you expected, and how to reproduce it.");
         description.setPrefRowCount(6);
         description.setWrapText(true);
         CheckBox include = new CheckBox("Include screenshot");
-        include.setSelected(capture != null);
         include.setDisable(capture == null);
         ImageView preview = new ImageView(capture);
         preview.setPreserveRatio(true);
@@ -161,8 +175,19 @@ public final class ReportUi {
         Label status = new Label();
         status.setWrapText(true);
         if (captureError != null) status.setText("Screenshot could not be captured: " + captureError);
-        VBox form = new VBox(8, new HBox(12, bug, suggestion), new Label("Send to:"), recipient,
-            new Label("Description:"), description, privacy, include, preview, status);
+        Label destination = new Label("Send to: " + SmtpConfig.SERVICE_ADDRESS);
+        destination.setWrapText(true);
+        Button configureButton = new Button("Configure email");
+        configureButton.setId("configure-report-email");
+        configureButton.setMinWidth(Region.USE_PREF_SIZE);
+        configureButton.setOnAction(e -> {
+            if (configure.test(pane.getScene().getWindow())) {
+                status.setText("Email settings saved. Click Send to submit your report.");
+            }
+        });
+        if (!configured.getAsBoolean()) status.setText("Email is not configured. Click Configure email to set it up.");
+        VBox form = new VBox(8, new HBox(12, bug, suggestion), destination,
+            new Label("Description:"), description, privacy, include, preview, configureButton, status);
         form.setPadding(new Insets(12));
         ScrollPane scroll = new ScrollPane(form);
         scroll.setFitToWidth(true);
@@ -170,34 +195,38 @@ public final class ReportUi {
         scroll.setPrefViewportHeight(650);
         pane.setContent(scroll);
         ButtonType sendType = new ButtonType("Send", ButtonBar.ButtonData.OK_DONE);
-        ButtonType draftType = new ButtonType("Save email draft...", ButtonBar.ButtonData.OTHER);
-        pane.getButtonTypes().addAll(sendType, draftType, ButtonType.CANCEL);
+        pane.getButtonTypes().addAll(sendType, ButtonType.CANCEL);
         Button send = (Button) pane.lookupButton(sendType);
-        Button draft = (Button) pane.lookupButton(draftType);
         Button cancel = (Button) pane.lookupButton(ButtonType.CANCEL);
-        for (Button button : new Button[]{send, draft, cancel}) {
+        for (Button button : new Button[]{send, cancel}) {
             button.setMinWidth(Region.USE_PREF_SIZE);
             ButtonBar.setButtonUniformSize(button, false);
         }
         Image screenshot = capture;
         send.addEventFilter(javafx.event.ActionEvent.ACTION, e -> {
             e.consume();
-            if (!validate(recipient, description, status)) return;
-            if (!email.isConfigured()) {
-                status.setText("Email is not configured. Save an email draft to send with your email application.");
+            String body = description.getText().strip();
+            if (body.isBlank()) {
+                status.setText("Describe the bug or suggestion before sending.");
                 return;
             }
-            String to = recipient.getText().trim();
-            String category = bug.isSelected() ? "Bug" : "Suggestion";
-            String body = reportBody(description.getText());
+            if (body.length() > 8000) {
+                status.setText("Enter a description of at most 8,000 characters.");
+                return;
+            }
+            if (!configured.getAsBoolean()) {
+                status.setText("Email is not configured. Click Configure email to set it up.");
+                return;
+            }
+            String category = bug.isSelected() ? "bug" : "suggestion";
             boolean attach = include.isSelected();
             send.setDisable(true);
-            draft.setDisable(true);
             cancel.setDisable(true);
+            configureButton.setDisable(true);
             status.setText("Sending report...");
             Task<Void> task = new Task<>() {
                 @Override protected Void call() throws IOException {
-                    email.send(to, "Almerion - " + category, body, attach ? png(screenshot) : null);
+                    submission.send(category, body, attach ? png(screenshot) : null);
                     return null;
                 }
             };
@@ -205,7 +234,6 @@ public final class ReportUi {
                 status.setText("Your report was sent. Thank you!");
                 cancel.setText("Close");
                 cancel.setDisable(false);
-                recipient.setDisable(true);
                 description.setDisable(true);
                 bug.setDisable(true);
                 suggestion.setDisable(true);
@@ -213,54 +241,100 @@ public final class ReportUi {
             });
             task.setOnFailed(failed -> {
                 send.setDisable(false);
-                draft.setDisable(false);
                 cancel.setDisable(false);
-                status.setText("Report could not be sent: " + task.getException().getMessage()
-                    + "\nSave an email draft or try again.");
+                configureButton.setDisable(false);
+                Throwable problem = task.getException();
+                status.setText(problem instanceof EmailService.EmailNotConfiguredException
+                    ? problem.getMessage() : "Report could not be sent: " + problem.getMessage());
             });
             Thread worker = new Thread(task, "almerion-report");
             worker.setDaemon(true);
             worker.start();
         });
-        draft.addEventFilter(javafx.event.ActionEvent.ACTION, e -> {
-            e.consume();
-            if (!validate(recipient, description, status)) return;
-            FileChooser chooser = new FileChooser();
-            chooser.setTitle("Save email draft");
-            chooser.setInitialFileName("almerion-report.eml");
-            chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Email draft", "*.eml"));
-            var file = chooser.showSaveDialog(pane.getScene().getWindow());
-            if (file == null) return;
-            try {
-                byte[] attachment = include.isSelected() ? png(screenshot) : null;
-                Files.write(file.toPath(), email.reportDraft(recipient.getText().trim(),
-                    "Almerion - " + (bug.isSelected() ? "Bug" : "Suggestion"),
-                    reportBody(description.getText()), attachment));
-                status.setText("Draft saved. Open the .eml file in your email application to send it.");
-            } catch (IOException | EmailService.EmailSendException ex) {
-                status.setText("Could not save the email draft: " + ex.getMessage());
-            }
-        });
         dialog.showAndWait();
     }
 
-    private static boolean validate(TextField recipient, TextArea description, Label status) {
-        if (!AuthService.isValidEmail(recipient.getText().trim())) {
-            status.setText("Enter a valid support email address.");
-            return false;
-        }
-        if (description.getText().isBlank()) {
-            status.setText("Describe the bug or suggestion before sending.");
-            return false;
-        }
-        return true;
-    }
+    private static boolean configureEmail(Window owner) {
+        SmtpConfig current = SmtpConfig.loadOrCreateTemplate();
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Configure email");
+        dialog.initOwner(owner);
+        DialogPane pane = dialog.getDialogPane();
+        pane.setMinWidth(Region.USE_PREF_SIZE);
+        pane.getStylesheets().add(ReportUi.class.getResource(CSS).toExternalForm());
+        pane.getScene().getProperties().put(REPORT, true);
 
-    private static String reportBody(String description) {
-        String version = com.dnd.update.UpdateChecker.currentVersion();
-        return "Almerion " + (version == null ? "(development build)" : version) + "\n"
-            + "OS: " + System.getProperty("os.name") + " " + System.getProperty("os.version")
-            + "\n\n" + description;
+        TextField address = new TextField(SmtpConfig.SERVICE_ADDRESS.equalsIgnoreCase(current.username)
+            && !current.enabled ? "" : current.username);
+        address.setPromptText("you@example.com");
+        TextField host = new TextField(current.host);
+        TextField port = new TextField(Integer.toString(current.port));
+        PasswordField password = new PasswordField();
+        Label help = new Label("Enter your own sender address. For Gmail, use smtp.gmail.com, port 587 or 465,"
+            + " and a Google App Password (requires 2-Step Verification). Do not use your normal Google password.");
+        help.setWrapText(true);
+        help.setMaxWidth(465);
+        Label status = new Label("Test and save sends a test email to your sender address, not to Almerion support.");
+        status.setWrapText(true);
+        status.setMaxWidth(465);
+        VBox form = new VBox(8, help, new Label("Sender email"), address, new Label("SMTP server"), host,
+            new Label("SMTP port (465 uses implicit TLS; other ports use STARTTLS)"), port,
+            new Label("SMTP password or app password"), password, status);
+        form.setPadding(new Insets(12));
+        pane.setContent(form);
+        ButtonType testType = new ButtonType("Test and save", ButtonBar.ButtonData.OK_DONE);
+        pane.getButtonTypes().addAll(testType, ButtonType.CANCEL);
+        Button test = (Button) pane.lookupButton(testType);
+        Button cancel = (Button) pane.lookupButton(ButtonType.CANCEL);
+        dialog.setOnCloseRequest(event -> { if (test.isDisabled()) event.consume(); });
+        test.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
+            event.consume();
+            SmtpConfig candidate = new SmtpConfig();
+            candidate.username = address.getText().strip();
+            candidate.host = host.getText().strip();
+            candidate.password = password.getText();
+            candidate.enabled = true;
+            try {
+                candidate.port = Integer.parseInt(port.getText().strip());
+            } catch (NumberFormatException e) {
+                candidate.port = 0;
+            }
+            EmailService email = new EmailService(candidate);
+            String problem = email.reportConfigProblem();
+            if (problem != null) {
+                status.setText(problem);
+                return;
+            }
+            test.setDisable(true);
+            cancel.setDisable(true);
+            form.setDisable(true);
+            status.setText("Sending test email...");
+            Task<Void> worker = new Task<>() {
+                @Override protected Void call() throws IOException {
+                    email.testConnection();
+                    candidate.saveWithProtectedPassword();
+                    return null;
+                }
+            };
+            worker.setOnSucceeded(done -> {
+                test.setDisable(false);
+                dialog.setResult(testType);
+                dialog.close();
+            });
+            worker.setOnFailed(failed -> {
+                form.setDisable(false);
+                test.setDisable(false);
+                cancel.setDisable(false);
+                Throwable error = worker.getException();
+                status.setText(error instanceof IOException
+                    ? "The test email was sent, but Windows could not save the email settings securely."
+                    : error.getMessage());
+            });
+            Thread thread = new Thread(worker, "almerion-test-email");
+            thread.setDaemon(true);
+            thread.start();
+        });
+        return dialog.showAndWait().orElse(ButtonType.CANCEL) == testType;
     }
 
     static byte[] png(Image image) throws IOException {

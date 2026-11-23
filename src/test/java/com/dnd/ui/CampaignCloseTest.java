@@ -74,6 +74,9 @@ public class CampaignCloseTest {
                 editor.close();
             }
             router.goTo(SceneType.CAMPAIGN_SELECTION);
+            assertTrue(Window.getWindows().stream().filter(Window::isShowing)
+                .map(w -> w.getScene().getRoot().lookup("#github-sync-progress"))
+                .anyMatch(node -> node != null && node.isVisible()));
             router.leaveCampaign(() -> closed.completeExceptionally(new AssertionError("Duplicate close accepted")));
             assertEquals(1, attempts.get());
             assertSame(scene, stage.getScene());
@@ -95,6 +98,60 @@ public class CampaignCloseTest {
             });
         });
         closed.get(20, TimeUnit.SECONDS);
+    }
+
+    @Test public void timedOutCloseKeepsCampaignOpenEvenIfSyncLaterSucceeds() throws Exception {
+        var folder = temp.newFolder("campaign").toPath();
+        var pending = new CompletableFuture<CampaignRepo.Result>();
+        var attempts = new AtomicInteger();
+        var departures = new AtomicInteger();
+        var window = new CompletableFuture<Stage>();
+        var timedOut = new CompletableFuture<Void>();
+        onFx(() -> {
+            var stage = new Stage();
+            var storage = new CampaignStorage(folder);
+            var cli = new CliSession(storage, null);
+            cli.setCampaignContext(new CampaignContext("Test campaign", folder));
+            var session = new UiSession(cli, storage, stage);
+            var user = new User();
+            user.setUsername("GM");
+            session.setCurrentUser(user);
+            session.setDm(true);
+            var router = new SceneRouter(session, stage, folder::equals, path -> {
+                attempts.incrementAndGet();
+                return pending;
+            }, 50);
+            router.goTo(SceneType.STORYLINE);
+            stage.show();
+            window.complete(stage);
+            router.leaveCampaign(departures::incrementAndGet);
+            var poll = new javafx.animation.Timeline(new javafx.animation.KeyFrame(javafx.util.Duration.millis(20), e -> {
+                boolean warning = Window.getWindows().stream().filter(Window::isShowing)
+                    .map(w -> w.getScene().getRoot()).filter(DialogPane.class::isInstance)
+                    .map(DialogPane.class::cast).anyMatch(p -> p.getContentText() != null
+                        && p.getContentText().contains("Stopped waiting"));
+                if (warning) timedOut.complete(null);
+            }));
+            poll.setCycleCount(200);
+            timedOut.whenComplete((v, error) -> Platform.runLater(poll::stop));
+            poll.play();
+        });
+        try {
+            timedOut.get(5, TimeUnit.SECONDS);
+            onFx(() -> {
+                var stage = window.join();
+                assertTrue(stage.isShowing());
+                assertFalse(pending.isDone());
+                pending.complete(new CampaignRepo.Result(CampaignRepo.Outcome.SYNCED, List.of(), List.of(), "Synced"));
+            });
+            onFx(() -> {
+                assertTrue(window.join().isShowing());
+                assertEquals(1, attempts.get());
+                assertEquals(0, departures.get());
+            });
+        } finally {
+            onFx(() -> window.join().hide());
+        }
     }
 
     private static void onFx(Runnable runnable) throws Exception {

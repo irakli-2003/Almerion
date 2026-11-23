@@ -166,6 +166,17 @@ await denied(set(player, `almerion-live/${id}`, live("player")));
 await denied(set(stranger, `almerion-live/${id}`, live("stranger")));
 await denied(set(dm, `almerion-live/${id}`, live("owner")));
 await ok(set(owner, `almerion-live/${id}`, live("owner")));
+await ok(set(owner, `almerion-live/${id}/projector`, "encrypted-frame"));
+await ok(get(null, `almerion-live/${id}/projector`));
+await denied(set(null, `almerion-live/${id}/projector`, "forged"));
+await denied(set(player, `almerion-live/${id}/projector`, "forged"));
+await denied(set(owner, `almerion-live/${id}/projector`, "x".repeat(2000001)));
+await ok(call(owner, "PATCH", "almerion-live", {
+  [`${id}/hostUid`]: "owner", [`${id}/campaignId`]: "campaign",
+  [`${id}/expiresAt`]: Date.now() + 43_200_000, [`${id}/snapshot`]: "updated-snapshot"
+}));
+assert.equal(await (await get(null, `almerion-live/${id}/projector`)).json(), "encrypted-frame");
+await ok(set(owner, `almerion-live/${id}/projector`, null));
 const chat = `almerion-chat/${id}`;
 const connection = "0";
 const wire = { connection: "1".repeat(36), id: "2".repeat(36), key: "wrapped-key", data: "encrypted-message" };
@@ -253,6 +264,7 @@ await denied(get(null, `${otherChat}/guests/${guestKey}/publicKey`));
 await denied(set(null, `${otherChat}/guests/${guestKey}/inbox/guest/0`, wire));
 await ok(set("admin", `almerion-live/${id}/expiresAt`, Date.now() - 1));
 await denied(get(null, `almerion-live/${id}/snapshot`));
+await denied(get(null, `almerion-live/${id}/projector`));
 await denied(get(player, `${chat}/outbox/player/${connection}`));
 await denied(set(player, `${chat}/inbox/player/${connection}`, wire));
 await denied(get(owner, chat));

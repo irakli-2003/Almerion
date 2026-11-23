@@ -356,6 +356,14 @@ public class CombatState {
      * are removed once they reach zero, so an empty map means everything is ready.
      */
     private Map<String, Integer> cooldowns = new LinkedHashMap<>();
+    private java.util.Set<String> encounterCasts = new java.util.LinkedHashSet<>();
+
+    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY)
+    public java.util.Set<String> getEncounterCasts() { return encounterCasts; }
+
+    public void setEncounterCasts(java.util.Set<String> casts) {
+        encounterCasts = casts == null ? new java.util.LinkedHashSet<>() : new java.util.LinkedHashSet<>(casts);
+    }
 
     public List<ActiveEffect> getActiveEffects() {
         if (activeEffects == null) activeEffects = new ArrayList<>();
@@ -581,6 +589,7 @@ public class CombatState {
         for (ActiveEffect e : getActiveEffects()) effects.add(e.copy());
         c.activeEffects = effects;
         c.cooldowns = new LinkedHashMap<>(getCooldowns());
+        c.setEncounterCasts(encounterCasts);
         c.featureUses = new LinkedHashMap<>(getFeatureUses());
         c.resistances = new ArrayList<>(getResistances());
         c.enduranceFeature = enduranceFeature;

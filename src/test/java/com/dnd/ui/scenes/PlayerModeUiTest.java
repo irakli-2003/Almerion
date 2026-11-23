@@ -171,6 +171,40 @@ public class PlayerModeUiTest {
         assertFalse(callback.get());
     }
 
+    @Test public void playerHomeShowsMapThenCharacterAndInlineSheet() throws Exception {
+        onFx(() -> {
+            Stage stage = new Stage();
+            UiSession session = session(stage);
+            session.setDm(false);
+            var pc = new com.dnd.model.character.PlayerCharacter();
+            pc.setId("hero");
+            pc.setName("Test Hero");
+            pc.setStats(new com.dnd.model.character.stats.CoreStats(12, 10, 10, 10, 10, 10));
+            pc.setItems(List.of(new com.dnd.model.character.PlayerCharacter.PlayerItem("sword", null, true)));
+            pc.setSpells(List.of(new com.dnd.model.character.PlayerCharacter.PlayerSpell("spark", 1, true)));
+            new com.dnd.data.CampaignRepositories(session.campaignRoot()).players().save(pc);
+            session.getSession().setActivePlayerCharacterId("hero");
+            stage.setScene(new com.dnd.ui.scenes.player.PlayerHomeScene(session).build());
+            stage.show();
+            stage.getScene().getRoot().applyCss();
+            stage.getScene().getRoot().layout();
+            var scroll = (javafx.scene.control.ScrollPane) stage.getScene().getRoot().lookup(".scroll-pane");
+            var content = (VBox) scroll.getContent();
+            var map = (VBox) content.getChildren().get(0);
+            var sheet = (VBox) content.getChildren().getLast();
+            assertTrue(map.getChildren().stream().anyMatch(n -> n instanceof Label l
+                && l.getText().equals("No map is shared at the moment")));
+            var labels = sheet.lookupAll(".label").stream().filter(Label.class::isInstance)
+                .map(n -> ((Label) n).getText()).toList();
+            assertTrue(labels.contains("Test Hero"));
+            assertTrue(labels.contains("Ability scores"));
+            assertTrue(labels.contains("Inventory"));
+            assertTrue(labels.contains("Spells / Abilities"));
+            assertTrue(labels.stream().anyMatch(text -> text.contains("sword")));
+            assertTrue(labels.stream().anyMatch(text -> text.contains("spark")));
+        });
+    }
+
     private UiSession session(Stage primary) throws Exception {
         CampaignStorage storage = new CampaignStorage(temp.getRoot().toPath());
         CliSession cli = new CliSession(storage, null);

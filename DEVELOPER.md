@@ -292,6 +292,11 @@ host-only metadata and directory records are not publicly readable. Legacy token
 Host demotion or campaign deletion also stops further snapshot reads immediately; previously
 downloaded plaintext cannot be revoked.
 
+The internet projector publishes an encrypted, size-limited rendered player view under
+`almerion-live/<sessionId>/projector`, not map or GM data. Frames expire locally after 15 seconds
+without a host refresh. Deploy the updated combined Firebase rules before enabling this in a
+release; old rules deny the new child. Keep the existing private rules in the combined ruleset.
+
 `node src\test\firebase\cloud-rules.mjs` exercises the combined deployed rules against the
 loopback emulator (same setup as below), including role spoofing, unsafe index writes,
 concurrent applications, private applicant reads, host impersonation and expiry.
@@ -426,14 +431,14 @@ credentials or custom provider addresses. To configure SMTP:
   `DialogPane` as the scene root to avoid automatic-sizing feedback and flashing.
   Reporting consumes the button action so the original dialog stays open.
   It captures only the app scene, not the desktop.
-- The report dialog previews the screenshot and permits removal before sending.
+- The report dialog previews an optional screenshot; inclusion is off by default.
   Successful sends are confirmed in the same form with an enabled Close button, not a
   second modal popup. Its action buttons keep their full preferred widths without
   uniform sizing, and the dialog cannot shrink below its preferred content width.
-  `auth/EmailService` sends UTF-8 MIME multipart reports with an optional PNG attachment;
-  the recipient defaults to the SMTP sender address, never its password.
-- Without usable SMTP, the user can export a complete `.eml` draft with the same optional
-  attachment. Screenshots remain in memory unless explicitly exported or sent.
+  Reports use `EmailService` over certificate-checked SMTP and a fixed support address.
+  **Configure email** tests the sender by emailing that address (not support) before
+  saving SMTP settings. In-app setup protects the password with Windows DPAPI and
+  atomically replaces the local configuration. No Firebase changes are needed.
 - PNG encoding uses `java.desktop` and JavaFX's PixelReader; no new runtime library or
   `javafx-swing` dependency is required, so installed apps can use the jar-only updater.
 
@@ -526,6 +531,9 @@ credentials or custom provider addresses. To configure SMTP:
   confirmation that other Almerion/Git processes using this campaign have stopped. It runs
   on the sync executor, moves the lock into `.git/almerion-lock-backups/`, then retries a
   full sync. It does not delete the index or campaign files; a failed backup leaves the lock.
+  The service also uses an OS-released per-repository guard to reject overlapping jobs
+  from updated Almerion instances. This does not replace Git's own index lock or coordinate
+  with external Git tools.
 - Sync-manager actions live in a wrapping FlowPane instead of a crowded dialog button bar,
   so translated captions remain fully visible.
 - `ManualFiles.prepare` runs before every staging pass. Files strictly larger than
@@ -695,11 +703,16 @@ Coverage: `UpgradeRequestsTest`, `UpgradeRequestsUiTest`, `LanSessionServerTest`
 ## 9. Publishing a release and self-update
 
 1. Bump `<version>` in `pom.xml`.
-2. Build the installer (see above).
-3. Create a GitHub release tagged `v<version>` and attach **both** the `.exe` and
+2. Write user-facing UTF-8 notes in `src/main/resources/patch-notes/<version>.txt` for
+   that exact version. Describe only changes actually included in the release. Maven's
+   validate phase rejects missing or blank notes, including when tests are skipped.
+3. Build the installer (see above). Its version must match `pom.xml`.
+4. Create a GitHub release tagged `v<version>` and attach **both** the `.exe` and
    `almerion.jar`.
 
 Installed apps check the latest release on start and ignore drafts and pre-releases.
+On the first launch of each packaged version, its bundled notes appear once; acknowledgement
+is stored locally under the app data folder. Fresh installations also see the current notes.
 
 - If only the jar is needed, they download it into `app\`, verify it, and switch on restart.
 - Old installs look for the asset by its old name, find none, and are offered the installer.
